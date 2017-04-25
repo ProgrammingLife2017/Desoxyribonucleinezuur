@@ -1,5 +1,6 @@
 package programminglife.model;
 
+import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -28,9 +29,23 @@ public class Node {
         this.children = children;
     }
 
-    @Override
-    public int hashCode() {
-        return this.id;
+    public String getSequence() {
+        return sequence;
+    }
+
+    public void setSequence(String sequence) {
+        this.sequence = sequence;
+    }
+
+    public static Node parseSegment(Scanner sc) {
+        int id = Integer.parseInt(sc.next());
+        String segment = sc.next();
+        sc.next();
+        String origin = sc.next();
+        String offset = sc.next();
+        String readCount = sc.next();
+
+        return new Node(id, segment);
     }
 
     public void addChild(Node child) {

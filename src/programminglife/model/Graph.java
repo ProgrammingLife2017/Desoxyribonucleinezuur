@@ -19,14 +19,40 @@ public class Graph {
         this.rootNodes = new TreeSet<>();
     }
 
-    public boolean add(Node node) {
+    public boolean addNode(Node node) {
         return this.nodes.add(node);
     }
 
-    public static void parse(String file) throws FileNotFoundException {
-        Scanner scanner = new Scanner(new File("data/chr19.hg38.w115.gfa"));
-        while (scanner.hasNext()) {
-            continue;
+    public Node getNode(int id) {
+        return this.nodes.get(id);
+    }
+
+    public static Graph parse(String file) throws FileNotFoundException {
+        Scanner sc = new Scanner(new File(file));
+        sc.useDelimiter("\t");
+        Graph g = new Graph(null);
+        int countLines = 0;
+
+        while (sc.hasNext() && countLines < 10) {
+            String token = sc.next();
+            switch (token) {
+                case "S":
+                    Node parsedNode = Node.parseSegment(sc);
+                    Node existingNode = g.getNode(parsedNode.getId());
+                    if (existingNode == null)
+                        g.addNode(parsedNode);
+                    else {
+                        existingNode.setSequence(parsedNode.getSequence());
+                    }
+                    break;
+                case "L":
+                    // Parse link
+                    break;
+            }
+
+            countLines++;
         }
+
+        return g;
     }
 }
