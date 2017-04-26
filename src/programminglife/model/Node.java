@@ -1,5 +1,6 @@
 package programminglife.model;
 
+import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeSet;
@@ -15,11 +16,11 @@ public class Node {
     private Set<Node> children;
 
     public Node(int id) {
-        this(id, new String(), new TreeSet<>(), new TreeSet<>());
+        this(id, new String(), new HashSet<>(), new HashSet<>());
     }
 
     public Node(int id, String sequence) {
-        this(id, sequence, new TreeSet<>(), new TreeSet<>());
+        this(id, sequence, new HashSet<>(), new HashSet<>());
     }
 
     public Node(int id, String sequence, Set<Node> parents, Set<Node> children) {

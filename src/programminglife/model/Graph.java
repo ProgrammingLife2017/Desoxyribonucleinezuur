@@ -16,7 +16,7 @@ public class Graph {
         this.nodes = new ArrayList<>();
         this.nodes.add(null);
         this.id = id;
-        this.rootNodes = new TreeSet<>();
+        this.rootNodes = new HashSet<>();
     }
 
     public boolean addNode(Node node) {
@@ -24,34 +24,85 @@ public class Graph {
     }
 
     public Node getNode(int id) {
-        return this.nodes.get(id);
+        try {
+            return this.nodes.get(id);
+        } catch (IndexOutOfBoundsException e) {
+            return null;
+        }
+    }
+
+    private void parseLink(Scanner sc) {
+        int sourceId = Integer.parseInt(sc.next());
+        sc.next();
+        int destinationId = Integer.parseInt(sc.next());
+        sc.next();
+        String overlap = sc.next();
+
+        Node sourceNode = this.getNode(sourceId);
+        Node destinationNode = this.getNode(destinationId);
+
+        if (null == sourceNode)
+            throw new Error("Source node does not (yet) exist!");
+
+        if (null == destinationNode) {
+            destinationNode = new Node(destinationId);
+            this.addNode(destinationNode);
+        }
+
+        sourceNode.addChild(destinationNode);
+        destinationNode.addChild(sourceNode);
     }
 
     public static Graph parse(String file) throws FileNotFoundException {
-        Scanner sc = new Scanner(new File(file));
-        sc.useDelimiter("\t");
+        Scanner lineScanner = new Scanner(new File(file));
+        lineScanner.useDelimiter("\t");
         Graph g = new Graph(null);
-        int countLines = 0;
 
-        while (sc.hasNext() && countLines < 10) {
-            String token = sc.next();
+        int numLinesRead = 0;
+        int numNodesParsed = 0;
+        int numLinksParsed = 0;
+        int miscParsed = 0;
+
+        while (lineScanner.hasNextLine()) {
+            String line = lineScanner.nextLine();
+            Scanner tokenScanner = new Scanner(line);
+            String token = tokenScanner.next();
+            numLinesRead++;
+
+            System.out.print(String.format("Token %s read (line %d)... ", token, numLinesRead));
+
             switch (token) {
                 case "S":
-                    Node parsedNode = Node.parseSegment(sc);
+                    // Parse segment
+                    System.out.println("parsing segment");
+                    Node parsedNode = Node.parseSegment(tokenScanner);
                     Node existingNode = g.getNode(parsedNode.getId());
                     if (existingNode == null)
                         g.addNode(parsedNode);
-                    else {
+                    else
                         existingNode.setSequence(parsedNode.getSequence());
-                    }
+
+                    numNodesParsed++;
                     break;
                 case "L":
                     // Parse link
+                    System.out.println("parsing link");
+                    g.parseLink(tokenScanner);
+                    numLinksParsed++;
                     break;
+                default:
+                    System.out.println("strange token on line!");
+                    miscParsed++;
             }
-
-            countLines++;
+            tokenScanner.close();
         }
+
+        lineScanner.close();
+
+        System.out.println(String.format("%d lines read from file %s", numLinesRead, file));
+        System.out.println(String.format("%d segments parsed", numNodesParsed));
+        System.out.println(String.format("%d links parsed", numLinksParsed));
+        System.out.println(String.format("%d miscellaneous parsed", miscParsed));
 
         return g;
     }
