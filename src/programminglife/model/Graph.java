@@ -55,7 +55,6 @@ public class Graph {
 
     public static Graph parse(String file) throws FileNotFoundException {
         Scanner lineScanner = new Scanner(new File(file));
-        lineScanner.useDelimiter("\t");
         Graph g = new Graph(null);
 
         int numLinesRead = 0;
@@ -66,6 +65,7 @@ public class Graph {
         while (lineScanner.hasNextLine()) {
             String line = lineScanner.nextLine();
             Scanner tokenScanner = new Scanner(line);
+            tokenScanner.useDelimiter("\t");
             String token = tokenScanner.next();
             numLinesRead++;
 
