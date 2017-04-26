@@ -10,7 +10,7 @@ import java.io.FileNotFoundException;
 public class ProgrammingLife {
     public static void main(String[] args) {
         try {
-            Graph g = Graph.parse("data/chr19.hg38.w115.gfa");
+            Graph g = Graph.parse("data/real/TB10.gfa");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
