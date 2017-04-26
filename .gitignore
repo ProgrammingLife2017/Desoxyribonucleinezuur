@@ -8,6 +8,9 @@ dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
 
+# Executable jar file
+*.jar
+
 # Data files (use data/test/ for small testing/validation files)
 data/real/
 
