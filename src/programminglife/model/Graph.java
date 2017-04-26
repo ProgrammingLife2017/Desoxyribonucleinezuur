@@ -55,12 +55,14 @@ public class Graph {
 
     public static Graph parse(String file) throws FileNotFoundException {
         Scanner lineScanner = new Scanner(new File(file));
-        Graph g = new Graph(null);
+        Graph graph = new Graph(null);
 
         int numLinesRead = 0;
         int numNodesParsed = 0;
         int numLinksParsed = 0;
         int miscParsed = 0;
+
+        boolean verbose = false;
 
         while (lineScanner.hasNextLine()) {
             String line = lineScanner.nextLine();
@@ -69,16 +71,21 @@ public class Graph {
             String token = tokenScanner.next();
             numLinesRead++;
 
-            System.out.print(String.format("Token %s read (line %d)... ", token, numLinesRead));
+            if (numLinesRead % 2500 == 0)
+                verbose = true;
+            else
+                verbose = false;
+
+            if (verbose) System.out.println(String.format("Token %s read (line %d)... ", token, numLinesRead));
 
             switch (token) {
                 case "S":
                     // Parse segment
-                    System.out.println("parsing segment");
+//                    System.out.println("parsing segment");
                     Node parsedNode = Node.parseSegment(tokenScanner);
-                    Node existingNode = g.getNode(parsedNode.getId());
+                    Node existingNode = graph.getNode(parsedNode.getId());
                     if (existingNode == null)
-                        g.addNode(parsedNode);
+                        graph.addNode(parsedNode);
                     else
                         existingNode.setSequence(parsedNode.getSequence());
 
@@ -86,12 +93,12 @@ public class Graph {
                     break;
                 case "L":
                     // Parse link
-                    System.out.println("parsing link");
-                    g.parseLink(tokenScanner);
+//                    System.out.println("parsing link");
+                    graph.parseLink(tokenScanner);
                     numLinksParsed++;
                     break;
                 default:
-                    System.out.println("strange token on line!");
+//                    System.out.println("strange token on line!");
                     miscParsed++;
             }
             tokenScanner.close();
@@ -99,11 +106,12 @@ public class Graph {
 
         lineScanner.close();
 
+        System.out.println();
         System.out.println(String.format("%d lines read from file %s", numLinesRead, file));
         System.out.println(String.format("%d segments parsed", numNodesParsed));
         System.out.println(String.format("%d links parsed", numLinksParsed));
         System.out.println(String.format("%d miscellaneous parsed", miscParsed));
 
-        return g;
+        return graph;
     }
 }
