@@ -3,7 +3,6 @@ package programminglife.model;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * Created by marti_000 on 25-4-2017.
@@ -59,5 +58,13 @@ public class Node {
 
     public int getId() {
         return this.id;
+    }
+
+    public Set<Node> getParents() {
+        return parents;
+    }
+
+    public Set<Node> getChildren() {
+        return children;
     }
 }

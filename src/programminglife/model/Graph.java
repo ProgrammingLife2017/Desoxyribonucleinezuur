@@ -14,7 +14,7 @@ public class Graph {
 
     public Graph(String id) {
         this.nodes = new ArrayList<>();
-        this.nodes.add(null);
+        this.nodes.add(new Node(-1));
         this.id = id;
         this.rootNodes = new HashSet<>();
     }
@@ -50,7 +50,7 @@ public class Graph {
         }
 
         sourceNode.addChild(destinationNode);
-        destinationNode.addChild(sourceNode);
+        destinationNode.addParent(sourceNode);
     }
 
     public static Graph parse(String file) throws FileNotFoundException {
@@ -111,6 +111,14 @@ public class Graph {
         System.out.println(String.format("%d segments parsed", numNodesParsed));
         System.out.println(String.format("%d links parsed", numLinksParsed));
         System.out.println(String.format("%d miscellaneous parsed", miscParsed));
+        System.out.println();
+
+        for (Node n : graph.nodes) {
+            if (n != null && n.getParents().isEmpty() && n.getId() > 0) {
+                graph.rootNodes.add(n);
+                System.out.println(String.format("Node %d is a root node", n.getId()));
+            }
+        }
 
         return graph;
     }
