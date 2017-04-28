@@ -54,6 +54,8 @@ public class Graph {
     }
 
     public static Graph parse(String file) throws FileNotFoundException {
+        System.out.println(String.format("Parsing file %s", file));
+
         Scanner lineScanner = new Scanner(new File(file));
         Graph graph = new Graph(null);
 
