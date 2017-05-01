@@ -31,6 +31,15 @@ public class Graph {
         }
     }
 
+    private void parseSegment(Scanner sc) {
+        Node parsedNode = Node.parseSegment(sc);
+        Node existingNode = this.getNode(parsedNode.getId());
+        if (existingNode == null)
+            this.addNode(parsedNode);
+        else
+            existingNode.setSequence(parsedNode.getSequence());
+    }
+
     private void parseLink(Scanner sc) {
         int sourceId = Integer.parseInt(sc.next());
         sc.next();
@@ -83,24 +92,16 @@ public class Graph {
             switch (token) {
                 case "S":
                     // Parse segment
-//                    System.out.println("parsing segment");
-                    Node parsedNode = Node.parseSegment(tokenScanner);
-                    Node existingNode = graph.getNode(parsedNode.getId());
-                    if (existingNode == null)
-                        graph.addNode(parsedNode);
-                    else
-                        existingNode.setSequence(parsedNode.getSequence());
-
+                    graph.parseSegment(tokenScanner);
                     numNodesParsed++;
                     break;
                 case "L":
                     // Parse link
-//                    System.out.println("parsing link");
                     graph.parseLink(tokenScanner);
                     numLinksParsed++;
                     break;
                 default:
-//                    System.out.println("strange token on line!");
+                    // Otherwise
                     miscParsed++;
             }
             tokenScanner.close();

@@ -15,7 +15,7 @@ public class Node {
     private Set<Node> children;
 
     public Node(int id) {
-        this(id, new String(), new HashSet<>(), new HashSet<>());
+        this(id, "", new HashSet<>(), new HashSet<>());
     }
 
     public Node(int id, String sequence) {
@@ -40,7 +40,7 @@ public class Node {
     public static Node parseSegment(Scanner sc) {
         int id = Integer.parseInt(sc.next());
         String segment = sc.next();
-        sc.next();
+        sc.next(); // Skip unused '*' symbol
         String origin = sc.next();
         String offset = sc.next();
         String readCount = sc.next();

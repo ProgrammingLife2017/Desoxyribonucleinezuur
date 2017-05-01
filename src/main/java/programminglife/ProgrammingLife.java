@@ -23,9 +23,9 @@ public class ProgrammingLife {
             graphFile = args[0];
 
         try {
-            g = Graph.parse(HUMAN_DATA);
+            g = Graph.parse(graphFile);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            throw new Error(String.format("File not found (%s)", graphFile));
         }
     }
 }
