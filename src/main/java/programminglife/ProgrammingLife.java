@@ -23,7 +23,7 @@ public class ProgrammingLife {
             graphFile = args[0];
 
         try {
-            g = Graph.parse(graphFile);
+            g = Graph.parse(graphFile, true);
         } catch (FileNotFoundException e) {
             throw new Error(String.format("File not found (%s)", graphFile));
         }
