@@ -17,17 +17,17 @@ public class Graph {
     /**
      * A list of nodes ordered by ID. Assumption: Nodes appear in GFA file in sequential order.
      */
-    private List<Node> nodes;
+    private Map<Integer, Node> nodes;
 
     public Graph(String id) {
-        this.nodes = new ArrayList<>();
-        this.nodes.add(new Node(-1));
+        this.nodes = new HashMap<>();
+        this.addNode(new Node(-1));
         this.id = id;
         this.rootNodes = new HashSet<>();
     }
 
-    public boolean addNode(Node node) {
-        return this.nodes.add(node);
+    public Node addNode(Node node) {
+        return this.nodes.put(node.getId(), node);
     }
 
     public Node getNode(int id) {
@@ -101,7 +101,7 @@ public class Graph {
             else
                 logCurrentLine = false;
 
-            if (logCurrentLine) System.out.println(String.format("Token %s read (line %d)... ", token, numLinesRead));
+            if (logCurrentLine) System.out.println(String.format("Token %s read (line %d)...", token, numLinesRead));
 
             switch (token) {
                 case "S":
@@ -130,7 +130,8 @@ public class Graph {
         if (verbose) System.out.println(String.format("%d miscellaneous parsed", miscParsed));
         if (verbose) System.out.println();
 
-        for (Node n : graph.nodes) {
+        for (int id : graph.nodes.keySet()) {
+            Node n = graph.getNode(id);
             if (n != null && n.getParents().isEmpty() && n.getId() > 0) {
                 graph.rootNodes.add(n);
                 if (verbose) System.out.println(String.format("Node %d is a root node", n.getId()));
