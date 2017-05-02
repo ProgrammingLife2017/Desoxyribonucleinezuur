@@ -3,9 +3,9 @@
   <component name="CheckStyle-IDEA">
     <option name="configuration">
       <map>
-        <entry key="active-configuration" value="LOCAL_FILE:$PRJ_DIR$/.idea/checkstyle.xml:Checkstyle" />
+        <entry key="active-configuration" value="LOCAL_FILE:$PRJ_DIR$/checkstyle.xml:Checkstyle" />
         <entry key="checkstyle-version" value="7.6.1" />
-        <entry key="location-0" value="LOCAL_FILE:$PRJ_DIR$/.idea/checkstyle.xml:Checkstyle" />
+        <entry key="location-0" value="LOCAL_FILE:$PRJ_DIR$/checkstyle.xml:Checkstyle" />
         <entry key="scanscope" value="JavaOnly" />
         <entry key="suppress-errors" value="true" />
         <entry key="thirdparty-classpath" value="" />
