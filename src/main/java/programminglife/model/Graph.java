@@ -129,9 +129,8 @@ public class Graph {
         if (verbose) System.out.println(String.format("%d miscellaneous parsed", miscParsed));
         if (verbose) System.out.println();
 
-        for (int id : graph.nodes.keySet()) {
-            Node n = graph.getNode(id);
-            if (n != null && n.getParents().isEmpty() && n.getId() > 0) {
+        for (Node n : graph.nodes.values()) {
+            if (n != null && n.getParents().isEmpty()) {
                 graph.rootNodes.add(n);
                 if (verbose) System.out.println(String.format("Node %d is a root node", n.getId()));
             }
