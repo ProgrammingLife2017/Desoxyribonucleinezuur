@@ -21,7 +21,6 @@ public class Graph {
 
     public Graph(String id) {
         this.nodes = new HashMap<>();
-        this.addNode(new Node(-1));
         this.id = id;
         this.rootNodes = new HashSet<>();
     }
