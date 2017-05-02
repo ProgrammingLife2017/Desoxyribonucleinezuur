@@ -40,10 +40,11 @@ public class Graph {
     private void parseSegment(Scanner sc) {
         Node parsedNode = Node.parseSegment(sc);
         Node existingNode = this.getNode(parsedNode.getId());
-        if (existingNode == null)
+        if (existingNode == null) {
             this.addNode(parsedNode);
-        else
+        } else {
             existingNode.setSequence(parsedNode.getSequence());
+        }
     }
 
     private void parseLink(Scanner sc) {
@@ -56,8 +57,9 @@ public class Graph {
         Node sourceNode = this.getNode(sourceId);
         Node destinationNode = this.getNode(destinationId);
 
-        if (null == sourceNode)
+        if (null == sourceNode) {
             throw new Error("Source node does not (yet) exist!");
+        }
 
         if (null == destinationNode) {
             destinationNode = new Node(destinationId);
@@ -77,7 +79,9 @@ public class Graph {
     }
 
     public static Graph parse(String file, boolean verbose, int lineInterval) throws FileNotFoundException {
-        if (verbose) System.out.println(String.format("Parsing file %s", file));
+        if (verbose) {
+            System.out.println(String.format("Parsing file %s", file));
+        }
 
         Scanner lineScanner = new Scanner(new File(file));
         Graph graph = new Graph(null);
@@ -95,12 +99,15 @@ public class Graph {
             String token = tokenScanner.next();
             numLinesRead++;
 
-            if (verbose && numLinesRead % lineInterval == 0)
+            if (verbose && numLinesRead % lineInterval == 0) {
                 logCurrentLine = true;
-            else
+            } else {
                 logCurrentLine = false;
+            }
 
-            if (logCurrentLine) System.out.println(String.format("Token %s read (line %d)...", token, numLinesRead));
+            if (logCurrentLine) {
+                System.out.println(String.format("Token %s read (line %d)...", token, numLinesRead));
+            }
 
             switch (token) {
                 case "S":
@@ -122,17 +129,21 @@ public class Graph {
 
         lineScanner.close();
 
-        if (verbose) System.out.println();
-        if (verbose) System.out.println(String.format("%d lines read from file %s", numLinesRead, file));
-        if (verbose) System.out.println(String.format("%d segments parsed", numNodesParsed));
-        if (verbose) System.out.println(String.format("%d links parsed", numLinksParsed));
-        if (verbose) System.out.println(String.format("%d miscellaneous parsed", miscParsed));
-        if (verbose) System.out.println();
+        if (verbose) {
+            System.out.println();
+            System.out.println(String.format("%d lines read from file %s", numLinesRead, file));
+            System.out.println(String.format("%d segments parsed", numNodesParsed));
+            System.out.println(String.format("%d links parsed", numLinksParsed));
+            System.out.println(String.format("%d miscellaneous parsed", miscParsed));
+            System.out.println();
+        }
 
         for (Node n : graph.nodes.values()) {
             if (n != null && n.getParents().isEmpty()) {
                 graph.rootNodes.add(n);
-                if (verbose) System.out.println(String.format("Node %d is a root node", n.getId()));
+                if (verbose) {
+                    System.out.println(String.format("Node %d is a root node", n.getId()));
+                }
             }
         }
 
