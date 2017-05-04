@@ -37,13 +37,13 @@ public class Node {
         this.sequence = sequence;
     }
 
-    public static Node parseSegment(Scanner sc) {
-        int id = Integer.parseInt(sc.next());
-        String segment = sc.next();
-        sc.next(); // Skip unused '*' symbol
-        String origin = sc.next();
-        String offset = sc.next();
-        String readCount = sc.next();
+    public static Node parseSegment(String propertyString) {
+        String[] properties = propertyString.split("\\s");
+        // properties[0] is 'S'
+        int id = Integer.parseInt(properties[1]);
+        String segment = properties[2];
+        // properties[3] is +/-
+        // rest of properties is unused
 
         return new Node(id, segment);
     }

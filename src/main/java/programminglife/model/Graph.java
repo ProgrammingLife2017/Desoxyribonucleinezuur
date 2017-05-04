@@ -1,7 +1,8 @@
 package programminglife.model;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import programminglife.model.exception.UnknownTypeException;
+
+import java.io.*;
 import java.util.*;
 
 /**
@@ -9,7 +10,6 @@ import java.util.*;
  */
 public class Graph {
     private static final boolean PARSE_LINE_VERBOSE_DEFAULT = false;
-    private static final int PARSE_LINE_LOG_INTERVAL_DEFAULT = 1000;
 
     private String id;
     private Set<Node> rootNodes;
@@ -37,12 +37,12 @@ public class Graph {
         }
     }
 
-    Map<Integer, Node> getNodes() {
-        return this.nodes;
+    public Collection<Node> getNodes() {
+        return this.nodes.values();
     }
 
-    private void parseSegment(Scanner sc) {
-        Node parsedNode = Node.parseSegment(sc);
+    private void parseSegment(String propertyString) {
+        Node parsedNode = Node.parseSegment(propertyString);
         Node existingNode;
         try {
             existingNode = this.getNode(parsedNode.getId());
@@ -52,12 +52,13 @@ public class Graph {
         }
     }
 
-    void parseLink(Scanner sc) {
-        int sourceId = Integer.parseInt(sc.next());
-        sc.next();
-        int destinationId = Integer.parseInt(sc.next());
-        sc.next();
-        String overlap = sc.next();
+    void parseLink(String propertyString) {
+        String[] properties = propertyString.split("\\s");
+        // properties[0] is 'L'
+        int sourceId = Integer.parseInt(properties[1]);
+        // properties[2] is unused
+        int destinationId = Integer.parseInt(properties[3]);
+        // properties[4] and further are unused
 
         Node sourceNode, destinationNode;
 
@@ -84,74 +85,39 @@ public class Graph {
     }
 
     public static Graph parse(String file, boolean verbose) throws FileNotFoundException {
-        return parse(file, verbose, PARSE_LINE_LOG_INTERVAL_DEFAULT);
-    }
-
-    public static Graph parse(String file, boolean verbose, int lineInterval) throws FileNotFoundException {
         if (verbose) {
             System.out.println(String.format("Parsing file %s", file));
         }
 
-        Scanner lineScanner = new Scanner(new File(file));
+        BufferedReader reader = new BufferedReader(new FileReader(file));
         Graph graph = new Graph(null);
-        boolean logCurrentLine = false;
 
-        int numLinesRead = 0;
-        int numNodesParsed = 0;
-        int numLinksParsed = 0;
-        int miscParsed = 0;
+        reader.lines().forEach(line -> {
+            char type = line.charAt(0);
 
-        while (lineScanner.hasNextLine()) {
-            String line = lineScanner.nextLine();
-            Scanner tokenScanner = new Scanner(line);
-            tokenScanner.useDelimiter("\t");
-            String token = tokenScanner.next();
-            numLinesRead++;
-
-            if (verbose && numLinesRead % lineInterval == 0) {
-                logCurrentLine = true;
-            } else {
-                logCurrentLine = false;
-            }
-
-            if (logCurrentLine) {
-                System.out.println(String.format("Token %s read (line %d)...", token, numLinesRead));
-            }
-
-            switch (token) {
-                case "S":
+            switch (type) {
+                case 'S':
                     // Parse segment
-                    graph.parseSegment(tokenScanner);
-                    numNodesParsed++;
+                    graph.parseSegment(line);
                     break;
-                case "L":
+                case 'L':
                     // Parse link
-                    graph.parseLink(tokenScanner);
-                    numLinksParsed++;
+                    graph.parseLink(line);
+                    break;
+                case 'H':
+                    System.out.println(line);
                     break;
                 default:
                     // Otherwise
-                    miscParsed++;
+                    throw new UnknownTypeException(String.format("Unknown type '%c'", type));
             }
-            tokenScanner.close();
-        }
-
-        lineScanner.close();
-
-        if (verbose) {
-            System.out.println();
-            System.out.println(String.format("%d lines read from file %s", numLinesRead, file));
-            System.out.println(String.format("%d segments parsed", numNodesParsed));
-            System.out.println(String.format("%d links parsed", numLinksParsed));
-            System.out.println(String.format("%d miscellaneous parsed", miscParsed));
-            System.out.println();
-        }
+        });
 
         for (Node n : graph.nodes.values()) {
             if (n != null && n.getParents().isEmpty()) {
                 graph.rootNodes.add(n);
                 if (verbose) {
-                    System.out.println(String.format("Node %d is a root node", n.getId()));
+                    System.out.println(String.format("Root node: %s", n));
                 }
             }
         }
