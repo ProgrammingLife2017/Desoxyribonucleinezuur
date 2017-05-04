@@ -1,8 +1,11 @@
 package programminglife.model;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Created by marti_000 on 25-4-2017.
@@ -66,5 +69,14 @@ public class Node {
 
     public Set<Node> getChildren() {
         return children;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Node<%d>(c:%s, p:%s, s:%s)",
+                this.getId(),
+                this.getChildren().stream().map(c -> c.getId()).collect(Collectors.toList()),
+                this.getParents().stream().map(p -> p.getId()).collect(Collectors.toList()),
+                StringUtils.abbreviate(this.getSequence(), 11));
     }
 }
