@@ -7,7 +7,6 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import programminglife.ProgrammingLife;
 
 import java.io.File;
-import java.io.IOException;
 
 /**
  * Created by Yannick on 02/05/2017.
