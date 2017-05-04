@@ -30,38 +30,47 @@ public class Graph {
     }
 
     public Node getNode(int id) {
-        try {
+        if (this.nodes.containsKey(id)) {
             return this.nodes.get(id);
-        } catch (IndexOutOfBoundsException e) {
-            return null;
+        } else {
+            throw new NoSuchElementException("There is no node with ID " + id);
         }
+    }
+
+    Map<Integer, Node> getNodes() {
+        return this.nodes;
     }
 
     private void parseSegment(Scanner sc) {
         Node parsedNode = Node.parseSegment(sc);
-        Node existingNode = this.getNode(parsedNode.getId());
-        if (existingNode == null) {
-            this.addNode(parsedNode);
-        } else {
+        Node existingNode;
+        try {
+            existingNode = this.getNode(parsedNode.getId());
             existingNode.setSequence(parsedNode.getSequence());
+        } catch (NoSuchElementException e) {
+            this.addNode(parsedNode);
         }
     }
 
-    private void parseLink(Scanner sc) {
+    void parseLink(Scanner sc) {
         int sourceId = Integer.parseInt(sc.next());
         sc.next();
         int destinationId = Integer.parseInt(sc.next());
         sc.next();
         String overlap = sc.next();
 
-        Node sourceNode = this.getNode(sourceId);
-        Node destinationNode = this.getNode(destinationId);
+        Node sourceNode, destinationNode;
 
-        if (null == sourceNode) {
-            throw new Error("Source node does not (yet) exist!");
+        try {
+            sourceNode = this.getNode(sourceId);
+        } catch (NoSuchElementException e) {
+            sourceNode = new Node(sourceId);
+            this.addNode(sourceNode);
         }
 
-        if (null == destinationNode) {
+        try {
+            destinationNode = this.getNode(destinationId);
+        } catch (NoSuchElementException e) {
             destinationNode = new Node(destinationId);
             this.addNode(destinationNode);
         }
