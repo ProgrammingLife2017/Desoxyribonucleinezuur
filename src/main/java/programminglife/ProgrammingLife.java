@@ -55,6 +55,7 @@ public final class ProgrammingLife extends Application {
         primaryStage.sizeToScene();
         primaryStage.show();
 
+        close();
     }
 
     public void close() {
