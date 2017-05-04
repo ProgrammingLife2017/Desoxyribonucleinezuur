@@ -58,6 +58,9 @@ public final class ProgrammingLife extends Application {
         close();
     }
 
+    /**
+     * Quit the application.
+     */
     public void close() {
         Platform.exit();
         System.exit(0);
