@@ -39,7 +39,8 @@ public final class ProgrammingLife extends Application {
         } catch (FileNotFoundException e) {
             System.err.println(String.format("File not found (%s)", graphFile));
         }
-        launch(args);
+
+//        launch(args);
     }
 
     @Override
@@ -54,8 +55,6 @@ public final class ProgrammingLife extends Application {
         primaryStage.setOnCloseRequest(e -> close());
         primaryStage.sizeToScene();
         primaryStage.show();
-
-        close();
     }
 
     /**
