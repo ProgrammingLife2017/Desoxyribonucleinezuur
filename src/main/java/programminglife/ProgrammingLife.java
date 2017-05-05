@@ -9,6 +9,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import programminglife.model.exception.UnknownTypeException;
 
 import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
@@ -44,9 +45,11 @@ public final class ProgrammingLife extends Application {
             long startTime = System.nanoTime();
             g = Graph.parse(graphFile);
             long elapsedTimeMs = (System.nanoTime() - startTime) / 1000000;
-            System.out.println(String.format("Parsing took %s", DATE_FORMAT.format(elapsedTimeMs)));
+            System.out.printf("Parsing took %s\n", DATE_FORMAT.format(elapsedTimeMs));
         } catch (FileNotFoundException e) {
-            System.err.println(String.format("File not found (%s)", graphFile));
+            System.err.printf("File not found (%s)\n", graphFile);
+        } catch (UnknownTypeException e) {
+            System.err.printf("Unknown symbol in file: %s\n", e.getMessage());
         }
 
 //        launch(args);

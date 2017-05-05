@@ -82,11 +82,12 @@ public class Graph {
         destinationNode.addParent(sourceNode);
     }
 
-    public static Graph parse(String file) throws FileNotFoundException {
+    public static Graph parse(String file) throws FileNotFoundException, UnknownTypeException {
         return parse(file, PARSE_LINE_VERBOSE_DEFAULT);
     }
 
-    public static Graph parse(String file, boolean verbose) throws FileNotFoundException {
+    public static Graph parse(String file, boolean verbose)
+            throws FileNotFoundException, UnknownTypeException {
         if (verbose) {
             System.out.println(String.format("Parsing file %s", file));
         }
