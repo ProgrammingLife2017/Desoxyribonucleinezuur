@@ -2,7 +2,9 @@ package programminglife.model;
 
 import programminglife.model.exception.UnknownTypeException;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.*;
 
 /**
@@ -54,7 +56,7 @@ public class Graph {
 
     void parseLink(String propertyString) {
         String[] properties = propertyString.split("\\s");
-        // properties[0] is 'L'
+        assert (properties[0].equals("L")); // properties[0] is 'L'
         int sourceId = Integer.parseInt(properties[1]);
         // properties[2] is unused
         int destinationId = Integer.parseInt(properties[3]);

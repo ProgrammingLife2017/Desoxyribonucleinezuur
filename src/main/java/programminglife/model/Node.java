@@ -3,7 +3,6 @@ package programminglife.model;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashSet;
-import java.util.Scanner;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -42,7 +41,7 @@ public class Node {
 
     public static Node parseSegment(String propertyString) {
         String[] properties = propertyString.split("\\s");
-        // properties[0] is 'S'
+        assert (properties[0].equals("S")); // properties[0] is 'S'
         int id = Integer.parseInt(properties[1]);
         String segment = properties[2];
         // properties[3] is +/-

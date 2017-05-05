@@ -43,7 +43,8 @@ public final class ProgrammingLife extends Application {
         try {
             long startTime = System.nanoTime();
             g = Graph.parse(graphFile);
-            System.out.println(String.format("Parsing took %s", DATE_FORMAT.format((System.nanoTime() - startTime) / 1000000)));
+            long elapsedTimeMs = (System.nanoTime() - startTime) / 1000000;
+            System.out.println(String.format("Parsing took %s", DATE_FORMAT.format(elapsedTimeMs)));
         } catch (FileNotFoundException e) {
             System.err.println(String.format("File not found (%s)", graphFile));
         }
