@@ -1,5 +1,7 @@
 package programminglife.model;
 
+import com.diffplug.common.base.Errors;
+import com.diffplug.common.base.Throwing;
 import programminglife.model.exception.UnknownTypeException;
 
 import java.io.BufferedReader;
@@ -86,8 +88,7 @@ public class Graph {
         return parse(file, PARSE_LINE_VERBOSE_DEFAULT);
     }
 
-    public static Graph parse(String file, boolean verbose)
-            throws FileNotFoundException, UnknownTypeException {
+    public static Graph parse(String file, boolean verbose) throws FileNotFoundException, UnknownTypeException {
         if (verbose) {
             System.out.println(String.format("Parsing file %s", file));
         }
@@ -95,26 +96,34 @@ public class Graph {
         BufferedReader reader = new BufferedReader(new FileReader(file));
         Graph graph = new Graph(null);
 
-        reader.lines().forEach(line -> {
-            char type = line.charAt(0);
+        try {
+            reader.lines().forEach(Errors.rethrow().wrap((Throwing.Consumer<String>) line -> {
+                char type = line.charAt(0);
 
-            switch (type) {
-                case 'S':
-                    // Parse segment
-                    graph.parseSegment(line);
-                    break;
-                case 'L':
-                    // Parse link
-                    graph.parseLink(line);
-                    break;
-                case 'H':
-                    System.out.println(line);
-                    break;
-                default:
-                    // Otherwise
-                    throw new UnknownTypeException(String.format("Unknown type '%c'", type));
+                switch (type) {
+                    case 'S':
+                        // Parse segment
+                        graph.parseSegment(line);
+                        break;
+                    case 'L':
+                        // Parse link
+                        graph.parseLink(line);
+                        break;
+                    case 'H':
+                        System.out.println(line);
+                        break;
+                    default:
+                        // Otherwise
+                        throw new UnknownTypeException(String.format("Unknown symbol '%c'", type));
+                }
+            }));
+        } catch (Errors.WrappedAsRuntimeException e) {
+            if (e.getCause() instanceof UnknownTypeException) {
+                throw (UnknownTypeException) e.getCause();
+            } else {
+                throw e;
             }
-        });
+        }
 
         for (Node n : graph.nodes.values()) {
             if (n != null && n.getParents().isEmpty()) {

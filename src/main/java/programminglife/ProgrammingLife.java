@@ -49,7 +49,7 @@ public final class ProgrammingLife extends Application {
         } catch (FileNotFoundException e) {
             System.err.printf("File not found (%s)\n", graphFile);
         } catch (UnknownTypeException e) {
-            System.err.printf("Unknown symbol in file: %s\n", e.getMessage());
+            System.err.printf("Parse error: %s\n", e.getMessage());
         }
 
 //        launch(args);
