@@ -5,9 +5,9 @@ before_install:
 script: "mvn clean test"
 jdk:
   - oraclejdk8
+
 # Use JDK 8u45. The above line just causes the use of a minor version of Java 8.
-  addons:
-  apt:
-  packages:
+addons:
+apt:
+packages:
   - oracle-java8-installer
-  
