@@ -1,15 +1,23 @@
 package programminglife.gui;
 
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.MenuItem;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import programminglife.ProgrammingLife;
+import programminglife.model.Graph;
+import programminglife.model.exception.UnknownTypeException;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Optional;
 
 /**
- * Created by Yannick on 02/05/2017.
+ * The controller for the GUI that is used in the application.
  */
 public class GuiController {
 
@@ -22,23 +30,44 @@ public class GuiController {
     }
 
     /**
-     * Initializes the open button so that the user can decide which file to open
+     * Initializes the open button so that the user can decide which file to open.
      */
     private void initApp() {
-        btnOpen.setOnAction(event -> {
+        /**
+         * Sets the action for the open MenuItem.
+         */
+        btnOpen.setOnAction((ActionEvent event) -> {
             FileChooser fileChooser = new FileChooser();
-            final ExtensionFilter extFilterGFA = new FileChooser.ExtensionFilter("JPG files (*.gfa)", "*.GFA");
+            final ExtensionFilter extFilterGFA = new ExtensionFilter("GFA files (*.gfa)", "*.GFA");
             fileChooser.getExtensionFilters().addAll(extFilterGFA);
-
             try {
                 File file = fileChooser.showOpenDialog(ProgrammingLife.getStage());
                 if (file != null) {
-                    // Do stuff for parsing here
-                    System.out.println("WERKT DIT?");
+                    Graph.parse(file.getAbsolutePath(), true);
                 }
-            } catch (NullPointerException e) {
-                e.printStackTrace();
+            } catch (FileNotFoundException | UnknownTypeException e) {
+                //Should not happen, because it gets handled by FileChooser and ExtensionFilter
+                throw new RuntimeException("This should absolutely not have happened", e);
+            }
+        });
+        /**
+        * Sets the event for the quit MenuItem.
+        */
+        btnQuit.setOnAction(event -> {
+            Alert a = new Alert(Alert.AlertType.CONFIRMATION);
+            a.setTitle("Confirm Exit");
+            a.setHeaderText("Do you really want to exit?");
+            Optional<ButtonType> result = a.showAndWait();
+            if (result.get() == ButtonType.OK) {
+                Platform.exit();
+                System.exit(0);
+            }
+
+            if (result.get() == ButtonType.CANCEL) {
+                a.close();
             }
         });
     }
+
+
 }
