@@ -46,7 +46,8 @@ public class GuiController {
                     Graph.parse(file.getAbsolutePath(), true);
                 }
             } catch (FileNotFoundException | UnknownTypeException e) {
-                //This gets handled by FileChooser and ExtensionFilter
+                //Should not happen, because it gets handled by FileChooser and ExtensionFilter
+                throw new RuntimeException("This should absolutely not have happened", e);
             }
         });
         /**
