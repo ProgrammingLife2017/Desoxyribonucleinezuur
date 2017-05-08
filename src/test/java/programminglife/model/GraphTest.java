@@ -1,12 +1,12 @@
 package programminglife.model;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import programminglife.model.exception.UnknownTypeException;
 
-import java.io.FileNotFoundException;
 import java.util.Collection;
 import java.util.NoSuchElementException;
-import java.util.Scanner;
 
 import static org.junit.Assert.assertEquals;
 
@@ -16,13 +16,21 @@ import static org.junit.Assert.assertEquals;
 public class GraphTest {
     Graph graph;
     Node node;
-    Scanner link;
+    String link;
+
+    private static String TEST_PATH, TEST_FAULTY_PATH;
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        TEST_PATH = GraphTest.class.getResource("/test.gfa").getPath();
+        TEST_FAULTY_PATH = GraphTest.class.getClass().getResource("/test-faulty.gfa").getPath();
+    }
 
     @Before
     public void setUp() throws Exception {
         graph = new Graph("test graph");
         node = new Node(3, "ATCG");
-        link = new Scanner("34\t+\t35\t+\t0M");
+        link = "L\t34\t+\t35\t+\t0M";
 
         graph.addNode(node);
     }
@@ -38,9 +46,9 @@ public class GraphTest {
     }
 
     @Test
-    public void parseTest() throws FileNotFoundException {
-        graph = Graph.parse("data/test/test.gfa");
-        Collection<Node> nodes = graph.getNodes().values();
+    public void parseTest() throws Exception {
+        graph = Graph.parse(TEST_PATH);
+        Collection<Node> nodes = graph.getNodes();
 
         assertEquals(8, nodes.size());
         assertEquals(9, nodes.stream()
@@ -48,15 +56,9 @@ public class GraphTest {
                                         .sum());
     }
 
-    @Test
-    public void parseVerboseTest() throws FileNotFoundException {
-        graph = Graph.parse("data/test/test.gfa", true, 1);
-        Collection<Node> nodes = graph.getNodes().values();
-
-        assertEquals(8, nodes.size());
-        assertEquals(9, nodes.stream()
-                .mapToInt(node -> node.getChildren().size())
-                .sum());
+    @Test(expected = UnknownTypeException.class)
+    public void faultyParseTest() throws Exception {
+        graph = Graph.parse(TEST_FAULTY_PATH);
     }
 
     @Test(expected = NoSuchElementException.class)

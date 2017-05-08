@@ -9,6 +9,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import programminglife.ProgrammingLife;
 import programminglife.model.Graph;
+import programminglife.model.exception.UnknownTypeException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -43,9 +44,10 @@ public class GuiController {
                 File file = fileChooser.showOpenDialog(ProgrammingLife.getStage());
                 if (file != null) {
                     Graph.parse(file.toString(), true);
+                    //Graph.parse(file.toString(), true);
                     System.out.println("WERKT DIT?");
                 }
-            } catch (FileNotFoundException e) {
+            } catch (FileNotFoundException | UnknownTypeException e) {
                 e.printStackTrace();
             }
         });
