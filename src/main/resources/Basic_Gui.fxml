@@ -12,16 +12,13 @@
           <items>
             <MenuItem fx:id="btnOpen" mnemonicParsing="false" text="Open gfa…" />
             <Menu mnemonicParsing="false" text="Open Recent" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem fx:id="btnQuit" mnemonicParsing="false" text="Quit" />
           </items>
         </Menu>
         <Menu mnemonicParsing="false" text="Help">
           <items>
             <MenuItem mnemonicParsing="false" text="About" />
-          </items>
-        </Menu>
-        <Menu mnemonicParsing="false" text="Exit">
-          <items>
-            <MenuItem fx:id="btnQuit" mnemonicParsing="false" text="Quit" />
           </items>
         </Menu>
       </menus>
