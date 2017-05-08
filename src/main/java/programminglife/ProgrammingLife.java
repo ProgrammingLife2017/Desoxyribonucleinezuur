@@ -26,7 +26,6 @@ public final class ProgrammingLife extends Application {
     private static VBox vbox;
 
     private static final String DATA_FOLDER = "data/";
-    private static final String TEST_DATA = DATA_FOLDER + "test/test.gfa";
     private static final String TB_DATA = DATA_FOLDER + "real/TB10.gfa";
     private static final String HUMAN_DATA = DATA_FOLDER + "real/chr19.hg38.w115.gfa";
 
@@ -34,11 +33,14 @@ public final class ProgrammingLife extends Application {
 
     public static void main(String[] args) {
         Graph g;
-        String graphFile = TEST_DATA;
+        String graphFile;
         DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
 
         if (args.length > 0) {
             graphFile = args[0];
+        } else {
+            System.err.println("No GFA file specified!");
+            System.exit(1);
         }
 
         try {
