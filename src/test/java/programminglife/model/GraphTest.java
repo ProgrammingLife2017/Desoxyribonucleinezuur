@@ -2,11 +2,10 @@ package programminglife.model;
 
 import org.junit.Before;
 import org.junit.Test;
+import programminglife.model.exception.UnknownTypeException;
 
-import java.io.FileNotFoundException;
 import java.util.Collection;
 import java.util.NoSuchElementException;
-import java.util.Scanner;
 
 import static org.junit.Assert.assertEquals;
 
@@ -38,7 +37,7 @@ public class GraphTest {
     }
 
     @Test
-    public void parseTest() throws FileNotFoundException {
+    public void parseTest() throws Exception {
         graph = Graph.parse("data/test/test.gfa");
         Collection<Node> nodes = graph.getNodes();
 
@@ -46,6 +45,11 @@ public class GraphTest {
         assertEquals(9, nodes.stream()
                                         .mapToInt(node -> node.getChildren().size())
                                         .sum());
+    }
+
+    @Test(expected = UnknownTypeException.class)
+    public void faultyParseTest() throws Exception {
+        graph = Graph.parse("data/test/test-faulty.gfa");
     }
 
     @Test(expected = NoSuchElementException.class)
