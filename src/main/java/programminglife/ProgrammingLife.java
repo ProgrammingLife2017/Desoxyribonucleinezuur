@@ -1,13 +1,16 @@
 package programminglife;
 
 import javafx.application.Application;
-import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import java.util.Optional;
 
@@ -55,28 +58,31 @@ public final class ProgrammingLife extends Application {
 
         vbox = FXMLLoader.load(getClass().getResource("/Basic_Gui.fxml"));
         primaryStage.setScene(new Scene(vbox, 1000, 900));
-        primaryStage.setOnCloseRequest(e -> close());
+        primaryStage.setOnCloseRequest(confirmCloseEventHandler);
+        Button close = new Button("Close Application");
+        close.setOnAction(event -> primaryStage.fireEvent(new WindowEvent(primaryStage, WindowEvent.WINDOW_CLOSE_REQUEST)));
         primaryStage.sizeToScene();
         primaryStage.show();
     }
 
-    /**
-     * Closes the application in a neat manner.
-     */
-    public void close() {
-        Alert a = new Alert(Alert.AlertType.CONFIRMATION);
-        a.setTitle("Confirm Exit");
-        a.setHeaderText("Do you really want to exit?");
-        Optional<ButtonType> result = a.showAndWait();
-        if (result.get() == ButtonType.OK) {
-            Platform.exit();
-            System.exit(0);
-        }
+    private EventHandler<WindowEvent> confirmCloseEventHandler = event -> {
+        Alert closeConfirmation = new Alert(
+                Alert.AlertType.CONFIRMATION,
+                "Are you sure you want to exit?"
+        );
+        Button exitButton = (Button) closeConfirmation.getDialogPane().lookupButton(
+                ButtonType.OK
+        );
+        exitButton.setText("Exit");
+        closeConfirmation.setHeaderText("Confirm Exit");
+        closeConfirmation.initModality(Modality.APPLICATION_MODAL);
+        closeConfirmation.initOwner(primaryStage);
 
-        if (result.get() == ButtonType.CANCEL) {
-            a.close();
+        Optional<ButtonType> closeResponse = closeConfirmation.showAndWait();
+        if (!ButtonType.OK.equals(closeResponse.get())) {
+            event.consume();
         }
-    }
+    };
 
     /**
      * Returns the VBox if called upon.
