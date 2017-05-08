@@ -1,18 +1,14 @@
 package programminglife;
 
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import programminglife.model.Graph;
-import javafx.scene.layout.VBox;
-import programminglife.gui.GuiController;
-
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.io.FileNotFoundException;
 import java.util.Optional;
 
 /**
@@ -30,8 +26,8 @@ public final class ProgrammingLife extends Application {
     private static final String HUMAN_DATA = DATA_FOLDER + "real/chr19.hg38.w115.gfa";
 
     /**
-     * Main method for the application
-     * @param args
+     * Main method for the application.
+     * @param args argument
      */
     public static void main(String[] args) {
 //        Graph g;
@@ -65,25 +61,25 @@ public final class ProgrammingLife extends Application {
     }
 
     /**
-     * Closes the application in a neat manner
+     * Closes the application in a neat manner.
      */
     public void close() {
         Alert a = new Alert(Alert.AlertType.CONFIRMATION);
         a.setTitle("Confirm Exit");
         a.setHeaderText("Do you really want to exit?");
         Optional<ButtonType> result = a.showAndWait();
-        if (result.get() == ButtonType.OK){
+        if (result.get() == ButtonType.OK) {
             Platform.exit();
             System.exit(0);
         }
 
-        if(result.get()== ButtonType.CANCEL){
+        if (result.get() == ButtonType.CANCEL) {
             a.close();
         }
     }
 
     /**
-     * Returns the VBox if called upon
+     * Returns the VBox if called upon.
      * @return VBox
      */
     public static VBox getVBox() {
@@ -91,7 +87,7 @@ public final class ProgrammingLife extends Application {
     }
 
     /**
-     * Returns the Stage if called upon
+     * Returns the Stage if called upon.
      * @return stage
      */
     public static Stage getStage() {
