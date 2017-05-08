@@ -1,6 +1,7 @@
 package programminglife.model;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import programminglife.model.exception.UnknownTypeException;
 
@@ -16,6 +17,14 @@ public class GraphTest {
     Graph graph;
     Node node;
     String link;
+
+    private static String TEST_PATH, TEST_FAULTY_PATH;
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        TEST_PATH = GraphTest.class.getResource("/test.gfa").getPath();
+        TEST_FAULTY_PATH = GraphTest.class.getClass().getResource("/test-faulty.gfa").getPath();
+    }
 
     @Before
     public void setUp() throws Exception {
@@ -38,7 +47,7 @@ public class GraphTest {
 
     @Test
     public void parseTest() throws Exception {
-        graph = Graph.parse("data/test/test.gfa");
+        graph = Graph.parse(TEST_PATH);
         Collection<Node> nodes = graph.getNodes();
 
         assertEquals(8, nodes.size());
@@ -49,7 +58,7 @@ public class GraphTest {
 
     @Test(expected = UnknownTypeException.class)
     public void faultyParseTest() throws Exception {
-        graph = Graph.parse("data/test/test-faulty.gfa");
+        graph = Graph.parse(TEST_FAULTY_PATH);
     }
 
     @Test(expected = NoSuchElementException.class)
