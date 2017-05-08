@@ -10,10 +10,8 @@
       <menus>
         <Menu mnemonicParsing="false" text="File">
           <items>
-            <MenuItem fx:id="btnOpen" mnemonicParsing="false" text="Open…" />
+            <MenuItem fx:id="btnOpen" mnemonicParsing="false" text="Open gfa…" />
             <Menu mnemonicParsing="false" text="Open Recent" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem fx:id="btnQuit" mnemonicParsing="false" text="Quit" />
           </items>
         </Menu>
         <Menu mnemonicParsing="false" text="Help">
@@ -21,16 +19,12 @@
             <MenuItem mnemonicParsing="false" text="About" />
           </items>
         </Menu>
+        <Menu mnemonicParsing="false" text="Exit">
+          <items>
+            <MenuItem fx:id="btnQuit" mnemonicParsing="false" text="Quit" />
+          </items>
+        </Menu>
       </menus>
     </MenuBar>
-    <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
-      <children>
-        <Label alignment="CENTER" layoutX="155.0" layoutY="177.0" style="&#10;" text="Drag components from Library here…" textAlignment="CENTER" textFill="#9f9f9f" wrapText="false">
-          <font>
-            <Font size="18.0" />
-          </font>
-        </Label>
-      </children>
-    </AnchorPane>
   </children>
 </VBox>
