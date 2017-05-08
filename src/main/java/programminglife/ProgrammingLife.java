@@ -41,6 +41,8 @@ public final class ProgrammingLife extends Application {
         }
 
 //        launch(args);
+
+        Platform.exit();
     }
 
     @Override
