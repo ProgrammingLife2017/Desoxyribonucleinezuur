@@ -1,5 +1,7 @@
 package programminglife;
 
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import programminglife.model.Graph;
 import javafx.scene.layout.VBox;
 import programminglife.gui.GuiController;
@@ -11,6 +13,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.FileNotFoundException;
+import java.util.Optional;
 
 /**
  * Created by marti_000 on 25-4-2017.
@@ -65,8 +68,18 @@ public final class ProgrammingLife extends Application {
      * Closes the application in a neat manner
      */
     public void close() {
-        Platform.exit();
-        System.exit(0);
+        Alert a = new Alert(Alert.AlertType.CONFIRMATION);
+        a.setTitle("Confirm Exit");
+        a.setHeaderText("Do you really want to exit?");
+        Optional<ButtonType> result = a.showAndWait();
+        if (result.get() == ButtonType.OK){
+            Platform.exit();
+            System.exit(0);
+        }
+
+        if(result.get()== ButtonType.CANCEL){
+            a.close();
+        }
     }
 
     /**

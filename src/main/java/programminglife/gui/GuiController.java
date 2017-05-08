@@ -2,14 +2,17 @@ package programminglife.gui;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.MenuItem;
 import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import programminglife.ProgrammingLife;
 import programminglife.model.Graph;
-import javafx.stage.FileChooser.ExtensionFilter;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Optional;
 
 /**
  * The controller for the GUI that is used in the application
@@ -50,8 +53,18 @@ public class GuiController {
         * Sets the event for the quit MenuItem
         */
         btnQuit.setOnAction(event -> {
-            Platform.exit();
-            System.exit(0);
+            Alert a = new Alert(Alert.AlertType.CONFIRMATION);
+            a.setTitle("Confirm Exit");
+            a.setHeaderText("Do you really want to exit?");
+            Optional<ButtonType> result = a.showAndWait();
+            if (result.get() == ButtonType.OK){
+                Platform.exit();
+                System.exit(0);
+            }
+
+            if(result.get()== ButtonType.CANCEL){
+                a.close();
+            }
         });
     }
 
