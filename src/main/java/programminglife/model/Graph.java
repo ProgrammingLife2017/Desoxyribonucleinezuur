@@ -45,6 +45,10 @@ public class Graph {
         return this.nodes.values();
     }
 
+    /**
+     * Parse a {@link String} representing a {@link Node}.
+     * @param propertyString the {@link String} from a GFA file.
+     */
     private void parseSegment(String propertyString) {
         Node parsedNode = Node.parseSegment(propertyString);
         Node existingNode;
@@ -56,6 +60,10 @@ public class Graph {
         }
     }
 
+    /**
+     * Parse a {@link String} representing a Link.
+     * @param propertyString the {@link String} from a GFA file.
+     */
     void parseLink(String propertyString) {
         String[] properties = propertyString.split("\\s");
         assert (properties[0].equals("L")); // properties[0] is 'L'
@@ -84,10 +92,25 @@ public class Graph {
         destinationNode.addParent(sourceNode);
     }
 
+    /**
+     * Parse a GFA file as a {@link Graph}.
+     * @param file the path to the GFA file.
+     * @return the {@link Graph} object.
+     * @throws FileNotFoundException when no file is found at the given path.
+     * @throws UnknownTypeException when an unknown identifier (H/S/L) is read from the file.
+     */
     public static Graph parse(String file) throws FileNotFoundException, UnknownTypeException {
         return parse(file, PARSE_LINE_VERBOSE_DEFAULT);
     }
 
+    /**
+     * Parse a GFA file as a {@link Graph}.
+     * @param file the path to the GFA file.
+     * @param verbose if log messages should be printed.
+     * @return the {@link Graph} object.
+     * @throws FileNotFoundException when no file is found at the given path.
+     * @throws UnknownTypeException when an unknown identifier (H/S/L) is read from the file.
+     */
     public static Graph parse(String file, boolean verbose) throws FileNotFoundException, UnknownTypeException {
         if (verbose) {
             System.out.println(String.format("Parsing file %s", file));

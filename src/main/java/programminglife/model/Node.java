@@ -39,6 +39,11 @@ public class Node {
         this.sequence = sequence;
     }
 
+    /**
+     * Parse a {@link Node} from a {@link String}.
+     * @param propertyString the {@link String} from a GFA file.
+     * @return the parsed {@link Node}.
+     */
     public static Node parseSegment(String propertyString) {
         String[] properties = propertyString.split("\\s");
         assert (properties[0].equals("S")); // properties[0] is 'S'
