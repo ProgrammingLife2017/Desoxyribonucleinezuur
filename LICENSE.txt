@@ -175,7 +175,7 @@
 
    END OF TERMS AND CONDITIONS
    
-   Copyright 2017 Desoxyribonucleïnezuur
+   Copyright 2017 Toine Hartman, Martijn van Meerten, Iwan Hoogenboom, Yannick Haveman, Ivo Wilms
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
