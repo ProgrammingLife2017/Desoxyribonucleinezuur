@@ -26,19 +26,23 @@ public final class ProgrammingLife extends Application {
     private static final String TB_DATA = DATA_FOLDER + "real/TB10.gfa";
     private static final String HUMAN_DATA = DATA_FOLDER + "real/chr19.hg38.w115.gfa";
 
+    /**
+     * Main method for the application
+     * @param args
+     */
     public static void main(String[] args) {
-        Graph g;
-        String graphFile = TEST_DATA;
-
-        if (args.length > 0) {
-            graphFile = args[0];
-        }
-
-        try {
-            g = Graph.parse(graphFile, true);
-        } catch (FileNotFoundException e) {
-            System.err.println(String.format("File not found (%s)", graphFile));
-        }
+//        Graph g;
+//        String graphFile = TEST_DATA;
+//
+//        if (args.length > 0) {
+//            graphFile = args[0];
+//        }
+//
+//        try {
+//            g = Graph.parse(graphFile, true);
+//        } catch (FileNotFoundException e) {
+//            System.err.println(String.format("File not found (%s)", graphFile));
+//        }
 
         launch(args);
     }
@@ -58,17 +62,25 @@ public final class ProgrammingLife extends Application {
     }
 
     /**
-     * Quit the application.
+     * Closes the application in a neat manner
      */
     public void close() {
         Platform.exit();
         System.exit(0);
     }
 
+    /**
+     * Returns the VBox if called upon
+     * @return VBox
+     */
     public static VBox getVBox() {
         return vbox;
     }
 
+    /**
+     * Returns the Stage if called upon
+     * @return stage
+     */
     public static Stage getStage() {
         return primaryStage;
     }
