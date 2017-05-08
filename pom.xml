@@ -6,7 +6,7 @@
 
     <groupId>nl.tudelft.contextproject</groupId>
     <artifactId>ProgrammingLife</artifactId>
-    <version>0.1</version>
+    <version>sprint2</version>
     <packaging>jar</packaging>
 
     <properties>
