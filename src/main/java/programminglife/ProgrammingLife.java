@@ -66,13 +66,8 @@ public final class ProgrammingLife extends Application {
     }
 
     private EventHandler<WindowEvent> confirmCloseEventHandler = event -> {
-        Alert closeConfirmation = new Alert(
-                Alert.AlertType.CONFIRMATION,
-                "Are you sure you want to exit?"
-        );
-        Button exitButton = (Button) closeConfirmation.getDialogPane().lookupButton(
-                ButtonType.OK
-        );
+        Alert closeConfirmation = new Alert(Alert.AlertType.CONFIRMATION, "Do you really want to exit?");
+        Button exitButton = (Button) closeConfirmation.getDialogPane().lookupButton(ButtonType.OK);
         exitButton.setText("Exit");
         closeConfirmation.setHeaderText("Confirm Exit");
         closeConfirmation.initModality(Modality.APPLICATION_MODAL);
