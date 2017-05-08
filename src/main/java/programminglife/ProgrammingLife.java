@@ -41,6 +41,7 @@ public final class ProgrammingLife extends Application {
         } else {
             System.err.println("No GFA file specified!");
             System.exit(1);
+            return; // This is to make sure the Java compiler does not warn about uninitialized 'graphFile'
         }
 
         try {
