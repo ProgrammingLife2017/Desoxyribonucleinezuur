@@ -1,12 +1,16 @@
 package programminglife.gui;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.MenuItem;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
-import javafx.stage.FileChooser.ExtensionFilter;
 import programminglife.ProgrammingLife;
+import programminglife.model.Graph;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /**
  * Created by Yannick on 02/05/2017.
@@ -27,18 +31,17 @@ public class GuiController {
     private void initApp() {
         btnOpen.setOnAction(event -> {
             FileChooser fileChooser = new FileChooser();
-            final ExtensionFilter extFilterGFA = new FileChooser.ExtensionFilter("JPG files (*.gfa)", "*.GFA");
-            fileChooser.getExtensionFilters().addAll(extFilterGFA);
-
             try {
                 File file = fileChooser.showOpenDialog(ProgrammingLife.getStage());
                 if (file != null) {
-                    // Do stuff for parsing here
+                    Graph.parse(file.toString(), true);
                     System.out.println("WERKT DIT?");
                 }
-            } catch (NullPointerException e) {
+            } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
         });
     }
+
+
 }

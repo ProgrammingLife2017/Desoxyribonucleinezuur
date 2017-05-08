@@ -40,7 +40,7 @@ public final class ProgrammingLife extends Application {
             System.err.println(String.format("File not found (%s)", graphFile));
         }
 
-//        launch(args);
+        launch(args);
     }
 
     @Override
