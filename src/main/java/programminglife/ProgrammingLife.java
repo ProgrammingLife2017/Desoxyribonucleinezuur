@@ -11,14 +11,10 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import programminglife.model.Graph;
-import programminglife.model.exception.UnknownTypeException;
 
-import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.TimeZone;
 
 /**
  * Created by marti_000 on 25-4-2017.
