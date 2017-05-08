@@ -148,15 +148,19 @@ public class Graph {
             }
         }
 
-        for (Node n : graph.nodes.values()) {
+        graph.findRootNodes(verbose);
+
+        return graph;
+    }
+
+    private void findRootNodes(boolean verbose) {
+        for (Node n : this.nodes.values()) {
             if (n != null && n.getParents().isEmpty()) {
-                graph.rootNodes.add(n);
+                this.rootNodes.add(n);
                 if (verbose) {
                     System.out.println(String.format("Root node: %s", n));
                 }
             }
         }
-
-        return graph;
     }
 }
