@@ -1,6 +1,7 @@
 package programminglife.gui;
 
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -35,20 +36,17 @@ public class GuiController {
         /**
          * Sets the action for the open MenuItem.
          */
-        btnOpen.setOnAction(event -> {
+        btnOpen.setOnAction((ActionEvent event) -> {
             FileChooser fileChooser = new FileChooser();
             final ExtensionFilter extFilterGFA = new ExtensionFilter("GFA files (*.gfa)", "*.GFA");
             fileChooser.getExtensionFilters().addAll(extFilterGFA);
-
             try {
                 File file = fileChooser.showOpenDialog(ProgrammingLife.getStage());
                 if (file != null) {
-                    Graph.parse(file.toString(), true);
-                    //Graph.parse(file.toString(), true);
-                    System.out.println("WERKT DIT?");
+                    Graph.parse(file.getAbsolutePath(), true);
                 }
             } catch (FileNotFoundException | UnknownTypeException e) {
-                e.printStackTrace();
+                //This gets handled by FileChooser and ExtensionFilter
             }
         });
         /**
