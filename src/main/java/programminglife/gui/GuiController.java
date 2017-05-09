@@ -18,6 +18,7 @@ import java.util.Optional;
 
 /**
  * The controller for the GUI that is used in the application.
+ * The @FXML tag is needed in initialize so that javaFX knows what to do.
  */
 public class GuiController {
 
@@ -25,17 +26,19 @@ public class GuiController {
     @FXML private MenuItem btnQuit;
 
     @FXML @SuppressWarnings("Unused")
+    /**
+     * The initialize will call the other methods that are run in the GUI
+     */
     private void initialize() {
         initApp();
     }
 
     /**
      * Initializes the open button so that the user can decide which file to open.
+     * Sets the action for the open MenuItem.
+     * Sets the event for the quit MenuItem.
      */
     private void initApp() {
-        /**
-         * Sets the action for the open MenuItem.
-         */
         btnOpen.setOnAction((ActionEvent event) -> {
             FileChooser fileChooser = new FileChooser();
             final ExtensionFilter extFilterGFA = new ExtensionFilter("GFA files (*.gfa)", "*.GFA");
@@ -50,9 +53,6 @@ public class GuiController {
                 throw new RuntimeException("This should absolutely not have happened", e);
             }
         });
-        /**
-        * Sets the event for the quit MenuItem.
-        */
         btnQuit.setOnAction(event -> {
             Alert a = new Alert(Alert.AlertType.CONFIRMATION);
             a.setTitle("Confirm Exit");
