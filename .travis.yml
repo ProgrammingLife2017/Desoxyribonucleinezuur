@@ -5,3 +5,7 @@ before_install:
 script: "mvn clean test"
 jdk:
   - oraclejdk8
+addons:
+  apt:
+    packages:
+      - oracle-java8-installer
