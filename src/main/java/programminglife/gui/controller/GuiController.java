@@ -1,4 +1,4 @@
-package programminglife.gui;
+package programminglife.gui.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuItem;
@@ -22,7 +22,7 @@ public class GuiController {
     }
 
     /**
-     * Initializes the open button so that the user can decide which file to open
+     * Initializes the open button so that the user can decide which file to open.
      */
     private void initApp() {
         btnOpen.setOnAction(event -> {
@@ -33,7 +33,7 @@ public class GuiController {
             try {
                 File file = fileChooser.showOpenDialog(ProgrammingLife.getStage());
                 if (file != null) {
-                    // Do stuff for parsing here
+
                     System.out.println("WERKT DIT?");
                 }
             } catch (NullPointerException e) {

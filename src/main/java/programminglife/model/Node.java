@@ -1,5 +1,6 @@
 package programminglife.model;
 
+import javafx.scene.canvas.GraphicsContext;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashSet;

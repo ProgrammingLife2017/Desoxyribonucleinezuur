@@ -2,7 +2,6 @@ package programminglife;
 
 import programminglife.model.Graph;
 import javafx.scene.layout.VBox;
-import programminglife.gui.GuiController;
 
 import javafx.application.Application;
 import javafx.application.Platform;
