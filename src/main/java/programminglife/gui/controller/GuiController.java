@@ -3,6 +3,7 @@ package programminglife.gui.controller;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.MenuItem;
@@ -10,6 +11,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import programminglife.ProgrammingLife;
 import programminglife.model.Graph;
+import programminglife.model.XYCoordinate;
 import programminglife.model.exception.UnknownTypeException;
 
 import java.io.File;
@@ -24,13 +26,28 @@ public class GuiController {
 
     @FXML private MenuItem btnOpen;
     @FXML private MenuItem btnQuit;
+    @FXML private Canvas graphCanvas;
+
+    private GraphController graphController;
 
     @FXML @SuppressWarnings("Unused")
     /**
      * The initialize will call the other methods that are run in the GUI
      */
     private void initialize() {
+        this.graphController = new GraphController(new Graph(""), this.graphCanvas);
         initApp();
+
+        File tempFile = new File("data/real/TB10.gfa");
+        try {
+            Graph graph = Graph.parse(tempFile, true);
+            this.graphController.setGraph(graph);
+
+            this.graphController.drawRecursive(this.graphController.getGraph().getNode(1), XYCoordinate.coord(10, 10));
+
+        } catch (UnknownTypeException | FileNotFoundException e) {
+            throw new RuntimeException("This should absolutely not have happened", e);
+        }
     }
 
     /**
@@ -46,7 +63,8 @@ public class GuiController {
             try {
                 File file = fileChooser.showOpenDialog(ProgrammingLife.getStage());
                 if (file != null) {
-                    Graph.parse(file.getAbsolutePath(), true);
+                    Graph graph = Graph.parse(file, true);
+                    this.graphController.setGraph(graph);
                 }
             } catch (FileNotFoundException | UnknownTypeException e) {
                 //Should not happen, because it gets handled by FileChooser and ExtensionFilter

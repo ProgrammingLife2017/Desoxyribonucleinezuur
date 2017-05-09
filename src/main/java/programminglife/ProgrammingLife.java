@@ -66,9 +66,6 @@ public final class ProgrammingLife extends Application {
     public void start(Stage stage) throws Exception {
         primaryStage = stage;
         primaryStage.setTitle("Programming Life");
-        primaryStage.minWidthProperty().set(1000);
-        primaryStage.minHeightProperty().set(900);
-
         vbox = FXMLLoader.load(getClass().getResource("/Basic_Gui.fxml"));
         primaryStage.setScene(new Scene(vbox, 1000, 900));
         primaryStage.setOnCloseRequest(confirmCloseEventHandler);

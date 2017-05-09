@@ -5,6 +5,7 @@ import com.diffplug.common.base.Throwing;
 import programminglife.model.exception.UnknownTypeException;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.*;
@@ -113,7 +114,7 @@ public class Graph {
      * @throws FileNotFoundException when no file is found at the given path.
      * @throws UnknownTypeException when an unknown identifier (H/S/L) is read from the file.
      */
-    public static Graph parse(String file) throws FileNotFoundException, UnknownTypeException {
+    public static Graph parse(File file) throws FileNotFoundException, UnknownTypeException {
         return parse(file, PARSE_LINE_VERBOSE_DEFAULT);
     }
 
@@ -125,13 +126,13 @@ public class Graph {
      * @throws FileNotFoundException when no file is found at the given path.
      * @throws UnknownTypeException when an unknown identifier (H/S/L) is read from the file.
      */
-    public static Graph parse(String file, boolean verbose) throws FileNotFoundException, UnknownTypeException {
+    public static Graph parse(File file, boolean verbose) throws FileNotFoundException, UnknownTypeException {
         if (verbose) {
-            System.out.println(String.format("Parsing file %s", file));
+            System.out.println(String.format("Parsing file %s", file.getAbsolutePath()));
         }
 
         BufferedReader reader = new BufferedReader(new FileReader(file));
-        Graph graph = new Graph(null);
+        Graph graph = new Graph(file.getName());
 
         try {
             reader.lines().forEach(Errors.rethrow().wrap((Throwing.Consumer<String>) line -> {
