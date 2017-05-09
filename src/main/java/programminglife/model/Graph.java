@@ -23,16 +23,30 @@ public class Graph {
      */
     private Map<Integer, Node> nodes;
 
+    /**
+     * The contructor for a Graph.
+     * @param id String id.
+     */
     public Graph(String id) {
         this.nodes = new HashMap<>();
         this.id = id;
         this.rootNodes = new HashSet<>();
     }
 
+    /**
+     * Add method for a node.
+     * @param node Node.
+     * @return Node.
+     */
     public Node addNode(Node node) {
         return this.nodes.put(node.getId(), node);
     }
 
+    /**
+     * get method for a node.
+     * @param id int.
+     * @return Node.
+     */
     public Node getNode(int id) {
         if (this.nodes.containsKey(id)) {
             return this.nodes.get(id);
