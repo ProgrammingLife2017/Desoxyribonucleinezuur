@@ -16,14 +16,30 @@ public class Node {
     private Set<Node> parents;
     private Set<Node> children;
 
+    /**
+     * Constructor for a node with an id.
+     * @param id int.
+     */
     public Node(int id) {
         this(id, "", new HashSet<>(), new HashSet<>());
     }
 
+    /**
+     * Constructor for a node with and id and sequence.
+     * @param id int.
+     * @param sequence String.
+     */
     public Node(int id, String sequence) {
         this(id, sequence, new HashSet<>(), new HashSet<>());
     }
 
+    /**
+     * Constructor for a node with an id, sequence, parents and children.
+     * @param id int.
+     * @param sequence String.
+     * @param parents Set<Node>.
+     * @param children Set<Node>.
+     */
     public Node(int id, String sequence, Set<Node> parents, Set<Node> children) {
         this.id = id;
         this.sequence = sequence;
@@ -31,6 +47,10 @@ public class Node {
         this.children = children;
     }
 
+    /**
+     * Getter for the sequence.
+     * @return String.
+     */
     public String getSequence() {
         return sequence;
     }
@@ -55,26 +75,50 @@ public class Node {
         return new Node(id, segment);
     }
 
+    /**
+     * Method to add a child to a node.
+     * @param child Node.
+     */
     public void addChild(Node child) {
         this.children.add(child);
     }
 
+    /**
+     * Method to add a parent to a node.
+     * @param parent Node.
+     */
     public void addParent(Node parent) {
         this.parents.add(parent);
     }
 
+    /**
+     * Getter for the id.
+     * @return int.
+     */
     public int getId() {
         return this.id;
     }
 
+    /**
+     * Getter for the parents of a Set<Node>.
+     * @return Set<Node>
+     */
     public Set<Node> getParents() {
         return parents;
     }
 
+    /**
+     * Getter for the children of a Set<Node>.
+     * @return Set<Node>
+     */
     public Set<Node> getChildren() {
         return children;
     }
 
+    /**
+     * toString method for the node.
+     * @return String.
+     */
     @Override
     public String toString() {
         return String.format("Node<%d>(c:%s, p:%s, s:%s)",
