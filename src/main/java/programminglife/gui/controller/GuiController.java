@@ -39,11 +39,11 @@ public class GuiController {
         initApp();
 
         File tempFile = new File("data/real/TB10.gfa");
+//        File tempFile = new File("data/real/chr19.hg38.w115.gfa");
         try {
             Graph graph = Graph.parse(tempFile, true);
             this.graphController.setGraph(graph);
-
-            this.graphController.drawRecursive(this.graphController.getGraph().getNode(1), XYCoordinate.coord(10, 10));
+            this.graphController.drawDFS(this.graphController.getGraph().getNode(1), new XYCoordinate(10, 10));
 
         } catch (UnknownTypeException | FileNotFoundException e) {
             throw new RuntimeException("This should absolutely not have happened", e);
@@ -86,6 +86,4 @@ public class GuiController {
             }
         });
     }
-
-
 }

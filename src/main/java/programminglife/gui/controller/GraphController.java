@@ -34,30 +34,48 @@ public class GraphController {
 
     /**
      * Draw all nodes recursively on the screen.
-     * @param node Draw this node and all its children recursively
+     * @param root Draw this node and all its children recursively
      * @param offset Draws nodes at this offset from the top-left of the screen
+     * @return a {@link Set} of all drawn {@link Node}s
      */
-    public void drawRecursive(Node node,  XYCoordinate offset) {
-        this.drawRecursive(node, offset, new HashSet<>());
+    public Set<Node> drawDFS(Node root, XYCoordinate offset) {
+        return this.drawDFS(root, offset, -1, new HashSet<>());
     }
 
     /**
      * Draw all nodes recursively on the screen.
-     * @param node Draw this node and all its children recursively
+     * @param root Draw this node and all its children recursively
+     * @param offset Draws nodes at this offset from the top-left of the screen
+     * @param maxDepth The max depth from root to draw nodes
+     * @return a {@link Set} of all drawn {@link Node}s
+     */
+    public Set<Node> drawDFS(Node root, XYCoordinate offset, int maxDepth) {
+        return this.drawDFS(root, offset, maxDepth, new HashSet<>());
+    }
+
+    /**
+     * Draw all nodes recursively on the screen.
+     * @param root Draw this node and all its children recursively
      * @param offset Draws nodes at this offset from the top-left of the screen
      * @param drawnNodes A set containing all drawn nodes
      */
-    private void drawRecursive(Node node, XYCoordinate offset, Set<Node> drawnNodes) {
-        XYCoordinate previousDimensions = this.drawNode(node, offset);
+    private Set<Node> drawDFS(Node root, XYCoordinate offset, int maxDepth, Set<Node> drawnNodes) {
+        XYCoordinate previousDimensions = this.drawNode(root, offset);
 
-        for (Node child : node.getChildren()) {
-            if (drawnNodes.contains(child)) {
+        int childCount = 0;
+        for (Node child : root.getChildren()) {
+            if (maxDepth == 0 || drawnNodes.contains(child)) {
                 continue;
             }
 
             drawnNodes.add(child);
-            this.drawRecursive(child, offset.setY(0).add(previousDimensions).add(DEFAULT_OFFSET), drawnNodes);
+
+            XYCoordinate newOffset = offset.setY(childCount * 15).add(previousDimensions).add(DEFAULT_OFFSET);
+            this.drawDFS(child, newOffset, maxDepth - 1, drawnNodes);
+            childCount++;
         }
+
+        return drawnNodes;
     }
 
     /**
