@@ -35,10 +35,10 @@ public class Node {
 
     /**
      * Constructor for a node with an id, sequence, parents and children.
-     * @param id int.
-     * @param sequence String.
-     * @param parents Set<Node>.
-     * @param children Set<Node>.
+     * @param id the id of the {@link Node}
+     * @param sequence the sequence of base pairs
+     * @param parents a {@link Set} of parents
+     * @param children a {@link Set} of children
      */
     public Node(int id, String sequence, Set<Node> parents, Set<Node> children) {
         this.id = id;
@@ -49,7 +49,7 @@ public class Node {
 
     /**
      * Getter for the sequence.
-     * @return String.
+     * @return the sequence of base pairs
      */
     public String getSequence() {
         return sequence;
@@ -100,16 +100,16 @@ public class Node {
     }
 
     /**
-     * Getter for the parents of a Set<Node>.
-     * @return Set<Node>
+     * Get the {@link Set} of parents.
+     * @return the {@link Set} of parents
      */
     public Set<Node> getParents() {
         return parents;
     }
 
     /**
-     * Getter for the children of a Set<Node>.
-     * @return Set<Node>
+     * Get the {@link Set} of children.
+     * @return the {@link java.util.Set} of children
      */
     public Set<Node> getChildren() {
         return children;
@@ -117,7 +117,7 @@ public class Node {
 
     /**
      * toString method for the node.
-     * @return String.
+     * @return the {@link String} representation of a {@link Node}
      */
     @Override
     public String toString() {
