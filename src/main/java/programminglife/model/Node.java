@@ -1,5 +1,6 @@
 package programminglife.model;
 
+import javafx.scene.shape.Rectangle;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashSet;
@@ -9,12 +10,15 @@ import java.util.stream.Collectors;
 /**
  * Created by marti_000 on 25-4-2017.
  */
-public class Node {
+public class Node extends Rectangle {
     private int id;
     private String sequence;
 
     private Set<Node> parents;
     private Set<Node> children;
+
+    private XYCoordinate size;
+    private XYCoordinate location;
 
     /**
      * Constructor for a node with an id.
@@ -91,6 +95,18 @@ public class Node {
         this.parents.add(parent);
     }
 
+    public XYCoordinate getRightBorderCenter() {
+        return this.getCenter().add(this.size.getX() >> 1, 0);
+    }
+
+    public XYCoordinate getLeftBorderCenter() {
+        return this.getCenter().add(-(this.size.getX() >> 1), 0);
+    }
+
+    public XYCoordinate getCenter() {
+        return location.add(new XYCoordinate(size.getX() >> 1, size.getY() >> 1));
+    }
+
     /**
      * Getter for the id.
      * @return int.
@@ -126,5 +142,21 @@ public class Node {
                 this.getChildren().stream().map(c -> c.getId()).collect(Collectors.toList()),
                 this.getParents().stream().map(p -> p.getId()).collect(Collectors.toList()),
                 StringUtils.abbreviate(this.getSequence(), 11));
+    }
+
+    public XYCoordinate getSize() {
+        return size;
+    }
+
+    public void setSize(XYCoordinate size) {
+        this.size = size;
+    }
+
+    public XYCoordinate getLocation() {
+        return location;
+    }
+
+    public void setLocation(XYCoordinate location) {
+        this.location = location;
     }
 }

@@ -28,6 +28,16 @@ public class XYCoordinate {
     }
 
     /**
+     * Add to x and y coordinate
+     * @param x The value to add to x
+     * @param y The value to add to y
+     * @return the new {@link XYCoordinate}
+     */
+    public XYCoordinate add(int x, int y) {
+        return new XYCoordinate(this.getX() + x, this.getY() + y);
+    }
+
+    /**
      * Multiply the coord with a factor.
      * @param factor the factor
      * @return the new coord
