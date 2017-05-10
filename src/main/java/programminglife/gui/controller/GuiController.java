@@ -3,6 +3,7 @@ package programminglife.gui.controller;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
@@ -42,6 +43,8 @@ public class GuiController {
 
     @FXML private TextField txtMaxDrawDepth;
 
+    @FXML private Group grpRectangles;
+
     @FXML private AnchorPane anchorLeftControlPanel;
 
     @FXML private Canvas canvas;
@@ -56,7 +59,7 @@ public class GuiController {
     @FXML
     @SuppressWarnings("Unused")
     private void initialize() {
-        this.graphController = new GraphController(null, this.canvas);
+        this.graphController = new GraphController(null, this.canvas, this.grpRectangles);
 
         initMenubar();
         initLeftControlpanel();

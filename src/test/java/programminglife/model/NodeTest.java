@@ -22,7 +22,7 @@ public class NodeTest {
     public void NodeId() {
         node = new Node(8);
 
-        assertEquals(8, node.getId());
+        assertEquals(8, node.getIdentifier());
         assertEquals("", node.getSequence());
         assertEquals(0, node.getParents().size());
         assertEquals(0, node.getChildren().size());
@@ -32,7 +32,7 @@ public class NodeTest {
     public void NodeIdSequence() {
         node = new Node(8, "ATCG");
 
-        assertEquals(8, node.getId());
+        assertEquals(8, node.getIdentifier());
         assertEquals("ATCG", node.getSequence());
         assertEquals(0, node.getParents().size());
         assertEquals(0, node.getChildren().size());
@@ -42,7 +42,7 @@ public class NodeTest {
     public void NodeIdSequenceParentsChildren() {
         node = new Node(8, "ATCG", new HashSet<>(), new HashSet<>());
 
-        assertEquals(8, node.getId());
+        assertEquals(8, node.getIdentifier());
         assertEquals("ATCG", node.getSequence());
         assertEquals(0, node.getParents().size());
         assertEquals(0, node.getChildren().size());
@@ -64,7 +64,7 @@ public class NodeTest {
     public void parseSegmentTest() {
         node = Node.parseSegment(line);
 
-        assertEquals(6, node.getId());
+        assertEquals(6, node.getIdentifier());
         assertEquals("C", node.getSequence());
         assertEquals(0, node.getParents().size());
         assertEquals(0, node.getChildren().size());

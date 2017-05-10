@@ -111,7 +111,7 @@ public class Node extends Rectangle {
      * Getter for the id.
      * @return int.
      */
-    public int getId() {
+    public int getIdentifier() {
         return this.id;
     }
 
@@ -138,9 +138,9 @@ public class Node extends Rectangle {
     @Override
     public String toString() {
         return String.format("Node<%d>(c:%s, p:%s, s:%s)",
-                this.getId(),
-                this.getChildren().stream().map(c -> c.getId()).collect(Collectors.toList()),
-                this.getParents().stream().map(p -> p.getId()).collect(Collectors.toList()),
+                this.getIdentifier(),
+                this.getChildren().stream().map(c -> c.getIdentifier()).collect(Collectors.toList()),
+                this.getParents().stream().map(p -> p.getIdentifier()).collect(Collectors.toList()),
                 StringUtils.abbreviate(this.getSequence(), 11));
     }
 
