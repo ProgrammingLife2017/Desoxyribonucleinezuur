@@ -6,7 +6,6 @@ import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
@@ -41,6 +40,7 @@ public class GuiController {
     @FXML private Button btnDraw;
 
     @FXML private TextField txtMaxDrawDepth;
+    @FXML private TextArea txtOutput;
 
     @FXML private AnchorPane anchorLeftControlPanel;
 
@@ -71,12 +71,14 @@ public class GuiController {
      */
     public void openFile(File file) throws FileNotFoundException, UnknownTypeException {
         if (file != null) {
+            txtOutput.setText("Parsing File..");
             Graph graph = Graph.parse(file, true);
             this.graphController.setGraph(graph);
 
             disableGraphUIElements(false);
 
             ProgrammingLife.getStage().setTitle(graph.getId());
+            txtOutput.setText("File Parsed.");
         } else {
             throw new Error("WTF this file is null");
         }
@@ -183,6 +185,7 @@ public class GuiController {
 
             this.graphController.clear();
             this.graphController.draw(maxDepth);
+            txtOutput.setText("Graph drawn.");
         });
 
         txtMaxDrawDepth.textProperty().addListener((observable, oldValue, newValue) -> {

@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 /**
  * Created by marti_000 on 25-4-2017.
  */
-public class Node extends Rectangle {
+public class Node {
     private int id;
     private String sequence;
 
