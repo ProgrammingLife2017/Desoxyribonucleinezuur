@@ -16,6 +16,7 @@ import programminglife.model.exception.UnknownTypeException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 import java.util.Optional;
 
 /**
@@ -26,24 +27,28 @@ public class GuiController {
 
     @FXML private MenuItem btnOpen;
     @FXML private MenuItem btnQuit;
-    @FXML private Button translate;
-    @FXML private Button resetXY;
-    @FXML private Canvas canvas;
-    @FXML private TextField txtDepth;
+
+    @FXML private Button btnTranslate;
+    @FXML private Button btnResetXY;
     @FXML private Button btnDraw;
+    @FXML private TextField txtDepth;
+
+    @FXML private Canvas canvas;
 
     private int translateX;
     private int translateY;
     private GraphController graphController;
 
-    @FXML @SuppressWarnings("Unused")
     /**
      * The initialize will call the other methods that are run in the GUI
      */
+    @FXML
+    @SuppressWarnings("Unused")
     private void initialize() {
         this.graphController = new GraphController(null, this.canvas);
-        initApp();
-        initButtons();
+
+        initMenubar();
+        initLeftControlpanel();
     }
 
     /**
@@ -57,8 +62,7 @@ public class GuiController {
             Graph graph = Graph.parse(file, true);
             this.graphController.setGraph(graph);
 
-            btnDraw.setDisable(false);
-            txtDepth.setDisable(false);
+            disableGraphUIElements(false);
 
             ProgrammingLife.getStage().setTitle(graph.getId());
         } else {
@@ -71,10 +75,7 @@ public class GuiController {
      * Sets the action for the open MenuItem.
      * Sets the event for the quit MenuItem.
      */
-    private void initApp() {
-        btnDraw.setDisable(true);
-        txtDepth.setDisable(true);
-
+    private void initMenubar() {
         btnOpen.setOnAction((ActionEvent event) -> {
             FileChooser fileChooser = new FileChooser();
             final ExtensionFilter extFilterGFA = new ExtensionFilter("GFA files (*.gfa)", "*.GFA");
@@ -103,34 +104,20 @@ public class GuiController {
                 a.close();
             }
         });
+    }
 
-        btnDraw.setOnAction(event -> {
-            int maxDepth = Integer.MAX_VALUE;
-
-            try {
-                maxDepth = Integer.parseInt(txtDepth.getText());
-            } catch (NumberFormatException e) {
-                Alert alert = new Alert(Alert.AlertType.WARNING, "Input is not a number", ButtonType.OK);
-                alert.show();
-                txtDepth.clear();
-            }
-
-            this.graphController.clear();
-            this.graphController.draw(maxDepth);
-        });
-
-        txtDepth.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.matches("\\d")) {
-                txtDepth.setText(newValue.replaceAll("[^\\d]", ""));
-            }
-        });
+    private void disableGraphUIElements(boolean isDisabled) {
+        javafx.scene.Node[] graphUIElements = new javafx.scene.Node[] {btnDraw, txtDepth, btnTranslate, btnResetXY};
+        Arrays.asList(graphUIElements).forEach(el -> el.setDisable(isDisabled));
     }
 
     /**
      * Initializes the buttons on the panel on the left side.
      */
-    private void initButtons() {
-        translate.setOnAction(event -> {
+    private void initLeftControlpanel() {
+        disableGraphUIElements(true);
+
+        btnTranslate.setOnAction(event -> {
             GridPane root = new GridPane();
             TextField f1 = new TextField();
             root.add(new Label("X value"), 0, 0);
@@ -151,9 +138,31 @@ public class GuiController {
                 s.close();
             });
         });
-        resetXY.setOnAction(event -> {
+
+        btnResetXY.setOnAction(event -> {
             canvas.setTranslateX(0);
             canvas.setTranslateY(0);
+        });
+
+        btnDraw.setOnAction(event -> {
+            int maxDepth = Integer.MAX_VALUE;
+
+            try {
+                maxDepth = Integer.parseInt(txtDepth.getText());
+            } catch (NumberFormatException e) {
+                Alert alert = new Alert(Alert.AlertType.WARNING, "Input is not a number", ButtonType.OK);
+                alert.show();
+                txtDepth.clear();
+            }
+
+            this.graphController.clear();
+            this.graphController.draw(maxDepth);
+        });
+
+        txtDepth.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d")) {
+                txtDepth.setText(newValue.replaceAll("[^\\d]", ""));
+            }
         });
     }
 }

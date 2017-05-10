@@ -29,8 +29,8 @@
                    <Button fx:id="ZoomIn" layoutX="12.0" layoutY="14.0" minWidth="100.0" mnemonicParsing="false" text="Zoom In" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
                    <Button fx:id="ZoomOut" layoutX="12.0" layoutY="39.0" minWidth="100.0" mnemonicParsing="false" text="Zoom Out" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
                    <Button fx:id="ResetZoom" layoutX="12.0" layoutY="64.0" minWidth="100.0" mnemonicParsing="false" text="Reset Zoom" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
-                   <Button fx:id="translate" layoutX="12.0" layoutY="110.0" minWidth="75.0" mnemonicParsing="false" text="Translate" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
-                   <Button fx:id="resetXY" layoutX="12.0" layoutY="160.0" minWidth="100.0" mnemonicParsing="false" text="Reset X/Y" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
+                   <Button fx:id="btnTranslate" layoutX="12.0" layoutY="110.0" minWidth="75.0" mnemonicParsing="false" text="Translate" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
+                   <Button fx:id="btnResetXY" layoutX="12.0" layoutY="160.0" minWidth="100.0" mnemonicParsing="false" text="Reset X/Y" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
                    <Button fx:id="btnDraw" layoutX="27.0" layoutY="316.0" minWidth="100.0" mnemonicParsing="false" text="Draw!" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
                    <TextField fx:id="txtDepth" layoutX="-13.0" layoutY="283.0" minWidth="100.0" promptText="Max depth" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
                </children></AnchorPane>
