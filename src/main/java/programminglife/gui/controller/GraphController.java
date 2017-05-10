@@ -33,12 +33,20 @@ public class GraphController {
     }
 
     /**
+     * Draw the {@link Graph} with DFS from {@link Node} 1.
+     * @param maxDepth The max depth of child {@link Node}s to draw
+     */
+    public void draw(int maxDepth) {
+        this.drawDFS(this.getGraph().getNode(1), new XYCoordinate(10, 10), maxDepth);
+    }
+
+    /**
      * Draw all nodes recursively on the screen.
      * @param root Draw this node and all its children recursively
      * @param offset Draws nodes at this offset from the top-left of the screen
      * @return a {@link Set} of all drawn {@link Node}s
      */
-    public Set<Node> drawDFS(Node root, XYCoordinate offset) {
+    private Set<Node> drawDFS(Node root, XYCoordinate offset) {
         return this.drawDFS(root, offset, -1, new HashSet<>());
     }
 

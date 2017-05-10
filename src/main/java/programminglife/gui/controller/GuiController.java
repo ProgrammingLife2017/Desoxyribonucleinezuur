@@ -4,14 +4,11 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import programminglife.ProgrammingLife;
 import programminglife.model.Graph;
-import programminglife.model.XYCoordinate;
 import programminglife.model.exception.UnknownTypeException;
 
 import java.io.File;
@@ -27,6 +24,8 @@ public class GuiController {
     @FXML private MenuItem btnOpen;
     @FXML private MenuItem btnQuit;
     @FXML private Canvas graphCanvas;
+    @FXML private TextField maxDepthText;
+    @FXML private Button drawButton;
 
     private GraphController graphController;
 
@@ -35,18 +34,22 @@ public class GuiController {
      * The initialize will call the other methods that are run in the GUI
      */
     private void initialize() {
-        this.graphController = new GraphController(new Graph(""), this.graphCanvas);
+        this.graphController = new GraphController(null, this.graphCanvas);
         initApp();
+    }
 
-        File tempFile = new File("data/real/TB10.gfa");
-//        File tempFile = new File("data/real/chr19.hg38.w115.gfa");
-        try {
-            Graph graph = Graph.parse(tempFile, true);
+    /**
+     * Open and parse a file.
+     * @param file The {@link File} to open
+     * @throws FileNotFoundException if the {@link File} is not found
+     * @throws UnknownTypeException if the {@link File} is not compliant with the GFA standard
+     */
+    public void openFile(File file) throws FileNotFoundException, UnknownTypeException {
+        if (file != null) {
+            Graph graph = Graph.parse(file, true);
             this.graphController.setGraph(graph);
-            this.graphController.drawDFS(this.graphController.getGraph().getNode(1), new XYCoordinate(10, 10));
-
-        } catch (UnknownTypeException | FileNotFoundException e) {
-            throw new RuntimeException("This should absolutely not have happened", e);
+        } else {
+            throw new Error("WTF this file is null");
         }
     }
 
@@ -59,16 +62,13 @@ public class GuiController {
         btnOpen.setOnAction((ActionEvent event) -> {
             FileChooser fileChooser = new FileChooser();
             final ExtensionFilter extFilterGFA = new ExtensionFilter("GFA files (*.gfa)", "*.GFA");
-            fileChooser.getExtensionFilters().addAll(extFilterGFA);
+            fileChooser.getExtensionFilters().add(extFilterGFA);
+
             try {
                 File file = fileChooser.showOpenDialog(ProgrammingLife.getStage());
-                if (file != null) {
-                    Graph graph = Graph.parse(file, true);
-                    this.graphController.setGraph(graph);
-                    this.graphController.clear();
-                }
+                this.openFile(file);
             } catch (FileNotFoundException | UnknownTypeException e) {
-                //Should not happen, because it gets handled by FileChooser and ExtensionFilter
+                // Should not happen, because it gets handled by FileChooser and ExtensionFilter
                 throw new RuntimeException("This should absolutely not have happened", e);
             }
         });
@@ -86,6 +86,21 @@ public class GuiController {
             if (result.get() == ButtonType.CANCEL) {
                 a.close();
             }
+        });
+
+        drawButton.setOnAction(event -> {
+            int maxDepth = Integer.MAX_VALUE;
+            System.out.printf("TextField text: %s\n", maxDepthText.getText());
+
+            try {
+                maxDepth = Integer.parseInt(maxDepthText.getText());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            System.out.printf("Draw graph with max depth %d\n", maxDepth);
+            this.graphController.clear();
+            this.graphController.draw(maxDepth);
         });
     }
 }

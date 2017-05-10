@@ -178,4 +178,12 @@ public class Graph {
             }
         }
     }
+
+    /**
+     * Get all root nodes (make sure to call {@link #findRootNodes(boolean)} first.
+     * @return a {@link Set} of root nodes of the {@link Graph}.
+     */
+    public Set<Node> getRootNodes() {
+        return rootNodes;
+    }
 }
