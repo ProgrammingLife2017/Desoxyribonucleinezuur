@@ -3,10 +3,13 @@ package programminglife.gui.controller;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Stage;
 import programminglife.ProgrammingLife;
 import programminglife.model.Graph;
 import programminglife.model.exception.UnknownTypeException;
@@ -26,7 +29,10 @@ public class GuiController {
     @FXML private Canvas graphCanvas;
     @FXML private TextField maxDepthText;
     @FXML private Button drawButton;
+    @FXML private Button translate;
 
+    private int translateX;
+    private int translateY;
     private GraphController graphController;
 
     @FXML @SuppressWarnings("Unused")
@@ -36,6 +42,7 @@ public class GuiController {
     private void initialize() {
         this.graphController = new GraphController(null, this.graphCanvas);
         initApp();
+        initButtons();
     }
 
     /**
@@ -101,6 +108,30 @@ public class GuiController {
             System.out.printf("Draw graph with max depth %d\n", maxDepth);
             this.graphController.clear();
             this.graphController.draw(maxDepth);
+        });
+    }
+
+    private void initButtons() {
+        translate.setOnAction(event -> {
+            GridPane root = new GridPane();
+            TextField f1 = new TextField();
+            root.add(new Label("X value"), 0, 0);
+            root.add(f1, 1, 0);
+            TextField f2 = new TextField();
+            root.add(new Label("Y value"), 0, 1);
+            root.add(f2, 1, 1);
+            Button ok = new Button("Translate");
+            root.add(ok, 1, 2);
+            Stage s = new Stage();
+            s.setScene(new Scene(root, 300, 200));
+            s.show();
+            ok.setOnAction(event2 -> {
+                this.translateX = Integer.valueOf(f1.getText());
+                this.translateY = Integer.valueOf(f2.getText());
+                graphCanvas.setTranslateX(this.translateX);
+                graphCanvas.setTranslateY(this.translateY);
+                s.close();
+            });
         });
     }
 }
