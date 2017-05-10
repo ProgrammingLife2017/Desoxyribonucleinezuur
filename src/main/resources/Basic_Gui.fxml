@@ -24,17 +24,17 @@
     </MenuBar>
       <SplitPane dividerPositions="0.15830721003134796" prefHeight="875.0" prefWidth="1000.0">
         <items>
-          <AnchorPane maxWidth="140.0" minHeight="0.0" minWidth="140.0" prefHeight="875.0" prefWidth="100.0" SplitPane.resizableWithParent="false">
+          <AnchorPane fx:id="anchorLeftControlPanel" maxWidth="140.0" minHeight="0.0" minWidth="140.0" prefHeight="875.0" prefWidth="100.0" SplitPane.resizableWithParent="false">
                <children>
-                   <Button fx:id="ZoomIn" layoutX="12.0" layoutY="14.0" minWidth="100.0" mnemonicParsing="false" text="Zoom In" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
-                   <Button fx:id="ZoomOut" layoutX="12.0" layoutY="39.0" minWidth="100.0" mnemonicParsing="false" text="Zoom Out" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
-                   <Button fx:id="ResetZoom" layoutX="12.0" layoutY="64.0" minWidth="100.0" mnemonicParsing="false" text="Reset Zoom" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
+                   <Button fx:id="btnZoomIn" layoutX="12.0" layoutY="14.0" minWidth="100.0" mnemonicParsing="false" text="Zoom In" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
+                   <Button fx:id="btnZoomOut" layoutX="12.0" layoutY="39.0" minWidth="100.0" mnemonicParsing="false" text="Zoom Out" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
+                   <Button fx:id="btnZoomReset" layoutX="12.0" layoutY="64.0" minWidth="100.0" mnemonicParsing="false" text="Reset Zoom" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
                    <Button fx:id="btnTranslate" layoutX="12.0" layoutY="110.0" minWidth="75.0" mnemonicParsing="false" text="Translate" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
-                   <Button fx:id="btnResetXY" layoutX="12.0" layoutY="160.0" minWidth="100.0" mnemonicParsing="false" text="Reset X/Y" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
+                   <Button fx:id="btnTranslateReset" layoutX="12.0" layoutY="160.0" minWidth="100.0" mnemonicParsing="false" text="Reset X/Y" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
                    <Button fx:id="btnDraw" layoutX="27.0" layoutY="316.0" minWidth="100.0" mnemonicParsing="false" text="Draw!" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
-                   <TextField fx:id="txtDepth" layoutX="-13.0" layoutY="283.0" minWidth="100.0" promptText="Max depth" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
+                   <TextField fx:id="txtMaxDrawDepth" layoutX="-13.0" layoutY="283.0" minWidth="100.0" promptText="Max depth" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
                </children></AnchorPane>
-          <AnchorPane fx:id="canvasAnchor" maxHeight="1080" maxWidth="1920" minHeight="600" minWidth="800" prefHeight="875.0" prefWidth="900.0">
+          <AnchorPane fx:id="anchorCanvas" maxHeight="1080" maxWidth="1920" minHeight="600" minWidth="800" prefHeight="875.0" prefWidth="900.0">
                <children>
                    <Canvas fx:id="canvas" height="1080.0" layoutX="-1.0" layoutY="-1.0" width="1920.0" AnchorPane.bottomAnchor="-1" AnchorPane.leftAnchor="-1" AnchorPane.rightAnchor="-1" AnchorPane.topAnchor="-1" />
                </children>

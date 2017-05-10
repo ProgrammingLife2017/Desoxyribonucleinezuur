@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -28,10 +29,16 @@ public class GuiController {
     @FXML private MenuItem btnOpen;
     @FXML private MenuItem btnQuit;
 
+    @FXML private Button btnZoomIn;
+    @FXML private Button btnZoomOut;
+    @FXML private Button btnZoomReset;
     @FXML private Button btnTranslate;
-    @FXML private Button btnResetXY;
+    @FXML private Button btnTranslateReset;
     @FXML private Button btnDraw;
-    @FXML private TextField txtDepth;
+
+    @FXML private TextField txtMaxDrawDepth;
+
+    @FXML private AnchorPane anchorLeftControlPanel;
 
     @FXML private Canvas canvas;
 
@@ -107,8 +114,7 @@ public class GuiController {
     }
 
     private void disableGraphUIElements(boolean isDisabled) {
-        javafx.scene.Node[] graphUIElements = new javafx.scene.Node[] {btnDraw, txtDepth, btnTranslate, btnResetXY};
-        Arrays.asList(graphUIElements).forEach(el -> el.setDisable(isDisabled));
+        anchorLeftControlPanel.setDisable(isDisabled);
     }
 
     /**
@@ -139,7 +145,7 @@ public class GuiController {
             });
         });
 
-        btnResetXY.setOnAction(event -> {
+        btnTranslateReset.setOnAction(event -> {
             canvas.setTranslateX(0);
             canvas.setTranslateY(0);
         });
@@ -148,20 +154,20 @@ public class GuiController {
             int maxDepth = Integer.MAX_VALUE;
 
             try {
-                maxDepth = Integer.parseInt(txtDepth.getText());
+                maxDepth = Integer.parseInt(txtMaxDrawDepth.getText());
             } catch (NumberFormatException e) {
                 Alert alert = new Alert(Alert.AlertType.WARNING, "Input is not a number", ButtonType.OK);
                 alert.show();
-                txtDepth.clear();
+                txtMaxDrawDepth.clear();
             }
 
             this.graphController.clear();
             this.graphController.draw(maxDepth);
         });
 
-        txtDepth.textProperty().addListener((observable, oldValue, newValue) -> {
+        txtMaxDrawDepth.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d")) {
-                txtDepth.setText(newValue.replaceAll("[^\\d]", ""));
+                txtMaxDrawDepth.setText(newValue.replaceAll("[^\\d]", ""));
             }
         });
     }
