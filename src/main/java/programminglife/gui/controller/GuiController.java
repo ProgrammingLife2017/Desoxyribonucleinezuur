@@ -65,12 +65,14 @@ public class GuiController {
                 if (file != null) {
                     Graph graph = Graph.parse(file, true);
                     this.graphController.setGraph(graph);
+                    this.graphController.clear();
                 }
             } catch (FileNotFoundException | UnknownTypeException e) {
                 //Should not happen, because it gets handled by FileChooser and ExtensionFilter
                 throw new RuntimeException("This should absolutely not have happened", e);
             }
         });
+
         btnQuit.setOnAction(event -> {
             Alert a = new Alert(Alert.AlertType.CONFIRMATION);
             a.setTitle("Confirm Exit");

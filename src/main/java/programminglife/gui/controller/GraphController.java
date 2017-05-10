@@ -109,7 +109,7 @@ public class GraphController {
         this.graphicsContext.setStroke(Color.color(Math.random(), Math.random(), Math.random()));
         this.graphicsContext.strokeRect(offset.getX(), offset.getY(), width, height);
 
-        return XYCoordinate.coord(width, height);
+        return new XYCoordinate(width, height);
     }
 
     /**
@@ -121,23 +121,17 @@ public class GraphController {
     }
 
     /**
-     * Draws a subgraph on the canvas based on center node and radius.
-     * @param graphicsContext - The graphicsContext used by the canvas
-     * @param n - The node to draw
-     * @return - A set of all neighbouring nodes
-     */
-    public Set<Node> drawSubGraph(GraphicsContext graphicsContext, Node n) {
-        graphicsContext.rect(n.getSequence().length(), 20, 20, 20);
-        Set<Node> nodes = n.getChildren();
-        nodes.addAll(n.getParents());
-        return nodes;
-    }
-
-    /**
      * Setter for the graph.
      * @param graph The graph
      */
     void setGraph(Graph graph) {
         this.graph = graph;
+    }
+
+    /**
+     * Clear the canvas.
+     */
+    public void clear() {
+        this.graphicsContext.clearRect(0, 0, this.canvas.getWidth(), this.canvas.getHeight());
     }
 }

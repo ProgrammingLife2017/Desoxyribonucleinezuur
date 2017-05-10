@@ -19,17 +19,6 @@ public class XYCoordinate {
     }
 
     /**
-     * Substitue for constructor.
-     * //TODO: remove
-     * @param xOffest x coord
-     * @param yOffset y coord
-     * @return a XCoordinate
-     */
-    public static XYCoordinate coord(int xOffest, int yOffset) {
-        return new XYCoordinate(xOffest, yOffset);
-    }
-
-    /**
      * Sum coords.
      * @param other the coord to add to this one
      * @return the sum
