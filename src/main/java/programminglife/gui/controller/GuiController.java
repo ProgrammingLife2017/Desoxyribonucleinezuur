@@ -2,11 +2,11 @@ package programminglife.gui.controller;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
@@ -27,6 +27,8 @@ import java.util.Optional;
  * The @FXML tag is needed in initialize so that javaFX knows what to do.
  */
 public class GuiController {
+    private double orgSceneX, orgSceneY;
+    private double orgTranslateX, orgTranslateY;
 
     @FXML private MenuItem btnOpen;
     @FXML private MenuItem btnQuit;
@@ -191,16 +193,20 @@ public class GuiController {
     }
 
     private void initMouse() {
-        canvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                canvas.setTranslateX(canvas.getTranslateX() + event.getX());
-                canvas.setTranslateY(canvas.getTranslateY() + event.getY());
+        canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
+            orgSceneX = event.getSceneX();
+            orgSceneY = event.getSceneY();
+            orgTranslateX = ((Canvas) (event.getSource())).getTranslateX();
+            orgTranslateY = ((Canvas) (event.getSource())).getTranslateY();
+        });
+        canvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> {
+            if (event.isAltDown()) {
+                ((Canvas) (event.getSource())).setTranslateX(orgTranslateX + event.getSceneX() - orgSceneX);
+                ((Canvas) (event.getSource())).setTranslateY(orgTranslateY + event.getSceneY() - orgSceneY);
             }
         });
-        canvas.addEventHandler(ScrollEvent.SCROLL, new EventHandler<ScrollEvent>() {
-            @Override
-            public void handle(ScrollEvent event) {
+        canvas.addEventHandler(ScrollEvent.SCROLL, event -> {
+            if (event.isAltDown()) {
                 canvas.setScaleX(canvas.getScaleX() + event.getDeltaY() / 250);
                 canvas.setScaleY(canvas.getScaleY() + event.getDeltaY() / 250);
             }
