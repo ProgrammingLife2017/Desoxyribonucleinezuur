@@ -2,10 +2,13 @@ package programminglife.gui.controller;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
@@ -55,6 +58,7 @@ public class GuiController {
 
         initMenubar();
         initLeftControlpanel();
+        initMouse();
     }
 
     /**
@@ -182,6 +186,23 @@ public class GuiController {
         txtMaxDrawDepth.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d")) {
                 txtMaxDrawDepth.setText(newValue.replaceAll("[^\\d]", ""));
+            }
+        });
+    }
+
+    private void initMouse() {
+        canvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                canvas.setTranslateX(canvas.getTranslateX() + event.getX());
+                canvas.setTranslateY(canvas.getTranslateY() + event.getY());
+            }
+        });
+        canvas.addEventHandler(ScrollEvent.SCROLL, new EventHandler<ScrollEvent>() {
+            @Override
+            public void handle(ScrollEvent event) {
+                canvas.setScaleX(canvas.getScaleX() + event.getDeltaY() / 250);
+                canvas.setScaleY(canvas.getScaleY() + event.getDeltaY() / 250);
             }
         });
     }
