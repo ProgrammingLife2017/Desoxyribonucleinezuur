@@ -96,12 +96,15 @@ public class GraphController {
      */
     private XYCoordinate drawNode(Node node, XYCoordinate offset) {
         float widthHeigthRatio = 0.2f;
-        int segmentLength = node.getSequence().length() * 20;
+        int segmentLength = node.getSequence().length();
         int width = (int) (segmentLength * (1.f - widthHeigthRatio));
         int height = (int) (segmentLength * widthHeigthRatio);
 
-        width = 10;
+        width = (int) Math.pow(segmentLength, 1.0 / 2);
         height = 10;
+
+        width = Math.max(width, 10);
+        height = Math.max(height, 10);
 
         this.graphicsContext.setStroke(Color.color(Math.random(), Math.random(), Math.random()));
         this.graphicsContext.strokeRect(offset.getX(), offset.getY(), width, height);
