@@ -26,10 +26,10 @@ public class GuiController {
 
     @FXML private MenuItem btnOpen;
     @FXML private MenuItem btnQuit;
-    @FXML private Canvas graphCanvas;
-    @FXML private TextField maxDepthText;
-    @FXML private Button drawButton;
     @FXML private Button translate;
+    @FXML private Canvas canvas;
+    @FXML private TextField txtDepth;
+    @FXML private Button btnDraw;
 
     private int translateX;
     private int translateY;
@@ -40,7 +40,7 @@ public class GuiController {
      * The initialize will call the other methods that are run in the GUI
      */
     private void initialize() {
-        this.graphController = new GraphController(null, this.graphCanvas);
+        this.graphController = new GraphController(null, this.canvas);
         initApp();
         initButtons();
     }
@@ -55,6 +55,11 @@ public class GuiController {
         if (file != null) {
             Graph graph = Graph.parse(file, true);
             this.graphController.setGraph(graph);
+
+            btnDraw.setDisable(false);
+            txtDepth.setDisable(false);
+
+            ProgrammingLife.getStage().setTitle(graph.getId());
         } else {
             throw new Error("WTF this file is null");
         }
@@ -66,6 +71,9 @@ public class GuiController {
      * Sets the event for the quit MenuItem.
      */
     private void initApp() {
+        btnDraw.setDisable(true);
+        txtDepth.setDisable(true);
+
         btnOpen.setOnAction((ActionEvent event) -> {
             FileChooser fileChooser = new FileChooser();
             final ExtensionFilter extFilterGFA = new ExtensionFilter("GFA files (*.gfa)", "*.GFA");
@@ -95,19 +103,25 @@ public class GuiController {
             }
         });
 
-        drawButton.setOnAction(event -> {
+        btnDraw.setOnAction(event -> {
             int maxDepth = Integer.MAX_VALUE;
-            System.out.printf("TextField text: %s\n", maxDepthText.getText());
 
             try {
-                maxDepth = Integer.parseInt(maxDepthText.getText());
-            } catch (Exception e) {
-                e.printStackTrace();
+                maxDepth = Integer.parseInt(txtDepth.getText());
+            } catch (NumberFormatException e) {
+                Alert alert = new Alert(Alert.AlertType.WARNING, "Input is not a number", ButtonType.OK);
+                alert.show();
+                txtDepth.clear();
             }
 
-            System.out.printf("Draw graph with max depth %d\n", maxDepth);
             this.graphController.clear();
             this.graphController.draw(maxDepth);
+        });
+
+        txtDepth.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d")) {
+                txtDepth.setText(newValue.replaceAll("[^\\d]", ""));
+            }
         });
     }
 
@@ -128,8 +142,8 @@ public class GuiController {
             ok.setOnAction(event2 -> {
                 this.translateX = Integer.valueOf(f1.getText());
                 this.translateY = Integer.valueOf(f2.getText());
-                graphCanvas.setTranslateX(this.translateX);
-                graphCanvas.setTranslateY(this.translateY);
+                canvas.setTranslateX(this.translateX);
+                canvas.setTranslateY(this.translateY);
                 s.close();
             });
         });
