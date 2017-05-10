@@ -17,7 +17,6 @@ import programminglife.model.exception.UnknownTypeException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Arrays;
 import java.util.Optional;
 
 /**
@@ -47,7 +46,7 @@ public class GuiController {
     private GraphController graphController;
 
     /**
-     * The initialize will call the other methods that are run in the GUI
+     * The initialize will call the other methods that are run in the .
      */
     @FXML
     @SuppressWarnings("Unused")
@@ -60,9 +59,9 @@ public class GuiController {
 
     /**
      * Open and parse a file.
-     * @param file The {@link File} to open
-     * @throws FileNotFoundException if the {@link File} is not found
-     * @throws UnknownTypeException if the {@link File} is not compliant with the GFA standard
+     * @param file The {@link File} to open.
+     * @throws FileNotFoundException if the {@link File} is not found.
+     * @throws UnknownTypeException if the {@link File} is not compliant with the GFA standard.
      */
     public void openFile(File file) throws FileNotFoundException, UnknownTypeException {
         if (file != null) {
@@ -149,6 +148,21 @@ public class GuiController {
             canvas.setTranslateX(0);
             canvas.setTranslateY(0);
         });
+
+        btnZoomIn.setOnAction(event -> {
+            canvas.setScaleX(canvas.getScaleX() + 0.05);
+            canvas.setScaleY(canvas.getScaleY() + 0.05);
+        });
+
+        btnZoomOut.setOnAction(event -> {
+            canvas.setScaleX(canvas.getScaleX() - 0.05);
+            canvas.setScaleY(canvas.getScaleY() - 0.05);
+        });
+
+         btnZoomReset.setOnAction(event -> {
+             canvas.setScaleX(1);
+             canvas.setScaleY(1);
+         });
 
         btnDraw.setOnAction(event -> {
             int maxDepth = Integer.MAX_VALUE;
