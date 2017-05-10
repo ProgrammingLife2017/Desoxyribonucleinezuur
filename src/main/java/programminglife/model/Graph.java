@@ -134,6 +134,11 @@ public class Graph {
         BufferedReader reader = new BufferedReader(new FileReader(file));
         Graph graph = new Graph(file.getName());
 
+        if (verbose) {
+            BufferedReader lineCountReader = new BufferedReader(new FileReader(file));
+            System.out.printf("The file has %d lines\n", lineCountReader.lines().count());
+        }
+
         try {
             reader.lines().forEach(Errors.rethrow().wrap((Throwing.Consumer<String>) line -> {
                 char type = line.charAt(0);
@@ -185,5 +190,13 @@ public class Graph {
      */
     public Set<Node> getRootNodes() {
         return rootNodes;
+    }
+
+    /**
+     * Get the {@link Graph} ID.
+     * @return the ID
+     */
+    public String getId() {
+        return id;
     }
 }
