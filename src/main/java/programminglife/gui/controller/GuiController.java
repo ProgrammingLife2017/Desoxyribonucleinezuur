@@ -30,6 +30,7 @@ public class GuiController {
     @FXML private TextField maxDepthText;
     @FXML private Button drawButton;
     @FXML private Button translate;
+    @FXML private Button resetXY;
 
     private int translateX;
     private int translateY;
@@ -111,6 +112,9 @@ public class GuiController {
         });
     }
 
+    /**
+     * Initializes the buttons on the panel on the left side.
+     */
     private void initButtons() {
         translate.setOnAction(event -> {
             GridPane root = new GridPane();
@@ -128,10 +132,14 @@ public class GuiController {
             ok.setOnAction(event2 -> {
                 this.translateX = Integer.valueOf(f1.getText());
                 this.translateY = Integer.valueOf(f2.getText());
-                graphCanvas.setTranslateX(this.translateX);
-                graphCanvas.setTranslateY(this.translateY);
+                graphCanvas.setTranslateX(graphCanvas.getTranslateX() + this.translateX);
+                graphCanvas.setTranslateY(graphCanvas.getTranslateY() + this.translateY);
                 s.close();
             });
+        });
+        resetXY.setOnAction(event -> {
+            graphCanvas.setTranslateX(0);
+            graphCanvas.setTranslateY(0);
         });
     }
 }
