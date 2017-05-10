@@ -9,7 +9,7 @@ public class XYCoordinate {
     private int y;
 
     /**
-     * Constructor for coordinate
+     * Constructor for X-Y coordinate.
      * @param x The x-coordinate
      * @param y The y-coordinate
      */
@@ -36,20 +36,38 @@ public class XYCoordinate {
         return new XYCoordinate(this.getX() * factor, this.getY() * factor);
     }
 
+    /**
+     * Get the X coordinate.
+     * @return the x
+     */
     public int getX() {
         return x;
     }
 
+    /**
+     * Set the X coordinate.
+     * @param x the value to set
+     * @return the {@link XYCoordinate} for chaining
+     */
     public XYCoordinate setX(int x) {
         this.x = x;
 
         return this;
     }
 
+    /**
+     * Get the Y coordinate.
+     * @return the y
+     */
     public int getY() {
         return y;
     }
 
+    /**
+     * Set the Y coordinate.
+     * @param y the value to set
+     * @return the {@link XYCoordinate} for chaining
+     */
     public XYCoordinate setY(int y) {
         this.y = y;
 
