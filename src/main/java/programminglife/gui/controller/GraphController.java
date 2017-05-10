@@ -95,10 +95,8 @@ public class GraphController {
      * @return
      */
     private XYCoordinate drawNode(Node node, XYCoordinate offset) {
-        float widthHeigthRatio = 0.2f;
         int segmentLength = node.getSequence().length();
-        int width = (int) (segmentLength * (1.f - widthHeigthRatio));
-        int height = (int) (segmentLength * widthHeigthRatio);
+        int width, height;
 
         width = (int) Math.pow(segmentLength, 1.0 / 2);
         height = 10;

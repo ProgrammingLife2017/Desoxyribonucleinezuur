@@ -36,29 +36,6 @@ public final class ProgrammingLife extends Application {
      * @param args argument
      */
     public static void main(String[] args) {
-//        Graph g;
-//        String graphFile;
-//        DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
-//
-//        if (args.length > 0) {
-//            graphFile = args[0];
-//        } else {
-//            System.err.println("No GFA file specified!");
-//            System.exit(1);
-//            return; // This is to make sure the Java compiler does not warn about uninitialized 'graphFile'
-//        }
-//
-//        try {
-//            long startTime = System.nanoTime();
-//            g = Graph.parse(graphFile);
-//            long elapsedTimeMs = (System.nanoTime() - startTime) / 1000000;
-//            System.out.printf("Parsing took %s\n", DATE_FORMAT.format(elapsedTimeMs));
-//        } catch (FileNotFoundException e) {
-//            System.err.printf("File not found (%s)\n", graphFile);
-//        } catch (UnknownTypeException e) {
-//            System.err.printf("Parse error: %s\n", e.getMessage());
-//        }
-
         launch(args);
     }
 
