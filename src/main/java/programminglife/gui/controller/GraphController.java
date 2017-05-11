@@ -37,8 +37,8 @@ public class GraphController {
      * Draw the {@link Graph} with DFS from {@link Node} 1.
      * @param maxDepth The max depth of child {@link Node}s to draw
      */
-    public void draw(int maxDepth) {
-        this.drawDFS(null, this.getGraph().getNode(1), INITIAL_OFFSET, maxDepth);
+    public void draw(int centerNode, int maxDepth) {
+        this.drawDFS(null, this.getGraph().getNode(centerNode), INITIAL_OFFSET, maxDepth);
     }
 
     /**
@@ -127,7 +127,7 @@ public class GraphController {
                 node.getSize()));
 
         node.setFill(Color.TRANSPARENT);
-        node.setStroke(new Color(Math.random(), Math.random(), Math.random(), 1.0));
+        node.setStroke(Color.DARKRED);
 
         this.grpDrawArea.getChildren().add(node);
         this.grpDrawArea.getChildren().add(new Rectangle(1, 2, 3, 4));

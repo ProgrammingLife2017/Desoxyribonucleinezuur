@@ -199,4 +199,8 @@ public class Graph {
     public String getId() {
         return id;
     }
+
+    public int size() {
+        return this.getNodes().size();
+    }
 }

@@ -1,6 +1,8 @@
 package programminglife.gui.controller;
 
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
@@ -33,8 +35,10 @@ public class GuiController {
 //    @FXML private Button btnTranslate;
 //    @FXML private Button btnTranslateReset;
     @FXML private Button btnDraw;
+    @FXML private Button btnDrawRandom;
 
     @FXML private TextField txtMaxDrawDepth;
+    @FXML private TextField txtCenterNode;
 
     @FXML private Group grpDrawArea;
 
@@ -69,6 +73,7 @@ public class GuiController {
         if (file != null) {
             Graph graph = Graph.parse(file, true);
             this.graphController.setGraph(graph);
+            System.out.printf("The graph has %d nodes\n", graph.size());
 
             disableGraphUIElements(false);
 
@@ -168,9 +173,11 @@ public class GuiController {
 
         btnDraw.setOnAction(event -> {
             int maxDepth = Integer.MAX_VALUE;
+            int centerNode = 0;
 
             try {
                 maxDepth = Integer.parseInt(txtMaxDrawDepth.getText());
+                centerNode = Integer.parseInt(txtCenterNode.getText());
             } catch (NumberFormatException e) {
                 Alert alert = new Alert(Alert.AlertType.WARNING, "Input is not a number", ButtonType.OK);
                 alert.show();
@@ -178,14 +185,31 @@ public class GuiController {
             }
 
             this.graphController.clear();
-            this.graphController.draw(maxDepth);
+            this.graphController.draw(centerNode, maxDepth);
         });
 
-        txtMaxDrawDepth.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.matches("\\d")) {
-                txtMaxDrawDepth.setText(newValue.replaceAll("[^\\d]", ""));
-            }
+        btnDrawRandom.setOnAction(event -> {
+            txtCenterNode.setText(Integer.toString((int) Math.ceil(Math.random() * this.graphController.getGraph().size())));
+            btnDraw.fire();
         });
+
+        txtMaxDrawDepth.textProperty().addListener(new NumbersOnlyListener(txtMaxDrawDepth));
+        txtCenterNode.textProperty().addListener(new NumbersOnlyListener(txtCenterNode));
+    }
+
+    class NumbersOnlyListener implements ChangeListener<String> {
+        TextField tf;
+
+        public NumbersOnlyListener(TextField tf) {
+            this.tf = tf;
+        }
+
+        @Override
+        public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+            if (!newValue.matches("\\d")) {
+                tf.setText(newValue.replaceAll("[^\\d]", ""));
+            }
+        }
     }
 
     private void initMouse() {
