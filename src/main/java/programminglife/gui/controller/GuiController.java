@@ -71,14 +71,14 @@ public class GuiController {
      */
     public void openFile(File file) throws FileNotFoundException, UnknownTypeException {
         if (file != null) {
-            txtOutput.setText("Parsing File..");
+            txtOutput.appendText("Parsing File...\n");
             Graph graph = Graph.parse(file, true);
             this.graphController.setGraph(graph);
 
             disableGraphUIElements(false);
 
             ProgrammingLife.getStage().setTitle(graph.getId());
-            txtOutput.setText("File Parsed.");
+            txtOutput.appendText("File Parsed.\n");
         } else {
             throw new Error("WTF this file is null");
         }
@@ -173,6 +173,8 @@ public class GuiController {
          });
 
         btnDraw.setOnAction(event -> {
+            txtOutput.appendText("Drawing graph...\n");
+
             int maxDepth = Integer.MAX_VALUE;
 
             try {
@@ -185,7 +187,7 @@ public class GuiController {
 
             this.graphController.clear();
             this.graphController.draw(maxDepth);
-            txtOutput.setText("Graph drawn.");
+            txtOutput.appendText("Graph drawn.\n");
         });
 
         txtMaxDrawDepth.textProperty().addListener((observable, oldValue, newValue) -> {
