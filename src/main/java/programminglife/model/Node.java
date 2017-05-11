@@ -17,9 +17,6 @@ public class Node extends Rectangle {
     private Set<Node> parents;
     private Set<Node> children;
 
-    private XYCoordinate size;
-    private XYCoordinate location;
-
     /**
      * Constructor for a node with an id.
      * @param id int.
@@ -49,6 +46,8 @@ public class Node extends Rectangle {
         this.sequence = sequence;
         this.parents = parents;
         this.children = children;
+
+        this.setDrawDimensions();
     }
 
     /**
@@ -59,8 +58,14 @@ public class Node extends Rectangle {
         return sequence;
     }
 
+    /**
+     * Set the sequence of base pairs of the {@link Node}.
+     * @param sequence A {@link String} representing the base pairs
+     */
     public void setSequence(String sequence) {
         this.sequence = sequence;
+
+        this.setDrawDimensions();
     }
 
     /**
@@ -96,15 +101,15 @@ public class Node extends Rectangle {
     }
 
     public XYCoordinate getRightBorderCenter() {
-        return this.getCenter().add(this.size.getX() >> 1, 0);
+        return this.getCenter().add(this.getSize().getX() >> 1, 0);
     }
 
     public XYCoordinate getLeftBorderCenter() {
-        return this.getCenter().add(-(this.size.getX() >> 1), 0);
+        return this.getCenter().add(-(this.getSize().getX() >> 1), 0);
     }
 
     public XYCoordinate getCenter() {
-        return location.add(new XYCoordinate(size.getX() >> 1, size.getY() >> 1));
+        return this.getLocation().add(this.getSize().multiply(0.5));
     }
 
     /**
@@ -137,26 +142,61 @@ public class Node extends Rectangle {
      */
     @Override
     public String toString() {
-        return String.format("Node<%d>(c:%s, p:%s, s:%s)",
+        return String.format("Node<%d>(c(%d):%s, p(%d):%s, s(%d):%s)",
                 this.getIdentifier(),
+                this.getChildren().size(),
                 this.getChildren().stream().map(c -> c.getIdentifier()).collect(Collectors.toList()),
+                this.getParents().size(),
                 this.getParents().stream().map(p -> p.getIdentifier()).collect(Collectors.toList()),
+                this.getSequence().length(),
                 StringUtils.abbreviate(this.getSequence(), 11));
     }
 
+    /**
+     * Get a {@link XYCoordinate} representing the size of the {@link Node}.
+     * @return The size of the {@link Node}
+     */
     public XYCoordinate getSize() {
-        return size;
+        return new XYCoordinate((int) this.getWidth(), (int) this.getHeight());
     }
 
-    public void setSize(XYCoordinate size) {
-        this.size = size;
+    /**
+     * Set the size {@link XYCoordinate} of the {@link Node}.
+     * @param size The {@link XYCoordinate} representing the size
+     */
+    void setSize(XYCoordinate size) {
+        this.setWidth(size.getX());
+        this.setHeight(size.getY());
     }
 
     public XYCoordinate getLocation() {
-        return location;
+        return new XYCoordinate((int) this.getX(), (int) this.getY());
     }
 
+    /**
+     * Set an {@link XYCoordinate} representing the location of the {@link Node}.
+     * @param location The {@link XYCoordinate}
+     */
     public void setLocation(XYCoordinate location) {
-        this.location = location;
+        this.setX(location.getX());
+        this.setY(location.getY());
+    }
+
+    public XYCoordinate getWidthCoordinate() {
+        return new XYCoordinate((int) this.getWidth(), 0);
+    }
+
+    public XYCoordinate getHeightCoordinate() {
+        return new XYCoordinate(0, (int) this.getHeight());
+    }
+
+    private void setDrawDimensions() {
+        int segmentLength = this.getSequence().length();
+        int width, height;
+
+        width = 10 + (int) Math.pow(segmentLength, 1.0 / 2);
+        height = 10;
+
+        this.setSize(new XYCoordinate(width, height));
     }
 }
