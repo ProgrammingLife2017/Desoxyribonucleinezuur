@@ -22,6 +22,13 @@
         <url>http://www.tudelft.nl/en/</url>
     </organization>
 
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
     <build>
         <plugins>
             <plugin>
@@ -161,6 +168,13 @@
             <groupId>com.diffplug.durian</groupId>
             <artifactId>durian</artifactId>
             <version>3.4.0</version>
+        </dependency>
+
+        <!-- https://jitpack.io/#uphy/javafx-console/-SNAPSHOT -->
+        <dependency>
+            <groupId>com.github.uphy</groupId>
+            <artifactId>javafx-console</artifactId>
+            <version>-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>
