@@ -10,12 +10,14 @@ import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import jp.uphy.javafx.console.ConsoleView;
 import programminglife.ProgrammingLife;
 import programminglife.model.Graph;
 import programminglife.model.exception.UnknownTypeException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.charset.Charset;
 import java.util.Optional;
 
 /**
@@ -38,13 +40,15 @@ public class GuiController {
     @FXML private Button btnDrawRandom;
 
     @FXML private TextField txtMaxDrawDepth;
-    @FXML private TextArea txtOutput;
-
     @FXML private TextField txtCenterNode;
 
     @FXML private Group grpDrawArea;
 
     @FXML private AnchorPane anchorLeftControlPanel;
+    @FXML private AnchorPane anchorGraphPanel;
+    @FXML private AnchorPane anchorConsolePanel;
+
+    private ConsoleView consoleView;
 
 //    @FXML private Canvas canvas;
 
@@ -63,6 +67,7 @@ public class GuiController {
         initMenubar();
         initLeftControlpanel();
         initMouse();
+        this.consoleView = initConsole(anchorConsolePanel);
     }
 
     /**
@@ -73,7 +78,7 @@ public class GuiController {
      */
     public void openFile(File file) throws FileNotFoundException, UnknownTypeException {
         if (file != null) {
-            txtOutput.appendText("Parsing File...\n");
+            System.out.println("Parsing File...");
             Graph graph = Graph.parse(file, true);
             this.graphController.setGraph(graph);
             System.out.printf("The graph has %d nodes\n", graph.size());
@@ -81,7 +86,7 @@ public class GuiController {
             disableGraphUIElements(false);
 
             ProgrammingLife.getStage().setTitle(graph.getId());
-            txtOutput.appendText("File Parsed.\n");
+            System.out.println("File Parsed.");
         } else {
             throw new Error("WTF this file is null");
         }
@@ -176,7 +181,7 @@ public class GuiController {
 //         });
 
         btnDraw.setOnAction(event -> {
-            txtOutput.appendText("Drawing graph...\n");
+            System.out.println("Drawing graph...");
 
             int maxDepth = Integer.MAX_VALUE;
             int centerNode = 0;
@@ -192,7 +197,7 @@ public class GuiController {
 
             this.graphController.clear();
             this.graphController.draw(centerNode, maxDepth);
-            txtOutput.appendText("Graph drawn.\n");
+            System.out.println("Graph drawn.");
         });
 
         btnDrawRandom.setOnAction(event -> {
@@ -238,5 +243,23 @@ public class GuiController {
 //                canvas.setScaleY(canvas.getScaleY() + event.getDeltaY() / 250);
 //            }
 //        });
+    }
+
+    private ConsoleView initConsole(AnchorPane parent) {
+        final ConsoleView console = new ConsoleView(Charset.forName("UTF-8"));
+        parent.getChildren().add(console);
+
+        AnchorPane.setBottomAnchor(console, 0.d);
+        AnchorPane.setTopAnchor(console, 0.d);
+        AnchorPane.setRightAnchor(console, 0.d);
+        AnchorPane.setLeftAnchor(console, 0.d);
+
+        console.setMinHeight(50.d);
+        console.prefHeight(50.d);
+        console.maxHeight(50.d);
+
+        System.setOut(console.getOut());
+
+        return console;
     }
 }

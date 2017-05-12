@@ -12,6 +12,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
+import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.Optional;
@@ -41,10 +42,14 @@ public final class ProgrammingLife extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+        GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+        int screenWidth = gd.getDisplayMode().getWidth();
+        int screenHeight = gd.getDisplayMode().getHeight();
+
         primaryStage = stage;
         primaryStage.setTitle("Programming Life");
         vbox = FXMLLoader.load(getClass().getResource("/Basic_Gui.fxml"));
-        primaryStage.setScene(new Scene(vbox, 1000, 900));
+        primaryStage.setScene(new Scene(vbox, 0.8 * screenWidth, 0.8 * screenHeight));
         primaryStage.setOnCloseRequest(confirmCloseEventHandler);
         Button close = new Button("Close Application");
         close.setOnAction(event -> primaryStage.fireEvent(
