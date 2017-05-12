@@ -201,7 +201,8 @@ public class GuiController {
         });
 
         btnDrawRandom.setOnAction(event -> {
-            txtCenterNode.setText(Integer.toString((int) Math.ceil(Math.random() * this.graphController.getGraph().size())));
+            int randomNodeID = (int) Math.ceil(Math.random() * this.graphController.getGraph().size());
+            txtCenterNode.setText(Integer.toString(randomNodeID));
             btnDraw.fire();
         });
 
@@ -209,10 +210,13 @@ public class GuiController {
         txtCenterNode.textProperty().addListener(new NumbersOnlyListener(txtCenterNode));
     }
 
-    class NumbersOnlyListener implements ChangeListener<String> {
-        TextField tf;
+    /**
+     * {@link ChangeListener} to make a {@link TextField} only accept numbers.
+     */
+    private class NumbersOnlyListener implements ChangeListener<String> {
+        private final TextField tf;
 
-        public NumbersOnlyListener(TextField tf) {
+        NumbersOnlyListener(TextField tf) {
             this.tf = tf;
         }
 

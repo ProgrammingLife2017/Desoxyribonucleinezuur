@@ -35,6 +35,7 @@ public class GraphController {
 
     /**
      * Draw the {@link Graph} with DFS from {@link Node} 1.
+     * @param centerNode The {@link Node} to start drawing from
      * @param maxDepth The max depth of child {@link Node}s to draw
      */
     public void draw(int centerNode, int maxDepth) {
