@@ -66,7 +66,8 @@ public class GuiController {
         this.graphController = new GraphController(null, this.grpDrawArea);
 
         initMenubar();
-        initLeftControlpanel();
+        initLeftControlpanelScreenModifiers();
+        initLeftControlpanelDraw();
         initMouse();
         this.consoleView = initConsole(anchorConsolePanel);
     }
@@ -134,9 +135,9 @@ public class GuiController {
     }
 
     /**
-     * Initializes the buttons on the panel on the left side.
+     * Initializes the buttons on the panel on the left side which do translation/zoom.
      */
-    private void initLeftControlpanel() {
+    private void initLeftControlpanelScreenModifiers() {
         disableGraphUIElements(true);
 
         btnTranslate.setOnAction(event -> {
@@ -176,10 +177,17 @@ public class GuiController {
             grpDrawArea.setScaleY(grpDrawArea.getScaleY() - 0.05);
         });
 
-         btnZoomReset.setOnAction(event -> {
-             grpDrawArea.setScaleX(1);
-             grpDrawArea.setScaleY(1);
-         });
+        btnZoomReset.setOnAction(event -> {
+            grpDrawArea.setScaleX(1);
+            grpDrawArea.setScaleY(1);
+        });
+    }
+
+    /**
+     * Initializes the button on the left side that are used to draw the graph.
+     */
+    private void initLeftControlpanelDraw() {
+        disableGraphUIElements(true);
 
         btnDraw.setOnAction(event -> {
             System.out.println("Drawing graph...");
