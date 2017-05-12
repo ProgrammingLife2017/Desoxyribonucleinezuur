@@ -6,10 +6,15 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Stage;
 import jp.uphy.javafx.console.ConsoleView;
 import programminglife.ProgrammingLife;
 import programminglife.model.Graph;
@@ -25,17 +30,15 @@ import java.util.Optional;
  * The @FXML tag is needed in initialize so that javaFX knows what to do.
  */
 public class GuiController {
-//    private double orgSceneX, orgSceneY;
-//    private double orgTranslateX, orgTranslateY;
 
+    //FXML imports.
     @FXML private MenuItem btnOpen;
     @FXML private MenuItem btnQuit;
-
-//    @FXML private Button btnZoomIn;
-//    @FXML private Button btnZoomOut;
-//    @FXML private Button btnZoomReset;
-//    @FXML private Button btnTranslate;
-//    @FXML private Button btnTranslateReset;
+    @FXML private Button btnZoomIn;
+    @FXML private Button btnZoomOut;
+    @FXML private Button btnZoomReset;
+    @FXML private Button btnTranslate;
+    @FXML private Button btnTranslateReset;
     @FXML private Button btnDraw;
     @FXML private Button btnDrawRandom;
 
@@ -43,17 +46,15 @@ public class GuiController {
     @FXML private TextField txtCenterNode;
 
     @FXML private Group grpDrawArea;
-
     @FXML private AnchorPane anchorLeftControlPanel;
-    @FXML private AnchorPane anchorGraphPanel;
     @FXML private AnchorPane anchorConsolePanel;
 
+    //Privates used by method.
     private ConsoleView consoleView;
-
-//    @FXML private Canvas canvas;
-
-//    private int translateX;
-//    private int translateY;
+    private double orgSceneX, orgSceneY;
+    private double orgTranslateX, orgTranslateY;
+    private int translateX;
+    private int translateY;
     private GraphController graphController;
 
     /**
@@ -138,47 +139,47 @@ public class GuiController {
     private void initLeftControlpanel() {
         disableGraphUIElements(true);
 
-//        btnTranslate.setOnAction(event -> {
-//            GridPane root = new GridPane();
-//            TextField f1 = new TextField();
-//            root.add(new Label("X value"), 0, 0);
-//            root.add(f1, 1, 0);
-//            TextField f2 = new TextField();
-//            root.add(new Label("Y value"), 0, 1);
-//            root.add(f2, 1, 1);
-//            Button ok = new Button("Translate");
-//            root.add(ok, 1, 2);
-//            Stage s = new Stage();
-//            s.setScene(new Scene(root, 300, 200));
-//            s.show();
-//            ok.setOnAction(event2 -> {
-//                this.translateX = Integer.valueOf(f1.getText());
-//                this.translateY = Integer.valueOf(f2.getText());
-//                canvas.setTranslateX(canvas.getTranslateX() + this.translateX);
-//                canvas.setTranslateY(canvas.getTranslateY() + this.translateY);
-//                s.close();
-//            });
-//        });
+        btnTranslate.setOnAction(event -> {
+            GridPane root = new GridPane();
+            TextField f1 = new TextField();
+            root.add(new Label("X value"), 0, 0);
+            root.add(f1, 1, 0);
+            TextField f2 = new TextField();
+            root.add(new Label("Y value"), 0, 1);
+            root.add(f2, 1, 1);
+            Button ok = new Button("Translate");
+            root.add(ok, 1, 2);
+            Stage s = new Stage();
+            s.setScene(new Scene(root, 300, 200));
+            s.show();
+            ok.setOnAction(event2 -> {
+                this.translateX = Integer.valueOf(f1.getText());
+                this.translateY = Integer.valueOf(f2.getText());
+                grpDrawArea.setTranslateX(grpDrawArea.getTranslateX() + this.translateX);
+                grpDrawArea.setTranslateY(grpDrawArea.getTranslateY() + this.translateY);
+                s.close();
+            });
+        });
 //
-//        btnTranslateReset.setOnAction(event -> {
-//            canvas.setTranslateX(0);
-//            canvas.setTranslateY(0);
-//        });
-//
-//        btnZoomIn.setOnAction(event -> {
-//            canvas.setScaleX(canvas.getScaleX() + 0.05);
-//            canvas.setScaleY(canvas.getScaleY() + 0.05);
-//        });
-//
-//        btnZoomOut.setOnAction(event -> {
-//            canvas.setScaleX(canvas.getScaleX() - 0.05);
-//            canvas.setScaleY(canvas.getScaleY() - 0.05);
-//        });
-//
-//         btnZoomReset.setOnAction(event -> {
-//             canvas.setScaleX(1);
-//             canvas.setScaleY(1);
-//         });
+        btnTranslateReset.setOnAction(event -> {
+            grpDrawArea.setTranslateX(0);
+            grpDrawArea.setTranslateY(0);
+        });
+
+        btnZoomIn.setOnAction(event -> {
+            grpDrawArea.setScaleX(grpDrawArea.getScaleX() + 0.05);
+            grpDrawArea.setScaleY(grpDrawArea.getScaleY() + 0.05);
+        });
+
+        btnZoomOut.setOnAction(event -> {
+            grpDrawArea.setScaleX(grpDrawArea.getScaleX() - 0.05);
+            grpDrawArea.setScaleY(grpDrawArea.getScaleY() - 0.05);
+        });
+
+         btnZoomReset.setOnAction(event -> {
+             grpDrawArea.setScaleX(1);
+             grpDrawArea.setScaleY(1);
+         });
 
         btnDraw.setOnAction(event -> {
             System.out.println("Drawing graph...");
@@ -225,24 +226,24 @@ public class GuiController {
     }
 
     private void initMouse() {
-//        canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
-//            orgSceneX = event.getSceneX();
-//            orgSceneY = event.getSceneY();
-//            orgTranslateX = ((Canvas) (event.getSource())).getTranslateX();
-//            orgTranslateY = ((Canvas) (event.getSource())).getTranslateY();
-//        });
-//        canvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> {
-//            if (event.isAltDown()) {
-//                ((Canvas) (event.getSource())).setTranslateX(orgTranslateX + event.getSceneX() - orgSceneX);
-//                ((Canvas) (event.getSource())).setTranslateY(orgTranslateY + event.getSceneY() - orgSceneY);
-//            }
-//        });
-//        canvas.addEventHandler(ScrollEvent.SCROLL, event -> {
-//            if (event.isAltDown()) {
-//                canvas.setScaleX(canvas.getScaleX() + event.getDeltaY() / 250);
-//                canvas.setScaleY(canvas.getScaleY() + event.getDeltaY() / 250);
-//            }
-//        });
+        grpDrawArea.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
+            orgSceneX = event.getSceneX();
+            orgSceneY = event.getSceneY();
+            orgTranslateX = ((Group) (event.getSource())).getTranslateX();
+            orgTranslateY = ((Group) (event.getSource())).getTranslateY();
+        });
+        grpDrawArea.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> {
+            if (event.isAltDown()) {
+                ((Group) (event.getSource())).setTranslateX(orgTranslateX + event.getSceneX() - orgSceneX);
+                ((Group) (event.getSource())).setTranslateY(orgTranslateY + event.getSceneY() - orgSceneY);
+            }
+        });
+        grpDrawArea.addEventHandler(ScrollEvent.SCROLL, event -> {
+            if (event.isAltDown()) {
+                grpDrawArea.setScaleX(grpDrawArea.getScaleX() + event.getDeltaY() / 250);
+                grpDrawArea.setScaleY(grpDrawArea.getScaleY() + event.getDeltaY() / 250);
+            }
+        });
     }
 
     private ConsoleView initConsole(AnchorPane parent) {
