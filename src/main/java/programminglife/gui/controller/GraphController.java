@@ -81,7 +81,10 @@ public class GraphController {
      * @param drawnNodes A set containing all drawn nodes
      */
     private Set<Node> drawDFS(Node origin, Node node, XYCoordinate offset, int maxDepth, Set<Node> drawnNodes) {
-        node.setLocation(offset);
+        boolean nodeIsDrawn = drawnNodes.contains(node);
+        if (!nodeIsDrawn) {
+            node.setLocation(offset);
+        }
 
         if (origin != null && maxDepth != 0) {
             XYCoordinate targetLeft = node.getLeftBorderCenter();
@@ -95,7 +98,7 @@ public class GraphController {
             this.grpDrawArea.getChildren().add(link);
         }
 
-        if (maxDepth != 0 && !drawnNodes.contains(node)) {
+        if (maxDepth != 0 && !nodeIsDrawn) {
             this.drawNode(node);
             drawnNodes.add(node);
 
