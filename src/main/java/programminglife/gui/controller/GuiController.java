@@ -32,6 +32,7 @@ public class GuiController {
     //FXML imports.
     @FXML private MenuItem btnOpen;
     @FXML private MenuItem btnQuit;
+    @FXML private MenuItem btnAbout;
     @FXML private Button btnZoomIn;
     @FXML private Button btnZoomOut;
     @FXML private Button btnZoomReset;
@@ -129,6 +130,18 @@ public class GuiController {
                 a.close();
             }
         });
+
+        btnAbout.setOnAction(event -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("About & Intructions");
+            alert.setHeaderText(null);
+            alert.setResizable(true);
+            alert.getDialogPane().setPrefSize(600, 60);
+            alert.setContentText("This application is made by Contextproject group Desoxyribonucleïnezuur.\n"
+                    + "Instruction: Open a gfa file -> enter a start node and draw depth -> press the draw button");
+            alert.show();
+        });
+
     }
 
     private void disableGraphUIElements(boolean isDisabled) {
