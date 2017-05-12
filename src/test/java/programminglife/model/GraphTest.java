@@ -5,6 +5,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import programminglife.model.exception.UnknownTypeException;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.NoSuchElementException;
 
@@ -47,7 +48,7 @@ public class GraphTest {
 
     @Test
     public void parseTest() throws Exception {
-        graph = Graph.parse(TEST_PATH);
+        graph = Graph.parse(new File(TEST_PATH));
         Collection<Node> nodes = graph.getNodes();
 
         assertEquals(8, nodes.size());
@@ -58,7 +59,7 @@ public class GraphTest {
 
     @Test(expected = UnknownTypeException.class)
     public void faultyParseTest() throws Exception {
-        graph = Graph.parse(TEST_FAULTY_PATH);
+        graph = Graph.parse(new File(TEST_FAULTY_PATH));
     }
 
     @Test(expected = NoSuchElementException.class)

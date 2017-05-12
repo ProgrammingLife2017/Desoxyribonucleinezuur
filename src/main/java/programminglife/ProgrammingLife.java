@@ -12,12 +12,14 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
+import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.Optional;
 
 /**
- * Created by marti_000 on 25-4-2017.
+ * Created by Martijn van Meerten on 25-4-2017.
+ * Main class for starting the application.
  */
 
 public final class ProgrammingLife extends Application {
@@ -35,41 +37,19 @@ public final class ProgrammingLife extends Application {
      * @param args argument
      */
     public static void main(String[] args) {
-//        Graph g;
-//        String graphFile;
-//        DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
-//
-//        if (args.length > 0) {
-//            graphFile = args[0];
-//        } else {
-//            System.err.println("No GFA file specified!");
-//            System.exit(1);
-//            return; // This is to make sure the Java compiler does not warn about uninitialized 'graphFile'
-//        }
-//
-//        try {
-//            long startTime = System.nanoTime();
-//            g = Graph.parse(graphFile);
-//            long elapsedTimeMs = (System.nanoTime() - startTime) / 1000000;
-//            System.out.printf("Parsing took %s\n", DATE_FORMAT.format(elapsedTimeMs));
-//        } catch (FileNotFoundException e) {
-//            System.err.printf("File not found (%s)\n", graphFile);
-//        } catch (UnknownTypeException e) {
-//            System.err.printf("Parse error: %s\n", e.getMessage());
-//        }
-
         launch(args);
     }
 
     @Override
     public void start(Stage stage) throws Exception {
+        GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+        int screenWidth = gd.getDisplayMode().getWidth();
+        int screenHeight = gd.getDisplayMode().getHeight();
+
         primaryStage = stage;
         primaryStage.setTitle("Programming Life");
-        primaryStage.minWidthProperty().set(1000);
-        primaryStage.minHeightProperty().set(900);
-
         vbox = FXMLLoader.load(getClass().getResource("/Basic_Gui.fxml"));
-        primaryStage.setScene(new Scene(vbox, 1000, 900));
+        primaryStage.setScene(new Scene(vbox, 0.8 * screenWidth, 0.8 * screenHeight));
         primaryStage.setOnCloseRequest(confirmCloseEventHandler);
         Button close = new Button("Close Application");
         close.setOnAction(event -> primaryStage.fireEvent(

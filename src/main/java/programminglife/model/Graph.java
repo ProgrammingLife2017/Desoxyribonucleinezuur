@@ -5,6 +5,7 @@ import com.diffplug.common.base.Throwing;
 import programminglife.model.exception.UnknownTypeException;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.*;
@@ -39,7 +40,7 @@ public class Graph {
      * @return Node.
      */
     public Node addNode(Node node) {
-        return this.nodes.put(node.getId(), node);
+        return this.nodes.put(node.getIdentifier(), node);
     }
 
     /**
@@ -67,7 +68,7 @@ public class Graph {
         Node parsedNode = Node.parseSegment(propertyString);
         Node existingNode;
         try {
-            existingNode = this.getNode(parsedNode.getId());
+            existingNode = this.getNode(parsedNode.getIdentifier());
             existingNode.setSequence(parsedNode.getSequence());
         } catch (NoSuchElementException e) {
             this.addNode(parsedNode);
@@ -113,7 +114,7 @@ public class Graph {
      * @throws FileNotFoundException when no file is found at the given path.
      * @throws UnknownTypeException when an unknown identifier (H/S/L) is read from the file.
      */
-    public static Graph parse(String file) throws FileNotFoundException, UnknownTypeException {
+    public static Graph parse(File file) throws FileNotFoundException, UnknownTypeException {
         return parse(file, PARSE_LINE_VERBOSE_DEFAULT);
     }
 
@@ -125,13 +126,18 @@ public class Graph {
      * @throws FileNotFoundException when no file is found at the given path.
      * @throws UnknownTypeException when an unknown identifier (H/S/L) is read from the file.
      */
-    public static Graph parse(String file, boolean verbose) throws FileNotFoundException, UnknownTypeException {
+    public static Graph parse(File file, boolean verbose) throws FileNotFoundException, UnknownTypeException {
         if (verbose) {
-            System.out.println(String.format("Parsing file %s", file));
+            System.out.println(String.format("Parsing file %s", file.getAbsolutePath()));
         }
 
         BufferedReader reader = new BufferedReader(new FileReader(file));
-        Graph graph = new Graph(null);
+        Graph graph = new Graph(file.getName());
+
+        if (verbose) {
+            BufferedReader lineCountReader = new BufferedReader(new FileReader(file));
+            System.out.printf("The file has %d lines\n", lineCountReader.lines().count());
+        }
 
         try {
             reader.lines().forEach(Errors.rethrow().wrap((Throwing.Consumer<String>) line -> {
@@ -176,5 +182,29 @@ public class Graph {
                 }
             }
         }
+    }
+
+    /**
+     * Get all root nodes (make sure to call {@link #findRootNodes(boolean)} first.
+     * @return a {@link Set} of root nodes of the {@link Graph}.
+     */
+    public Set<Node> getRootNodes() {
+        return rootNodes;
+    }
+
+    /**
+     * Get the {@link Graph} ID.
+     * @return the ID
+     */
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * Get the number of {@link Node}s in the {@link Graph}.
+     * @return the number of {@link Node}s
+     */
+    public int size() {
+        return this.getNodes().size();
     }
 }
