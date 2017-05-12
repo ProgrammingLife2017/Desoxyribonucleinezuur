@@ -200,6 +200,10 @@ public class Graph {
         return id;
     }
 
+    /**
+     * Get the number of {@link Node}s in the {@link Graph}.
+     * @return the number of {@link Node}s
+     */
     public int size() {
         return this.getNodes().size();
     }
