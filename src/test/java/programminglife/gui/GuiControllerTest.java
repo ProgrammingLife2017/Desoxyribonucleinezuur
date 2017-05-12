@@ -30,7 +30,7 @@ public class GuiControllerTest extends ApplicationTest {
     private FXMLLoader loader = new FXMLLoader();
 
     @Override public void start(Stage stage) throws IOException, UnknownTypeException {
-        Parent p = FXMLLoader.load(getClass().getResource("/Basic_Gui.fxml"));  
+        Parent p = FXMLLoader.load(getClass().getResource("/Basic_Gui.fxml"));
         stage.setScene(new Scene(p));
         stage.show();
         stage.toFront();

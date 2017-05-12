@@ -15,14 +15,12 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
-import jp.uphy.javafx.console.ConsoleView;
 import programminglife.ProgrammingLife;
 import programminglife.model.Graph;
 import programminglife.model.exception.UnknownTypeException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.nio.charset.Charset;
 import java.util.Optional;
 
 /**
@@ -50,7 +48,8 @@ public class GuiController {
     @FXML private AnchorPane anchorConsolePanel;
 
     //Privates used by method.
-    private ConsoleView consoleView;
+//    private ConsoleView consoleView;
+    private TextArea consoleView;
     private double orgSceneX, orgSceneY;
     private double orgTranslateX, orgTranslateY;
     private int translateX;
@@ -69,7 +68,9 @@ public class GuiController {
         initLeftControlpanelScreenModifiers();
         initLeftControlpanelDraw();
         initMouse();
-        this.consoleView = initConsole(anchorConsolePanel);
+        consoleView = initConsole(anchorConsolePanel);
+
+        this.graphController.setConsole(consoleView);
     }
 
     /**
@@ -80,15 +81,15 @@ public class GuiController {
      */
     public void openFile(File file) throws FileNotFoundException, UnknownTypeException {
         if (file != null) {
-            System.out.println("Parsing File...");
+            consoleView.appendText("Parsing File...\n");
             Graph graph = Graph.parse(file, true);
             this.graphController.setGraph(graph);
-            System.out.printf("The graph has %d nodes\n", graph.size());
+            consoleView.appendText(String.format("The graph has %d nodes\n", graph.size()));
 
             disableGraphUIElements(false);
 
             ProgrammingLife.getStage().setTitle(graph.getId());
-            System.out.println("File Parsed.");
+            consoleView.appendText("File Parsed.\n");
         } else {
             throw new Error("WTF this file is null");
         }
@@ -190,7 +191,7 @@ public class GuiController {
         disableGraphUIElements(true);
 
         btnDraw.setOnAction(event -> {
-            System.out.println("Drawing graph...");
+            consoleView.appendText("Drawing graph...\n");
 
             int maxDepth = Integer.MAX_VALUE;
             int centerNode = 0;
@@ -206,7 +207,7 @@ public class GuiController {
 
             this.graphController.clear();
             this.graphController.draw(centerNode, maxDepth);
-            System.out.println("Graph drawn.");
+            consoleView.appendText("Graph drawn.\n");
         });
 
         btnDrawRandom.setOnAction(event -> {
@@ -258,8 +259,9 @@ public class GuiController {
         });
     }
 
-    private ConsoleView initConsole(AnchorPane parent) {
-        final ConsoleView console = new ConsoleView(Charset.forName("UTF-8"));
+    private TextArea initConsole(AnchorPane parent) {
+//        final ConsoleView console = new ConsoleView(Charset.forName("UTF-8"));
+        final TextArea console = new TextArea();
         parent.getChildren().add(console);
 
         AnchorPane.setBottomAnchor(console, 0.d);
@@ -271,7 +273,7 @@ public class GuiController {
         console.prefHeight(50.d);
         console.maxHeight(50.d);
 
-        System.setOut(console.getOut());
+//        System.setOut(console.getOut());
 
         return console;
     }

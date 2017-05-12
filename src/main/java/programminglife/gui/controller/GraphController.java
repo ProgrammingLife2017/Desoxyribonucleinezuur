@@ -1,6 +1,7 @@
 package programminglife.gui.controller;
 
 import javafx.scene.Group;
+import javafx.scene.control.TextArea;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
@@ -22,6 +23,7 @@ public class GraphController {
 
     private Graph graph;
     private Group grpDrawArea;
+    private TextArea console;
 
     /**
      * Initialize controller object.
@@ -31,6 +33,10 @@ public class GraphController {
     public GraphController(Graph graph, Group grpDrawArea) {
         this.graph = graph;
         this.grpDrawArea = grpDrawArea;
+    }
+
+    public void setConsole(TextArea console) {
+        this.console = console;
     }
 
     /**
@@ -75,7 +81,10 @@ public class GraphController {
      * @param drawnNodes A set containing all drawn nodes
      */
     private Set<Node> drawDFS(Node origin, Node node, XYCoordinate offset, int maxDepth, Set<Node> drawnNodes) {
-        node.setLocation(offset);
+        boolean nodeIsDrawn = drawnNodes.contains(node);
+        if (!nodeIsDrawn) {
+            node.setLocation(offset);
+        }
 
         if (origin != null && maxDepth != 0) {
             XYCoordinate targetLeft = node.getLeftBorderCenter();
@@ -84,12 +93,12 @@ public class GraphController {
             Line link = new Line(targetLeft.getX(), targetLeft.getY(), originRight.getX(), originRight.getY());
             link.setStroke(Color.DARKGRAY);
             link.setStrokeWidth(3);
-            link.setOnMouseClicked(event -> System.out.printf("Link{%s -> %s}\n", origin, node));
+            link.setOnMouseClicked(event -> this.console.appendText(String.format("Link{%s -> %s}\n", origin, node)));
 
             this.grpDrawArea.getChildren().add(link);
         }
 
-        if (maxDepth != 0 && !drawnNodes.contains(node)) {
+        if (maxDepth != 0 && !nodeIsDrawn) {
             this.drawNode(node);
             drawnNodes.add(node);
 
@@ -122,10 +131,13 @@ public class GraphController {
      * @return the size of the drawn {@link Node}
      */
     private XYCoordinate drawNode(Node node) {
-        node.setOnMouseClicked(event -> System.out.printf("%s (location %s, size %s)\n",
-                node.toString(),
-                node.getLocation(),
-                node.getSize()));
+        node.setOnMouseClicked(event -> {
+            this.console.appendText(node.getSequence() + "\n");
+            this.console.appendText(String.format("%s (location %s, size %s)\n",
+                    node.toString(),
+                    node.getLocation(),
+                    node.getSize()));
+        });
 
         node.setFill(Color.TRANSPARENT);
         node.setStroke(Color.DARKRED);
