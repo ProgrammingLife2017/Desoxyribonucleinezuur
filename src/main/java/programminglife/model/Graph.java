@@ -40,7 +40,7 @@ public class Graph {
      * @return Node.
      */
     public Node addNode(Node node) {
-        return this.nodes.put(node.getId(), node);
+        return this.nodes.put(node.getIdentifier(), node);
     }
 
     /**
@@ -68,7 +68,7 @@ public class Graph {
         Node parsedNode = Node.parseSegment(propertyString);
         Node existingNode;
         try {
-            existingNode = this.getNode(parsedNode.getId());
+            existingNode = this.getNode(parsedNode.getIdentifier());
             existingNode.setSequence(parsedNode.getSequence());
         } catch (NoSuchElementException e) {
             this.addNode(parsedNode);
@@ -198,5 +198,9 @@ public class Graph {
      */
     public String getId() {
         return id;
+    }
+
+    public int size() {
+        return this.getNodes().size();
     }
 }

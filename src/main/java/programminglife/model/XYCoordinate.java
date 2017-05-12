@@ -28,7 +28,7 @@ public class XYCoordinate {
     }
 
     /**
-     * Add to x and y coordinate
+     * Add to x and y coordinate.
      * @param x The value to add to x
      * @param y The value to add to y
      * @return the new {@link XYCoordinate}
@@ -42,8 +42,8 @@ public class XYCoordinate {
      * @param factor the factor
      * @return the new coord
      */
-    public XYCoordinate multiply(int factor) {
-        return new XYCoordinate(this.getX() * factor, this.getY() * factor);
+    public XYCoordinate multiply(double factor) {
+        return new XYCoordinate((int) (this.getX() * factor), (int) (this.getY() * factor));
     }
 
     /**
@@ -82,5 +82,10 @@ public class XYCoordinate {
         this.y = y;
 
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return "(" + this.getX() + ", " + this.getY() + ")";
     }
 }

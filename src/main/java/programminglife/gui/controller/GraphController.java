@@ -1,8 +1,9 @@
 package programminglife.gui.controller;
 
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.Group;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
 import programminglife.model.Graph;
 import programminglife.model.Node;
 import programminglife.model.XYCoordinate;
@@ -15,72 +16,90 @@ import java.util.Set;
  * Controller for drawing the graph.
  */
 public class GraphController {
+    private static final XYCoordinate INITIAL_OFFSET = new XYCoordinate(50, 50);
+    private static final XYCoordinate HORIZONTAL_OFFSET = new XYCoordinate(50, 0);
+    private static final double CHILD_OFFSET = 1.7;
+
     private Graph graph;
-    private Canvas canvas;
-    private GraphicsContext graphicsContext;
-    private static final XYCoordinate DEFAULT_OFFSET = new XYCoordinate(5, 0);
+    private Group grpDrawArea;
 
     /**
      * Initialize controller object.
      * @param graph The genome graph to control
-     * @param canvas The canvas on which to draw
+     * @param grpDrawArea The {@link Group} to draw in
      */
-    public GraphController(Graph graph, Canvas canvas) {
+    public GraphController(Graph graph, Group grpDrawArea) {
         this.graph = graph;
-        this.canvas = canvas;
-        this.canvas.setVisible(true);
-        this.graphicsContext = this.canvas.getGraphicsContext2D();
+        this.grpDrawArea = grpDrawArea;
     }
 
     /**
      * Draw the {@link Graph} with DFS from {@link Node} 1.
      * @param maxDepth The max depth of child {@link Node}s to draw
      */
-    public void draw(int maxDepth) {
-        this.drawDFS(this.getGraph().getNode(1), new XYCoordinate(10, 10), maxDepth);
+    public void draw(int centerNode, int maxDepth) {
+        this.drawDFS(null, this.getGraph().getNode(centerNode), INITIAL_OFFSET, maxDepth);
     }
 
     /**
      * Draw all nodes recursively on the screen.
-     * @param root Draw this node and all its children recursively
+     *
+     * @param origin
+     * @param node Draw this node and all its children recursively
      * @param offset Draws nodes at this offset from the top-left of the screen
      * @return a {@link Set} of all drawn {@link Node}s
      */
-    private Set<Node> drawDFS(Node root, XYCoordinate offset) {
-        return this.drawDFS(root, offset, -1, new HashSet<>());
+    private Set<Node> drawDFS(Node origin, Node node, XYCoordinate offset) {
+        return this.drawDFS(origin, node, offset, -1, new HashSet<>());
     }
 
     /**
      * Draw all nodes recursively on the screen.
-     * @param root Draw this node and all its children recursively
+     *
+     * @param origin The parent {@link Node} that initiated this draw call
+     * @param node Draw this {@link Node} and all its children recursively
      * @param offset Draws nodes at this offset from the top-left of the screen
      * @param maxDepth The max depth from root to draw nodes
      * @return a {@link Set} of all drawn {@link Node}s
      */
-    public Set<Node> drawDFS(Node root, XYCoordinate offset, int maxDepth) {
-        return this.drawDFS(root, offset, maxDepth, new HashSet<>());
+    public Set<Node> drawDFS(Node origin, Node node, XYCoordinate offset, int maxDepth) {
+        return this.drawDFS(origin, node, offset, maxDepth, new HashSet<>());
     }
 
     /**
      * Draw all nodes recursively on the screen.
-     * @param root Draw this node and all its children recursively
+     * @param origin
+     * @param node Draw this node and all its children recursively
      * @param offset Draws nodes at this offset from the top-left of the screen
      * @param drawnNodes A set containing all drawn nodes
      */
-    private Set<Node> drawDFS(Node root, XYCoordinate offset, int maxDepth, Set<Node> drawnNodes) {
-        XYCoordinate previousDimensions = this.drawNode(root, offset);
+    private Set<Node> drawDFS(Node origin, Node node, XYCoordinate offset, int maxDepth, Set<Node> drawnNodes) {
+        node.setLocation(offset);
 
-        int childCount = 0;
-        for (Node child : root.getChildren()) {
-            if (maxDepth == 0 || drawnNodes.contains(child)) {
-                continue;
+        if (origin != null && maxDepth != 0) {
+            XYCoordinate targetLeft = node.getLeftBorderCenter();
+            XYCoordinate originRight = origin.getRightBorderCenter();
+
+            Line link = new Line(targetLeft.getX(), targetLeft.getY(), originRight.getX(), originRight.getY());
+            link.setStroke(Color.DARKGRAY);
+            link.setStrokeWidth(3);
+            link.setOnMouseClicked(event -> System.out.printf("Link{%s -> %s}\n", origin, node));
+
+            this.grpDrawArea.getChildren().add(link);
+        }
+
+        if (maxDepth != 0 && !drawnNodes.contains(node)) {
+            this.drawNode(node);
+            drawnNodes.add(node);
+
+            int childCount = 0;
+            for (Node child : node.getChildren()) {
+                XYCoordinate newOffset = offset.add(HORIZONTAL_OFFSET)
+                        .add(node.getWidthCoordinate())
+                        .setY(INITIAL_OFFSET.getY() + (int) (CHILD_OFFSET * childCount * node.getHeight()));
+                this.drawDFS(node, child, newOffset, maxDepth - 1, drawnNodes);
+                childCount++;
             }
-
-            drawnNodes.add(child);
-
-            XYCoordinate newOffset = offset.setY(childCount * 15).add(previousDimensions).add(DEFAULT_OFFSET);
-            this.drawDFS(child, newOffset, maxDepth - 1, drawnNodes);
-            childCount++;
         }
 
         return drawnNodes;
@@ -88,34 +107,32 @@ public class GraphController {
 
     /**
      * Draws the node on the canvas.
+     *
      * @param nodeID The ID of the node to draw
-     * @param offset Draw the node at this offset
      * @return The size of the node
      */
-    private XYCoordinate drawNode(int nodeID, XYCoordinate offset) {
-        return this.drawNode(this.graph.getNode(nodeID), offset);
+    private XYCoordinate drawNode(int nodeID) {
+        return this.drawNode(this.graph.getNode(nodeID));
     }
 
     /**
-     *
-     * @param node
-     * @param offset
-     * @return
+     * Draw a single {@link Node}.
+     * @param node the {@link Node} to draw
+     * @return the size of the drawn {@link Node}
      */
-    private XYCoordinate drawNode(Node node, XYCoordinate offset) {
-        int segmentLength = node.getSequence().length();
-        int width, height;
+    private XYCoordinate drawNode(Node node) {
+        node.setOnMouseClicked(event -> System.out.printf("%s (location %s, size %s)\n",
+                node.toString(),
+                node.getLocation(),
+                node.getSize()));
 
-        width = (int) Math.pow(segmentLength, 1.0 / 2);
-        height = 10;
+        node.setFill(Color.TRANSPARENT);
+        node.setStroke(Color.DARKRED);
 
-        width = Math.max(width, 10);
-        height = Math.max(height, 10);
+        this.grpDrawArea.getChildren().add(node);
+        this.grpDrawArea.getChildren().add(new Rectangle(1, 2, 3, 4));
 
-        this.graphicsContext.setStroke(Color.color(Math.random(), Math.random(), Math.random()));
-        this.graphicsContext.strokeRect(offset.getX(), offset.getY(), width, height);
-
-        return new XYCoordinate(width, height);
+        return node.getSize();
     }
 
     /**
@@ -135,9 +152,9 @@ public class GraphController {
     }
 
     /**
-     * Clear the canvas.
+     * Clear the draw area.
      */
     public void clear() {
-        this.graphicsContext.clearRect(0, 0, this.canvas.getWidth(), this.canvas.getHeight());
+        this.grpDrawArea.getChildren().clear();
     }
 }
