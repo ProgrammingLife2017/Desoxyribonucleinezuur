@@ -22,6 +22,8 @@ import programminglife.model.exception.UnknownTypeException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The controller for the GUI that is used in the application.
@@ -48,7 +50,6 @@ public class GuiController {
     @FXML private AnchorPane anchorConsolePanel;
 
     //Privates used by method.
-//    private ConsoleView consoleView;
     private TextArea consoleView;
     private double orgSceneX, orgSceneY;
     private double orgTranslateX, orgTranslateY;
@@ -91,7 +92,7 @@ public class GuiController {
             ProgrammingLife.getStage().setTitle(graph.getId());
             consoleView.appendText("File Parsed.\n");
         } else {
-            throw new Error("WTF this file is null");
+            Logger.getLogger(GuiController.class.getName()).log(Level.INFO, "User pressed cancel");
         }
     }
 
@@ -124,7 +125,6 @@ public class GuiController {
                 Platform.exit();
                 System.exit(0);
             }
-
             if (result.get() == ButtonType.CANCEL) {
                 a.close();
             }
