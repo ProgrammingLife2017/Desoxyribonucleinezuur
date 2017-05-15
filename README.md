@@ -27,3 +27,6 @@ E - Lowest priority. A task assigned with this priority is not essential for the
 
 ###### Hand-in Link:
 http://bit.do/cppl2017 
+
+###### SE sprint grade overview link:
+https://docs.google.com/spreadsheets/d/1CtztyF6JH_XaqPzJB7x5jpi1oTfi_4PVuT6HIjSam9Y/edit#gid=0
