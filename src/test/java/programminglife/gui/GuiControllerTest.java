@@ -17,7 +17,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 /**
- * Created by Yannick on 12/05/2017.
+ * This test class is there to interactively test the GUI. It is capable of clicking on certain buttons and items
+ * that are present within the GUI. It is important however not to move the mouse during this process!!!
  */
 public class GuiControllerTest extends FxRobot {
     public static Stage primaryStage;
@@ -48,6 +49,10 @@ public class GuiControllerTest extends FxRobot {
         Platform.exit();
     }
 
+    /**
+     * This test will open a file that has been added to the test resources. It uses the FXML that is also used
+     * by the main class and relies heavily on that class.
+     */
     @Test
     public void clickOnTest() {
         clickOn("#menuFile");
