@@ -23,6 +23,7 @@ import programminglife.parser.GraphParser;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.NoSuchElementException;
 import java.util.Observable;
 import java.util.Observer;
 import java.nio.charset.Charset;
@@ -161,7 +162,7 @@ public class GuiController implements Observer {
             alert.setTitle("About");
             alert.setHeaderText(null);
             alert.setResizable(true);
-            alert.getDialogPane().setMinWidth(500);
+            alert.getDialogPane().setMinWidth(ABOUT_MIN_WIDTH);
             alert.setContentText("This application is made by Contextproject group Desoxyribonucleïnezuur:\n\n"
                     + "Ivo Wilms \n" + "Iwan Hoogenboom \n" + "Martijn van Meerten \n" + "Toine Hartman\n"
                     + "Yannick Haveman");
@@ -265,19 +266,23 @@ public class GuiController implements Observer {
                 alert.show();
             }
 
-            if (centerNode > this.graphController.getGraph().size()) {
+            try {
+                this.graphController.getGraph().getNode(centerNode);
+                this.graphController.clear();
+                this.graphController.draw(centerNode, maxDepth);
+                System.out.printf("%s Graph drawn.\n", Thread.currentThread());
+            } catch (NoSuchElementException e) {
                 Alert alert = new Alert(Alert.AlertType.WARNING, "This graph only has "
                         + this.graphController.getGraph().size()
                         + " nodes. Choose another start Node.", ButtonType.OK);
                 alert.show();
             }
 
-            this.graphController.clear();
-            this.graphController.draw(centerNode, maxDepth);
-            System.out.printf("%s Graph drawn.\n", Thread.currentThread());
+
         });
 
         btnDrawRandom.setOnAction(event -> {
+            System.out.println(this.graphController.getGraph().size());
             int randomNodeID = (int) Math.ceil(Math.random() * this.graphController.getGraph().size());
             txtCenterNode.setText(Integer.toString(randomNodeID));
             btnDraw.fire();

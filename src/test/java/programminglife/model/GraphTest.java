@@ -52,4 +52,11 @@ public class GraphTest {
     public void getNodeTest1() {
         graph.getNode(121);
     }
+
+    @Test
+    public void sizeTest() {
+        assertEquals(1,graph.size());
+        graph.addNode(new Node(2,"AAAAT"));
+        assertEquals(2,graph.size());
+    }
 }
