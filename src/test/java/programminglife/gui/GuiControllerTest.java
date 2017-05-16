@@ -53,14 +53,6 @@ public class GuiControllerTest extends FxRobot {
         }
     }
 
-    @After
-    public void tearDown() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
     @Test
     public void isActive() {
         assertTrue(primaryStage.isShowing());
@@ -198,12 +190,13 @@ public class GuiControllerTest extends FxRobot {
             }
             type(kc);
         }
-        type(KeyCode.ENTER);
 
+        type(KeyCode.ENTER);
         if(OS.contains("mac")) {
             sleep(500, TimeUnit.MILLISECONDS);
             type(KeyCode.ENTER);
         }
+
         sleep(5, TimeUnit.SECONDS);
         clickOn("#txtMaxDrawDepth").type(KeyCode.DIGIT9);
         clickOn("#txtCenterNode").type(KeyCode.DIGIT1);
