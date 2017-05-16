@@ -53,6 +53,8 @@ public class GuiController implements Observer {
     @FXML private AnchorPane anchorConsolePanel;
 
     //Privates used by method.
+
+
     private ConsoleView consoleView;
     private double orgSceneX, orgSceneY;
     private double orgTranslateX, orgTranslateY;
@@ -88,8 +90,6 @@ public class GuiController implements Observer {
             GraphParser graphParser = new GraphParser(file);
             graphParser.addObserver(this);
             (new Thread(graphParser)).start();
-        } else {
-            throw new Error(Thread.currentThread() + "WTF this file is null");
         }
     }
 
@@ -140,7 +140,6 @@ public class GuiController implements Observer {
                 Platform.exit();
                 System.exit(0);
             }
-
             if (result.get() == ButtonType.CANCEL) {
                 a.close();
             }
