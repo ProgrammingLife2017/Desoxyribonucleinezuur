@@ -27,8 +27,10 @@ public class GraphParserTest implements Observer {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        TEST_PATH = GraphTest.class.getResource("/test.gfa").getPath();
-        TEST_FAULTY_PATH = GraphTest.class.getClass().getResource("/test-faulty.gfa").getPath();
+        TEST_PATH = new File(GraphTest.class.getResource("/test.gfa").toURI()).getAbsolutePath();
+        TEST_FAULTY_PATH = new File(
+                GraphTest.class.getClass().getResource("/test-faulty.gfa").toURI()
+        ).getAbsolutePath();
     }
 
     @Before
