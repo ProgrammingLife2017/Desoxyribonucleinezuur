@@ -19,9 +19,12 @@ import jp.uphy.javafx.console.ConsoleView;
 import programminglife.ProgrammingLife;
 import programminglife.model.Graph;
 import programminglife.model.exception.UnknownTypeException;
+import programminglife.parser.GraphParser;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Observable;
+import java.util.Observer;
 import java.nio.charset.Charset;
 import java.util.Optional;
 
@@ -29,7 +32,11 @@ import java.util.Optional;
  * The controller for the GUI that is used in the application.
  * The @FXML tag is needed in initialize so that javaFX knows what to do.
  */
-public class GuiController {
+
+
+
+
+public class GuiController implements Observer {
     //static finals
     private static final String INITIAL_CENTER_NODE = "1";
     private static final String INITIAL_MAX_DRAW_DEPTH = "10";
@@ -89,14 +96,27 @@ public class GuiController {
      */
     public void openFile(File file) throws FileNotFoundException, UnknownTypeException {
         if (file != null) {
-            Graph graph = Graph.parse(file, true);
-            this.graphController.setGraph(graph);
+            GraphParser graphParser = new GraphParser(file);
+            graphParser.addObserver(this);
+            (new Thread(graphParser)).start();
+        }
+    }
 
-            disableGraphUIElements(false);
+    @Override
+    public void update(Observable o, Object arg) {
+        if (o instanceof GraphParser) {
+            if (arg instanceof Graph) {
+                Graph graph = (Graph) arg;
+                this.graphController.setGraph(graph);
 
-            ProgrammingLife.getStage().setTitle(graph.getId());
-        } else {
-            throw new RuntimeException("Opening file cancelled");
+                disableGraphUIElements(graph == null);
+
+                System.out.printf("%s File Parsed.\n", Thread.currentThread());
+                System.out.printf("%s The graph has %d nodes\n", Thread.currentThread(), graph.size());
+            } else if (arg instanceof Exception) {
+                Exception e = (Exception) arg;
+                // TODO find out a smart way to catch Exceptions across threads
+            }
         }
     }
 
@@ -317,7 +337,7 @@ public class GuiController {
 
     /**
      * Initialises the Console.
-     * @param parent is the {@Link AnchorPane} in which the console is placed.
+     * @param parent is the {@link AnchorPane} in which the console is placed.
      * @return the ConsoleView to print to
      */
     private ConsoleView initConsole(AnchorPane parent) {

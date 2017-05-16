@@ -69,22 +69,6 @@ public class Node extends Rectangle {
     }
 
     /**
-     * Parse a {@link Node} from a {@link String}.
-     * @param propertyString the {@link String} from a GFA file.
-     * @return the parsed {@link Node}.
-     */
-    public static Node parseSegment(String propertyString) {
-        String[] properties = propertyString.split("\\s");
-        assert (properties[0].equals("S")); // properties[0] is 'S'
-        int id = Integer.parseInt(properties[1]);
-        String segment = properties[2];
-        // properties[3] is +/-
-        // rest of properties is unused
-
-        return new Node(id, segment);
-    }
-
-    /**
      * Method to add a child to a node.
      * @param child Node.
      */
@@ -170,8 +154,8 @@ public class Node extends Rectangle {
     }
 
     /**
-     * Getter for top left corner of a {@Link Node}.
-     * @return {@Link XYCoordinate} with the values of the top left corner.
+     * Getter for top left corner of a {@link Node}.
+     * @return {@link XYCoordinate} with the values of the top left corner.
      */
     public XYCoordinate getLocation() {
         return new XYCoordinate((int) this.getX(), (int) this.getY());
