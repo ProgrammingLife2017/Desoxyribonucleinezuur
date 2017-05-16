@@ -100,11 +100,7 @@ public class GuiController implements Observer {
                 Graph graph = (Graph) arg;
                 this.graphController.setGraph(graph);
 
-                if (graph != null) {
-                    disableGraphUIElements(false);
-                } else {
-                    disableGraphUIElements(true);
-                }
+                disableGraphUIElements(graph == null);
 
                 System.out.printf("%s File Parsed.\n", Thread.currentThread());
                 System.out.printf("%s The graph has %d nodes\n", Thread.currentThread(), graph.size());
