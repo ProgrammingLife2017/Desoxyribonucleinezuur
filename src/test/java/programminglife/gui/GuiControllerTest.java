@@ -225,9 +225,6 @@ public class GuiControllerTest extends FxRobot {
         clickOn("#btnZoomOut");
         clickOn("#btnZoomReset");
         clickOn("#btnDrawRandom");
-        clickOn("#menuFile");
-        clickOn("#btnQuit");
         sleep(1, TimeUnit.SECONDS);
-//        type(KeyCode.ENTER);
     }
 }
