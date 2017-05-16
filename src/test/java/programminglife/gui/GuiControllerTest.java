@@ -9,6 +9,7 @@ import org.testfx.util.WaitForAsyncUtils;
 import programminglife.ProgrammingLife;
 
 import java.io.File;
+import java.net.URISyntaxException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -22,7 +23,15 @@ import static org.junit.Assert.assertTrue;
 public class GuiControllerTest extends FxRobot {
     private static Stage primaryStage;
     private ProgrammingLife pl;
-    private final String f = new File(getClass().getResource("/test.gfa").getPath()).getAbsolutePath().replaceAll("%20", " ");
+    private String f;
+
+    public GuiControllerTest() {
+        try {
+            f = new File(getClass().getResource("/test.gfa").toURI()).getAbsolutePath();
+        } catch (URISyntaxException e) {
+            f = null;
+        }
+    }
 
     @BeforeClass
     public static void setUpClass() {
