@@ -67,19 +67,8 @@ public class GuiControllerTest extends FxRobot {
                 release(KeyCode.SHIFT);
                 continue;
             }
-            else if ('%' == a) {
-                press(KeyCode.SHIFT).type(KeyCode.DIGIT2);
-                release(KeyCode.SHIFT);
-                continue;
-            }
-            else if ('.' == a) {
-                kc = KeyCode.PERIOD;
-            }
-            else if ('-' == a) {
-                kc = KeyCode.MINUS;
-            }
-            else if ('_' == a) {
-                press(KeyCode.SHIFT).type(KeyCode.MINUS);
+            else if (')' == a) {
+                press(KeyCode.SHIFT).type(KeyCode.DIGIT0);
                 release(KeyCode.SHIFT);
                 continue;
             }
@@ -88,15 +77,78 @@ public class GuiControllerTest extends FxRobot {
                 release(KeyCode.SHIFT);
                 continue;
             }
-            else if (')' == a) {
-                press(KeyCode.SHIFT).type(KeyCode.DIGIT0);
+            else if ('*' == a) {
+                press(KeyCode.SHIFT).type(KeyCode.DIGIT8);
                 release(KeyCode.SHIFT);
                 continue;
+            }
+            else if ('&' == a) {
+                press(KeyCode.SHIFT).type(KeyCode.DIGIT7);
+                release(KeyCode.SHIFT);
+                continue;
+            }
+            else if ('^' == a) {
+                press(KeyCode.SHIFT).type(KeyCode.DIGIT6);
+                release(KeyCode.SHIFT);
+                continue;
+            }
+            else if ('%' == a) {
+                press(KeyCode.SHIFT).type(KeyCode.DIGIT5);
+                release(KeyCode.SHIFT);
+                continue;
+            }
+            else if ('$' == a) {
+                press(KeyCode.SHIFT).type(KeyCode.DIGIT4);
+                release(KeyCode.SHIFT);
+                continue;
+            }
+            else if ('#' == a) {
+                press(KeyCode.SHIFT).type(KeyCode.DIGIT3);
+                release(KeyCode.SHIFT);
+                continue;
+            }
+            else if ('@' == a) {
+                press(KeyCode.SHIFT).type(KeyCode.DIGIT2);
+                release(KeyCode.SHIFT);
+                continue;
+            }
+            else if ('!' == a) {
+                press(KeyCode.SHIFT).type(KeyCode.DIGIT1);
+                release(KeyCode.SHIFT);
+                continue;
+            }
+            else if ('_' == a) {
+                press(KeyCode.SHIFT).type(KeyCode.MINUS);
+                release(KeyCode.SHIFT);
+                continue;
+            }
+            else if ('+' == a) {
+                press(KeyCode.SHIFT).type(KeyCode.EQUALS);
+                release(KeyCode.SHIFT);
+                continue;
+            }
+            else if (',' == a) {
+                kc = KeyCode.COMMA;
+            }
+            else if ('.' == a) {
+                kc = KeyCode.PERIOD;
+            }
+            else if ('-' == a) {
+                kc = KeyCode.MINUS;
+            }
+            else if ('=' == a) {
+                kc = KeyCode.EQUALS;
             }
             else if (' ' == a) {
                 kc = KeyCode.SPACE;
             }
-            else if (kc == null) {
+            else if (';' == a) {
+                kc = KeyCode.SEMICOLON;
+            }
+            else if ('/' == a) {
+                kc = KeyCode.SLASH;
+            }
+            else if ('\\' == a) {
                 kc = KeyCode.BACK_SLASH;
             }
             type(kc);
