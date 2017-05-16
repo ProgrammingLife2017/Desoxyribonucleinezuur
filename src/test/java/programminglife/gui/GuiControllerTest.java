@@ -77,143 +77,124 @@ public class GuiControllerTest extends FxRobot {
         clickOn("#btnOpen");
         sleep(1, TimeUnit.SECONDS);
         for (int i = 0; i < f.length(); i++) {
-            char a = f.charAt(i);
             KeyCode kc = KeyCode.getKeyCode(f.toUpperCase().charAt(i) + "");
-            if (':' == a) {
-                press(KeyCode.SHIFT).type(KeyCode.SEMICOLON);
-                release(KeyCode.SHIFT);
-                continue;
-            }
-            else if (')' == a) {
-                press(KeyCode.SHIFT).type(KeyCode.DIGIT0);
-                release(KeyCode.SHIFT);
-                continue;
-            }
-            else if ('(' == a) {
-                press(KeyCode.SHIFT).type(KeyCode.DIGIT9);
-                release(KeyCode.SHIFT);
-                continue;
-            }
-            else if ('*' == a) {
-                press(KeyCode.SHIFT).type(KeyCode.DIGIT8);
-                release(KeyCode.SHIFT);
-                continue;
-            }
-            else if ('&' == a) {
-                press(KeyCode.SHIFT).type(KeyCode.DIGIT7);
-                release(KeyCode.SHIFT);
-                continue;
-            }
-            else if ('^' == a) {
-                press(KeyCode.SHIFT).type(KeyCode.DIGIT6);
-                release(KeyCode.SHIFT);
-                continue;
-            }
-            else if ('%' == a) {
-                press(KeyCode.SHIFT).type(KeyCode.DIGIT5);
-                release(KeyCode.SHIFT);
-                continue;
-            }
-            else if ('$' == a) {
-                press(KeyCode.SHIFT).type(KeyCode.DIGIT4);
-                release(KeyCode.SHIFT);
-                continue;
-            }
-            else if ('#' == a) {
-                press(KeyCode.SHIFT).type(KeyCode.DIGIT3);
-                release(KeyCode.SHIFT);
-                continue;
-            }
-            else if ('@' == a) {
-                press(KeyCode.SHIFT).type(KeyCode.DIGIT2);
-                release(KeyCode.SHIFT);
-                continue;
-            }
-            else if ('!' == a) {
-                press(KeyCode.SHIFT).type(KeyCode.DIGIT1);
-                release(KeyCode.SHIFT);
-                continue;
-            }
-            else if ('_' == a) {
-                press(KeyCode.SHIFT).type(KeyCode.MINUS);
-                release(KeyCode.SHIFT);
-                continue;
-            }
-            else if ('+' == a) {
-                press(KeyCode.SHIFT).type(KeyCode.EQUALS);
-                release(KeyCode.SHIFT);
-                continue;
-            }
-            else if ('"' == a) {
-                press(KeyCode.SHIFT).type(KeyCode.QUOTE);
-                release(KeyCode.SHIFT);
-                continue;
-            }
-            else if ('?' == a) {
-                press(KeyCode.SHIFT).type(KeyCode.SLASH);
-                release(KeyCode.SHIFT);
-                continue;
-            }
-            else if ('>' == a) {
-                press(KeyCode.SHIFT).type(KeyCode.PERIOD);
-                release(KeyCode.SHIFT);
-                continue;
-            }
-            else if ('<' == a) {
-                press(KeyCode.SHIFT).type(KeyCode.COMMA);
-                release(KeyCode.SHIFT);
-                continue;
-            }
-            else if ('{' == a) {
-                press(KeyCode.SHIFT).type(KeyCode.OPEN_BRACKET);
-                release(KeyCode.SHIFT);
-                continue;
-            }
-            else if ('}' == a) {
-                press(KeyCode.SHIFT).type(KeyCode.CLOSE_BRACKET);
-                release(KeyCode.SHIFT);
-                continue;
-            }
-            else if ('~' == a) {
-                press(KeyCode.SHIFT).type(KeyCode.BACK_QUOTE);
-                release(KeyCode.SHIFT);
-                continue;
-            }
-            else if ('`' == a) {
-                kc = KeyCode.BACK_QUOTE;
-            }
-            else if ('[' == a) {
-                kc = KeyCode.OPEN_BRACKET;
-            }
-            else if (']' == a) {
-                kc = KeyCode.CLOSE_BRACKET;
-            }
-            else if ('\'' == a) {
-                kc = KeyCode.QUOTE;
-            }
-            else if (',' == a) {
-                kc = KeyCode.COMMA;
-            }
-            else if ('.' == a) {
-                kc = KeyCode.PERIOD;
-            }
-            else if ('-' == a) {
-                kc = KeyCode.MINUS;
-            }
-            else if ('=' == a) {
-                kc = KeyCode.EQUALS;
-            }
-            else if (' ' == a) {
-                kc = KeyCode.SPACE;
-            }
-            else if (';' == a) {
-                kc = KeyCode.SEMICOLON;
-            }
-            else if ('/' == a) {
-                kc = KeyCode.SLASH;
-            }
-            else if ('\\' == a) {
-                kc = KeyCode.BACK_SLASH;
+            switch (f.charAt(i)) {
+                case ':':
+                    press(KeyCode.SHIFT).type(KeyCode.SEMICOLON);
+                    release(KeyCode.SHIFT);
+                    continue;
+                case ')':
+                    press(KeyCode.SHIFT).type(KeyCode.DIGIT0);
+                    release(KeyCode.SHIFT);
+                    continue;
+                case '(':
+                    press(KeyCode.SHIFT).type(KeyCode.DIGIT9);
+                    release(KeyCode.SHIFT);
+                    continue;
+                case '*':
+                    press(KeyCode.SHIFT).type(KeyCode.DIGIT8);
+                    release(KeyCode.SHIFT);
+                    continue;
+                case '&':
+                    press(KeyCode.SHIFT).type(KeyCode.DIGIT7);
+                    release(KeyCode.SHIFT);
+                    continue;
+                case '^' :
+                    press(KeyCode.SHIFT).type(KeyCode.DIGIT6);
+                    release(KeyCode.SHIFT);
+                    continue;
+                case '%' :
+                    press(KeyCode.SHIFT).type(KeyCode.DIGIT5);
+                    release(KeyCode.SHIFT);
+                    continue;
+                case '$' :
+                    press(KeyCode.SHIFT).type(KeyCode.DIGIT4);
+                    release(KeyCode.SHIFT);
+                    continue;
+                case '#' :
+                    press(KeyCode.SHIFT).type(KeyCode.DIGIT3);
+                    release(KeyCode.SHIFT);
+                    continue;
+                case '@' :
+                    press(KeyCode.SHIFT).type(KeyCode.DIGIT2);
+                    release(KeyCode.SHIFT);
+                    continue;
+                case '!' :
+                    press(KeyCode.SHIFT).type(KeyCode.DIGIT1);
+                    release(KeyCode.SHIFT);
+                    continue;
+                case '_' :
+                    press(KeyCode.SHIFT).type(KeyCode.MINUS);
+                    release(KeyCode.SHIFT);
+                    continue;
+                case '+' :
+                    press(KeyCode.SHIFT).type(KeyCode.EQUALS);
+                    release(KeyCode.SHIFT);
+                    continue;
+                case '"' :
+                    press(KeyCode.SHIFT).type(KeyCode.QUOTE);
+                    release(KeyCode.SHIFT);
+                    continue;
+                case '?' :
+                    press(KeyCode.SHIFT).type(KeyCode.SLASH);
+                    release(KeyCode.SHIFT);
+                    continue;
+                case '>' :
+                    press(KeyCode.SHIFT).type(KeyCode.PERIOD);
+                    release(KeyCode.SHIFT);
+                    continue;
+                case '<' :
+                    press(KeyCode.SHIFT).type(KeyCode.COMMA);
+                    release(KeyCode.SHIFT);
+                    continue;
+                case '{' :
+                    press(KeyCode.SHIFT).type(KeyCode.OPEN_BRACKET);
+                    release(KeyCode.SHIFT);
+                    continue;
+                case '}' :
+                    press(KeyCode.SHIFT).type(KeyCode.CLOSE_BRACKET);
+                    release(KeyCode.SHIFT);
+                    continue;
+                case '~' :
+                    press(KeyCode.SHIFT).type(KeyCode.BACK_QUOTE);
+                    release(KeyCode.SHIFT);
+                    continue;
+                case '`' :
+                    kc = KeyCode.BACK_QUOTE;
+                    break;
+                case '[' :
+                    kc = KeyCode.OPEN_BRACKET;
+                    break;
+                case ']' :
+                    kc = KeyCode.CLOSE_BRACKET;
+                    break;
+                case '\'' :
+                    kc = KeyCode.QUOTE;
+                    break;
+                case ',' :
+                    kc = KeyCode.COMMA;
+                    break;
+                case '.' :
+                    kc = KeyCode.PERIOD;
+                    break;
+                case '-' :
+                    kc = KeyCode.MINUS;
+                    break;
+                case '=' :
+                    kc = KeyCode.EQUALS;
+                    break;
+                case ' ' :
+                    kc = KeyCode.SPACE;
+                    break;
+                case ';' :
+                    kc = KeyCode.SEMICOLON;
+                    break;
+                case '/' :
+                    kc = KeyCode.SLASH;
+                    break;
+                case '\\' :
+                    kc = KeyCode.BACK_SLASH;
+                    break;
             }
             type(kc);
         }
