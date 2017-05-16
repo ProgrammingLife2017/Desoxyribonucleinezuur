@@ -15,12 +15,14 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
+import jp.uphy.javafx.console.ConsoleView;
 import programminglife.ProgrammingLife;
 import programminglife.model.Graph;
 import programminglife.model.exception.UnknownTypeException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.charset.Charset;
 import java.util.Optional;
 
 /**
@@ -49,8 +51,9 @@ public class GuiController {
     @FXML private AnchorPane anchorConsolePanel;
 
     //Privates used by method.
-//    private ConsoleView consoleView;
-    private TextArea consoleView;
+
+
+    private ConsoleView consoleView;
     private double orgSceneX, orgSceneY;
     private double orgTranslateX, orgTranslateY;
     private int translateX;
@@ -82,17 +85,14 @@ public class GuiController {
      */
     public void openFile(File file) throws FileNotFoundException, UnknownTypeException {
         if (file != null) {
-            consoleView.appendText("Parsing File...\n");
             Graph graph = Graph.parse(file, true);
             this.graphController.setGraph(graph);
-            consoleView.appendText(String.format("The graph has %d nodes\n", graph.size()));
 
             disableGraphUIElements(false);
 
             ProgrammingLife.getStage().setTitle(graph.getId());
-            consoleView.appendText("File Parsed.\n");
         } else {
-            throw new Error("WTF this file is null");
+            throw new RuntimeException("Opening file cancelled");
         }
     }
 
@@ -125,7 +125,6 @@ public class GuiController {
                 Platform.exit();
                 System.exit(0);
             }
-
             if (result.get() == ButtonType.CANCEL) {
                 a.close();
             }
@@ -144,6 +143,10 @@ public class GuiController {
 
     }
 
+    /**
+     * Method to disable the UI Elements on the left of the GUI.
+     * @param isDisabled boolean, true disables the left anchor panel.
+     */
     private void disableGraphUIElements(boolean isDisabled) {
         anchorLeftControlPanel.setDisable(isDisabled);
     }
@@ -204,7 +207,7 @@ public class GuiController {
         disableGraphUIElements(true);
 
         btnDraw.setOnAction(event -> {
-            consoleView.appendText("Drawing graph...\n");
+            System.out.printf("%s Drawing graph...\n", Thread.currentThread());
 
             int maxDepth = Integer.MAX_VALUE;
             int centerNode = 0;
@@ -220,7 +223,7 @@ public class GuiController {
 
             this.graphController.clear();
             this.graphController.draw(centerNode, maxDepth);
-            consoleView.appendText("Graph drawn.\n");
+            System.out.printf("%s Graph drawn.\n", Thread.currentThread());
         });
 
         btnDrawRandom.setOnAction(event -> {
@@ -239,6 +242,10 @@ public class GuiController {
     private class NumbersOnlyListener implements ChangeListener<String> {
         private final TextField tf;
 
+        /**
+         * Constructor for the Listener.
+         * @param tf {@link TextField} is the text field on which the listener listens
+         */
         NumbersOnlyListener(TextField tf) {
             this.tf = tf;
         }
@@ -251,6 +258,9 @@ public class GuiController {
         }
     }
 
+    /**
+     * Initialises the mouse events.
+     */
     private void initMouse() {
         grpDrawArea.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
             orgSceneX = event.getSceneX();
@@ -272,9 +282,13 @@ public class GuiController {
         });
     }
 
-    private TextArea initConsole(AnchorPane parent) {
-//        final ConsoleView console = new ConsoleView(Charset.forName("UTF-8"));
-        final TextArea console = new TextArea();
+    /**
+     * Initialises the Console.
+     * @param parent is the {@Link AnchorPane} in which the console is placed.
+     * @return the ConsoleView to print to
+     */
+    private ConsoleView initConsole(AnchorPane parent) {
+        final ConsoleView console = new ConsoleView(Charset.forName("UTF-8"));
         parent.getChildren().add(console);
 
         AnchorPane.setBottomAnchor(console, 0.d);
@@ -286,7 +300,7 @@ public class GuiController {
         console.prefHeight(50.d);
         console.maxHeight(50.d);
 
-//        System.setOut(console.getOut());
+        System.setOut(console.getOut());
 
         return console;
     }
