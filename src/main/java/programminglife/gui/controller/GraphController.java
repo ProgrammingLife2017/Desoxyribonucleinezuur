@@ -80,7 +80,7 @@ public class GraphController {
      * @param offset Draws nodes at this offset from the top-left of the screen
      * @param drawnNodes A set containing all drawn nodes
      * @param maxDepth The max depth from root to draw nodes
-     * @return a {@Link Set} of all drawn {@Link Node}s
+     * @return a {@link Set} of all drawn {@link Node}s
      */
     private Set<Node> drawDFS(Node origin, Node node, XYCoordinate offset, int maxDepth, Set<Node> drawnNodes) {
         boolean nodeIsDrawn = drawnNodes.contains(node);

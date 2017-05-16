@@ -290,7 +290,7 @@ public class GuiController implements Observer {
 
     /**
      * Initialises the Console.
-     * @param parent is the {@Link AnchorPane} in which the console is placed.
+     * @param parent is the {@link AnchorPane} in which the console is placed.
      * @return the ConsoleView to print to
      */
     private ConsoleView initConsole(AnchorPane parent) {

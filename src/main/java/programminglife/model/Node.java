@@ -154,8 +154,8 @@ public class Node extends Rectangle {
     }
 
     /**
-     * Getter for top left corner of a {@Link Node}.
-     * @return {@Link XYCoordinate} with the values of the top left corner.
+     * Getter for top left corner of a {@link Node}.
+     * @return {@link XYCoordinate} with the values of the top left corner.
      */
     public XYCoordinate getLocation() {
         return new XYCoordinate((int) this.getX(), (int) this.getY());
