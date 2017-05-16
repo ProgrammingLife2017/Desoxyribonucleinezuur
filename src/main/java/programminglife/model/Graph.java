@@ -30,7 +30,7 @@ public class Graph {
      * @param id String id.
      */
     public Graph(String id) {
-        this.nodes = new HashMap<>();
+        this.nodes = new HashMap<>(500000, 0.9f);
         this.id = id;
         this.rootNodes = new HashSet<>();
     }

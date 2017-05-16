@@ -12,7 +12,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
-import programminglife.model.Graph;
 import programminglife.model.exception.UnknownTypeException;
 
 import java.io.File;
@@ -35,7 +34,6 @@ public class GuiControllerTest extends ApplicationTest {
         stage.show();
         stage.toFront();
         File f = new File(getClass().getResource("/test.gfa").getPath());
-        Graph g = Graph.parse(f);
     }
 
     private <T extends Node> T find(final String query) {
