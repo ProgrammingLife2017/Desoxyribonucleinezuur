@@ -271,6 +271,7 @@ public class GuiController {
     /**
      * Initialises the Console.
      * @param parent is the {@Link AnchorPane} in which the console is placed.
+     * @return the ConsoleView to print to
      */
     private ConsoleView initConsole(AnchorPane parent) {
         final ConsoleView console = new ConsoleView(Charset.forName("UTF-8"));
