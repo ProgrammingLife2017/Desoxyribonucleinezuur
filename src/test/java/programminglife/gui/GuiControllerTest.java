@@ -24,6 +24,7 @@ public class GuiControllerTest extends FxRobot {
     private static Stage primaryStage;
     private ProgrammingLife pl;
     private String f;
+    private static String OS = System.getProperty("os.name").toLowerCase();
 
     public GuiControllerTest() {
         try {
@@ -217,6 +218,9 @@ public class GuiControllerTest extends FxRobot {
             type(kc);
         }
         type(KeyCode.ENTER);
+        if(OS.equals("mac")) {
+            type(KeyCode.ENTER);
+        }
         sleep(5, TimeUnit.SECONDS);
         clickOn("#txtMaxDrawDepth").type(KeyCode.DIGIT9);
         clickOn("#txtCenterNode").type(KeyCode.DIGIT1);
