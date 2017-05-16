@@ -40,6 +40,8 @@ public class GuiController implements Observer {
     //static finals
     private static final String INITIAL_CENTER_NODE = "1";
     private static final String INITIAL_MAX_DRAW_DEPTH = "10";
+    private static final double INSTRUCTIONS_MIN_WIDTH = 800;
+    private static final double ABOUT_MIN_WIDTH = 500;
 
     //FXML imports.
     @FXML private MenuItem btnOpen;
@@ -159,7 +161,7 @@ public class GuiController implements Observer {
             alert.setTitle("About");
             alert.setHeaderText(null);
             alert.setResizable(true);
-            alert.getDialogPane().setPrefSize(500, 200);
+            alert.getDialogPane().setMinWidth(500);
             alert.setContentText("This application is made by Contextproject group Desoxyribonucleïnezuur:\n\n"
                     + "Ivo Wilms \n" + "Iwan Hoogenboom \n" + "Martijn van Meerten \n" + "Toine Hartman\n"
                     + "Yannick Haveman");
@@ -173,7 +175,7 @@ public class GuiController implements Observer {
             alert.setTitle("Instructions");
             alert.setHeaderText(null);
             alert.setResizable(true);
-            alert.getDialogPane().setPrefSize(500, 200);
+            alert.getDialogPane().setMinWidth(INSTRUCTIONS_MIN_WIDTH);
             alert.setContentText("Open a gfa file, wait for it to be parsed.\n"
                     + "Give the start node and the amount of layers (depth) to be drawn on the left.\n\n"
                     + "Zoom using the zoom buttons or alt + scrollwheel.\n"
@@ -181,7 +183,6 @@ public class GuiController implements Observer {
                     + "Reset the zoom with reset zoom and jump back to the beginning"
                     + " of the drawn graph with the Reset X/Y button.\n"
                     + "The suprise me! button chooses a random start node and draws with the depth you gave.");
-
             alert.show();
         });
 
