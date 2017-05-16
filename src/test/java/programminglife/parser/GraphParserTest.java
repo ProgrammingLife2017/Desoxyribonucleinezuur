@@ -85,6 +85,7 @@ public class GraphParserTest implements Observer {
         try {
             faultyGraphParser.addObserver(this);
             faultyGraphParser.run();
+            fail();
         } catch (RuntimeException re) {
             assertEquals(UnknownTypeException.class, re.getCause().getClass());
         }
