@@ -218,7 +218,9 @@ public class GuiControllerTest extends FxRobot {
             type(kc);
         }
         type(KeyCode.ENTER);
-        if(OS.equals("mac")) {
+
+        if(OS.contains("mac")) {
+            sleep(500, TimeUnit.MILLISECONDS);
             type(KeyCode.ENTER);
         }
         sleep(5, TimeUnit.SECONDS);
