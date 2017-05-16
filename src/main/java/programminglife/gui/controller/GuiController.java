@@ -18,16 +18,19 @@ import javafx.stage.Stage;
 import programminglife.ProgrammingLife;
 import programminglife.model.Graph;
 import programminglife.model.exception.UnknownTypeException;
+import programminglife.parser.GraphParser;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Optional;
 
 /**
  * The controller for the GUI that is used in the application.
  * The @FXML tag is needed in initialize so that javaFX knows what to do.
  */
-public class GuiController {
+public class GuiController implements Observer {
 
     //FXML imports.
     @FXML private MenuItem btnOpen;
@@ -81,17 +84,29 @@ public class GuiController {
      */
     public void openFile(File file) throws FileNotFoundException, UnknownTypeException {
         if (file != null) {
-            consoleView.appendText("Parsing File...\n");
-            Graph graph = Graph.parse(file, true);
-            this.graphController.setGraph(graph);
-            consoleView.appendText(String.format("The graph has %d nodes\n", graph.size()));
+            GraphParser graphParser = new GraphParser(file);
+            graphParser.addObserver(this);
+            (new Thread(graphParser)).start();
 
-            disableGraphUIElements(false);
-
-            ProgrammingLife.getStage().setTitle(graph.getId());
-            consoleView.appendText("File Parsed.\n");
         } else {
-            throw new Error("WTF this file is null");
+            throw new Error(Thread.currentThread() + "WTF this file is null");
+        }
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        if (o instanceof GraphParser && arg instanceof Graph) {
+            Graph graph = (Graph) arg;
+            this.graphController.setGraph(graph);
+
+            if (graph != null) {
+                disableGraphUIElements(false);
+            } else {
+                disableGraphUIElements(true);
+            }
+
+            System.out.printf("%s File Parsed.\n", Thread.currentThread());
+            System.out.printf("%s The graph has %d nodes\n", Thread.currentThread(), graph.size());
         }
     }
 

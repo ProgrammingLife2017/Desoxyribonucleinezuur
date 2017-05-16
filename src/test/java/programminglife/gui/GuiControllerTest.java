@@ -35,7 +35,6 @@ public class GuiControllerTest extends ApplicationTest {
         stage.show();
         stage.toFront();
         File f = new File(getClass().getResource("/test.gfa").getPath());
-        Graph g = Graph.parse(f);
     }
 
     private <T extends Node> T find(final String query) {
