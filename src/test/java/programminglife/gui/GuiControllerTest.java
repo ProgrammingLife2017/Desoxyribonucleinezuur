@@ -16,11 +16,12 @@ import java.util.concurrent.TimeoutException;
 /**
  * This test class is there to interactively test the GUI. It is capable of clicking on certain buttons and items
  * that are present within the GUI. It is important however not to move the mouse during this process!!!
+ * This is only usable if you have a USA QWERTY layout on your keyboard!!!
  */
 public class GuiControllerTest extends FxRobot {
-    public static Stage primaryStage;
+    private static Stage primaryStage;
     private ProgrammingLife pl;
-    private final String f = new File(getClass().getResource("/test.gfa").getPath()).getAbsolutePath();
+    private final String f = new File(getClass().getResource("/test.gfa").toString()).getAbsolutePath();
 
     @BeforeClass
     public static void setUpClass() {
@@ -126,6 +127,53 @@ public class GuiControllerTest extends FxRobot {
                 press(KeyCode.SHIFT).type(KeyCode.EQUALS);
                 release(KeyCode.SHIFT);
                 continue;
+            }
+            else if ('"' == a) {
+                press(KeyCode.SHIFT).type(KeyCode.QUOTE);
+                release(KeyCode.SHIFT);
+                continue;
+            }
+            else if ('?' == a) {
+                press(KeyCode.SHIFT).type(KeyCode.SLASH);
+                release(KeyCode.SHIFT);
+                continue;
+            }
+            else if ('>' == a) {
+                press(KeyCode.SHIFT).type(KeyCode.PERIOD);
+                release(KeyCode.SHIFT);
+                continue;
+            }
+            else if ('<' == a) {
+                press(KeyCode.SHIFT).type(KeyCode.COMMA);
+                release(KeyCode.SHIFT);
+                continue;
+            }
+            else if ('{' == a) {
+                press(KeyCode.SHIFT).type(KeyCode.OPEN_BRACKET);
+                release(KeyCode.SHIFT);
+                continue;
+            }
+            else if ('}' == a) {
+                press(KeyCode.SHIFT).type(KeyCode.CLOSE_BRACKET);
+                release(KeyCode.SHIFT);
+                continue;
+            }
+            else if ('~' == a) {
+                press(KeyCode.SHIFT).type(KeyCode.BACK_QUOTE);
+                release(KeyCode.SHIFT);
+                continue;
+            }
+            else if ('`' == a) {
+                kc = KeyCode.BACK_QUOTE;
+            }
+            else if ('[' == a) {
+                kc = KeyCode.OPEN_BRACKET;
+            }
+            else if (']' == a) {
+                kc = KeyCode.CLOSE_BRACKET;
+            }
+            else if ('\'' == a) {
+                kc = KeyCode.QUOTE;
             }
             else if (',' == a) {
                 kc = KeyCode.COMMA;
