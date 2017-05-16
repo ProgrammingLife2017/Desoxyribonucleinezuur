@@ -57,7 +57,6 @@ public class GuiControllerTest extends FxRobot {
 
     @AfterClass
     public static void tearDownClass() {
-
     }
 
     /**
