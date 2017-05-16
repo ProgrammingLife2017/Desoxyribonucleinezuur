@@ -3,10 +3,7 @@ package programminglife.gui;
 import javafx.application.Platform;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 import org.testfx.api.FxRobot;
 import org.testfx.api.FxToolkit;
 import org.testfx.util.WaitForAsyncUtils;
@@ -45,8 +42,12 @@ public class GuiControllerTest extends FxRobot {
     }
 
     @After
-    public void tearDown() throws TimeoutException, RuntimeException {
-        Platform.exit();
+    public void tearDown() {
+    }
+
+    @AfterClass
+    public static void tearDownClass() {
+
     }
 
     /**
@@ -73,6 +74,9 @@ public class GuiControllerTest extends FxRobot {
             }
             if ("_".equals(f.charAt(i) + "")) {
                 kc = KeyCode.UNDERSCORE;
+            }
+            if (" ".equals(f.charAt(i) + "")) {
+                kc = KeyCode.SPACE;
             }
             if (kc == null) {
                 kc = KeyCode.BACK_SLASH;
