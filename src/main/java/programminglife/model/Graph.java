@@ -19,7 +19,7 @@ public class Graph {
      * @param id String id.
      */
     public Graph(String id) {
-        this.nodes = new HashMap<>();
+        this.nodes = new HashMap<>(500000, 0.9f);
         this.id = id;
         this.rootNodes = new HashSet<>();
     }
@@ -51,7 +51,7 @@ public class Graph {
     }
 
     /**
-     * Get all root nodes (make sure to call {@link programminglife.parser.GraphParser#findRootNodes(boolean)} first.
+     * Get all root nodes (make sure to call {@link programminglife.parser.GraphParser#findRootNodes()} first.
      * @return a {@link Set} of root nodes of the {@link Graph}.
      */
     public Set<Node> getRootNodes() {

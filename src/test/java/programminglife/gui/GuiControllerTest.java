@@ -12,7 +12,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
-import programminglife.model.Graph;
 import programminglife.model.exception.UnknownTypeException;
 
 import java.io.File;

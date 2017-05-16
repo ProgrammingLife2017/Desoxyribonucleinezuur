@@ -153,6 +153,10 @@ public class Node extends Rectangle {
         this.setHeight(size.getY());
     }
 
+    /**
+     * Getter for top left corner of a {@Link Node}.
+     * @return {@Link XYCoordinate} with the values of the top left corner.
+     */
     public XYCoordinate getLocation() {
         return new XYCoordinate((int) this.getX(), (int) this.getY());
     }
@@ -174,6 +178,9 @@ public class Node extends Rectangle {
         return new XYCoordinate(0, (int) this.getHeight());
     }
 
+    /**
+     * Setter for the dimension of the node.
+     */
     private void setDrawDimensions() {
         int segmentLength = this.getSequence().length();
         int width, height;
