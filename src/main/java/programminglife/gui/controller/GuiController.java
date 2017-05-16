@@ -50,6 +50,8 @@ public class GuiController {
     @FXML private AnchorPane anchorConsolePanel;
 
     //Privates used by method.
+
+
     private ConsoleView consoleView;
     private double orgSceneX, orgSceneY;
     private double orgTranslateX, orgTranslateY;
@@ -89,7 +91,7 @@ public class GuiController {
 
             ProgrammingLife.getStage().setTitle(graph.getId());
         } else {
-            throw new Error("WTF this file is null");
+            throw new RuntimeException("Opening file cancelled");
         }
     }
 
@@ -122,7 +124,6 @@ public class GuiController {
                 Platform.exit();
                 System.exit(0);
             }
-
             if (result.get() == ButtonType.CANCEL) {
                 a.close();
             }
