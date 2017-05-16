@@ -60,30 +60,46 @@ public class GuiControllerTest extends FxRobot {
         clickOn("#btnOpen");
         sleep(1, TimeUnit.SECONDS);
         for (int i = 0; i < f.length(); i++) {
+            char a = f.charAt(i);
             KeyCode kc = KeyCode.getKeyCode(f.toUpperCase().charAt(i) + "");
-            if (":".equals(f.charAt(i) + "")) {
-                kc = KeyCode.SEMICOLON;
+            if (':' == a) {
                 press(KeyCode.SHIFT).type(KeyCode.SEMICOLON);
                 release(KeyCode.SHIFT);
+                continue;
             }
-            if (".".equals(f.charAt(i) + "")) {
+            else if ('%' == a) {
+                press(KeyCode.SHIFT).type(KeyCode.DIGIT2);
+                release(KeyCode.SHIFT);
+                continue;
+            }
+            else if ('.' == a) {
                 kc = KeyCode.PERIOD;
             }
-            if ("-".equals(f.charAt(i) + "")) {
+            else if ('-' == a) {
                 kc = KeyCode.MINUS;
             }
-            if ("_".equals(f.charAt(i) + "")) {
-                kc = KeyCode.UNDERSCORE;
+            else if ('_' == a) {
+                press(KeyCode.SHIFT).type(KeyCode.MINUS);
+                release(KeyCode.SHIFT);
+                continue;
             }
-            if (" ".equals(f.charAt(i) + "")) {
+            else if ('(' == a) {
+                press(KeyCode.SHIFT).type(KeyCode.DIGIT9);
+                release(KeyCode.SHIFT);
+                continue;
+            }
+            else if (')' == a) {
+                press(KeyCode.SHIFT).type(KeyCode.DIGIT0);
+                release(KeyCode.SHIFT);
+                continue;
+            }
+            else if (' ' == a) {
                 kc = KeyCode.SPACE;
             }
-            if (kc == null) {
+            else if (kc == null) {
                 kc = KeyCode.BACK_SLASH;
             }
-            if (kc != KeyCode.SEMICOLON) {
-                type(kc);
-            }
+            type(kc);
         }
         sleep(1, TimeUnit.SECONDS);
         type(KeyCode.ENTER);
