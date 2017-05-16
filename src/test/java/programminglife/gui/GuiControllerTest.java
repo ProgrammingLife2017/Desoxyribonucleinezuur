@@ -21,7 +21,7 @@ import java.util.concurrent.TimeoutException;
 public class GuiControllerTest extends FxRobot {
     private static Stage primaryStage;
     private ProgrammingLife pl;
-    private final String f = new File(getClass().getResource("/test.gfa").toString()).getAbsolutePath();
+    private final String f = new File(getClass().getResource("/test.gfa").getPath()).getAbsolutePath().replaceAll("%20", " ");
 
     @BeforeClass
     public static void setUpClass() {
@@ -48,7 +48,6 @@ public class GuiControllerTest extends FxRobot {
 
     @AfterClass
     public static void tearDownClass() {
-
     }
 
     /**
