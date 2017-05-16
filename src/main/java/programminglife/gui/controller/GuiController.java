@@ -93,7 +93,7 @@ public class GuiController {
 
             ProgrammingLife.getStage().setTitle(graph.getId());
         } else {
-            Logger.getLogger(GuiController.class.getName()).log(Level.INFO, "User pressed cancel");
+            throw new RuntimeException("Opening file cancelled");
         }
     }
 
