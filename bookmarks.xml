@@ -1,0 +1,8 @@
+<graphs>
+    <test>
+        <name>testbm</name>
+        <ID>2</ID>
+        <radius>6</radius>
+        <description>testing</description>
+    </test>
+</graphs>

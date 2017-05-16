@@ -4,13 +4,11 @@ package programminglife.model;
  * Created by Martijn van Meerten and Iwan Hoogenboom on 15-5-2017.
  * Class representing a bookmark. Consists of a location and radius.
  */
-public class BookMark {
+public class Bookmark {
     private int radius;
     private int nodeID;
     private String bookmarkName;
     private String description;
-    private XYCoordinate coordinate;
-    private double zoom;
 
     /**
      * Initialize a bookmark.
@@ -18,14 +16,11 @@ public class BookMark {
      * @param nodeID is the ID of the node where the bookmark is present.
      * @param radius is the depth to which surrounding nodes will be visualized.
      */
-    public BookMark(String bookmarkName, String description, int nodeID, int radius, XYCoordinate coordinate, double zoom) {
+    public Bookmark(int nodeID, int radius, String bookmarkName, String description) {
         this.radius = radius;
         this.nodeID = nodeID;
         this.bookmarkName = bookmarkName;
         this.description = description;
-        this.coordinate = coordinate;
-        this.zoom = zoom;
-
     }
 
     public String getbookmarkName() {
@@ -58,5 +53,27 @@ public class BookMark {
 
     public void setNodeID(int nodeID) {
         this.nodeID = nodeID;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other instanceof Bookmark) {
+            Bookmark that = (Bookmark) other;
+            if (this.radius == that.getRadius()
+                    && this.nodeID == that.getNodeID()
+                    && this.bookmarkName.equals(that.getbookmarkName())
+                    && this.description.equals(that.getDescription())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return ("{name: " + this.bookmarkName
+                + ", description: " + this.description
+                + ", ID " + this.nodeID
+                + ", radius: " + this.radius + "}");
     }
 }
