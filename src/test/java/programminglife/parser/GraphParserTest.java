@@ -80,14 +80,14 @@ public class GraphParserTest implements Observer {
         graphParser.run();
     }
 
-    @Test
-    public void runTestFailure() {
+    @Test(expected = UnknownTypeException.class)
+    public void runTestFailure() throws Throwable {
         try {
             faultyGraphParser.addObserver(this);
             faultyGraphParser.run();
             fail();
         } catch (RuntimeException re) {
-            assertEquals(UnknownTypeException.class, re.getCause().getClass());
+            throw re.getCause();
         }
     }
 
