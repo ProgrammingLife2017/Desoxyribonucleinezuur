@@ -198,7 +198,10 @@ public class GuiControllerTest extends FxRobot {
         }
 
         sleep(5, TimeUnit.SECONDS);
+        //backspace to remove the initial values.
+        clickOn("#txtMaxDrawDepth").type(KeyCode.BACK_SPACE);
         clickOn("#txtMaxDrawDepth").type(KeyCode.DIGIT9);
+        clickOn("#txtCenterNode").type(KeyCode.BACK_SPACE);
         clickOn("#txtCenterNode").type(KeyCode.DIGIT1);
         clickOn("#btnDraw");
         clickOn("#btnZoomIn");
