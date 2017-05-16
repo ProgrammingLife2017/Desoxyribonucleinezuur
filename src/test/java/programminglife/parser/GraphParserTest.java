@@ -10,13 +10,16 @@ import programminglife.model.exception.UnknownTypeException;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Observable;
+import java.util.Observer;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * Created by toinehartman on 16/05/2017.
  */
-public class GraphParserTest {
+public class GraphParserTest implements Observer {
     private static String TEST_PATH, TEST_FAULTY_PATH;
 
     private String linkLine, nodeLine;
@@ -69,5 +72,36 @@ public class GraphParserTest {
         assertEquals("C", node.getSequence());
         assertEquals(0, node.getParents().size());
         assertEquals(0, node.getChildren().size());
+    }
+
+    @Test
+    public void runTestSuccess() {
+        graphParser.addObserver(this);
+        graphParser.run();
+    }
+
+    @Test
+    public void runTestFailure() {
+        try {
+            faultyGraphParser.addObserver(this);
+            faultyGraphParser.run();
+        } catch (RuntimeException re) {
+            assertEquals(UnknownTypeException.class, re.getCause().getClass());
+        }
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        if (o instanceof GraphParser) {
+            if (arg instanceof Graph) {
+                Graph graph = (Graph) arg;
+                Node node = graph.getNode(8);
+
+                assertEquals(new File(TEST_PATH).getName(), graph.getId());
+                assertEquals("GTC", node.getSequence());
+            } else if (arg instanceof Exception) {
+                throw new RuntimeException((Exception) arg);
+            }
+        }
     }
 }

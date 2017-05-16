@@ -41,10 +41,9 @@ public class GraphParser extends Observable implements Runnable {
             parse(this.verbose);
             this.setChanged();
             this.notifyObservers(this.graph);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (UnknownTypeException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            this.setChanged();
+            this.notifyObservers(e);
         }
     }
 

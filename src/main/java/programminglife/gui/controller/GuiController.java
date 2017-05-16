@@ -88,7 +88,6 @@ public class GuiController implements Observer {
             GraphParser graphParser = new GraphParser(file);
             graphParser.addObserver(this);
             (new Thread(graphParser)).start();
-
         } else {
             throw new Error(Thread.currentThread() + "WTF this file is null");
         }
@@ -96,20 +95,23 @@ public class GuiController implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        if (o instanceof GraphParser && arg instanceof Graph) {
-            Graph graph = (Graph) arg;
-            this.graphController.setGraph(graph);
+        if (o instanceof GraphParser) {
+            if (arg instanceof Graph) {
+                Graph graph = (Graph) arg;
+                this.graphController.setGraph(graph);
 
-            if (graph != null) {
-                disableGraphUIElements(false);
-            } else {
-                disableGraphUIElements(true);
+                if (graph != null) {
+                    disableGraphUIElements(false);
+                } else {
+                    disableGraphUIElements(true);
+                }
+
+                System.out.printf("%s File Parsed.\n", Thread.currentThread());
+                System.out.printf("%s The graph has %d nodes\n", Thread.currentThread(), graph.size());
+            } else if (arg instanceof Exception) {
+                Exception e = (Exception) arg;
+                // TODO find out a smart way to catch Exceptions across threads
             }
-
-            System.out.printf("%s File Parsed.\n", Thread.currentThread());
-            System.out.printf("%s The graph has %d nodes\n", Thread.currentThread(), graph.size());
-        } else {
-            throw new Error("WTF this file is null");
         }
     }
 
