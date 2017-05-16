@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+
 import java.util.*;
 
 /**
@@ -29,7 +30,7 @@ public class Graph {
      * @param id String id.
      */
     public Graph(String id) {
-        this.nodes = new HashMap<>();
+        this.nodes = new HashMap<>(500000, 0.9f);
         this.id = id;
         this.rootNodes = new HashSet<>();
     }
@@ -173,6 +174,10 @@ public class Graph {
         return graph;
     }
 
+    /**
+     * Method to find the RootNodes in a graph. Root nodes are nodes without any parents.
+     * @param verbose boolean when set true will print the root node to the screen.
+     */
     private void findRootNodes(boolean verbose) {
         for (Node n : this.nodes.values()) {
             if (n != null && n.getParents().isEmpty()) {
