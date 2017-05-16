@@ -51,7 +51,7 @@ public class GraphController {
     /**
      * Draw all nodes recursively on the screen.
      *
-     * @param origin
+     * @param origin The parent {@link Node} that initiated this draw call
      * @param node Draw this node and all its children recursively
      * @param offset Draws nodes at this offset from the top-left of the screen
      * @return a {@link Set} of all drawn {@link Node}s
@@ -75,10 +75,12 @@ public class GraphController {
 
     /**
      * Draw all nodes recursively on the screen.
-     * @param origin
+     * @param origin The parent {@link Node} that initiated this draw call
      * @param node Draw this node and all its children recursively
      * @param offset Draws nodes at this offset from the top-left of the screen
      * @param drawnNodes A set containing all drawn nodes
+     * @param maxDepth The max depth from root to draw nodes
+     * @return a {@Link Set} of all drawn {@Link Node}s
      */
     private Set<Node> drawDFS(Node origin, Node node, XYCoordinate offset, int maxDepth, Set<Node> drawnNodes) {
         boolean nodeIsDrawn = drawnNodes.contains(node);

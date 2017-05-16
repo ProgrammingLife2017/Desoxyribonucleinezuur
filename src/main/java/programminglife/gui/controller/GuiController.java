@@ -131,6 +131,10 @@ public class GuiController {
         });
     }
 
+    /**
+     * Method to disable the UI Elements on the left of the GUI.
+     * @param isDisabled boolean, true disables the left anchor panel.
+     */
     private void disableGraphUIElements(boolean isDisabled) {
         anchorLeftControlPanel.setDisable(isDisabled);
     }
@@ -226,6 +230,10 @@ public class GuiController {
     private class NumbersOnlyListener implements ChangeListener<String> {
         private final TextField tf;
 
+        /**
+         * Constructor for the Listener.
+         * @param tf {@link TextField} is the text field on which the listener listens
+         */
         NumbersOnlyListener(TextField tf) {
             this.tf = tf;
         }
@@ -238,6 +246,9 @@ public class GuiController {
         }
     }
 
+    /**
+     * Initialises the mouse events.
+     */
     private void initMouse() {
         grpDrawArea.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
             orgSceneX = event.getSceneX();
@@ -259,6 +270,10 @@ public class GuiController {
         });
     }
 
+    /**
+     * Initialises the Console.
+     * @param parent is the {@Link AnchorPane} in which the console is placed.
+     */
     private TextArea initConsole(AnchorPane parent) {
 //        final ConsoleView console = new ConsoleView(Charset.forName("UTF-8"));
         final TextArea console = new TextArea();
