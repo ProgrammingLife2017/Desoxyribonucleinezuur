@@ -1,6 +1,5 @@
 package programminglife.gui;
 
-import javafx.application.Platform;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import org.junit.*;
@@ -12,6 +11,8 @@ import programminglife.ProgrammingLife;
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * This test class is there to interactively test the GUI. It is capable of clicking on certain buttons and items
@@ -50,12 +51,18 @@ public class GuiControllerTest extends FxRobot {
     public static void tearDownClass() {
     }
 
+    @Test
+    public void isActive() {
+        assertTrue(primaryStage.isShowing());
+    }
+
     /**
      * This test will open a file that has been added to the test resources. It uses the FXML that is also used
      * by the main class and relies heavily on that class.
      */
     @Test
     public void clickOnTest() {
+        assertTrue(primaryStage.isShowing());
         clickOn("#menuFile");
         clickOn("#btnOpen");
         sleep(1, TimeUnit.SECONDS);
@@ -200,28 +207,18 @@ public class GuiControllerTest extends FxRobot {
             }
             type(kc);
         }
-        sleep(1, TimeUnit.SECONDS);
         type(KeyCode.ENTER);
-        sleep(10, TimeUnit.SECONDS);
+        sleep(5, TimeUnit.SECONDS);
         clickOn("#txtMaxDrawDepth").type(KeyCode.DIGIT9);
-        sleep(1, TimeUnit.SECONDS);
         clickOn("#txtCenterNode").type(KeyCode.DIGIT1);
-        sleep(1, TimeUnit.SECONDS);
         clickOn("#btnDraw");
-        sleep(1, TimeUnit.SECONDS);
         clickOn("#btnZoomIn");
-        sleep(1, TimeUnit.SECONDS);
         clickOn("#btnZoomOut");
-        sleep(1, TimeUnit.SECONDS);
         clickOn("#btnZoomReset");
-        sleep(1, TimeUnit.SECONDS);
         clickOn("#btnDrawRandom");
-        sleep(1, TimeUnit.SECONDS);
         clickOn("#menuFile");
-        sleep(1, TimeUnit.SECONDS);
         clickOn("#btnQuit");
         sleep(1, TimeUnit.SECONDS);
-        type(KeyCode.ENTER);
-        sleep(1, TimeUnit.SECONDS);
+//        type(KeyCode.ENTER);
     }
 }
