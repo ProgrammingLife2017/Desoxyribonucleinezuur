@@ -211,9 +211,11 @@ public class GuiControllerTest extends FxRobot {
         sleep(1, TimeUnit.SECONDS);
         clickOn("#menuHelp");
         clickOn("#btnAbout");
+        sleep(500);
         type(KeyCode.ENTER);
         clickOn("#menuHelp");
         clickOn("#btnInstructions");
+        sleep(500);
         type(KeyCode.ENTER);
     }
 }
