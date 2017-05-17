@@ -21,6 +21,12 @@
             <MenuItem mnemonicParsing="false" text="About" />
           </items>
         </Menu>
+        <Menu mnemonicParsing="false" text="Bookmarks">
+          <items>
+            <MenuItem fx:id="btnCreateBookmark" mnemonicParsing="false" text="Create Bookmark" />
+            <MenuItem fx:id="btnLoadBookmark" mnemonicParsing="false" text="Load Bookmark" />
+          </items>
+        </Menu>
       </menus>
     </MenuBar>
       <SplitPane dividerPositions="0.15830721003134796" prefHeight="875.0" prefWidth="1000.0">
