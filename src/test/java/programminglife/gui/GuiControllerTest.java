@@ -43,6 +43,13 @@ public class GuiControllerTest extends FxRobot {
 
     @BeforeClass
     public static void setUpClass() throws TimeoutException {
+        if (Boolean.getBoolean("headless")) {
+            System.setProperty("testfx.robot", "glass");
+            System.setProperty("testfx.headless", "true");
+            System.setProperty("prism.order", "sw");
+            System.setProperty("prism.text", "t2k");
+            System.setProperty("java.awt.headless", "true");
+        }
         operatingSystem = System.getProperty("os.name").toLowerCase();
         primaryStage = FxToolkit.registerPrimaryStage();
     }
