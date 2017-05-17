@@ -68,6 +68,13 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.20</version>
+                <configuration>
+                    <excludes>
+                        <!-- exclude tests here -->
+                        <exclude>**/TestCircle.java</exclude>
+                        <exclude>**/TestSquare.java</exclude>
+                    </excludes>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
