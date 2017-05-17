@@ -1,5 +1,6 @@
 package programminglife.gui;
 
+import javafx.fxml.FXML;
 import javafx.scene.Group;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -11,8 +12,10 @@ import org.junit.Test;
 import org.testfx.api.FxRobot;
 import org.testfx.api.FxToolkit;
 import org.testfx.util.WaitForAsyncUtils;
+import static org.testfx.api.FxAssert.verifyThat;
 import programminglife.ProgrammingLife;
 
+import static org.hamcrest.Matchers.containsString;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.util.concurrent.TimeUnit;
@@ -81,9 +84,11 @@ public class GuiControllerTest extends FxRobot {
         clickOn("#txtMaxDrawDepth").type(KeyCode.DIGIT9);
         clickOn("#txtCenterNode").type(KeyCode.DIGIT2);
         clickOn("#btnDraw");
-        assertEquals("2", ((TextField) lookup("#txtCenterNode").queryFirst()).getCharacters().toString());
-        assertEquals("9", ((TextField) lookup("#txtMaxDrawDepth").queryFirst()).getCharacters().toString());
-        assertEquals(2 * 7 + 8, ((Group) lookup("#grpDrawArea").queryFirst()).getChildren().size());
+        verifyThat("#txtMaxDrawDepth", containsString("txtMaxDrawDepth"));
+        verifyThat("#txtCenterNode", containsString("txtCenterNode"));
+        assertEquals("2", ((TextField) this.lookup("#txtCenterNode").queryFirst()).getCharacters().toString());
+        assertEquals("9", ((TextField) this.lookup("#txtMaxDrawDepth").queryFirst()).getCharacters().toString());
+        assertEquals(2 * 7 + 8, ((Group) this.lookup("#grpDrawArea").queryFirst()).getChildren().size());
         clickOn("#btnZoomIn");
         clickOn("#btnZoomOut");
         clickOn("#btnZoomReset");
