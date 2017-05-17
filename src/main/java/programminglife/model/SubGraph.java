@@ -6,7 +6,7 @@ import java.util.*;
  * Created by Ivo on 2017-05-11.
  * This is a SubGraph, which means that not all children or parents of a
  * Node in this graph need to be within this graph.
- * TODO: make this class thread safe (because it is currently absolutely not.
+ * TODO: make this class thread safe (because it is currently absolutely not).
  */
 public class SubGraph implements Iterable<Node> {
     /**
@@ -167,6 +167,23 @@ public class SubGraph implements Iterable<Node> {
         }
 
         recalculateRootsAndEnds();
+    }
+
+    /**
+     * Removes all Nodes in nodes from this graph. Returns all nodes that were removed.
+     * @param nodes The nodes to be removed.
+     * @return All the nodes that were removed. This is necessarily a subset of nodes.
+     */
+    public Collection<Node> removeAll(Collection<Node> nodes) {
+        HashSet<Node> res = new HashSet<>();
+
+        for (Node n : nodes) {
+            res.add(this.removeNodeNoUpdate(n.getIdentifier()));
+        }
+
+        this.recalculateRootsAndEnds();
+        res.remove(null);
+        return res;
     }
 
     /**

@@ -60,6 +60,40 @@ public class SubGraphTest {
     }
 
     @Test
+    public void removeAllEmpty() throws Exception {
+        // TODO: remove all from an empty graph
+        // check: returns empty collection;
+    }
+
+    @Test
+    public void removeAllNone() throws Exception {
+        // TODO: call removeAll with an empty set
+        // checks:
+        //   returns empty set
+        //   graph is not modified
+    }
+
+    @Test
+    public void removeAllPartial() throws Exception {
+        // TODO: remove all: only some of the nodes are actually in the graph
+        // check:
+        //   nodes that were not in the graph are not in return value
+        //   nodes that were in the graph and the set are now removed
+        //   nodes that were in the graph and the set are in the return value
+        //   nodes that were in the graph but not the set are still in the graph
+        //   nodes that were in the graph but not the set are not in the return value
+    }
+
+    @Test
+    public void removeAllEverything() throws Exception {
+        // TODO: remove all: nodes contains all Nodes from the graph
+        // check:
+        //   graph is now empty
+        //   return value contains all nodes from graph
+        //   return value contains only nodes from graph
+    }
+
+    @Test
     public void containsPositive() throws Exception {
         // TODO check contains on graph that actually contains it
     }
