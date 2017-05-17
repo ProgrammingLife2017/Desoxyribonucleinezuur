@@ -9,6 +9,8 @@
     <version>sprint2</version>
     <packaging>jar</packaging>
 
+    <name>ProgrammingLife</name>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <targetJdk>1.8</targetJdk>
@@ -191,7 +193,7 @@
         <dependency>
             <groupId>org.testfx</groupId>
             <artifactId>testfx-core</artifactId>
-            <version>4.0.1-alpha</version>
+            <version>4.0.5-alpha</version>
             <scope>test</scope>
         </dependency>
 
@@ -199,7 +201,7 @@
         <dependency>
             <groupId>org.testfx</groupId>
             <artifactId>testfx-junit</artifactId>
-            <version>4.0.6-alpha</version>
+            <version>4.0.5-alpha</version>
             <scope>test</scope>
         </dependency>
 
@@ -214,7 +216,6 @@
             <groupId>org.jfxtras</groupId>
             <artifactId>openjfx-monocle</artifactId>
             <version>1.8.0_20</version>
-            <scope>test</scope>
         </dependency>
 
     </dependencies>
