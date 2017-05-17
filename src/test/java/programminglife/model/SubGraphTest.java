@@ -1,9 +1,7 @@
-package programminglife.gui.controller;
+package programminglife.model;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import programminglife.model.Segment;
-import programminglife.model.SubGraph;
 import programminglife.parser.GraphParser;
 
 import java.io.File;
