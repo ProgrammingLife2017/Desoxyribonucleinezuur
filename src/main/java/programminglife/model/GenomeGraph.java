@@ -2,7 +2,6 @@ package programminglife.model;
 
 import org.jetbrains.annotations.NotNull;
 import org.mapdb.HTreeMap;
-import org.mapdb.Serializer;
 
 import java.util.*;
 
@@ -18,13 +17,18 @@ public class GenomeGraph implements Graph<Segment, Link> {
      */
     private HTreeMap<Integer, Segment> nodes;
 
-    public GenomeGraph(String id) {
-        this(id, DataManager.createSegmentStorage(id));
+    /**
+     * Create a genomeGraph with name.
+     * @param name name of the graph
+     */
+    public GenomeGraph(String name) {
+        this(name, DataManager.getSegmentStorage(name));
     }
 
     /**
      * The constructor for a GenomeGraph.
      * @param id String id.
+     * @param nodes A HTreeMap with ids mapped to Segments.
      */
     public GenomeGraph(String id, HTreeMap<Integer, Segment> nodes) {
         this.nodes = nodes;

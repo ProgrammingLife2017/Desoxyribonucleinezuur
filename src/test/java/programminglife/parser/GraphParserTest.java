@@ -35,8 +35,11 @@ public class GraphParserTest implements Observer {
 
     @Before
     public void setUp() throws Exception {
-        graphParser = new GraphParser(new File(TEST_PATH));
-        faultyGraphParser = new GraphParser(new File(TEST_FAULTY_PATH));
+        File testFile = new File(TEST_PATH);
+        graphParser = new GraphParser(testFile, testFile.getName());
+
+        File faultyTestFile = new File(TEST_PATH);
+        faultyGraphParser = new GraphParser(faultyTestFile, faultyTestFile.getName());
 
         linkLine = "L\t34\t+\t35\t+\t0M";
         nodeLine = "S\t6\tC\t*\tORI:Z:TKK_04_0031.fasta\tCRD:Z:TKK_04_0031.fasta\tCRDCTG:Z:7000000219691771\tCTG:Z:7000000219691771\tSTART:Z:3039";

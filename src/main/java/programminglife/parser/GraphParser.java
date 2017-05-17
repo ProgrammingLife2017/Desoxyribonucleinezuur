@@ -20,16 +20,19 @@ public class GraphParser extends Observable implements Runnable {
 
     private GenomeGraph graph;
     private File graphFile;
+    private String name;
     private boolean verbose;
 
     /**
      * Initiates an empty graph and the {@link File} to parse.
      * @param graphFile the file to parse the {@link GenomeGraph} from
+     * @param name The name to use for this Graph (this name is used to create the cache).
      */
-    public GraphParser(File graphFile) {
+    public GraphParser(File graphFile, String name) {
         this.graphFile = graphFile;
+        this.name = name;
         this.verbose = PARSE_LINE_VERBOSE_DEFAULT;
-        this.graph = new GenomeGraph(graphFile.getName(), DataManager.createSegmentStorage(graphFile.getName()));
+        this.graph = new GenomeGraph(name, DataManager.createCleanSegmentStorage(name));
     }
 
     /**
@@ -65,7 +68,12 @@ public class GraphParser extends Observable implements Runnable {
      */
     protected synchronized void parse(boolean verbose) throws FileNotFoundException, UnknownTypeException {
         if (verbose) {
-            System.out.printf("%s Parsing file %s\n", Thread.currentThread(), this.graphFile.getAbsolutePath());
+            System.out.printf(
+                    "%s Parsing file with name %s with path %s\n",
+                    Thread.currentThread(),
+                    this.name,
+                    this.graphFile.getAbsolutePath()
+            );
         }
 
         BufferedReader reader = new BufferedReader(new FileReader(this.graphFile));

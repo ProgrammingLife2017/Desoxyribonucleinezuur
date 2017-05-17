@@ -228,10 +228,11 @@ public class SubGraphTest {
 
     @Test
     public void topoSortNormal() throws Exception {
-        GraphParser gp = new GraphParser(new File(TEST_PATH));
+        File testFile = new File(TEST_PATH);
+        GraphParser gp = new GraphParser(testFile, testFile.getName());
         gp.parse();
 
-        SubGraph sg = new SubGraph(gp.getGraph());
+        SubGraph<Segment, Link> sg = new SubGraph<>(gp.getGraph());
 
         List<Segment> sorted = sg.topoSort();
         Set<Segment> found = new HashSet<>();

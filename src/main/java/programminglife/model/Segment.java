@@ -214,6 +214,9 @@ public class Segment extends Rectangle implements Node<Segment> {
         return this.sequence.length();
     }
 
+    /**
+     * A class for serializing and deserializing Segments.
+     */
     public static class SegmentSerializer implements Serializer<Segment> {
         /**
          * Serializes the content of the given value into the given

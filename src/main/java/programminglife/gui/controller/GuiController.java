@@ -17,6 +17,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import jp.uphy.javafx.console.ConsoleView;
 import programminglife.ProgrammingLife;
+import programminglife.model.DataManager;
 import programminglife.model.GenomeGraph;
 import programminglife.model.exception.UnknownTypeException;
 import programminglife.parser.GraphParser;
@@ -87,9 +88,21 @@ public class GuiController implements Observer {
      */
     public void openFile(File file) throws FileNotFoundException, UnknownTypeException {
         if (file != null) {
-            GraphParser graphParser = new GraphParser(file);
-            graphParser.addObserver(this);
-            (new Thread(graphParser)).start();
+            String name = file.getName();
+
+            if (DataManager.hasCache(name)) {
+                // load cache from datamanager
+                GenomeGraph graph = new GenomeGraph(name, DataManager.getSegmentStorage(name));
+
+                System.out.printf("%s Graph %s found in cache\n", Thread.currentThread(), name);
+                this.setGraph(graph);
+            } else {
+                // Parse graph and save it.
+                GraphParser graphParser = new GraphParser(file, name);
+                graphParser.addObserver(this);
+                System.out.printf("%s No cache found for %s, parsing graph...\n", Thread.currentThread(), name);
+                (new Thread(graphParser)).start();
+            }
         }
     }
 
@@ -98,16 +111,30 @@ public class GuiController implements Observer {
         if (o instanceof GraphParser) {
             if (arg instanceof GenomeGraph) {
                 GenomeGraph graph = (GenomeGraph) arg;
-                this.graphController.setGraph(graph);
-
-                disableGraphUIElements(graph == null);
 
                 System.out.printf("%s File Parsed.\n", Thread.currentThread());
-                System.out.printf("%s The graph has %d nodes\n", Thread.currentThread(), graph.size());
+
+                this.setGraph(graph);
             } else if (arg instanceof Exception) {
                 Exception e = (Exception) arg;
                 // TODO find out a smart way to catch Exceptions across threads
             }
+        }
+    }
+
+    /**
+     * Set the graph for this GUIController.
+     * @param graph Graph to use.
+     */
+    public void setGraph(GenomeGraph graph) {
+        this.graphController.setGraph(graph);
+        disableGraphUIElements(graph == null);
+
+        if (graph != null) {
+            System.out.printf("%s Graph was set to %s.\n", Thread.currentThread(), graph.getId());
+            System.out.printf("%s The graph has %d nodes\n", Thread.currentThread(), graph.size());
+        } else {
+            System.out.printf("%s graph was set to null.\n", Thread.currentThread());
         }
     }
 
