@@ -69,7 +69,7 @@ public class GuiControllerTest extends FxRobot {
      */
     @Test
     public void clickOnTest() {
-        openAndParseFile(this.testFileName);
+        openAndParseFile(testFileName);
 
         clickOn("#txtMaxDrawDepth").type(KeyCode.DIGIT9);
         clickOn("#txtCenterNode").type(KeyCode.DIGIT2);
