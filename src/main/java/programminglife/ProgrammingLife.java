@@ -37,7 +37,7 @@ public final class ProgrammingLife extends Application {
      * @param args argument
      */
     public static void main(String[] args) {
-        new ToolkitApplicationLauncher().launch(ProgrammingLife.class, args);
+        launch(args);
     }
 
     @Override
