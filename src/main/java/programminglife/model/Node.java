@@ -2,6 +2,7 @@ package programminglife.model;
 
 import org.apache.commons.lang3.NotImplementedException;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 /**

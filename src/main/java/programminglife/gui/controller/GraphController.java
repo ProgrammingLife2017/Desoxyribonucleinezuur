@@ -5,6 +5,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import jp.uphy.javafx.console.ConsoleView;
+import programminglife.model.DataManager;
 import programminglife.model.GenomeGraph;
 import programminglife.model.Segment;
 import programminglife.model.XYCoordinate;
@@ -33,6 +34,8 @@ public class GraphController {
     public GraphController(GenomeGraph graph, Group grpDrawArea) {
         this.graph = graph;
         this.grpDrawArea = grpDrawArea;
+
+        DataManager.getInstance();
     }
 
     public void setConsole(ConsoleView console) {

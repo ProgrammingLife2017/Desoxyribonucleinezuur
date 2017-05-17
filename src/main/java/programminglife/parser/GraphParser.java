@@ -2,6 +2,7 @@ package programminglife.parser;
 
 import com.diffplug.common.base.Errors;
 import com.diffplug.common.base.Throwing;
+import programminglife.model.DataManager;
 import programminglife.model.GenomeGraph;
 import programminglife.model.Segment;
 import programminglife.model.exception.UnknownTypeException;
@@ -28,7 +29,7 @@ public class GraphParser extends Observable implements Runnable {
     public GraphParser(File graphFile) {
         this.graphFile = graphFile;
         this.verbose = PARSE_LINE_VERBOSE_DEFAULT;
-        this.graph = new GenomeGraph("");
+        this.graph = new GenomeGraph(graphFile.getName(), DataManager.createSegmentStorage(graphFile.getName()));
     }
 
     /**
@@ -68,7 +69,6 @@ public class GraphParser extends Observable implements Runnable {
         }
 
         BufferedReader reader = new BufferedReader(new FileReader(this.graphFile));
-        this.graph = new GenomeGraph(this.graphFile.getName());
 
         try {
             reader.lines().forEach(Errors.rethrow().wrap((Throwing.Consumer<String>) line -> {

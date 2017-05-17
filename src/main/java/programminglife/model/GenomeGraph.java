@@ -1,6 +1,8 @@
 package programminglife.model;
 
 import org.jetbrains.annotations.NotNull;
+import org.mapdb.HTreeMap;
+import org.mapdb.Serializer;
 
 import java.util.*;
 
@@ -14,14 +16,18 @@ public class GenomeGraph implements Graph<Segment, Link> {
     /**
      * A list of nodes ordered by ID. Assumption: Nodes appear in GFA file in sequential order.
      */
-    private Map<Integer, Segment> nodes;
+    private HTreeMap<Integer, Segment> nodes;
+
+    public GenomeGraph(String id) {
+        this(id, DataManager.createSegmentStorage(id));
+    }
 
     /**
      * The constructor for a GenomeGraph.
      * @param id String id.
      */
-    public GenomeGraph(String id) {
-        this.nodes = new HashMap<>(500000, 0.9f);
+    public GenomeGraph(String id, HTreeMap<Integer, Segment> nodes) {
+        this.nodes = nodes;
         this.id = id;
         this.rootNodes = new HashSet<>();
     }

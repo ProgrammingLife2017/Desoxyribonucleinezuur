@@ -3,7 +3,12 @@ package programminglife.model;
 import javafx.scene.shape.Rectangle;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
+import org.mapdb.DataInput2;
+import org.mapdb.DataOutput2;
+import org.mapdb.Serializer;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -207,5 +212,37 @@ public class Segment extends Rectangle implements Node<Segment> {
      */
     public int getSequenceLength() {
         return this.sequence.length();
+    }
+
+    public static class SegmentSerializer implements Serializer<Segment> {
+        /**
+         * Serializes the content of the given value into the given
+         * {@link DataOutput2}.
+         *
+         * @param out   DataOutput2 to save object into
+         * @param value Object to serialize
+         * @throws IOException in case of an I/O error
+         */
+        @Override
+        public void serialize(@NotNull DataOutput2 out, @NotNull Segment value) throws IOException {
+            out.writeInt(value.getIdentifier());
+            out.writeBytes(value.getSequence());
+        }
+
+        /**
+         * Deserializes and returns the content of the given {@link DataInput2}.
+         *
+         * @param input     DataInput2 to de-serialize data from
+         * @param available how many bytes that are available in the DataInput2 for
+         *                  reading, may be -1 (in streams) or 0 (null).
+         * @return the de-serialized content of the given {@link DataInput2}
+         * @throws IOException in case of an I/O error
+         */
+        @Override
+        public Segment deserialize(@NotNull DataInput2 input, int available) throws IOException {
+            byte[] s = new byte[available];
+            input.readFully(s, 0, available);
+            return new Segment(input.readInt(), new String(s));
+        }
     }
 }
