@@ -74,7 +74,9 @@ public class GuiControllerTest extends FxRobot {
     public void clickOnTest() {
         openAndParseFile(testFileName);
 
+        clickOn("#txtMaxDrawDepth").type(KeyCode.BACK_SPACE);
         clickOn("#txtMaxDrawDepth").type(KeyCode.DIGIT9);
+        clickOn("#txtCenterNode").type(KeyCode.BACK_SPACE);
         clickOn("#txtCenterNode").type(KeyCode.DIGIT2);
         clickOn("#btnDraw");
         assertEquals("2", ((TextField) lookup("#txtCenterNode").query()).getCharacters().toString());
@@ -84,6 +86,15 @@ public class GuiControllerTest extends FxRobot {
         clickOn("#btnZoomOut");
         clickOn("#btnZoomReset");
         clickOn("#btnDrawRandom");
+        sleep(500);
+        clickOn("#menuHelp");
+        clickOn("#btnAbout");
+        sleep(500);
+        type(KeyCode.ENTER);
+        clickOn("#menuHelp");
+        clickOn("#btnInstructions");
+        sleep(500);
+        type(KeyCode.ENTER);
     }
 
     private void openAndParseFile(String fileName) {

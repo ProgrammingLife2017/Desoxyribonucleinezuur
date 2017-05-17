@@ -16,9 +16,10 @@
             <MenuItem fx:id="btnQuit" mnemonicParsing="false" text="Quit" />
           </items>
         </Menu>
-        <Menu mnemonicParsing="false" text="Help">
+        <Menu fx:id="menuHelp" mnemonicParsing="false" text="Help">
           <items>
-            <MenuItem mnemonicParsing="false" text="About" />
+            <MenuItem fx:id="btnAbout" mnemonicParsing="false" text="About" />
+            <MenuItem fx:id="btnInstructions" mnemonicParsing="false" text="Instructions" />
           </items>
         </Menu>
       </menus>

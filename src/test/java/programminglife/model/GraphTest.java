@@ -7,7 +7,9 @@ import org.junit.Test;
 import java.io.File;
 import java.util.NoSuchElementException;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by toinehartman on 03/05/2017.
@@ -53,5 +55,21 @@ public class GraphTest {
     @Test(expected = NoSuchElementException.class)
     public void getNodeTest1() {
         graph.getNode(121);
+    }
+
+    @Test
+    public void sizeTest() {
+        assertEquals(1,graph.size());
+        graph.addNode(new Node(2,"AAAAT"));
+        assertEquals(2,graph.size());
+    }
+
+    @Test
+    public void containsTest() {
+        Node node2 = new Node( 2, "ATTCTT");
+        graph.addNode(node2);
+        assertTrue(graph.contains(node2));
+        Node node3 = new Node(37,"AAAAAAAA");
+        assertFalse(graph.contains(node3));
     }
 }

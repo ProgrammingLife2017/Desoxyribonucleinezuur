@@ -23,6 +23,7 @@ import programminglife.parser.GraphParser;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.NoSuchElementException;
 import java.util.Observable;
 import java.util.Observer;
 import java.nio.charset.Charset;
@@ -32,11 +33,22 @@ import java.util.Optional;
  * The controller for the GUI that is used in the application.
  * The @FXML tag is needed in initialize so that javaFX knows what to do.
  */
+
+
+
+
 public class GuiController implements Observer {
+    //static finals
+    private static final String INITIAL_CENTER_NODE = "1";
+    private static final String INITIAL_MAX_DRAW_DEPTH = "10";
+    private static final double INSTRUCTIONS_MIN_WIDTH = 800;
+    private static final double ABOUT_MIN_WIDTH = 500;
 
     //FXML imports.
     @FXML private MenuItem btnOpen;
     @FXML private MenuItem btnQuit;
+    @FXML private MenuItem btnAbout;
+    @FXML private MenuItem btnInstructions;
     @FXML private Button btnZoomIn;
     @FXML private Button btnZoomOut;
     @FXML private Button btnZoomReset;
@@ -53,8 +65,6 @@ public class GuiController implements Observer {
     @FXML private AnchorPane anchorConsolePanel;
 
     //Privates used by method.
-
-
     private ConsoleView consoleView;
     private double orgSceneX, orgSceneY;
     private double orgTranslateX, orgTranslateY;
@@ -69,13 +79,11 @@ public class GuiController implements Observer {
     @SuppressWarnings("Unused")
     private void initialize() {
         this.graphController = new GraphController(null, this.grpDrawArea);
-
         initMenubar();
         initLeftControlpanelScreenModifiers();
         initLeftControlpanelDraw();
         initMouse();
         consoleView = initConsole(anchorConsolePanel);
-
         this.graphController.setConsole(consoleView);
     }
 
@@ -144,6 +152,37 @@ public class GuiController implements Observer {
                 a.close();
             }
         });
+
+        btnAbout.setOnAction(event -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("About");
+            alert.setHeaderText(null);
+            alert.setResizable(true);
+            alert.getDialogPane().setMinWidth(ABOUT_MIN_WIDTH);
+            alert.setContentText("This application is made by Contextproject group Desoxyribonucleïnezuur:\n\n"
+                    + "Ivo Wilms \n" + "Iwan Hoogenboom \n" + "Martijn van Meerten \n" + "Toine Hartman\n"
+                    + "Yannick Haveman");
+
+            alert.show();
+        });
+
+
+        btnInstructions.setOnAction(event -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Instructions");
+            alert.setHeaderText(null);
+            alert.setResizable(true);
+            alert.getDialogPane().setMinWidth(INSTRUCTIONS_MIN_WIDTH);
+            alert.setContentText("Open a gfa file, wait for it to be parsed.\n"
+                    + "Give the start node and the amount of layers (depth) to be drawn on the left.\n\n"
+                    + "Zoom using the zoom buttons or alt + scrollwheel.\n"
+                    + "Move the graph by pressing alt + dragging a node or edge.\n"
+                    + "Reset the zoom with reset zoom and jump back to the beginning"
+                    + " of the drawn graph with the Reset X/Y button.\n"
+                    + "The suprise me! button chooses a random start node and draws with the depth you gave.");
+            alert.show();
+        });
+
     }
 
     /**
@@ -212,21 +251,29 @@ public class GuiController implements Observer {
         btnDraw.setOnAction(event -> {
             System.out.printf("%s Drawing graph...\n", Thread.currentThread());
 
-            int maxDepth = Integer.MAX_VALUE;
             int centerNode = 0;
+            int maxDepth = 0;
 
             try {
-                maxDepth = Integer.parseInt(txtMaxDrawDepth.getText());
                 centerNode = Integer.parseInt(txtCenterNode.getText());
+                maxDepth = Integer.parseInt(txtMaxDrawDepth.getText());
             } catch (NumberFormatException e) {
-                Alert alert = new Alert(Alert.AlertType.WARNING, "Input is not a number", ButtonType.OK);
+                Alert alert = new Alert(Alert.AlertType.WARNING, "Make sure you have entered a number as input.");
                 alert.show();
-                txtMaxDrawDepth.clear();
             }
 
-            this.graphController.clear();
-            this.graphController.draw(centerNode, maxDepth);
-            System.out.printf("%s Graph drawn.\n", Thread.currentThread());
+            try {
+                this.graphController.getGraph().getNode(centerNode);
+                this.graphController.clear();
+                this.graphController.draw(centerNode, maxDepth);
+                System.out.printf("%s Graph drawn.\n", Thread.currentThread());
+            } catch (NoSuchElementException e) {
+                Alert alert = new Alert(Alert.AlertType.WARNING, "There is no node with this ID."
+                        + " Choose another start Node.", ButtonType.OK);
+                alert.show();
+            }
+
+
         });
 
         btnDrawRandom.setOnAction(event -> {
@@ -236,7 +283,10 @@ public class GuiController implements Observer {
         });
 
         txtMaxDrawDepth.textProperty().addListener(new NumbersOnlyListener(txtMaxDrawDepth));
+        txtMaxDrawDepth.setText(INITIAL_MAX_DRAW_DEPTH);
+
         txtCenterNode.textProperty().addListener(new NumbersOnlyListener(txtCenterNode));
+        txtCenterNode.setText(INITIAL_CENTER_NODE);
     }
 
     /**

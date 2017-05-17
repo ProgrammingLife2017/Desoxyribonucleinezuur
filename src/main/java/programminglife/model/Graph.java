@@ -73,4 +73,12 @@ public class Graph {
     public int size() {
         return this.getNodes().size();
     }
+
+    /**
+     * @param node {@link Node} to check if it is contained in the graph.
+     * @return boolean with the result of the contains.
+     */
+    public boolean contains(Node node) {
+        return this.nodes.containsKey(node.getIdentifier());
+    }
 }
