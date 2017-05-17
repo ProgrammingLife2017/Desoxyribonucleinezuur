@@ -7,7 +7,6 @@ import javafx.scene.shape.Rectangle;
 import jp.uphy.javafx.console.ConsoleView;
 import programminglife.model.GenomeGraph;
 import programminglife.model.Segment;
-import programminglife.model.SubGraph;
 import programminglife.model.XYCoordinate;
 
 import java.util.HashSet;
@@ -114,7 +113,8 @@ public class GraphController {
      * @param maxDepth The max depth from root to draw nodes
      * @return a {@link Set} of all drawn {@link Segment}s
      */
-    private Set<Segment> drawDFS(Segment origin, Segment node, XYCoordinate offset, int maxDepth, Set<Segment> drawnNodes) {
+    private Set<Segment> drawDFS(Segment origin, Segment node,
+                                 XYCoordinate offset, int maxDepth, Set<Segment> drawnNodes) {
         boolean nodeIsDrawn = drawnNodes.contains(node);
         if (!nodeIsDrawn) {
             node.setLocation(offset);

@@ -3,10 +3,11 @@ package programminglife.model;
 import java.util.*;
 
 /**
- * Created by Ivo on 2017-05-11.
  * This is a SubGraph, which means that not all children or parents of a
- * N in this graph need to be within this graph.
+ * {@link N} in this graph need to be within this graph.
  * TODO: make this class thread safe (because it is currently absolutely not).
+ * @param <N> an implementation of {@link Node} to use for node/vertex objects.
+ * @param <E> an implementation of {@link Edge} to use for link/edge objects.
  */
 public class SubGraph<N extends Node<N>, E extends Edge> implements Graph<N, E> {
     /**
@@ -81,7 +82,7 @@ public class SubGraph<N extends Node<N>, E extends Edge> implements Graph<N, E> 
      * @param graph GenomeGraph to create this SubGraph from.
      */
     public SubGraph(Graph graph) {
-        this.addAll(graph.getNodes());
+        this(graph.getNodes());
     }
 
     /**
@@ -116,15 +117,15 @@ public class SubGraph<N extends Node<N>, E extends Edge> implements Graph<N, E> 
 
     /**
      * Add a collection of Nodes to this GenomeGraph.<br>
-     * Because this uses the same interface as {@link #addNode(N) AddNode}, this method will
+     * Because this uses the same interface as {@link #addNode(Node)}, this method will
      * throw an Exception when one of the nodes already exists.
      * This also means that the Collection cannot contain duplicates.<br>
      * If this happens, all Nodes before are inserted, but all Nodes after (including the duplicate N) not.
      * If the iterator for the Collection does not return Nodes in a deterministic order,
      * the state of the SubGraph is essentially undefined.
-     * You can partly fix it by calling {@link #removeAll(Collection< N >) removeAll},
+     * You can partly fix it by calling {@link #removeAll(Collection)},
      * but it will remove any duplicates.
-     * If you don't want this, use {@link #replaceAll(Collection< N >) replaceAll} instead.
+     * If you don't want this, use {@link #replaceAll(Collection)} instead.
      * (That can also be used when you are absolutely certain that no nodes already exist,
      * which would be faster, as it skips that check then)<br>
      * Functionally the same as <br>
@@ -210,9 +211,9 @@ public class SubGraph<N extends Node<N>, E extends Edge> implements Graph<N, E> 
     /**
      * add a new node to nodes.
      * This method throws an Exception when there already exists a node with the same identifier.
-     * If you don't want this, use {@link #replaceNode(N) replaceNode}.
+     * If you don't want this, use {@link #replaceNode(Node)}.
      * @param node N to add
-     * @throws Error If there already was a node with this id, this method throws an Exception.
+     * @throws Error If there already was a node with this id, this method throws an {@link Exception}.
      */
     public void addNode(N node) {
         assert (node != null);
@@ -233,7 +234,7 @@ public class SubGraph<N extends Node<N>, E extends Edge> implements Graph<N, E> 
     /**
      * replaces a node with a new N.
      * This method does not throw an Exception when there already exists a node with the same identifier.
-     * If you want that, use {@link #addNode(N) addNode}.
+     * If you want that, use {@link #addNode(Node)}.
      * @param node The new N.
      * @return The old N, or null if there was none.
      */
@@ -244,9 +245,9 @@ public class SubGraph<N extends Node<N>, E extends Edge> implements Graph<N, E> 
     }
 
     /**
-     * Remove a N from this GenomeGraph.
+     * Remove a {@link N} from this {@link GenomeGraph}.
      * @param id Id of the node to remove
-     * @return the removed N, or null if there was none.
+     * @return the removed {@link N}, or null if there was none.
      */
     public N removeNode(int id) {
         N node = this.removeNodeNoUpdate(id);
@@ -272,12 +273,13 @@ public class SubGraph<N extends Node<N>, E extends Edge> implements Graph<N, E> 
      * This method is to be used when a lot of changes to the graph are going to be made,
      * and it will be more efficient to change them all first and then update everything else.
      * This method throws an Exception when there already exists a node with the same identifier.
-     * If you don't want this, use {@link #replaceNodeNoUpdate(N) replaceNodeNoUpdate}.
+     * If you don't want this, use {@link #replaceNodeNoUpdate(Node)}.
      * @param node N to add
      * @throws Error If there already was a node with this id, this method throws an Exception.
      */
     private void addNodeNoUpdate(N node) {
         assert (node != null);
+        assert(this.nodes != null);
 
         N res = this.nodes.put(node.getIdentifier(), node);
         if (res != null) {
@@ -419,7 +421,7 @@ public class SubGraph<N extends Node<N>, E extends Edge> implements Graph<N, E> 
         // }
         // Repeat until all nodes are added to the list.
         while (!nodes.isEmpty()) {
-            N n = nodes.get(nodes.size());
+            N n = nodes.get(nodes.size() - 1);
 
             findAllParentsAdded:
             while (true) {

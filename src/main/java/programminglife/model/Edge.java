@@ -11,7 +11,4 @@ public interface Edge {
      * @return The genomes tat go through this edge.
      */
     Collection<Genome> getGenomes();
-
-    
-
 }
