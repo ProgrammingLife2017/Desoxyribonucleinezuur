@@ -8,18 +8,18 @@ import java.util.HashSet;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class NodeTest {
-    Node node;
+public class SegmentTest {
+    Segment node;
     String line;
 
     @Before
     public void setUp() throws Exception {
-        node = new Node(1, "ATCG");
+        node = new Segment(1, "ATCG");
     }
 
     @Test
     public void NodeId() {
-        node = new Node(8);
+        node = new Segment(8);
 
         assertEquals(8, node.getIdentifier());
         assertEquals("", node.getSequence());
@@ -29,7 +29,7 @@ public class NodeTest {
 
     @Test
     public void NodeIdSequence() {
-        node = new Node(8, "ATCG");
+        node = new Segment(8, "ATCG");
 
         assertEquals(8, node.getIdentifier());
         assertEquals("ATCG", node.getSequence());
@@ -39,7 +39,7 @@ public class NodeTest {
 
     @Test
     public void NodeIdSequenceParentsChildren() {
-        node = new Node(8, "ATCG", new HashSet<>(), new HashSet<>());
+        node = new Segment(8, "ATCG", new HashSet<>(), new HashSet<>());
 
         assertEquals(8, node.getIdentifier());
         assertEquals("ATCG", node.getSequence());
@@ -61,8 +61,8 @@ public class NodeTest {
 
     @Test
     public void childrenTest() {
-        Node child1 = new Node(3);
-        Node child2 = new Node(16);
+        Segment child1 = new Segment(3);
+        Segment child2 = new Segment(16);
         node.addChild(child1);
         node.addChild(child2);
 
@@ -74,8 +74,8 @@ public class NodeTest {
 
     @Test
     public void parentsTest() {
-        Node child1 = new Node(3);
-        Node child2 = new Node(16);
+        Segment child1 = new Segment(3);
+        Segment child2 = new Segment(16);
         node.addParent(child1);
         node.addParent(child2);
 

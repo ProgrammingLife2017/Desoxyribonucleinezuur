@@ -3,7 +3,7 @@ package programminglife.parser;
 import com.diffplug.common.base.Errors;
 import com.diffplug.common.base.Throwing;
 import programminglife.model.GenomeGraph;
-import programminglife.model.Node;
+import programminglife.model.Segment;
 import programminglife.model.exception.UnknownTypeException;
 
 import java.io.*;
@@ -106,7 +106,7 @@ public class GraphParser extends Observable implements Runnable {
     }
 
     /**
-     * Parse a {@link String} representing a {@link Node}.
+     * Parse a {@link String} representing a {@link Segment}.
      * @param propertyString the {@link String} from a GFA file.
      */
     synchronized void parseSegment(String propertyString) {
@@ -117,8 +117,8 @@ public class GraphParser extends Observable implements Runnable {
         // properties[3] is +/-
         // rest of properties is unused
 
-        Node parsedNode = new Node(id, segment);
-        Node existingNode;
+        Segment parsedNode = new Segment(id, segment);
+        Segment existingNode;
         try {
             existingNode = this.getGraph().getNode(parsedNode.getIdentifier());
             existingNode.setSequence(parsedNode.getSequence());
@@ -139,19 +139,19 @@ public class GraphParser extends Observable implements Runnable {
         int destinationId = Integer.parseInt(properties[3]);
         // properties[4] and further are unused
 
-        Node sourceNode, destinationNode;
+        Segment sourceNode, destinationNode;
 
         try {
             sourceNode = this.getGraph().getNode(sourceId);
         } catch (NoSuchElementException e) {
-            sourceNode = new Node(sourceId);
+            sourceNode = new Segment(sourceId);
             this.getGraph().addNode(sourceNode);
         }
 
         try {
             destinationNode = this.getGraph().getNode(destinationId);
         } catch (NoSuchElementException e) {
-            destinationNode = new Node(destinationId);
+            destinationNode = new Segment(destinationId);
             this.getGraph().addNode(destinationNode);
         }
 
@@ -160,10 +160,10 @@ public class GraphParser extends Observable implements Runnable {
     }
 
     /**
-     * Find all {@link Node}s without parents and mark them as root nodes.
+     * Find all {@link Segment}s without parents and mark them as root nodes.
      */
     private synchronized void findRootNodes() {
-        for (Node n : this.getGraph().getNodes()) {
+        for (Segment n : this.getGraph().getNodes()) {
             if (n != null && n.getParents().isEmpty()) {
                 this.getGraph().getRootNodes().add(n);
             }

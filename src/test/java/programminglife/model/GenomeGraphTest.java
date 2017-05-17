@@ -14,7 +14,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class GenomeGraphTest {
     GenomeGraph graph;
-    Node node;
+    Segment node;
     String link;
 
     private static String TEST_PATH, TEST_FAULTY_PATH;
@@ -30,14 +30,14 @@ public class GenomeGraphTest {
     @Before
     public void setUp() throws Exception {
         graph = new GenomeGraph("test graph");
-        node = new Node(3, "ATCG");
+        node = new Segment(3, "ATCG");
 
         graph.addNode(node);
     }
 
     @Test
     public void addNodeTest() throws Exception {
-        Node secondNode = new Node(8);
+        Segment secondNode = new Segment(8);
         graph.addNode(secondNode);
 
         assertEquals(2, graph.getNodes().size());

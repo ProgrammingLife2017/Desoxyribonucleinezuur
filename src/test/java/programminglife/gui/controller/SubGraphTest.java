@@ -2,7 +2,7 @@ package programminglife.gui.controller;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import programminglife.model.Node;
+import programminglife.model.Segment;
 import programminglife.model.SubGraph;
 import programminglife.parser.GraphParser;
 
@@ -113,7 +113,7 @@ public class SubGraphTest {
         // TODO: add a new node that already exists (should throw exception)
         // Checks:
         //   throws Exception
-        //   new Node is NOT inserted
+        //   new Segment is NOT inserted
         //   old nodes are still there.
     }
 
@@ -140,17 +140,17 @@ public class SubGraphTest {
         // Checks:
         //   new node is inserted
         //   old node is deleted.
-        //   returns old Node.
+        //   returns old Segment.
     }
 
     @Test
     public void removeNodeExists() throws Exception {
-        // TODO: check that removing a Node from the graph removes it (!sg.contains(node))
+        // TODO: check that removing a Segment from the graph removes it (!sg.contains(node))
     }
 
     @Test
     public void removeNodeNotExists() throws Exception {
-        // TODO: check that removing a Node that does not exist from the graph does not change it.
+        // TODO: check that removing a Segment that does not exist from the graph does not change it.
     }
 
     @Test
@@ -235,18 +235,18 @@ public class SubGraphTest {
 
         SubGraph sg = new SubGraph(gp.getGraph());
 
-        List<Node> sorted = sg.topoSort();
-        Set<Node> found = new HashSet<>();
+        List<Segment> sorted = sg.topoSort();
+        Set<Segment> found = new HashSet<>();
 
-        for (Node n : sorted) {
+        for (Segment n : sorted) {
             // n should not yet have been in the list.
             assertFalse(found.contains(n));
 
-            for (Node p : n.getParents()) {
+            for (Segment p : n.getParents()) {
                 assertTrue(found.contains(p));
             }
 
-            for (Node c : n.getChildren()) {
+            for (Segment c : n.getChildren()) {
                 assertFalse(found.contains(c));
             }
 
@@ -256,7 +256,7 @@ public class SubGraphTest {
 
     @Test
     public void topoSortEmpty() throws Exception {
-        assertEquals(new ArrayList<>(new SubGraph().topoSort()), new ArrayList<Node>());
+        assertEquals(new ArrayList<>(new SubGraph().topoSort()), new ArrayList<Segment>());
     }
 
     @Test

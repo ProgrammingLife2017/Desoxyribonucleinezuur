@@ -5,7 +5,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import programminglife.model.GenomeGraph;
 import programminglife.model.GenomeGraphTest;
-import programminglife.model.Node;
+import programminglife.model.Segment;
 import programminglife.model.exception.UnknownTypeException;
 
 import java.io.File;
@@ -51,7 +51,7 @@ public class GraphParserTest implements Observer {
     public void parseTest() throws Exception {
         graphParser.parse();
         GenomeGraph graph = graphParser.getGraph();
-        Collection<Node> nodes = graph.getNodes();
+        Collection<Segment> nodes = graph.getNodes();
 
         assertEquals(8, nodes.size());
         assertEquals(9, nodes.stream()
@@ -68,7 +68,7 @@ public class GraphParserTest implements Observer {
     public void parseSegmentTest() {
         graphParser.parseSegment(nodeLine);
 
-        Node node = graphParser.getGraph().getNode(6);
+        Segment node = graphParser.getGraph().getNode(6);
 
         assertEquals(6, node.getIdentifier());
         assertEquals("C", node.getSequence());
@@ -98,7 +98,7 @@ public class GraphParserTest implements Observer {
         if (o instanceof GraphParser) {
             if (arg instanceof GenomeGraph) {
                 GenomeGraph graph = (GenomeGraph) arg;
-                Node node = graph.getNode(8);
+                Segment node = graph.getNode(8);
 
                 assertEquals(new File(TEST_PATH).getName(), graph.getId());
                 assertEquals("GTC", node.getSequence());

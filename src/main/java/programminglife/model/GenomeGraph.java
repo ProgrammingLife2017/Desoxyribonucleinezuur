@@ -7,12 +7,12 @@ import java.util.*;
  */
 public class GenomeGraph {
     private String id;
-    private Set<Node> rootNodes;
+    private Set<Segment> rootNodes;
 
     /**
      * A list of nodes ordered by ID. Assumption: Nodes appear in GFA file in sequential order.
      */
-    private Map<Integer, Node> nodes;
+    private Map<Integer, Segment> nodes;
 
     /**
      * The constructor for a GenomeGraph.
@@ -26,10 +26,10 @@ public class GenomeGraph {
 
     /**
      * Add method for a node.
-     * @param node Node.
+     * @param node Segment.
      * @return the previous node with this id.
      */
-    public Node addNode(Node node) {
+    public Segment addNode(Segment node) {
         this.rootNodes.removeAll(node.getChildren()); // any children of this node are no longer a root
         if (!this.containsAny(node.getParents())) {
             this.rootNodes.add(node); // this node is a root if none of its parents are in this graph
@@ -42,10 +42,10 @@ public class GenomeGraph {
     /**
      * get method for a node.
      * @param id int.
-     * @return Node.
+     * @return Segment.
      */
-    public Node getNode(int id) {
-        Node res = this.nodes.get(id);
+    public Segment getNode(int id) {
+        Segment res = this.nodes.get(id);
         if (res != null) {
             return res;
         } else {
@@ -58,7 +58,7 @@ public class GenomeGraph {
      * get a collection of all nodes in this graph. This collection can be modified without changing this graph.
      * @return all nodes
      */
-    public Collection<Node> getNodes() {
+    public Collection<Segment> getNodes() {
         return this.nodes.values();
     }
 
@@ -68,8 +68,8 @@ public class GenomeGraph {
      * @param nodes the nodes to check for
      * @return true if this graph contains any of the nodes in nodes, false otherwise.
      */
-    public boolean containsAny(Collection<Node> nodes) {
-        for (Node node: nodes) {
+    public boolean containsAny(Collection<Segment> nodes) {
+        for (Segment node: nodes) {
             // check identifier instead of node because checking keys is faster than values.
             if (this.nodes.containsKey(node.getIdentifier())) {
                 return true;
@@ -82,7 +82,7 @@ public class GenomeGraph {
      * Get all root nodes (make sure to call {@link programminglife.parser.GraphParser#findRootNodes()} first.
      * @return a {@link Set} of root nodes of the {@link GenomeGraph}.
      */
-    public Set<Node> getRootNodes() {
+    public Set<Segment> getRootNodes() {
         return rootNodes;
     }
 
@@ -95,8 +95,8 @@ public class GenomeGraph {
     }
 
     /**
-     * Get the number of {@link Node}s in the {@link GenomeGraph}.
-     * @return the number of {@link Node}s
+     * Get the number of {@link Segment}s in the {@link GenomeGraph}.
+     * @return the number of {@link Segment}s
      */
     public int size() {
         return this.getNodes().size();
