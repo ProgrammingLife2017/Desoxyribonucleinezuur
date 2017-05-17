@@ -57,8 +57,7 @@ public class GenomeGraph implements Graph<Segment, Link> {
 
 
     /**
-     * get a collection of all nodes in this graph. This collection can be modified without changing this graph.
-     * @return all nodes
+     * {@inheritDoc}
      */
     public Collection<Segment> getNodes() {
         return this.nodes.values();

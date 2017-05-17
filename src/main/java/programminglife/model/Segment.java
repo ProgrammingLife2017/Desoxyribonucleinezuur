@@ -1,8 +1,10 @@
 package programminglife.model;
 
 import javafx.scene.shape.Rectangle;
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -110,6 +112,14 @@ public class Segment extends Rectangle implements Node<Segment> {
      */
     public Set<Segment> getParents() {
         return parents;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Collection<Genome> getGenomes() {
+        throw new NotImplementedException("Segment#getGenomes() is not yet implemented");
     }
 
     /**
