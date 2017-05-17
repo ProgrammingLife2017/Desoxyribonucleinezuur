@@ -173,7 +173,6 @@ final class BookmarkController {
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = docFactory.newDocumentBuilder();
             Document doc = builder.parse(fileName);
-            Element rootElement = doc.getDocumentElement();
             Element graphTag = findTag(doc.getDocumentElement().getChildNodes(), graphName);
 
             if (graphTag != null) {
