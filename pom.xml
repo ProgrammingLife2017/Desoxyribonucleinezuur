@@ -26,6 +26,9 @@
         <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </repository>
         <repository>
             <id>maven-central-repo</id>
@@ -191,17 +194,22 @@
             <version>4.0.1-alpha</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.testfx/testfx-junit -->
         <dependency>
             <groupId>org.testfx</groupId>
             <artifactId>testfx-junit</artifactId>
-            <version>4.0.1-alpha</version>
+            <version>4.0.6-alpha</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.testfx/openjfx-monocle -->
         <dependency>
             <groupId>org.testfx</groupId>
             <artifactId>openjfx-monocle</artifactId>
-            <version>1.8.0_20</version>
+            <version>8u76-b04</version>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
 </project>
