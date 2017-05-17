@@ -23,7 +23,5 @@
     <orderEntry type="library" scope="TEST" name="Maven: net.jcip:jcip-annotations:1.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.google.code.findbugs:jsr305:3.0.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.testfx:testfx-junit:4.0.5-alpha" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.testfx:openjfx-monocle:8u76-b04" level="project" />
-    <orderEntry type="library" name="Maven: org.jfxtras:openjfx-monocle:1.8.0_20" level="project" />
   </component>
 </module>

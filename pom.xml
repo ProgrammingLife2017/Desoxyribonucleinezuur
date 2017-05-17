@@ -204,19 +204,5 @@
             <version>4.0.5-alpha</version>
             <scope>test</scope>
         </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.testfx/openjfx-monocle -->
-        <dependency>
-            <groupId>org.testfx</groupId>
-            <artifactId>openjfx-monocle</artifactId>
-            <version>8u76-b04</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jfxtras</groupId>
-            <artifactId>openjfx-monocle</artifactId>
-            <version>1.8.0_20</version>
-        </dependency>
-
     </dependencies>
 </project>

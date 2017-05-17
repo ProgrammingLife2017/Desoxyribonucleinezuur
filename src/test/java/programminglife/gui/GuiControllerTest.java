@@ -19,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 /**
@@ -45,13 +46,6 @@ public class GuiControllerTest extends FxRobot {
 
     @BeforeClass
     public static void setUpClass() throws TimeoutException {
-        if (Boolean.getBoolean("headless")) {
-            System.setProperty("testfx.robot", "glass");
-            System.setProperty("testfx.headless", "true");
-            System.setProperty("prism.order", "sw");
-            System.setProperty("prism.text", "t2k");
-            System.setProperty("java.awt.headless", "true");
-        }
         operatingSystem = System.getProperty("os.name").toLowerCase();
         primaryStage = FxToolkit.registerPrimaryStage();
     }
@@ -67,10 +61,10 @@ public class GuiControllerTest extends FxRobot {
         FxToolkit.cleanupApplication(this.pl);
     }
 
-//    @Test
-//    public void isActive() {
-//        assertTrue(primaryStage.isShowing());
-//    }
+    @Test
+    public void isActive() {
+        assertTrue(primaryStage.isShowing());
+    }
 
     /**
      * This test will open a file that has been added to the test resources. It uses the FXML that is also used
