@@ -9,7 +9,7 @@ import java.util.*;
  * @param <N> an implementation of {@link Node} to use for node/vertex objects.
  * @param <E> an implementation of {@link Edge} to use for link/edge objects.
  */
-public class SubGraph<N extends Node<N>, E extends Edge> implements Graph<N, E> {
+public class SubGraph<N extends Node<N>, E extends Edge<N>> implements Graph<N, E> {
     /**
      * This is the first sentence, which ends in a period, because checkstyle.
      * Invariants:
@@ -135,7 +135,7 @@ public class SubGraph<N extends Node<N>, E extends Edge> implements Graph<N, E> 
      * except that this is optimized.
      * @param nodes The nodes to add.
      */
-    public void addAll(Collection<N> nodes) {
+    public void addAll(Collection<? extends N> nodes) {
         // TODO: add approximate check for whether it would be faster to use AddNodeNoUpdate
         // and then recalculate roots and ends afterwards, or to just use addNode repeatedly.
         // This would mostly involve some computation on
@@ -279,7 +279,7 @@ public class SubGraph<N extends Node<N>, E extends Edge> implements Graph<N, E> 
      */
     private void addNodeNoUpdate(N node) {
         assert (node != null);
-        assert(this.nodes != null);
+        assert (this.nodes != null);
 
         N res = this.nodes.put(node.getIdentifier(), node);
         if (res != null) {

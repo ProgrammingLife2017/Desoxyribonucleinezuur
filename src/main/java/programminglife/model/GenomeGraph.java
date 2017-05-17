@@ -118,7 +118,7 @@ public class GenomeGraph implements Graph<Segment, Link> {
      * {@inheritDoc}
      */
     @Override
-    public void addAll(Collection<Segment> nodes) {
+    public void addAll(Collection<? extends Segment> nodes) {
         nodes.forEach(this::addNode);
     }
 }
