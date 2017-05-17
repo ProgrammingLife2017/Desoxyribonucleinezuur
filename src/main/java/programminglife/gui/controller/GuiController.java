@@ -71,6 +71,7 @@ public class GuiController implements Observer {
     private int translateX;
     private int translateY;
     private GraphController graphController;
+    private File file;
 
     /**
      * The initialize will call the other methods that are run in the .
@@ -129,9 +130,12 @@ public class GuiController implements Observer {
             FileChooser fileChooser = new FileChooser();
             final ExtensionFilter extFilterGFA = new ExtensionFilter("GFA files (*.gfa)", "*.GFA");
             fileChooser.getExtensionFilters().add(extFilterGFA);
-
+            if (file != null){
+                File existDirectory = file.getParentFile();
+                fileChooser.setInitialDirectory(existDirectory);
+            }
             try {
-                File file = fileChooser.showOpenDialog(ProgrammingLife.getStage());
+                file = fileChooser.showOpenDialog(ProgrammingLife.getStage());
                 this.openFile(file);
             } catch (FileNotFoundException | UnknownTypeException e) {
                 // Should not happen, because it gets handled by FileChooser and ExtensionFilter
