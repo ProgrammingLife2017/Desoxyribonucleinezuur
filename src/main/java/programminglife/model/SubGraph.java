@@ -82,7 +82,7 @@ public class SubGraph<N extends Node<N>, E extends Edge> implements Graph<N, E> 
      * @param graph GenomeGraph to create this SubGraph from.
      */
     public SubGraph(Graph graph) {
-        this.addAll(graph.getNodes());
+        this(graph.getNodes());
     }
 
     /**
@@ -279,6 +279,7 @@ public class SubGraph<N extends Node<N>, E extends Edge> implements Graph<N, E> 
      */
     private void addNodeNoUpdate(N node) {
         assert (node != null);
+        assert(this.nodes != null);
 
         N res = this.nodes.put(node.getIdentifier(), node);
         if (res != null) {
@@ -420,7 +421,7 @@ public class SubGraph<N extends Node<N>, E extends Edge> implements Graph<N, E> 
         // }
         // Repeat until all nodes are added to the list.
         while (!nodes.isEmpty()) {
-            N n = nodes.get(nodes.size());
+            N n = nodes.get(nodes.size() - 1);
 
             findAllParentsAdded:
             while (true) {
