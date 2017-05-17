@@ -5,7 +5,7 @@ import java.util.*;
 /**
  * Created by marti_000 on 25-4-2017.
  */
-public class Graph {
+public class GenomeGraph {
     private String id;
     private Set<Node> rootNodes;
 
@@ -15,10 +15,10 @@ public class Graph {
     private Map<Integer, Node> nodes;
 
     /**
-     * The constructor for a Graph.
+     * The constructor for a GenomeGraph.
      * @param id String id.
      */
-    public Graph(String id) {
+    public GenomeGraph(String id) {
         this.nodes = new HashMap<>(500000, 0.9f);
         this.id = id;
         this.rootNodes = new HashSet<>();
@@ -80,14 +80,14 @@ public class Graph {
 
     /**
      * Get all root nodes (make sure to call {@link programminglife.parser.GraphParser#findRootNodes()} first.
-     * @return a {@link Set} of root nodes of the {@link Graph}.
+     * @return a {@link Set} of root nodes of the {@link GenomeGraph}.
      */
     public Set<Node> getRootNodes() {
         return rootNodes;
     }
 
     /**
-     * Get the {@link Graph} ID.
+     * Get the {@link GenomeGraph} ID.
      * @return the ID
      */
     public String getId() {
@@ -95,7 +95,7 @@ public class Graph {
     }
 
     /**
-     * Get the number of {@link Node}s in the {@link Graph}.
+     * Get the number of {@link Node}s in the {@link GenomeGraph}.
      * @return the number of {@link Node}s
      */
     public int size() {

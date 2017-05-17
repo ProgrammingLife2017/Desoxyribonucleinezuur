@@ -2,7 +2,7 @@ package programminglife.parser;
 
 import com.diffplug.common.base.Errors;
 import com.diffplug.common.base.Throwing;
-import programminglife.model.Graph;
+import programminglife.model.GenomeGraph;
 import programminglife.model.Node;
 import programminglife.model.exception.UnknownTypeException;
 
@@ -17,18 +17,18 @@ public class GraphParser extends Observable implements Runnable {
 
     private static final boolean PARSE_LINE_VERBOSE_DEFAULT = true;
 
-    private Graph graph;
+    private GenomeGraph graph;
     private File graphFile;
     private boolean verbose;
 
     /**
      * Initiates an empty graph and the {@link File} to parse.
-     * @param graphFile the file to parse the {@link Graph} from
+     * @param graphFile the file to parse the {@link GenomeGraph} from
      */
     public GraphParser(File graphFile) {
         this.graphFile = graphFile;
         this.verbose = PARSE_LINE_VERBOSE_DEFAULT;
-        this.graph = new Graph("");
+        this.graph = new GenomeGraph("");
     }
 
     /**
@@ -37,7 +37,7 @@ public class GraphParser extends Observable implements Runnable {
     @Override
     public void run() {
         try {
-            System.out.printf("%s Parsing Graph on separate Thread", Thread.currentThread());
+            System.out.printf("%s Parsing GenomeGraph on separate Thread", Thread.currentThread());
             parse(this.verbose);
             this.setChanged();
             this.notifyObservers(this.graph);
@@ -48,7 +48,7 @@ public class GraphParser extends Observable implements Runnable {
     }
 
     /**
-     * Parse a GFA file as a {@link Graph}.
+     * Parse a GFA file as a {@link GenomeGraph}.
      * @throws FileNotFoundException when no file is found at the given path.
      * @throws UnknownTypeException when an unknown identifier (H/S/L) is read from the file.
      */
@@ -57,7 +57,7 @@ public class GraphParser extends Observable implements Runnable {
     }
 
     /**
-     * Parse a GFA file as a {@link Graph}.
+     * Parse a GFA file as a {@link GenomeGraph}.
      * @param verbose if log messages should be printed.
      * @throws FileNotFoundException when no file is found at the given path.
      * @throws UnknownTypeException when an unknown identifier (H/S/L) is read from the file.
@@ -68,7 +68,7 @@ public class GraphParser extends Observable implements Runnable {
         }
 
         BufferedReader reader = new BufferedReader(new FileReader(this.graphFile));
-        this.graph = new Graph(this.graphFile.getName());
+        this.graph = new GenomeGraph(this.graphFile.getName());
 
         try {
             reader.lines().forEach(Errors.rethrow().wrap((Throwing.Consumer<String>) line -> {
@@ -170,7 +170,7 @@ public class GraphParser extends Observable implements Runnable {
         }
     }
 
-    public Graph getGraph() {
+    public GenomeGraph getGraph() {
         return graph;
     }
 }

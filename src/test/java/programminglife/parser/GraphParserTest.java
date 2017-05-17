@@ -3,8 +3,8 @@ package programminglife.parser;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import programminglife.model.Graph;
-import programminglife.model.GraphTest;
+import programminglife.model.GenomeGraph;
+import programminglife.model.GenomeGraphTest;
 import programminglife.model.Node;
 import programminglife.model.exception.UnknownTypeException;
 
@@ -27,9 +27,9 @@ public class GraphParserTest implements Observer {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        TEST_PATH = new File(GraphTest.class.getResource("/test.gfa").toURI()).getAbsolutePath();
+        TEST_PATH = new File(GenomeGraphTest.class.getResource("/test.gfa").toURI()).getAbsolutePath();
         TEST_FAULTY_PATH = new File(
-                GraphTest.class.getClass().getResource("/test-faulty.gfa").toURI()
+                GenomeGraphTest.class.getClass().getResource("/test-faulty.gfa").toURI()
         ).getAbsolutePath();
     }
 
@@ -50,7 +50,7 @@ public class GraphParserTest implements Observer {
     @Test
     public void parseTest() throws Exception {
         graphParser.parse();
-        Graph graph = graphParser.getGraph();
+        GenomeGraph graph = graphParser.getGraph();
         Collection<Node> nodes = graph.getNodes();
 
         assertEquals(8, nodes.size());
@@ -96,8 +96,8 @@ public class GraphParserTest implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         if (o instanceof GraphParser) {
-            if (arg instanceof Graph) {
-                Graph graph = (Graph) arg;
+            if (arg instanceof GenomeGraph) {
+                GenomeGraph graph = (GenomeGraph) arg;
                 Node node = graph.getNode(8);
 
                 assertEquals(new File(TEST_PATH).getName(), graph.getId());

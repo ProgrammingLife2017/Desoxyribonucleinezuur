@@ -17,7 +17,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import jp.uphy.javafx.console.ConsoleView;
 import programminglife.ProgrammingLife;
-import programminglife.model.Graph;
+import programminglife.model.GenomeGraph;
 import programminglife.model.exception.UnknownTypeException;
 import programminglife.parser.GraphParser;
 
@@ -96,8 +96,8 @@ public class GuiController implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         if (o instanceof GraphParser) {
-            if (arg instanceof Graph) {
-                Graph graph = (Graph) arg;
+            if (arg instanceof GenomeGraph) {
+                GenomeGraph graph = (GenomeGraph) arg;
                 this.graphController.setGraph(graph);
 
                 disableGraphUIElements(graph == null);
@@ -226,7 +226,7 @@ public class GuiController implements Observer {
 
             this.graphController.clear();
             this.graphController.draw(centerNode, maxDepth);
-            System.out.printf("%s Graph drawn.\n", Thread.currentThread());
+            System.out.printf("%s GenomeGraph drawn.\n", Thread.currentThread());
         });
 
         btnDrawRandom.setOnAction(event -> {

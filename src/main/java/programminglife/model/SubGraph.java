@@ -45,7 +45,7 @@ public class SubGraph implements Iterable<Node> {
     }
 
     /**
-     * Create a Graph with Nodes nodes. If any of the Nodes has the same id,
+     * Create a GenomeGraph with Nodes nodes. If any of the Nodes has the same id,
      * the last one (as defined by the iterator for the collection) will be taken.
      * @param nodes Nodes with which this SubGraph will be instantiated.
      */
@@ -76,11 +76,11 @@ public class SubGraph implements Iterable<Node> {
     }
 
     /**
-     * Create a SubGraph from a graph. The SubGraph will contain the same Nodes as the Graph.
+     * Create a SubGraph from a graph. The SubGraph will contain the same Nodes as the GenomeGraph.
      * Mostly for testing.
-     * @param graph Graph to create this SubGraph from.
+     * @param graph GenomeGraph to create this SubGraph from.
      */
-    public SubGraph(Graph graph) {
+    public SubGraph(GenomeGraph graph) {
         this.addAll(graph.getNodes());
     }
 
@@ -115,7 +115,7 @@ public class SubGraph implements Iterable<Node> {
     }
 
     /**
-     * Add a collection of Nodes to this Graph.<br>
+     * Add a collection of Nodes to this GenomeGraph.<br>
      * Because this uses the same interface as {@link #addNode(Node) AddNode}, this method will
      * throw an Exception when one of the nodes already exists.
      * This also means that the Collection cannot contain duplicates.<br>
@@ -236,7 +236,7 @@ public class SubGraph implements Iterable<Node> {
     }
 
     /**
-     * Remove a Node from this Graph.
+     * Remove a Node from this GenomeGraph.
      * @param id Id of the node to remove
      * @return the removed Node, or null if there was none.
      */
@@ -284,7 +284,7 @@ public class SubGraph implements Iterable<Node> {
      * This method is to be used when a lot of changes to the graph are going to be made,
      * and it will be more efficient to change them all first and then update everything else.
      * @param id The identifier of the Node to be removed
-     * @return the removed Node, or null if there was no Node with that id in this Graph.
+     * @return the removed Node, or null if there was no Node with that id in this GenomeGraph.
      */
     private Node removeNodeNoUpdate(int id) {
         return this.nodes.remove(id);
@@ -320,7 +320,7 @@ public class SubGraph implements Iterable<Node> {
     }
 
     /**
-     * Updates the roots and the ends of this Graph. Call this if you have modified the graph structure without
+     * Updates the roots and the ends of this GenomeGraph. Call this if you have modified the graph structure without
      * this graph knowing about it (e.g. added/removed parents/children to nodes)
      */
     public void recalculateRootsAndEnds() {

@@ -12,8 +12,8 @@ import static org.junit.Assert.assertEquals;
 /**
  * Created by toinehartman on 03/05/2017.
  */
-public class GraphTest {
-    Graph graph;
+public class GenomeGraphTest {
+    GenomeGraph graph;
     Node node;
     String link;
 
@@ -21,15 +21,15 @@ public class GraphTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        TEST_PATH = new File(GraphTest.class.getResource("/test.gfa").toURI()).getAbsolutePath();
+        TEST_PATH = new File(GenomeGraphTest.class.getResource("/test.gfa").toURI()).getAbsolutePath();
         TEST_FAULTY_PATH = new File(
-                GraphTest.class.getClass().getResource("/test-faulty.gfa").toURI()
+                GenomeGraphTest.class.getClass().getResource("/test-faulty.gfa").toURI()
         ).getAbsolutePath();
     }
 
     @Before
     public void setUp() throws Exception {
-        graph = new Graph("test graph");
+        graph = new GenomeGraph("test graph");
         node = new Node(3, "ATCG");
 
         graph.addNode(node);

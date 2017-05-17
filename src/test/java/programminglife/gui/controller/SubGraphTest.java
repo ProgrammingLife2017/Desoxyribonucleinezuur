@@ -1,15 +1,12 @@
 package programminglife.gui.controller;
 
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import programminglife.model.Graph;
 import programminglife.model.Node;
 import programminglife.model.SubGraph;
 import programminglife.parser.GraphParser;
 
 import java.io.File;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;

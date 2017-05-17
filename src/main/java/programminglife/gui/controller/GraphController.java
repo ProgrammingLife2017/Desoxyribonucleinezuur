@@ -5,7 +5,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import jp.uphy.javafx.console.ConsoleView;
-import programminglife.model.Graph;
+import programminglife.model.GenomeGraph;
 import programminglife.model.Node;
 import programminglife.model.SubGraph;
 import programminglife.model.XYCoordinate;
@@ -22,7 +22,7 @@ public class GraphController {
     private static final XYCoordinate HORIZONTAL_OFFSET = new XYCoordinate(50, 0);
     private static final double CHILD_OFFSET = 1.7;
 
-    private Graph graph;
+    private GenomeGraph graph;
     private Group grpDrawArea;
     private ConsoleView console;
 
@@ -31,7 +31,7 @@ public class GraphController {
      * @param graph The genome graph to control
      * @param grpDrawArea The {@link Group} to draw in
      */
-    public GraphController(Graph graph, Group grpDrawArea) {
+    public GraphController(GenomeGraph graph, Group grpDrawArea) {
         this.graph = graph;
         this.grpDrawArea = grpDrawArea;
     }
@@ -41,7 +41,7 @@ public class GraphController {
     }
 
     /**
-     * Draw the {@link Graph} with DFS from {@link Node} 1.
+     * Draw the {@link GenomeGraph} with DFS from {@link Node} 1.
      * @param centerNode The {@link Node} to start drawing from
      * @param maxDepth The max depth of child {@link Node}s to draw
      */
@@ -187,7 +187,7 @@ public class GraphController {
      * Getter for the graph.
      * @return - The graph
      */
-    public Graph getGraph() {
+    public GenomeGraph getGraph() {
         return graph;
     }
 
@@ -195,7 +195,7 @@ public class GraphController {
      * Setter for the graph.
      * @param graph The graph
      */
-    void setGraph(Graph graph) {
+    void setGraph(GenomeGraph graph) {
         this.graph = graph;
     }
 
