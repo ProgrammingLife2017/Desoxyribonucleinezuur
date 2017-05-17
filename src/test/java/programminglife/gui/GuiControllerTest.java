@@ -90,15 +90,15 @@ public class GuiControllerTest extends FxRobot {
         clickOn("#btnZoomOut");
         clickOn("#btnZoomReset");
         clickOn("#btnDrawRandom");
-        sleep(500);
-        clickOn("#menuHelp");
-        clickOn("#btnAbout");
-        sleep(500);
-        type(KeyCode.ENTER);
-        clickOn("#menuHelp");
-        clickOn("#btnInstructions");
-        sleep(500);
-        type(KeyCode.ENTER);
+//        sleep(500);
+//        clickOn("#menuHelp");
+//        clickOn("#btnAbout");
+//        sleep(500);
+//        type(KeyCode.ENTER);
+//        clickOn("#menuHelp");
+//        clickOn("#btnInstructions");
+//        sleep(500);
+//        type(KeyCode.ENTER);
     }
 
     private void openAndParseFile(String fileName) {
