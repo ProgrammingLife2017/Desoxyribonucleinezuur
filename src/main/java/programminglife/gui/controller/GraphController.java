@@ -56,28 +56,29 @@ public class GraphController {
      * Draws all nodes in the SubGraph g.
      * @param g The SubGraph
      */
-    public void drawSubGraph(SubGraph g) {
-        this.clear();
-        for (Segment n : g) {
-            for (Segment p : n.getParents()) {
-                if (!g.contains(p)) {
-                    continue;
-                }
-                Line link = new Line(
-                        p.getX() + p.getWidth(),
-                        p.getY() + p.getHeight() / 2,
-                        n.getX(),
-                        n.getY() + n.getHeight() / 2
-                );
-                link.setStroke(Color.DARKGRAY);
-                link.setStrokeWidth(3);
-                link.setOnMouseClicked(event -> System.out.printf("Link{%s -> %s}\n", p, n));
-
-                this.grpDrawArea.getChildren().add(link);
-                this.drawNode(n);
-            }
-        }
-    }
+    // TODO repair method for new generic Interface structure
+//    public void drawSubGraph(SubGraph g) {
+//        this.clear();
+//        for (Segment n : g) {
+//            for (Segment p : n.getParents()) {
+//                if (!g.contains(p)) {
+//                    continue;
+//                }
+//                Line link = new Line(
+//                        p.getX() + p.getWidth(),
+//                        p.getY() + p.getHeight() / 2,
+//                        n.getX(),
+//                        n.getY() + n.getHeight() / 2
+//                );
+//                link.setStroke(Color.DARKGRAY);
+//                link.setStrokeWidth(3);
+//                link.setOnMouseClicked(event -> System.out.printf("Link{%s -> %s}\n", p, n));
+//
+//                this.grpDrawArea.getChildren().add(link);
+//                this.drawNode(n);
+//            }
+//        }
+//    }
 
     /**
      * Draw all nodes recursively on the screen.

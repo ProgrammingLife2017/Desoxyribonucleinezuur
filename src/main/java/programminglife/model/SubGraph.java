@@ -5,17 +5,17 @@ import java.util.*;
 /**
  * Created by Ivo on 2017-05-11.
  * This is a SubGraph, which means that not all children or parents of a
- * Segment in this graph need to be within this graph.
+ * N in this graph need to be within this graph.
  * TODO: make this class thread safe (because it is currently absolutely not).
  */
-public class SubGraph implements Iterable<Segment> {
+public class SubGraph<N extends Node<N>, E extends Edge> implements Graph<N, E> {
     /**
      * This is the first sentence, which ends in a period, because checkstyle.
      * Invariants:
      *  - does not contain null
      *  - for each key-value pair, key == value.id
      */
-    private Map<Integer, Segment> nodes;
+    private Map<Integer, N> nodes;
 
     /**
      * This is the first sentence, which ends in a period, because checkstyle.
@@ -23,9 +23,9 @@ public class SubGraph implements Iterable<Segment> {
      *  - does not contain null
      *  - all rootNodes must be in nodes
      *  - rootNodes do not contain any parents in nodes
-     *    (for each Segment n in rootNotes, for each parent p of n, p is not in nodes)
+     *    (for each N n in rootNotes, for each parent p of n, p is not in nodes)
      */
-    private Set<Segment> rootNodes;
+    private Set<N> rootNodes;
 
     /**
      * This is the first sentence, which ends in a period, because checkstyle.
@@ -33,9 +33,9 @@ public class SubGraph implements Iterable<Segment> {
      *  - does not contain null
      *  - all endNodes must be in nodes
      *  - endNodes do not contain any children in nodes
-     *    (for each Segment n in endNotes, for each child c of n, c is not in nodes)
+     *    (for each N n in endNotes, for each child c of n, c is not in nodes)
      */
-    private Set<Segment> endNodes;
+    private Set<N> endNodes;
 
     /**
      * Nullary constructor: initializes without any Nodes.
@@ -49,7 +49,7 @@ public class SubGraph implements Iterable<Segment> {
      * the last one (as defined by the iterator for the collection) will be taken.
      * @param nodes Nodes with which this SubGraph will be instantiated.
      */
-    public SubGraph(Collection<Segment> nodes) {
+    public SubGraph(Collection<? extends N> nodes) {
         this.nodes = new HashMap<>();
         this.rootNodes = new HashSet<>();
         this.endNodes = new HashSet<>();
@@ -64,7 +64,7 @@ public class SubGraph implements Iterable<Segment> {
      * @param centerNode The center (first) node
      * @param radius the number of steps that are taken before stopping.
      */
-    public SubGraph(Segment centerNode, int radius) {
+    public SubGraph(N centerNode, int radius) {
         assert (centerNode != null);
         assert (radius >= 0);
 
@@ -80,7 +80,7 @@ public class SubGraph implements Iterable<Segment> {
      * Mostly for testing.
      * @param graph GenomeGraph to create this SubGraph from.
      */
-    public SubGraph(GenomeGraph graph) {
+    public SubGraph(Graph graph) {
         this.addAll(graph.getNodes());
     }
 
@@ -90,7 +90,7 @@ public class SubGraph implements Iterable<Segment> {
      * @param node the node to start searching from
      * @param radius the radius, i.e. the number of steps taken before stopping
      */
-    private void addNodes(Segment node, int radius) {
+    private void addNodes(N node, int radius) {
         assert (radius >= 0);
         assert (node != null);
 
@@ -104,43 +104,43 @@ public class SubGraph implements Iterable<Segment> {
         this.nodes.put(node.getIdentifier(), node);
 
         // add all children
-        for (Segment child : node.getChildren()) {
+        for (N child : node.getChildren()) {
             addNodes(child, radius - 1);
         }
 
         // add all parents
-        for (Segment parent : node.getParents()) {
+        for (N parent : node.getParents()) {
             addNodes(parent, radius - 1);
         }
     }
 
     /**
      * Add a collection of Nodes to this GenomeGraph.<br>
-     * Because this uses the same interface as {@link #addNode(Segment) AddNode}, this method will
+     * Because this uses the same interface as {@link #addNode(N) AddNode}, this method will
      * throw an Exception when one of the nodes already exists.
      * This also means that the Collection cannot contain duplicates.<br>
-     * If this happens, all Nodes before are inserted, but all Nodes after (including the duplicate Segment) not.
+     * If this happens, all Nodes before are inserted, but all Nodes after (including the duplicate N) not.
      * If the iterator for the Collection does not return Nodes in a deterministic order,
      * the state of the SubGraph is essentially undefined.
-     * You can partly fix it by calling {@link #removeAll(Collection< Segment >) removeAll},
+     * You can partly fix it by calling {@link #removeAll(Collection< N >) removeAll},
      * but it will remove any duplicates.
-     * If you don't want this, use {@link #replaceAll(Collection< Segment >) replaceAll} instead.
+     * If you don't want this, use {@link #replaceAll(Collection< N >) replaceAll} instead.
      * (That can also be used when you are absolutely certain that no nodes already exist,
      * which would be faster, as it skips that check then)<br>
      * Functionally the same as <br>
-     * {@code for (Segment n : nodes) {
+     * {@code for (N n : nodes) {
      *      addNode(n);
      * }}<br>
      * except that this is optimized.
      * @param nodes The nodes to add.
      */
-    public void addAll(Collection<Segment> nodes) {
+    public void addAll(Collection<N> nodes) {
         // TODO: add approximate check for whether it would be faster to use AddNodeNoUpdate
         // and then recalculate roots and ends afterwards, or to just use addNode repeatedly.
         // This would mostly involve some computation on
         // the size of nodes and this.nodes, this.rootNodes and this.endNodes
 
-        for (Segment node : nodes) {
+        for (N node : nodes) {
             this.addNodeNoUpdate(node);
         }
 
@@ -148,21 +148,29 @@ public class SubGraph implements Iterable<Segment> {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Collection<N> getNodes() {
+        return this.nodes.values();
+    }
+
+    /**
      * Replace Nodes in this graph with the Nodes in nodes.
      * Functionally the same as <br>
-     * {@code for (Segment n : nodes) {
+     * {@code for (N n : nodes) {
      *      addNode(n);
      * }}<br>
      * except that this is optimized.
      * @param nodes Nodes to replace.
      */
-    public void replaceAll(Collection<Segment> nodes) {
+    public void replaceAll(Collection<? extends N> nodes) {
         // TODO: add approximate check for whether it would be faster to use AddNodeNoUpdate
         // and then recalculate roots and ends afterwards, or to just use addNode repeatedly.
         // This would mostly involve some computation on
         // the size of nodes and this.nodes, this.rootNodes and this.endNodes
 
-        for (Segment n : nodes) {
+        for (N n : nodes) {
             replaceNodeNoUpdate(n);
         }
 
@@ -174,10 +182,10 @@ public class SubGraph implements Iterable<Segment> {
      * @param nodes The nodes to be removed.
      * @return All the nodes that were removed. This is necessarily a subset of nodes.
      */
-    public Collection<Segment> removeAll(Collection<Segment> nodes) {
-        HashSet<Segment> res = new HashSet<>();
+    public Collection<N> removeAll(Collection<N> nodes) {
+        HashSet<N> res = new HashSet<>();
 
-        for (Segment n : nodes) {
+        for (N n : nodes) {
             res.add(this.removeNodeNoUpdate(n.getIdentifier()));
         }
 
@@ -188,10 +196,10 @@ public class SubGraph implements Iterable<Segment> {
 
     /**
      * Check whether this graph contains node.
-     * @param node Segment to check for
+     * @param node N to check for
      * @return true if this graph contains node, false otherwise.
      */
-    public boolean contains(Segment node) {
+    public boolean contains(N node) {
         assert (node != null);
 
         // search keys since they are sorted / much faster to check
@@ -202,11 +210,11 @@ public class SubGraph implements Iterable<Segment> {
     /**
      * add a new node to nodes.
      * This method throws an Exception when there already exists a node with the same identifier.
-     * If you don't want this, use {@link #replaceNode(Segment) replaceNode}.
-     * @param node Segment to add
+     * If you don't want this, use {@link #replaceNode(N) replaceNode}.
+     * @param node N to add
      * @throws Error If there already was a node with this id, this method throws an Exception.
      */
-    public void addNode(Segment node) {
+    public void addNode(N node) {
         assert (node != null);
 
         this.addNodeNoUpdate(node);
@@ -223,36 +231,36 @@ public class SubGraph implements Iterable<Segment> {
     }
 
     /**
-     * replaces a node with a new Segment.
+     * replaces a node with a new N.
      * This method does not throw an Exception when there already exists a node with the same identifier.
-     * If you want that, use {@link #addNode(Segment) addNode}.
-     * @param node The new Segment.
-     * @return The old Segment, or null if there was none.
+     * If you want that, use {@link #addNode(N) addNode}.
+     * @param node The new N.
+     * @return The old N, or null if there was none.
      */
-    public Segment replaceNode(Segment node) {
-        Segment res = this.removeNode(node.getIdentifier());
+    public N replaceNode(N node) {
+        N res = this.removeNode(node.getIdentifier());
         this.addNode(node);
         return res;
     }
 
     /**
-     * Remove a Segment from this GenomeGraph.
+     * Remove a N from this GenomeGraph.
      * @param id Id of the node to remove
-     * @return the removed Segment, or null if there was none.
+     * @return the removed N, or null if there was none.
      */
-    public Segment removeNode(int id) {
-        Segment node = this.removeNodeNoUpdate(id);
+    public N removeNode(int id) {
+        N node = this.removeNodeNoUpdate(id);
         if (node == null) {
             return null;
         }
 
         if (this.rootNodes.remove(node)) {
-            // any children of this Segment might have become root, if this Segment was a root.
+            // any children of this N might have become root, if this N was a root.
             this.checkNodesForRoot(node.getChildren());
         }
 
         if (this.rootNodes.remove(node)) {
-            // any parents of this Segment might have become an end Segment if this Segment was an end Segment
+            // any parents of this N might have become an end N if this N was an end N
             this.checkNodesForEnd(node.getParents());
         }
 
@@ -264,18 +272,18 @@ public class SubGraph implements Iterable<Segment> {
      * This method is to be used when a lot of changes to the graph are going to be made,
      * and it will be more efficient to change them all first and then update everything else.
      * This method throws an Exception when there already exists a node with the same identifier.
-     * If you don't want this, use {@link #replaceNodeNoUpdate(Segment) replaceNodeNoUpdate}.
-     * @param node Segment to add
+     * If you don't want this, use {@link #replaceNodeNoUpdate(N) replaceNodeNoUpdate}.
+     * @param node N to add
      * @throws Error If there already was a node with this id, this method throws an Exception.
      */
-    private void addNodeNoUpdate(Segment node) {
+    private void addNodeNoUpdate(N node) {
         assert (node != null);
 
-        Segment res = this.nodes.put(node.getIdentifier(), node);
+        N res = this.nodes.put(node.getIdentifier(), node);
         if (res != null) {
             // TODO Replace error by a RuntimeExtension (create a specific one)
             // Do this if you are going to use this!
-            throw new Error("Tried inserting a node that already exists. Id: " + res.getId());
+            throw new Error("Tried inserting a node that already exists. Id: " + res.getIdentifier());
         }
     }
 
@@ -283,10 +291,10 @@ public class SubGraph implements Iterable<Segment> {
      * removes the node with identifier id. No further processing (like updating the rootNodes or endNodes) is done.
      * This method is to be used when a lot of changes to the graph are going to be made,
      * and it will be more efficient to change them all first and then update everything else.
-     * @param id The identifier of the Segment to be removed
-     * @return the removed Segment, or null if there was no Segment with that id in this GenomeGraph.
+     * @param id The identifier of the N to be removed
+     * @return the removed N, or null if there was no N with that id in this GenomeGraph.
      */
-    private Segment removeNodeNoUpdate(int id) {
+    private N removeNodeNoUpdate(int id) {
         return this.nodes.remove(id);
     }
 
@@ -295,11 +303,11 @@ public class SubGraph implements Iterable<Segment> {
      * This method is to be used when a lot of changes to the graph are going to be made,
      * and it will be more efficient to change them all first and then update everything else.
      * This method does not throw an Exception when there already exists a node with the same identifier.
-     * If you want that, use {@link #addNodeNoUpdate(Segment) addNodeNoUpdate}.
-     * @param node New Segment to replace the old one (if any) with.
-     * @return The old Segment, or null if there was none.
+     * If you want that, use {@link #addNodeNoUpdate(N) addNodeNoUpdate}.
+     * @param node New N to replace the old one (if any) with.
+     * @return The old N, or null if there was none.
      */
-    private Segment replaceNodeNoUpdate(Segment node) {
+    private N replaceNodeNoUpdate(N node) {
         return this.nodes.put(node.getIdentifier(), node);
     }
 
@@ -309,8 +317,8 @@ public class SubGraph implements Iterable<Segment> {
      * @param nodes the nodes to check for
      * @return true if this graph contains any of the nodes in nodes, false otherwise.
      */
-    public boolean containsAny(Collection<Segment> nodes) {
-        for (Segment node: nodes) {
+    public boolean containsAny(Collection<N> nodes) {
+        for (N node: nodes) {
             // check identifier instead of node because checking keys is faster than values.
             if (this.nodes.containsKey(node.getIdentifier())) {
                 return true;
@@ -333,7 +341,7 @@ public class SubGraph implements Iterable<Segment> {
      */
     public void recalculateRoots() {
         this.rootNodes.clear();
-        for (Segment n : this.nodes.values()) {
+        for (N n : this.nodes.values()) {
             if (!this.containsAny(n.getParents())) {
                 this.rootNodes.add(n);
             }
@@ -345,7 +353,7 @@ public class SubGraph implements Iterable<Segment> {
      */
     public void recalculateEnds() {
         this.endNodes.clear();
-        for (Segment n : this.nodes.values()) {
+        for (N n : this.nodes.values()) {
             if (!this.containsAny(n.getChildren())) {
                 this.endNodes.add(n);
             }
@@ -356,9 +364,9 @@ public class SubGraph implements Iterable<Segment> {
      * Recheck whether any of the Nodes in nodes are now root.
      * @param nodes Nodes to check.
      */
-    private void checkNodesForRoot(Collection<Segment> nodes) {
+    private void checkNodesForRoot(Collection<N> nodes) {
         this.rootNodes.removeAll(nodes);
-        for (Segment n : nodes) {
+        for (N n : nodes) {
             if (!this.containsAny(n.getParents())) {
                 this.rootNodes.add(n);
             }
@@ -369,9 +377,9 @@ public class SubGraph implements Iterable<Segment> {
      * Recheck whether any of the Nodes in nodes are now root.
      * @param nodes Nodes to check.
      */
-    private void checkNodesForEnd(Collection<Segment> nodes) {
+    private void checkNodesForEnd(Collection<N> nodes) {
         this.endNodes.removeAll(nodes);
-        for (Segment n : nodes) {
+        for (N n : nodes) {
             if (!this.containsAny(n.getChildren())) {
                 this.endNodes.add(n);
             }
@@ -385,7 +393,7 @@ public class SubGraph implements Iterable<Segment> {
      * If you want them in topological order, use {@code topoSort().iterator();}
      * @return An iterator
      */
-    public Iterator<Segment> iterator() {
+    public Iterator<N> iterator() {
         return this.nodes.values().iterator();
     }
 
@@ -393,15 +401,15 @@ public class SubGraph implements Iterable<Segment> {
      * Topologically sort the nodes from this graph.
      * @return a topologically sorted list of nodes
      */
-    public List<Segment> topoSort() {
+    public List<N> topoSort() {
         // TODO: check that graph is not circular. Easiest way is by having a
         // parent-step counter and making sure it doesn't go higher than the number of nodes.
 
         // topo sorted list
-        ArrayList<Segment> res = new ArrayList<>(this.nodes.size());
+        ArrayList<N> res = new ArrayList<>(this.nodes.size());
 
         // nodes that have not yet been added to the list.
-        ArrayList<Segment> nodes = new ArrayList<>(this.nodes.values());
+        ArrayList<N> nodes = new ArrayList<>(this.nodes.values());
 
         // tactic:
         // {
@@ -411,12 +419,12 @@ public class SubGraph implements Iterable<Segment> {
         // }
         // Repeat until all nodes are added to the list.
         while (!nodes.isEmpty()) {
-            Segment n = nodes.get(nodes.size());
+            N n = nodes.get(nodes.size());
 
             findAllParentsAdded:
             while (true) {
-                Set<Segment> parents = n.getParents();
-                for (Segment p : parents) {
+                Collection<N> parents = n.getParents();
+                for (N p : parents) {
                     if (nodes.contains(p)) {
                         // there is a parent of n in nodes, so this parent should go before in res.
                         assert (!res.contains(p));
@@ -462,45 +470,46 @@ public class SubGraph implements Iterable<Segment> {
      * @param xMargin The minimal horizontal distance between two nodes
      * @param yMargin The minimal vertical distance between two nodes
      */
-    public void calculateNodeLocations(int xMargin, int yMargin) {
-        List<Segment> nodes = this.topoSort();
-        Set<Segment> drawnNodes = new HashSet<>();
-        Map<Integer, Set<Segment>> lines = new HashMap<>(); // the horizontal "lines" on which nodes are drawn.
-
-        for (Segment n : nodes) {
-            int maxChildX = 0;
-            for (Segment c : n.getChildren()) {
-                if (drawnNodes.contains(c)) {
-                    int childX = c.getRightBorderCenter().getX();
-                    if (childX > maxChildX) {
-                        maxChildX = childX;
-                    }
-                }
-            }
-
-            // TODO: create a more efficient way of finding y coordinate
-            // (use overlapping intervals on x axis to find required height)
-            int y = -1;
-
-            lineLoop:
-            for (int lineNumber : lines.keySet()) {
-                for (Segment drawn : lines.get(lineNumber)) {
-                    if (drawn.getRightBorderCenter().getX() + xMargin >= maxChildX
-                            || drawn.getLeftBorderCenter().getX() < maxChildX + n.getWidth() + xMargin) {
-                        continue lineLoop;
-                    }
-                }
-                // we can place it here!
-                y = lineNumber;
-            }
-            if (y < 0) {
-                // no line was free, create a new one
-                y = lines.size(); // y will be new line number
-                lines.put(lines.size(), new HashSet<Segment>()); // create new line with next number
-            }
-
-
-            n.setLocation(new XYCoordinate(maxChildX + xMargin, y * (int) n.getHeight()));
-        }
-    }
+    // TODO repair method for new generic Interface structure
+//    public void calculateNodeLocations(int xMargin, int yMargin) {
+//        List<N> nodes = this.topoSort();
+//        Set<N> drawnNodes = new HashSet<>();
+//        Map<Integer, Set<N>> lines = new HashMap<>(); // the horizontal "lines" on which nodes are drawn.
+//
+//        for (N n : nodes) {
+//            int maxChildX = 0;
+//            for (N c : n.getChildren()) {
+//                if (drawnNodes.contains(c)) {
+//                    int childX = c.getRightBorderCenter().getX();
+//                    if (childX > maxChildX) {
+//                        maxChildX = childX;
+//                    }
+//                }
+//            }
+//
+//            // TODO: create a more efficient way of finding y coordinate
+//            // (use overlapping intervals on x axis to find required height)
+//            int y = -1;
+//
+//            lineLoop:
+//            for (int lineNumber : lines.keySet()) {
+//                for (N drawn : lines.get(lineNumber)) {
+//                    if (drawn.getRightBorderCenter().getX() + xMargin >= maxChildX
+//                            || drawn.getLeftBorderCenter().getX() < maxChildX + n.getWidth() + xMargin) {
+//                        continue lineLoop;
+//                    }
+//                }
+//                // we can place it here!
+//                y = lineNumber;
+//            }
+//            if (y < 0) {
+//                // no line was free, create a new one
+//                y = lines.size(); // y will be new line number
+//                lines.put(lines.size(), new HashSet<N>()); // create new line with next number
+//            }
+//
+//
+//            n.setLocation(new XYCoordinate(maxChildX + xMargin, y * (int) n.getHeight()));
+//        }
+//    }
 }

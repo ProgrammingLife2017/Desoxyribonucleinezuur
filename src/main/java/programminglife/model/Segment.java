@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 /**
  * Created by marti_000 on 25-4-2017.
  */
-public class Segment extends Rectangle {
+public class Segment extends Rectangle implements Node<Segment> {
     private int id;
     private String sequence;
 

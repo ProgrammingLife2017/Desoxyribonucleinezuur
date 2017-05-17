@@ -1,11 +1,13 @@
 package programminglife.model;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.*;
 
 /**
  * Created by marti_000 on 25-4-2017.
  */
-public class GenomeGraph {
+public class GenomeGraph implements Graph<Segment, Link> {
     private String id;
     private Set<Segment> rootNodes;
 
@@ -100,5 +102,24 @@ public class GenomeGraph {
      */
     public int size() {
         return this.getNodes().size();
+    }
+
+    /**
+     * Returns an iterator over elements of type {@code T}.
+     *
+     * @return an Iterator.
+     */
+    @NotNull
+    @Override
+    public Iterator<Segment> iterator() {
+        return this.getNodes().iterator();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addAll(Collection<Segment> nodes) {
+        nodes.forEach(this::addNode);
     }
 }
