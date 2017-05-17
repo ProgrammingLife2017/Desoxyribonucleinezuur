@@ -71,8 +71,7 @@
                 <configuration>
                     <excludes>
                         <!-- exclude tests here -->
-                        <exclude>**/TestCircle.java</exclude>
-                        <exclude>**/TestSquare.java</exclude>
+                        <exclude>**/GuiControllerTest.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>
