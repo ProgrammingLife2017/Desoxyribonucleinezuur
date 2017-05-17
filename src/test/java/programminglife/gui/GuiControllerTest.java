@@ -79,11 +79,11 @@ public class GuiControllerTest extends FxRobot {
         openAndParseFile(testFileName);
 
         clickOn("#txtMaxDrawDepth").type(KeyCode.DIGIT9);
-        clickOn("#txtCenterNode").type(KeyCode.DIGIT1);
+        clickOn("#txtCenterNode").type(KeyCode.DIGIT2);
         clickOn("#btnDraw");
-        assertEquals("1", ((TextField) lookup("#txtCenterNode").queryFirst()).getCharacters().toString());
+        assertEquals("2", ((TextField) lookup("#txtCenterNode").queryFirst()).getCharacters().toString());
         assertEquals("9", ((TextField) lookup("#txtMaxDrawDepth").queryFirst()).getCharacters().toString());
-        assertEquals(2 * 8 + 9, ((Group) lookup("#grpDrawArea").queryFirst()).getChildren().size());
+        assertEquals(2 * 7 + 8, ((Group) lookup("#grpDrawArea").queryFirst()).getChildren().size());
         clickOn("#btnZoomIn");
         clickOn("#btnZoomOut");
         clickOn("#btnZoomReset");
