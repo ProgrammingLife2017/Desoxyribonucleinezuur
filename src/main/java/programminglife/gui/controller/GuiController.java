@@ -65,8 +65,6 @@ public class GuiController implements Observer {
     @FXML private AnchorPane anchorConsolePanel;
 
     //Privates used by method.
-
-
     private ConsoleView consoleView;
     private double orgSceneX, orgSceneY;
     private double orgTranslateX, orgTranslateY;
@@ -81,13 +79,11 @@ public class GuiController implements Observer {
     @SuppressWarnings("Unused")
     private void initialize() {
         this.graphController = new GraphController(null, this.grpDrawArea);
-
         initMenubar();
         initLeftControlpanelScreenModifiers();
         initLeftControlpanelDraw();
         initMouse();
         consoleView = initConsole(anchorConsolePanel);
-
         this.graphController.setConsole(consoleView);
     }
 
@@ -256,7 +252,7 @@ public class GuiController implements Observer {
             System.out.printf("%s Drawing graph...\n", Thread.currentThread());
 
             int centerNode = 0;
-            int maxDepth = Integer.MAX_VALUE;
+            int maxDepth = 0;
 
             try {
                 centerNode = Integer.parseInt(txtCenterNode.getText());
