@@ -190,4 +190,12 @@ public class Segment extends Rectangle implements Node<Segment> {
 
         this.setSize(new XYCoordinate(width, height));
     }
+
+    /**
+     * get the length of the sequence of this segment.
+     * @return the length of the sequence of this segment
+     */
+    public int getSequenceLength() {
+        return this.sequence.length();
+    }
 }
