@@ -1,5 +1,7 @@
 package programminglife.gui;
 
+import javafx.scene.Group;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import org.junit.After;
@@ -15,6 +17,7 @@ import java.net.URISyntaxException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 /**
@@ -79,9 +82,9 @@ public class GuiControllerTest extends FxRobot {
         clickOn("#txtMaxDrawDepth").type(KeyCode.DIGIT9);
         clickOn("#txtCenterNode").type(KeyCode.DIGIT2);
         clickOn("#btnDraw");
-//        assertEquals("2", ((TextField) this.lookup("#txtCenterNode").queryFirst()).getCharacters().toString());
-//        assertEquals("9", ((TextField) this.lookup("#txtMaxDrawDepth").queryFirst()).getCharacters().toString());
-//        assertEquals(2 * 7 + 8, ((Group) this.lookup("#grpDrawArea").queryFirst()).getChildren().size());
+        assertEquals("2", ((TextField) lookup("#txtCenterNode").query()).getCharacters().toString());
+        assertEquals("9", ((TextField) lookup("#txtMaxDrawDepth").query()).getCharacters().toString());
+        assertEquals(2 * 7 + 8, ((Group) lookup("#grpDrawArea").query()).getChildren().size());
         clickOn("#btnZoomIn");
         clickOn("#btnZoomOut");
         clickOn("#btnZoomReset");
