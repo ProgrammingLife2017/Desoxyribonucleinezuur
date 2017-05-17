@@ -7,6 +7,7 @@ import javafx.scene.shape.Rectangle;
 import jp.uphy.javafx.console.ConsoleView;
 import programminglife.model.Graph;
 import programminglife.model.Node;
+import programminglife.model.SubGraph;
 import programminglife.model.XYCoordinate;
 
 import java.util.HashSet;
@@ -46,6 +47,36 @@ public class GraphController {
      */
     public void draw(int centerNode, int maxDepth) {
         this.drawDFS(null, this.getGraph().getNode(centerNode), INITIAL_OFFSET, maxDepth);
+//        SubGraph subGraph = new SubGraph(this.getGraph().getNode(centerNode), maxDepth);
+//        subGraph.calculateNodeLocations(50, 20);
+//        drawSubGraph(subGraph);
+    }
+
+    /**
+     * Draws all nodes in the SubGraph g.
+     * @param g The SubGraph
+     */
+    public void drawSubGraph(SubGraph g) {
+        this.clear();
+        for (Node n : g) {
+            for (Node p : n.getParents()) {
+                if (!g.contains(p)) {
+                    continue;
+                }
+                Line link = new Line(
+                        p.getX() + p.getWidth(),
+                        p.getY() + p.getHeight() / 2,
+                        n.getX(),
+                        n.getY() + n.getHeight() / 2
+                );
+                link.setStroke(Color.DARKGRAY);
+                link.setStrokeWidth(3);
+                link.setOnMouseClicked(event -> System.out.printf("Link{%s -> %s}\n", p, n));
+
+                this.grpDrawArea.getChildren().add(link);
+                this.drawNode(n);
+            }
+        }
     }
 
     /**
@@ -116,6 +147,8 @@ public class GraphController {
 
         return drawnNodes;
     }
+
+
 
     /**
      * Draws the node on the canvas.

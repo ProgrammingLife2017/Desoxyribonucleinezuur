@@ -15,7 +15,7 @@ public class Graph {
     private Map<Integer, Node> nodes;
 
     /**
-     * The contructor for a Graph.
+     * The constructor for a Graph.
      * @param id String id.
      */
     public Graph(String id) {
@@ -27,9 +27,15 @@ public class Graph {
     /**
      * Add method for a node.
      * @param node Node.
-     * @return Node.
+     * @return the previous node with this id.
      */
     public Node addNode(Node node) {
+        this.rootNodes.removeAll(node.getChildren()); // any children of this node are no longer a root
+        if (!this.containsAny(node.getParents())) {
+            this.rootNodes.add(node); // this node is a root if none of its parents are in this graph
+        }
+
+        // add node
         return this.nodes.put(node.getIdentifier(), node);
     }
 
@@ -39,15 +45,37 @@ public class Graph {
      * @return Node.
      */
     public Node getNode(int id) {
-        if (this.nodes.containsKey(id)) {
-            return this.nodes.get(id);
+        Node res = this.nodes.get(id);
+        if (res != null) {
+            return res;
         } else {
             throw new NoSuchElementException("There is no node with ID " + id);
         }
     }
 
+
+    /**
+     * get a collection of all nodes in this graph. This collection can be modified without changing this graph.
+     * @return all nodes
+     */
     public Collection<Node> getNodes() {
         return this.nodes.values();
+    }
+
+    /**
+     * check whether this graph contains any of the Nodes in nodes.
+     * This method short-circuits: as soon as a node is found that is in this graph, it returns true.
+     * @param nodes the nodes to check for
+     * @return true if this graph contains any of the nodes in nodes, false otherwise.
+     */
+    public boolean containsAny(Collection<Node> nodes) {
+        for (Node node: nodes) {
+            // check identifier instead of node because checking keys is faster than values.
+            if (this.nodes.containsKey(node.getIdentifier())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

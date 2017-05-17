@@ -52,7 +52,7 @@ public class GraphParser extends Observable implements Runnable {
      * @throws FileNotFoundException when no file is found at the given path.
      * @throws UnknownTypeException when an unknown identifier (H/S/L) is read from the file.
      */
-    protected synchronized void parse() throws FileNotFoundException, UnknownTypeException {
+    public synchronized void parse() throws FileNotFoundException, UnknownTypeException {
         parse(PARSE_LINE_VERBOSE_DEFAULT);
     }
 
