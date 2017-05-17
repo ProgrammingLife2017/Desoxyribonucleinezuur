@@ -272,9 +272,8 @@ public class GuiController implements Observer {
                 this.graphController.draw(centerNode, maxDepth);
                 System.out.printf("%s Graph drawn.\n", Thread.currentThread());
             } catch (NoSuchElementException e) {
-                Alert alert = new Alert(Alert.AlertType.WARNING, "This graph only has "
-                        + this.graphController.getGraph().size()
-                        + " nodes. Choose another start Node.", ButtonType.OK);
+                Alert alert = new Alert(Alert.AlertType.WARNING, "There is no node with this ID."
+                        + " Choose another start Node.", ButtonType.OK);
                 alert.show();
             }
 
