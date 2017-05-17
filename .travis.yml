@@ -9,7 +9,7 @@ addons:
   apt:
     packages:
       - oracle-java8-installer
-# use operating systems.
+# use operating systems
   os:
     - linux
 # setup jobs.

@@ -10,6 +10,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.testfx.api.FxRobot;
 import org.testfx.api.FxToolkit;
+import org.testfx.util.WaitForAsyncUtils;
 import programminglife.ProgrammingLife;
 
 import java.io.File;
@@ -58,7 +59,7 @@ public class GuiControllerTest extends FxRobot {
     @Before
     public void setUp() throws TimeoutException {
         this.pl = (ProgrammingLife) FxToolkit.setupApplication(ProgrammingLife.class);
-        //WaitForAsyncUtils.waitFor(10, TimeUnit.SECONDS, primaryStage.showingProperty());
+        WaitForAsyncUtils.waitFor(10, TimeUnit.SECONDS, primaryStage.showingProperty());
     }
 
     @After
