@@ -2,8 +2,8 @@ package programminglife.parser;
 
 import com.diffplug.common.base.Errors;
 import com.diffplug.common.base.Throwing;
-import programminglife.model.Graph;
-import programminglife.model.Node;
+import programminglife.model.GenomeGraph;
+import programminglife.model.Segment;
 import programminglife.model.exception.UnknownTypeException;
 
 import java.io.*;
@@ -17,18 +17,18 @@ public class GraphParser extends Observable implements Runnable {
 
     private static final boolean PARSE_LINE_VERBOSE_DEFAULT = true;
 
-    private Graph graph;
+    private GenomeGraph graph;
     private File graphFile;
     private boolean verbose;
 
     /**
      * Initiates an empty graph and the {@link File} to parse.
-     * @param graphFile the file to parse the {@link Graph} from
+     * @param graphFile the file to parse the {@link GenomeGraph} from
      */
     public GraphParser(File graphFile) {
         this.graphFile = graphFile;
         this.verbose = PARSE_LINE_VERBOSE_DEFAULT;
-        this.graph = new Graph("");
+        this.graph = new GenomeGraph("");
     }
 
     /**
@@ -37,7 +37,7 @@ public class GraphParser extends Observable implements Runnable {
     @Override
     public void run() {
         try {
-            System.out.printf("%s Parsing Graph on separate Thread", Thread.currentThread());
+            System.out.printf("%s Parsing GenomeGraph on separate Thread", Thread.currentThread());
             parse(this.verbose);
             this.setChanged();
             this.notifyObservers(this.graph);
@@ -48,7 +48,7 @@ public class GraphParser extends Observable implements Runnable {
     }
 
     /**
-     * Parse a GFA file as a {@link Graph}.
+     * Parse a GFA file as a {@link GenomeGraph}.
      * @throws FileNotFoundException when no file is found at the given path.
      * @throws UnknownTypeException when an unknown identifier (H/S/L) is read from the file.
      */
@@ -57,7 +57,7 @@ public class GraphParser extends Observable implements Runnable {
     }
 
     /**
-     * Parse a GFA file as a {@link Graph}.
+     * Parse a GFA file as a {@link GenomeGraph}.
      * @param verbose if log messages should be printed.
      * @throws FileNotFoundException when no file is found at the given path.
      * @throws UnknownTypeException when an unknown identifier (H/S/L) is read from the file.
@@ -68,7 +68,7 @@ public class GraphParser extends Observable implements Runnable {
         }
 
         BufferedReader reader = new BufferedReader(new FileReader(this.graphFile));
-        this.graph = new Graph(this.graphFile.getName());
+        this.graph = new GenomeGraph(this.graphFile.getName());
 
         try {
             reader.lines().forEach(Errors.rethrow().wrap((Throwing.Consumer<String>) line -> {
@@ -106,7 +106,7 @@ public class GraphParser extends Observable implements Runnable {
     }
 
     /**
-     * Parse a {@link String} representing a {@link Node}.
+     * Parse a {@link String} representing a {@link Segment}.
      * @param propertyString the {@link String} from a GFA file.
      */
     synchronized void parseSegment(String propertyString) {
@@ -117,8 +117,8 @@ public class GraphParser extends Observable implements Runnable {
         // properties[3] is +/-
         // rest of properties is unused
 
-        Node parsedNode = new Node(id, segment);
-        Node existingNode;
+        Segment parsedNode = new Segment(id, segment);
+        Segment existingNode;
         try {
             existingNode = this.getGraph().getNode(parsedNode.getIdentifier());
             existingNode.setSequence(parsedNode.getSequence());
@@ -139,19 +139,19 @@ public class GraphParser extends Observable implements Runnable {
         int destinationId = Integer.parseInt(properties[3]);
         // properties[4] and further are unused
 
-        Node sourceNode, destinationNode;
+        Segment sourceNode, destinationNode;
 
         try {
             sourceNode = this.getGraph().getNode(sourceId);
         } catch (NoSuchElementException e) {
-            sourceNode = new Node(sourceId);
+            sourceNode = new Segment(sourceId);
             this.getGraph().addNode(sourceNode);
         }
 
         try {
             destinationNode = this.getGraph().getNode(destinationId);
         } catch (NoSuchElementException e) {
-            destinationNode = new Node(destinationId);
+            destinationNode = new Segment(destinationId);
             this.getGraph().addNode(destinationNode);
         }
 
@@ -160,17 +160,17 @@ public class GraphParser extends Observable implements Runnable {
     }
 
     /**
-     * Find all {@link Node}s without parents and mark them as root nodes.
+     * Find all {@link Segment}s without parents and mark them as root nodes.
      */
     private synchronized void findRootNodes() {
-        for (Node n : this.getGraph().getNodes()) {
+        for (Segment n : this.getGraph().getNodes()) {
             if (n != null && n.getParents().isEmpty()) {
                 this.getGraph().getRootNodes().add(n);
             }
         }
     }
 
-    public Graph getGraph() {
+    public GenomeGraph getGraph() {
         return graph;
     }
 }

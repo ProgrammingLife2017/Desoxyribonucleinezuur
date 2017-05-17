@@ -10,18 +10,18 @@ import java.util.stream.Collectors;
 /**
  * Created by marti_000 on 25-4-2017.
  */
-public class Node extends Rectangle {
+public class Segment extends Rectangle {
     private int id;
     private String sequence;
 
-    private Set<Node> parents;
-    private Set<Node> children;
+    private Set<Segment> parents;
+    private Set<Segment> children;
 
     /**
      * Constructor for a node with an id.
      * @param id int.
      */
-    public Node(int id) {
+    public Segment(int id) {
         this(id, "", new HashSet<>(), new HashSet<>());
     }
 
@@ -30,18 +30,18 @@ public class Node extends Rectangle {
      * @param id int.
      * @param sequence String.
      */
-    public Node(int id, String sequence) {
+    public Segment(int id, String sequence) {
         this(id, sequence, new HashSet<>(), new HashSet<>());
     }
 
     /**
      * Constructor for a node with an id, sequence, parents and children.
-     * @param id the id of the {@link Node}
+     * @param id the id of the {@link Segment}
      * @param sequence the sequence of base pairs
      * @param parents a {@link Set} of parents
      * @param children a {@link Set} of children
      */
-    public Node(int id, String sequence, Set<Node> parents, Set<Node> children) {
+    public Segment(int id, String sequence, Set<Segment> parents, Set<Segment> children) {
         this.id = id;
         this.sequence = sequence;
         this.parents = parents;
@@ -59,7 +59,7 @@ public class Node extends Rectangle {
     }
 
     /**
-     * Set the sequence of base pairs of the {@link Node}.
+     * Set the sequence of base pairs of the {@link Segment}.
      * @param sequence A {@link String} representing the base pairs
      */
     public void setSequence(String sequence) {
@@ -70,17 +70,17 @@ public class Node extends Rectangle {
 
     /**
      * Method to add a child to a node.
-     * @param child Node.
+     * @param child Segment.
      */
-    public void addChild(Node child) {
+    public void addChild(Segment child) {
         this.children.add(child);
     }
 
     /**
      * Method to add a parent to a node.
-     * @param parent Node.
+     * @param parent Segment.
      */
-    public void addParent(Node parent) {
+    public void addParent(Segment parent) {
         this.parents.add(parent);
     }
 
@@ -108,7 +108,7 @@ public class Node extends Rectangle {
      * Get the {@link Set} of parents.
      * @return the {@link Set} of parents
      */
-    public Set<Node> getParents() {
+    public Set<Segment> getParents() {
         return parents;
     }
 
@@ -116,17 +116,17 @@ public class Node extends Rectangle {
      * Get the {@link Set} of children.
      * @return the {@link java.util.Set} of children
      */
-    public Set<Node> getChildren() {
+    public Set<Segment> getChildren() {
         return children;
     }
 
     /**
      * toString method for the node.
-     * @return the {@link String} representation of a {@link Node}
+     * @return the {@link String} representation of a {@link Segment}
      */
     @Override
     public String toString() {
-        return String.format("Node<%d>(c(%d):%s, p(%d):%s, s(%d):%s)",
+        return String.format("Segment<%d>(c(%d):%s, p(%d):%s, s(%d):%s)",
                 this.getIdentifier(),
                 this.getChildren().size(),
                 this.getChildren().stream().map(c -> c.getIdentifier()).collect(Collectors.toList()),
@@ -137,15 +137,15 @@ public class Node extends Rectangle {
     }
 
     /**
-     * Get a {@link XYCoordinate} representing the size of the {@link Node}.
-     * @return The size of the {@link Node}
+     * Get a {@link XYCoordinate} representing the size of the {@link Segment}.
+     * @return The size of the {@link Segment}
      */
     public XYCoordinate getSize() {
         return new XYCoordinate((int) this.getWidth(), (int) this.getHeight());
     }
 
     /**
-     * Set the size {@link XYCoordinate} of the {@link Node}.
+     * Set the size {@link XYCoordinate} of the {@link Segment}.
      * @param size The {@link XYCoordinate} representing the size
      */
     void setSize(XYCoordinate size) {
@@ -154,7 +154,7 @@ public class Node extends Rectangle {
     }
 
     /**
-     * Getter for top left corner of a {@link Node}.
+     * Getter for top left corner of a {@link Segment}.
      * @return {@link XYCoordinate} with the values of the top left corner.
      */
     public XYCoordinate getLocation() {
@@ -162,7 +162,7 @@ public class Node extends Rectangle {
     }
 
     /**
-     * Set an {@link XYCoordinate} representing the location of the {@link Node}.
+     * Set an {@link XYCoordinate} representing the location of the {@link Segment}.
      * @param location The {@link XYCoordinate}
      */
     public void setLocation(XYCoordinate location) {

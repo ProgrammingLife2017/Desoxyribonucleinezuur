@@ -12,32 +12,32 @@ import static org.junit.Assert.assertEquals;
 /**
  * Created by toinehartman on 03/05/2017.
  */
-public class GraphTest {
-    Graph graph;
-    Node node;
+public class GenomeGraphTest {
+    GenomeGraph graph;
+    Segment node;
     String link;
 
     private static String TEST_PATH, TEST_FAULTY_PATH;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        TEST_PATH = new File(GraphTest.class.getResource("/test.gfa").toURI()).getAbsolutePath();
+        TEST_PATH = new File(GenomeGraphTest.class.getResource("/test.gfa").toURI()).getAbsolutePath();
         TEST_FAULTY_PATH = new File(
-                GraphTest.class.getClass().getResource("/test-faulty.gfa").toURI()
+                GenomeGraphTest.class.getClass().getResource("/test-faulty.gfa").toURI()
         ).getAbsolutePath();
     }
 
     @Before
     public void setUp() throws Exception {
-        graph = new Graph("test graph");
-        node = new Node(3, "ATCG");
+        graph = new GenomeGraph("test graph");
+        node = new Segment(3, "ATCG");
 
         graph.addNode(node);
     }
 
     @Test
     public void addNodeTest() throws Exception {
-        Node secondNode = new Node(8);
+        Segment secondNode = new Segment(8);
         graph.addNode(secondNode);
 
         assertEquals(2, graph.getNodes().size());
