@@ -18,7 +18,9 @@ import java.net.URISyntaxException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * This test class is there to interactively test the GUI. It is capable of clicking on certain buttons and items
@@ -26,6 +28,7 @@ import static org.junit.Assert.*;
  * This is only usable if you have a USA QWERTY layout on your keyboard!!!
  */
 public class GuiControllerTest extends FxRobot {
+
     private static Stage primaryStage;
     private static String operatingSystem;
     private static String testFileName;
@@ -69,29 +72,29 @@ public class GuiControllerTest extends FxRobot {
      */
     @Test
     public void clickOnTest() {
-        openAndParseFile(this.testFileName);
+        openAndParseFile(testFileName);
 
         clickOn("#txtMaxDrawDepth").type(KeyCode.BACK_SPACE);
         clickOn("#txtMaxDrawDepth").type(KeyCode.DIGIT9);
         clickOn("#txtCenterNode").type(KeyCode.BACK_SPACE);
         clickOn("#txtCenterNode").type(KeyCode.DIGIT2);
         clickOn("#btnDraw");
-//        assertEquals("2", ((TextField) lookup("#txtCenterNode").queryFirst()).getCharacters().toString());
-//        assertEquals("9", ((TextField) lookup("#txtMaxDrawDepth").queryFirst()).getCharacters().toString());
-//        assertEquals(2 * 7 + 8, ((Group) lookup("#grpDrawArea").queryFirst()).getChildren().size());
+        assertEquals("2", ((TextField) lookup("#txtCenterNode").query()).getCharacters().toString());
+        assertEquals("9", ((TextField) lookup("#txtMaxDrawDepth").query()).getCharacters().toString());
+        assertEquals(2 * 7 + 8, ((Group) lookup("#grpDrawArea").query()).getChildren().size());
         clickOn("#btnZoomIn");
         clickOn("#btnZoomOut");
         clickOn("#btnZoomReset");
         clickOn("#btnDrawRandom");
-//        sleep(500);
-//        clickOn("#menuHelp");
-//        clickOn("#btnAbout");
-//        sleep(500);
-//        type(KeyCode.ENTER);
-//        clickOn("#menuHelp");
-//        clickOn("#btnInstructions");
-//        sleep(500);
-//        type(KeyCode.ENTER);
+        sleep(500);
+        clickOn("#menuHelp");
+        clickOn("#btnAbout");
+        sleep(500);
+        type(KeyCode.ENTER);
+        clickOn("#menuHelp");
+        clickOn("#btnInstructions");
+        sleep(500);
+        type(KeyCode.ENTER);
     }
 
     private void openAndParseFile(String fileName) {
