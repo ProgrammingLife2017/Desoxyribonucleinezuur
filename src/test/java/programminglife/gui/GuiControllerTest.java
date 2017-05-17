@@ -1,6 +1,5 @@
 package programminglife.gui;
 
-import javafx.fxml.FXML;
 import javafx.scene.Group;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -12,16 +11,16 @@ import org.junit.Test;
 import org.testfx.api.FxRobot;
 import org.testfx.api.FxToolkit;
 import org.testfx.util.WaitForAsyncUtils;
-import static org.testfx.api.FxAssert.verifyThat;
 import programminglife.ProgrammingLife;
 
-import static org.hamcrest.Matchers.containsString;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.*;
+import static org.testfx.api.FxAssert.verifyThat;
 
 /**
  * This test class is there to interactively test the GUI. It is capable of clicking on certain buttons and items
@@ -46,13 +45,6 @@ public class GuiControllerTest extends FxRobot {
 
     @BeforeClass
     public static void setUpClass() throws TimeoutException {
-        if (Boolean.getBoolean("headless")) {
-            System.setProperty("testfx.robot", "glass");
-            System.setProperty("testfx.headless", "true");
-            System.setProperty("prism.order", "sw");
-            System.setProperty("prism.text", "t2k");
-            System.setProperty("java.awt.headless", "true");
-        }
         operatingSystem = System.getProperty("os.name").toLowerCase();
         primaryStage = FxToolkit.registerPrimaryStage();
     }
@@ -89,6 +81,9 @@ public class GuiControllerTest extends FxRobot {
         assertEquals("2", ((TextField) this.lookup("#txtCenterNode").queryFirst()).getCharacters().toString());
         assertEquals("9", ((TextField) this.lookup("#txtMaxDrawDepth").queryFirst()).getCharacters().toString());
         assertEquals(2 * 7 + 8, ((Group) this.lookup("#grpDrawArea").queryFirst()).getChildren().size());
+//        assertEquals("2", ((TextField) lookup("#txtCenterNode").queryFirst()).getCharacters().toString());
+//        assertEquals("9", ((TextField) lookup("#txtMaxDrawDepth").queryFirst()).getCharacters().toString());
+//        assertEquals(2 * 7 + 8, ((Group) lookup("#grpDrawArea").queryFirst()).getChildren().size());
         clickOn("#btnZoomIn");
         clickOn("#btnZoomOut");
         clickOn("#btnZoomReset");
