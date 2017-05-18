@@ -25,20 +25,16 @@ import programminglife.parser.GraphParser;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.NoSuchElementException;
 import java.util.Observable;
 import java.util.Observer;
-import java.nio.charset.Charset;
 import java.util.Optional;
 
 /**
  * The controller for the GUI that is used in the application.
  * The @FXML tag is needed in initialize so that javaFX knows what to do.
  */
-
-
-
-
 public class GuiController implements Observer {
     //static finals
     private static final String INITIAL_CENTER_NODE = "1";
@@ -81,7 +77,7 @@ public class GuiController implements Observer {
      * The initialize will call the other methods that are run in the .
      */
     @FXML
-    @SuppressWarnings("Unused")
+    @SuppressWarnings("unused")
     private void initialize() {
         this.graphController = new GraphController(null, this.grpDrawArea);
         initMenubar();
@@ -99,7 +95,7 @@ public class GuiController implements Observer {
      * @throws FileNotFoundException if the {@link File} is not found.
      * @throws UnknownTypeException if the {@link File} is not compliant with the GFA standard.
      */
-    public void openFile(File file) throws FileNotFoundException, UnknownTypeException {
+    private void openFile(File file) throws FileNotFoundException, UnknownTypeException {
         if (file != null) {
             GraphParser graphParser = new GraphParser(file);
             graphParser.addObserver(this);
@@ -153,12 +149,14 @@ public class GuiController implements Observer {
             a.setTitle("Confirm Exit");
             a.setHeaderText("Do you really want to exit?");
             Optional<ButtonType> result = a.showAndWait();
-            if (result.get() == ButtonType.OK) {
-                Platform.exit();
-                System.exit(0);
-            }
-            if (result.get() == ButtonType.CANCEL) {
-                a.close();
+            if (result.isPresent()) {
+                if (result.get() == ButtonType.OK) {
+                    Platform.exit();
+                    System.exit(0);
+                }
+                if (result.get() == ButtonType.CANCEL) {
+                    a.close();
+                }
             }
         });
 
@@ -198,12 +196,11 @@ public class GuiController implements Observer {
      * Initializes the bookmark buttons in the menu.
      */
     private void initBookmarkMenu() {
-
         btnCreateBookmark.setOnAction(event -> {
             try {
                 System.out.println("came here");
-                FXMLLoader loader = new FXMLLoader();
-                loader.setLocation(ProgrammingLife.class.getResource("/CreateBookmarkWindow.fxml"));
+                FXMLLoader loader = new FXMLLoader(ProgrammingLife.class.getResource("/CreateBookmarkWindow.fxml"));
+                GuiBookmarkController gc = loader.getController();
                 AnchorPane page = loader.load();
                 Scene scene = new Scene(page);
                 Stage bookmarkDialogStage = new Stage();
@@ -211,6 +208,13 @@ public class GuiController implements Observer {
                 bookmarkDialogStage.setTitle("Create Bookmark");
                 bookmarkDialogStage.initOwner(ProgrammingLife.getStage());
                 bookmarkDialogStage.showAndWait();
+
+                gc.getBtnOk().setOnAction(e -> {
+                    bookmarkDialogStage.close();
+                });
+                gc.getBtnCancel().setOnAction(e -> {
+                    bookmarkDialogStage.close();
+                });
 
             } catch (IOException e) {
                 e.printStackTrace();
