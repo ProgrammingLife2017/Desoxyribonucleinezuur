@@ -3,9 +3,7 @@ package programminglife.parser;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import programminglife.model.GenomeGraph;
-import programminglife.model.GenomeGraphTest;
-import programminglife.model.Segment;
+import programminglife.model.*;
 import programminglife.model.exception.UnknownTypeException;
 
 import java.io.File;
@@ -14,6 +12,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 /**
@@ -54,12 +53,9 @@ public class GraphParserTest implements Observer {
     public void parseTest() throws Exception {
         graphParser.parse();
         GenomeGraph graph = graphParser.getGraph();
-        Collection<Segment> nodes = graph.getNodes();
 
-        assertEquals(8, nodes.size());
-        assertEquals(9, nodes.stream()
-                .mapToInt(node -> node.getChildren().size())
-                .sum());
+        assertEquals(8, graph.size());
+        assertEquals(9, graph.getChildrenAdjacencyList().values().stream().mapToInt(children -> children.size()).sum());
     }
 
     @Test
@@ -70,13 +66,12 @@ public class GraphParserTest implements Observer {
     @Test
     public void parseSegmentTest() {
         graphParser.parseSegment(nodeLine);
+        Graph g = graphParser.getGraph();
 
-        Segment node = graphParser.getGraph().getNode(6);
-
-        assertEquals(6, node.getIdentifier());
-        assertEquals("C", node.getSequence());
-        assertEquals(0, node.getParents().size());
-        assertEquals(0, node.getChildren().size());
+        assertTrue(g.contains(6));
+        assertEquals("C", DataManager.getSequence(6));
+        assertEquals(0, g.getParents(6).size());
+        assertEquals(0, g.getChildren(6).size());
     }
 
     @Test
@@ -101,10 +96,9 @@ public class GraphParserTest implements Observer {
         if (o instanceof GraphParser) {
             if (arg instanceof GenomeGraph) {
                 GenomeGraph graph = (GenomeGraph) arg;
-                Segment node = graph.getNode(8);
 
-                assertEquals(new File(TEST_PATH).getName(), graph.getId());
-                assertEquals("GTC", node.getSequence());
+                assertEquals(new File(TEST_PATH).getName(), graph.getID());
+                assertEquals("GTC", DataManager.getSequence(8));
             } else if (arg instanceof Exception) {
                 throw new RuntimeException((Exception) arg);
             }

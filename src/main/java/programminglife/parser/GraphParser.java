@@ -2,13 +2,12 @@ package programminglife.parser;
 
 import com.diffplug.common.base.Errors;
 import com.diffplug.common.base.Throwing;
-import programminglife.model.DataManager;
 import programminglife.model.GenomeGraph;
+import programminglife.model.Node;
 import programminglife.model.Segment;
 import programminglife.model.exception.UnknownTypeException;
 
 import java.io.*;
-import java.util.NoSuchElementException;
 import java.util.Observable;
 
 /**
@@ -32,7 +31,7 @@ public class GraphParser extends Observable implements Runnable {
         this.graphFile = graphFile;
         this.name = name;
         this.verbose = PARSE_LINE_VERBOSE_DEFAULT;
-        this.graph = new GenomeGraph(name, DataManager.createCleanSegmentStorage(name));
+        this.graph = new GenomeGraph(name);
     }
 
     /**
@@ -109,8 +108,6 @@ public class GraphParser extends Observable implements Runnable {
                 System.err.println("Unexpected (non-fatal) failure closing the GFA file.");
             }
         }
-
-        this.findRootNodes();
     }
 
     /**
@@ -120,18 +117,14 @@ public class GraphParser extends Observable implements Runnable {
     synchronized void parseSegment(String propertyString) {
         String[] properties = propertyString.split("\\s");
         assert (properties[0].equals("S")); // properties[0] is 'S'
-        int id = Integer.parseInt(properties[1]);
-        String segment = properties[2];
+        int segmentID = Integer.parseInt(properties[1]);
+        String sequence = properties[2];
         // properties[3] is +/-
         // rest of properties is unused
 
-        Segment parsedNode = new Segment(id, segment);
-        Segment existingNode;
-        try {
-            existingNode = this.getGraph().getNode(parsedNode.getIdentifier());
-            existingNode.setSequence(parsedNode.getSequence());
-        } catch (NoSuchElementException e) {
-            this.getGraph().addNode(parsedNode);
+        Node segment = new Segment(segmentID, sequence);
+        if (!this.getGraph().contains(segmentID)) {
+            this.getGraph().addNode(segment);
         }
     }
 
@@ -147,35 +140,17 @@ public class GraphParser extends Observable implements Runnable {
         int destinationId = Integer.parseInt(properties[3]);
         // properties[4] and further are unused
 
-        Segment sourceNode, destinationNode;
-
-        try {
-            sourceNode = this.getGraph().getNode(sourceId);
-        } catch (NoSuchElementException e) {
-            sourceNode = new Segment(sourceId);
+        Node sourceNode = new Segment(sourceId);
+        Node destinationNode = new Segment(destinationId);
+        if (!this.getGraph().contains(sourceId)) {
             this.getGraph().addNode(sourceNode);
         }
 
-        try {
-            destinationNode = this.getGraph().getNode(destinationId);
-        } catch (NoSuchElementException e) {
-            destinationNode = new Segment(destinationId);
+        if (!this.getGraph().contains(destinationId)) {
             this.getGraph().addNode(destinationNode);
         }
 
-        sourceNode.addChild(destinationNode);
-        destinationNode.addParent(sourceNode);
-    }
-
-    /**
-     * Find all {@link Segment}s without parents and mark them as root nodes.
-     */
-    private synchronized void findRootNodes() {
-        for (Segment n : this.getGraph().getNodes()) {
-            if (n != null && n.getParents().isEmpty()) {
-                this.getGraph().getRootNodes().add(n);
-            }
-        }
+        this.getGraph().addEdge(sourceNode, destinationNode);
     }
 
     public GenomeGraph getGraph() {

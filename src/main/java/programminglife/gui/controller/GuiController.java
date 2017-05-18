@@ -92,7 +92,7 @@ public class GuiController implements Observer {
 
             if (DataManager.hasCache(name)) {
                 // load cache from datamanager
-                GenomeGraph graph = new GenomeGraph(name, DataManager.getSegmentStorage(name));
+                GenomeGraph graph = new GenomeGraph(name);
 
                 System.out.printf("%s Graph %s found in cache\n", Thread.currentThread(), name);
                 this.setGraph(graph);
@@ -131,7 +131,7 @@ public class GuiController implements Observer {
         disableGraphUIElements(graph == null);
 
         if (graph != null) {
-            System.out.printf("%s Graph was set to %s.\n", Thread.currentThread(), graph.getId());
+            System.out.printf("%s Graph was set to %s.\n", Thread.currentThread(), graph.getID());
             System.out.printf("%s The graph has %d nodes\n", Thread.currentThread(), graph.size());
         } else {
             System.out.printf("%s graph was set to null.\n", Thread.currentThread());

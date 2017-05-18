@@ -7,13 +7,12 @@ import org.mapdb.Serializer;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
-/**
- * Created by toinehartman on 17/05/2017.
- */
 public final class DataManager {
     private static final String DB_FILE_PATH = "dbFile.db";
     private static DataManager ourInstance = null;
+    private static String currentCollectionName = null;
 
     private DB db;
 
@@ -62,7 +61,7 @@ public final class DataManager {
 
     /**
      * Check whether a cache exists for file named name.
-     * @param name File to check for
+     * @param name collection to check for
      * @return true iff a cache exists for the file, false iff otherwise.
      */
     public static boolean hasCache(String name) {
@@ -71,35 +70,38 @@ public final class DataManager {
 
     /**
      * Create a clean (empty) Segment storage.
-     * WARNING: this operation overwrites the cache name, if it exists.
-     * @param name name of cache file
+     * WARNING: this operation overwrites the cache collection, if it exists.
+     * @param collectionName name of collection
      * @return A clean (empty) HTreeMap
      */
-    public static HTreeMap<Integer, Segment> createCleanSegmentStorage(String name) {
-        HTreeMap<Integer, Segment> res = getSegmentStorage(name);
+    public static Map<Integer, String> getCleanCollection(String collectionName) {
+        Map<Integer, String> res = getCollection(collectionName);
         res.clear();
         return res;
     }
 
     /**
-     * Get the HTreeMap cache for name.
-     * @param name name for the cache
-     * @return The HTreeMap associated with name.
+     * Get the HTreeMap cache with this name.
+     * @param collectionName name for the cache
+     * @return The HTreeMap associated with collectionName.
      */
-    public static HTreeMap<Integer, Segment> getSegmentStorage(String name) {
+    public static Map<Integer, String> getCollection(String collectionName) {
         DB db = DataManager.getInstance().getDb();
-        if (db.exists(name)) {
-            System.out.printf("%s Storage %s exists\n", Thread.currentThread(), name);
-            return db.get(name);
+        if (db.exists(collectionName)) {
+            System.out.printf("%s Storage %s exists\n", Thread.currentThread(), collectionName);
+            return db.get(collectionName);
         } else {
             System.out.printf("%s Storage %s does not exist.\n%s Creating storage %s...\n",
-                    Thread.currentThread(), name, Thread.currentThread(), name);
-            HTreeMap<Integer, Segment> res = db
-                    .hashMap(name)
+                    Thread.currentThread(), collectionName, Thread.currentThread(), collectionName);
+            HTreeMap<Integer, String> res = db
+                    .hashMap(collectionName)
                     .keySerializer(Serializer.INTEGER)
-                    .valueSerializer(new Segment.SegmentSerializer())
+                    .valueSerializer(Serializer.STRING_ASCII)
                     .create();
-            System.out.printf("%s Storage %s created\n", Thread.currentThread(), name);
+            System.out.printf("%s Storage %s created\n", Thread.currentThread(), collectionName);
+
+            currentCollectionName = collectionName;
+
             return res;
         }
     }
@@ -112,5 +114,9 @@ public final class DataManager {
         DataManager.getInstance().getDb().commit();
         DataManager.getInstance().getDb().close();
         System.out.printf("%s MapDB closed\n", Thread.currentThread());
+    }
+
+    public static String getSequence(int nodeID) {
+        return getCollection(currentCollectionName).get(nodeID);
     }
 }

@@ -3,16 +3,6 @@ package programminglife.model;
 import javafx.scene.shape.Rectangle;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
-import org.mapdb.DataInput2;
-import org.mapdb.DataOutput2;
-import org.mapdb.Serializer;
-
-import java.io.IOException;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Created by marti_000 on 25-4-2017.
@@ -21,15 +11,12 @@ public class Segment extends Rectangle implements Node<Segment> {
     private int id;
     private String sequence;
 
-    private Set<Segment> parents;
-    private Set<Segment> children;
-
     /**
      * Constructor for a node with an id.
      * @param id int.
      */
     public Segment(int id) {
-        this(id, "", new HashSet<>(), new HashSet<>());
+        this(id, "");
     }
 
     /**
@@ -38,23 +25,8 @@ public class Segment extends Rectangle implements Node<Segment> {
      * @param sequence String.
      */
     public Segment(int id, String sequence) {
-        this(id, sequence, new HashSet<>(), new HashSet<>());
-    }
-
-    /**
-     * Constructor for a node with an id, sequence, parents and children.
-     * @param id the id of the {@link Segment}
-     * @param sequence the sequence of base pairs
-     * @param parents a {@link Set} of parents
-     * @param children a {@link Set} of children
-     */
-    public Segment(int id, String sequence, Set<Segment> parents, Set<Segment> children) {
         this.id = id;
-        this.sequence = sequence;
-        this.parents = parents;
-        this.children = children;
-
-        this.setDrawDimensions();
+        // TODO save sequence to MapDB
     }
 
     /**
@@ -62,7 +34,8 @@ public class Segment extends Rectangle implements Node<Segment> {
      * @return the sequence of base pairs
      */
     public String getSequence() {
-        return sequence;
+        // TODO get sequence from MapDB
+        throw new NotImplementedException("Segment#getSequence() is not yet implemented");
     }
 
     /**
@@ -70,25 +43,10 @@ public class Segment extends Rectangle implements Node<Segment> {
      * @param sequence A {@link String} representing the base pairs
      */
     public void setSequence(String sequence) {
-        this.sequence = sequence;
-
+        // TODO set sequence in MapDB
         this.setDrawDimensions();
-    }
 
-    /**
-     * Method to add a child to a node.
-     * @param child Segment.
-     */
-    public void addChild(Segment child) {
-        this.children.add(child);
-    }
-
-    /**
-     * Method to add a parent to a node.
-     * @param parent Segment.
-     */
-    public void addParent(Segment parent) {
-        this.parents.add(parent);
+        throw new NotImplementedException("Segment#setSequence() is not yet implemented");
     }
 
     public XYCoordinate getRightBorderCenter() {
@@ -112,43 +70,16 @@ public class Segment extends Rectangle implements Node<Segment> {
     }
 
     /**
-     * Get the {@link Set} of parents.
-     * @return the {@link Set} of parents
-     */
-    public Set<Segment> getParents() {
-        return parents;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Collection<Genome> getGenomes() {
-        throw new NotImplementedException("Segment#getGenomes() is not yet implemented");
-    }
-
-    /**
-     * Get the {@link Set} of children.
-     * @return the {@link java.util.Set} of children
-     */
-    public Set<Segment> getChildren() {
-        return children;
-    }
-
-    /**
      * toString method for the node.
      * @return the {@link String} representation of a {@link Segment}
      */
     @Override
     public String toString() {
-        return String.format("Segment<%d>(c(%d):%s, p(%d):%s, s(%d):%s)",
+        String sequence = this.getSequence();
+        return String.format("Segment<%d>[s(%d):%s]",
                 this.getIdentifier(),
-                this.getChildren().size(),
-                this.getChildren().stream().map(c -> c.getIdentifier()).collect(Collectors.toList()),
-                this.getParents().size(),
-                this.getParents().stream().map(p -> p.getIdentifier()).collect(Collectors.toList()),
-                this.getSequence().length(),
-                StringUtils.abbreviate(this.getSequence(), 11));
+                sequence.length(),
+                StringUtils.abbreviate(sequence, 11));
     }
 
     /**
@@ -211,41 +142,6 @@ public class Segment extends Rectangle implements Node<Segment> {
      * @return the length of the sequence of this segment
      */
     public int getSequenceLength() {
-        return this.sequence.length();
-    }
-
-    /**
-     * A class for serializing and deserializing Segments.
-     */
-    public static class SegmentSerializer implements Serializer<Segment> {
-        /**
-         * Serializes the content of the given value into the given
-         * {@link DataOutput2}.
-         *
-         * @param out   DataOutput2 to save object into
-         * @param value Object to serialize
-         * @throws IOException in case of an I/O error
-         */
-        @Override
-        public void serialize(@NotNull DataOutput2 out, @NotNull Segment value) throws IOException {
-            out.writeInt(value.getIdentifier());
-            out.writeBytes(value.getSequence());
-        }
-
-        /**
-         * Deserializes and returns the content of the given {@link DataInput2}.
-         *
-         * @param input     DataInput2 to de-serialize data from
-         * @param available how many bytes that are available in the DataInput2 for
-         *                  reading, may be -1 (in streams) or 0 (null).
-         * @return the de-serialized content of the given {@link DataInput2}
-         * @throws IOException in case of an I/O error
-         */
-        @Override
-        public Segment deserialize(@NotNull DataInput2 input, int available) throws IOException {
-            byte[] s = new byte[available];
-            input.readFully(s, 0, available);
-            return new Segment(input.readInt(), new String(s));
-        }
+        return this.getSequence().length();
     }
 }

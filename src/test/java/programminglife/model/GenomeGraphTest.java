@@ -8,6 +8,7 @@ import java.io.File;
 import java.util.NoSuchElementException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by toinehartman on 03/05/2017.
@@ -40,18 +41,18 @@ public class GenomeGraphTest {
         Segment secondNode = new Segment(8);
         graph.addNode(secondNode);
 
-        assertEquals(2, graph.getNodes().size());
-        assertEquals(node, graph.getNode(3));
-        assertEquals(secondNode, graph.getNode(8));
+        assertEquals(2, graph.size());
+        assertTrue(graph.contains(3));
+        assertTrue(graph.contains(8));
     }
 
     @Test
     public void getNodeTest2() {
-        assertEquals(node, graph.getNode(3));
+        assertTrue(graph.contains(3));
     }
 
     @Test(expected = NoSuchElementException.class)
     public void getNodeTest1() {
-        graph.getNode(121);
+        graph.getChildren(121);
     }
 }

@@ -1,134 +1,141 @@
 package programminglife.model;
 
-import org.jetbrains.annotations.NotNull;
-import org.mapdb.HTreeMap;
+import org.apache.commons.lang3.NotImplementedException;
+import programminglife.model.exception.NodeExistsException;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Created by marti_000 on 25-4-2017.
  */
-public class GenomeGraph implements Graph<Segment, Link> {
+public class GenomeGraph implements Graph {
     private String id;
-    private Set<Segment> rootNodes;
 
-    /**
-     * A list of nodes ordered by ID. Assumption: Nodes appear in GFA file in sequential order.
-     */
-    private HTreeMap<Integer, Segment> nodes;
+    private Map<Integer, Set<Integer>> children;
+    private Map<Integer, Set<Integer>> parents;
 
     /**
      * Create a genomeGraph with name.
      * @param name name of the graph
      */
     public GenomeGraph(String name) {
-        this(name, DataManager.getSegmentStorage(name));
+        this(name, new HashMap<>(), new HashMap<>());
     }
 
     /**
      * The constructor for a GenomeGraph.
      * @param id String id.
-     * @param nodes A HTreeMap with ids mapped to Segments.
      */
-    public GenomeGraph(String id, HTreeMap<Integer, Segment> nodes) {
-        this.nodes = nodes;
+    public GenomeGraph(String id, Map<Integer, Set<Integer>> children, Map<Integer, Set<Integer>> parents) {
+        this.children = children;
+        this.parents = parents;
         this.id = id;
-        this.rootNodes = new HashSet<>();
-    }
-
-    /**
-     * Add method for a node.
-     * @param node Segment.
-     * @return the previous node with this id.
-     */
-    public Segment addNode(Segment node) {
-        this.rootNodes.removeAll(node.getChildren()); // any children of this node are no longer a root
-        if (!this.containsAny(node.getParents())) {
-            this.rootNodes.add(node); // this node is a root if none of its parents are in this graph
-        }
-
-        // add node
-        return this.nodes.put(node.getIdentifier(), node);
-    }
-
-    /**
-     * get method for a node.
-     * @param id int.
-     * @return Segment.
-     */
-    public Segment getNode(int id) {
-        Segment res = this.nodes.get(id);
-        if (res != null) {
-            return res;
-        } else {
-            throw new NoSuchElementException("There is no node with ID " + id);
-        }
-    }
-
-
-    /**
-     * {@inheritDoc}
-     */
-    public Collection<Segment> getNodes() {
-        return this.nodes.values();
-    }
-
-    /**
-     * check whether this graph contains any of the Nodes in nodes.
-     * This method short-circuits: as soon as a node is found that is in this graph, it returns true.
-     * @param nodes the nodes to check for
-     * @return true if this graph contains any of the nodes in nodes, false otherwise.
-     */
-    public boolean containsAny(Collection<Segment> nodes) {
-        for (Segment node: nodes) {
-            // check identifier instead of node because checking keys is faster than values.
-            if (this.nodes.containsKey(node.getIdentifier())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Get all root nodes (make sure to call {@link programminglife.parser.GraphParser#findRootNodes()} first.
-     * @return a {@link Set} of root nodes of the {@link GenomeGraph}.
-     */
-    public Set<Segment> getRootNodes() {
-        return rootNodes;
     }
 
     /**
      * Get the {@link GenomeGraph} ID.
      * @return the ID
      */
-    public String getId() {
+    public String getID() {
         return id;
     }
 
+    @Override
+    public void addNode(Node node) {
+        this.addNode(node, new HashSet<>(), new HashSet<>());
+    }
+
+    @Override
+    public void addNode(Node node, Set<Node> children, Set<Node> parents) {
+        if (this.contains(node)) {
+            throw new NodeExistsException(String.format("%s already exists in graph %s", node.toString(), this.getID()));
+        }
+
+        this.replaceNode(node, children, parents);
+    }
+
+    @Override
+    public void replaceNode(Node node) {
+        this.replaceNode(node, new HashSet<>(), new HashSet<>());
+    }
+
+    @Override
+    public void replaceNode(Node node, Set<Node> children, Set<Node> parents) {
+        this.children.put(node.getIdentifier(), children.stream().map(c ->
+                c.getIdentifier()).collect(Collectors.toSet()));
+        this.parents.put(node.getIdentifier(), parents.stream().map(p ->
+                p.getIdentifier()).collect(Collectors.toSet()));
+    }
+
     /**
-     * Get the number of {@link Segment}s in the {@link GenomeGraph}.
-     * @return the number of {@link Segment}s
+     * Get the number of nodes in the {@link GenomeGraph}.
+     * @return the number of nodes
      */
     public int size() {
-        return this.getNodes().size();
+        assert (children.size() == parents.size());
+        return this.children.size();
     }
 
-    /**
-     * Returns an iterator over elements of type {@code T}.
-     *
-     * @return an Iterator.
-     */
-    @NotNull
     @Override
-    public Iterator<Segment> iterator() {
-        return this.getNodes().iterator();
+    public Map<Node, Set<Node>> getChildrenAdjacencyList() {
+        throw new NotImplementedException("GenomeGraph#getChildrenAdjacencyList() is not yet implemented");
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public void addAll(Collection<? extends Segment> nodes) {
-        nodes.forEach(this::addNode);
+    public Map<Node, Set<Node>> getParentsAdjacencyList() {
+        throw new NotImplementedException("GenomeGraph#getParentsAdjacencyList() is not yet implemented");
+    }
+
+    @Override
+    public Set<Segment> getChildren(Node node) {
+        return this.getChildren(node.getIdentifier());
+    }
+
+    @Override
+    public Set<Segment> getChildren(int nodeID) {
+        return this.children.get(nodeID).stream().map(id -> new Segment(id)).collect(Collectors.toSet());
+    }
+
+    @Override
+    public Set<Segment> getParents(Node node) {
+        return this.getParents(node.getIdentifier());
+    }
+
+    @Override
+    public Set<Segment> getParents(int nodeID) {
+        return this.parents.get(nodeID).stream().map(id -> new Segment(id)).collect(Collectors.toSet());
+    }
+
+    @Override
+    public Set<Genome> getGenomes(Node node) {
+        throw new NotImplementedException("GenomeGraph#getGenomes(Node) is not yet implemented");
+    }
+
+    @Override
+    public boolean contains(Node node) {
+        return this.contains(node.getIdentifier());
+    }
+
+    @Override
+    public boolean contains(int nodeID) {
+        return this.children.containsKey(nodeID);
+    }
+
+    @Override
+    public void addEdge(Node source, Node destination) {
+        this.addChild(source, destination);
+        this.addParent(destination, source);
+    }
+
+    private void addChild(Node node, Node child) {
+        this.children.get(node.getIdentifier()).add(child.getIdentifier());
+    }
+
+    private void addParent(Node node, Node parent) {
+        this.parents.get(node.getIdentifier()).add(parent.getIdentifier());
     }
 }

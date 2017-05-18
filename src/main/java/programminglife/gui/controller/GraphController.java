@@ -48,39 +48,8 @@ public class GraphController {
      * @param maxDepth The max depth of child {@link Segment}s to draw
      */
     public void draw(int centerNode, int maxDepth) {
-        this.drawDFS(null, this.getGraph().getNode(centerNode), INITIAL_OFFSET, maxDepth);
-//        SubGraph subGraph = new SubGraph(this.getGraph().getNode(centerNode), maxDepth);
-//        subGraph.calculateNodeLocations(50, 20);
-//        drawSubGraph(subGraph);
+        this.drawDFS(null, new Segment(centerNode), INITIAL_OFFSET, maxDepth);
     }
-
-    /**
-     * Draws all nodes in the SubGraph g.
-     * @param g The SubGraph
-     */
-    // TODO repair method for new generic Interface structure
-//    public void drawSubGraph(SubGraph g) {
-//        this.clear();
-//        for (Segment n : g) {
-//            for (Segment p : n.getParents()) {
-//                if (!g.contains(p)) {
-//                    continue;
-//                }
-//                Line link = new Line(
-//                        p.getX() + p.getWidth(),
-//                        p.getY() + p.getHeight() / 2,
-//                        n.getX(),
-//                        n.getY() + n.getHeight() / 2
-//                );
-//                link.setStroke(Color.DARKGRAY);
-//                link.setStrokeWidth(3);
-//                link.setOnMouseClicked(event -> System.out.printf("Link{%s -> %s}\n", p, n));
-//
-//                this.grpDrawArea.getChildren().add(link);
-//                this.drawNode(n);
-//            }
-//        }
-//    }
 
     /**
      * Draw all nodes recursively on the screen.
@@ -140,7 +109,7 @@ public class GraphController {
             drawnNodes.add(node);
 
             int childCount = 0;
-            for (Segment child : node.getChildren()) {
+            for (Segment child : this.getGraph().getChildren(node)) {
                 XYCoordinate newOffset = offset.add(HORIZONTAL_OFFSET)
                         .add(node.getWidthCoordinate())
                         .setY(INITIAL_OFFSET.getY() + (int) (CHILD_OFFSET * childCount * node.getHeight()));
@@ -161,7 +130,7 @@ public class GraphController {
      * @return The size of the node
      */
     private XYCoordinate drawNode(int nodeID) {
-        return this.drawNode(this.graph.getNode(nodeID));
+        return this.drawNode(new Segment(nodeID));
     }
 
     /**

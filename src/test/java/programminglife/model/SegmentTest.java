@@ -10,7 +10,6 @@ import static org.junit.Assert.assertTrue;
 
 public class SegmentTest {
     Segment node;
-    String line;
 
     @Before
     public void setUp() throws Exception {
@@ -23,8 +22,6 @@ public class SegmentTest {
 
         assertEquals(8, node.getIdentifier());
         assertEquals("", node.getSequence());
-        assertEquals(0, node.getParents().size());
-        assertEquals(0, node.getChildren().size());
     }
 
     @Test
@@ -33,18 +30,6 @@ public class SegmentTest {
 
         assertEquals(8, node.getIdentifier());
         assertEquals("ATCG", node.getSequence());
-        assertEquals(0, node.getParents().size());
-        assertEquals(0, node.getChildren().size());
-    }
-
-    @Test
-    public void NodeIdSequenceParentsChildren() {
-        node = new Segment(8, "ATCG", new HashSet<>(), new HashSet<>());
-
-        assertEquals(8, node.getIdentifier());
-        assertEquals("ATCG", node.getSequence());
-        assertEquals(0, node.getParents().size());
-        assertEquals(0, node.getChildren().size());
     }
 
     @Test
@@ -57,32 +42,6 @@ public class SegmentTest {
         node.setSequence("GCTA");
 
         assertEquals("GCTA", node.getSequence());
-    }
-
-    @Test
-    public void childrenTest() {
-        Segment child1 = new Segment(3);
-        Segment child2 = new Segment(16);
-        node.addChild(child1);
-        node.addChild(child2);
-
-        assertEquals(0, node.getParents().size());
-        assertEquals(2, node.getChildren().size());
-        assertTrue(node.getChildren().contains(child1));
-        assertTrue(node.getChildren().contains(child2));
-    }
-
-    @Test
-    public void parentsTest() {
-        Segment child1 = new Segment(3);
-        Segment child2 = new Segment(16);
-        node.addParent(child1);
-        node.addParent(child2);
-
-        assertEquals(0, node.getChildren().size());
-        assertEquals(2, node.getParents().size());
-        assertTrue(node.getParents().contains(child1));
-        assertTrue(node.getParents().contains(child2));
     }
 
     @Test
