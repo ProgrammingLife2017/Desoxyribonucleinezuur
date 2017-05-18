@@ -5,6 +5,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -23,20 +24,17 @@ import programminglife.parser.GraphParser;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.NoSuchElementException;
 import java.util.Observable;
 import java.util.Observer;
-import java.nio.charset.Charset;
 import java.util.Optional;
 
 /**
  * The controller for the GUI that is used in the application.
  * The @FXML tag is needed in initialize so that javaFX knows what to do.
  */
-
-
-
-
 public class GuiController implements Observer {
     //static finals
     private static final String INITIAL_CENTER_NODE = "1";
@@ -47,8 +45,11 @@ public class GuiController implements Observer {
     //FXML imports.
     @FXML private MenuItem btnOpen;
     @FXML private MenuItem btnQuit;
+    @FXML private MenuItem btnCreateBookmark;
+    @FXML private MenuItem btnLoadBookmark;
     @FXML private MenuItem btnAbout;
     @FXML private MenuItem btnInstructions;
+    @FXML private RadioMenuItem btnToggle;
     @FXML private Button btnZoomIn;
     @FXML private Button btnZoomOut;
     @FXML private Button btnZoomReset;
@@ -77,10 +78,11 @@ public class GuiController implements Observer {
      * The initialize will call the other methods that are run in the .
      */
     @FXML
-    @SuppressWarnings("Unused")
+    @SuppressWarnings("unused")
     private void initialize() {
         this.graphController = new GraphController(null, this.grpDrawArea);
         initMenubar();
+        initBookmarkMenu();
         initLeftControlpanelScreenModifiers();
         initLeftControlpanelDraw();
         initMouse();
@@ -94,7 +96,7 @@ public class GuiController implements Observer {
      * @throws FileNotFoundException if the {@link File} is not found.
      * @throws UnknownTypeException if the {@link File} is not compliant with the GFA standard.
      */
-    public void openFile(File file) throws FileNotFoundException, UnknownTypeException {
+    private void openFile(File file) throws FileNotFoundException, UnknownTypeException {
         if (file != null) {
             GraphParser graphParser = new GraphParser(file);
             graphParser.addObserver(this);
@@ -130,7 +132,7 @@ public class GuiController implements Observer {
             FileChooser fileChooser = new FileChooser();
             final ExtensionFilter extFilterGFA = new ExtensionFilter("GFA files (*.gfa)", "*.GFA");
             fileChooser.getExtensionFilters().add(extFilterGFA);
-            if (file != null){
+            if (file != null) {
                 File existDirectory = file.getParentFile();
                 fileChooser.setInitialDirectory(existDirectory);
             }
@@ -148,12 +150,14 @@ public class GuiController implements Observer {
             a.setTitle("Confirm Exit");
             a.setHeaderText("Do you really want to exit?");
             Optional<ButtonType> result = a.showAndWait();
-            if (result.get() == ButtonType.OK) {
-                Platform.exit();
-                System.exit(0);
-            }
-            if (result.get() == ButtonType.CANCEL) {
-                a.close();
+            if (result.isPresent()) {
+                if (result.get() == ButtonType.OK) {
+                    Platform.exit();
+                    System.exit(0);
+                }
+                if (result.get() == ButtonType.CANCEL) {
+                    a.close();
+                }
             }
         });
 
@@ -170,7 +174,6 @@ public class GuiController implements Observer {
             alert.show();
         });
 
-
         btnInstructions.setOnAction(event -> {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Instructions");
@@ -186,7 +189,27 @@ public class GuiController implements Observer {
                     + "The suprise me! button chooses a random start node and draws with the depth you gave.");
             alert.show();
         });
+    }
 
+    /**
+     * Initializes the bookmark buttons in the menu.
+     */
+    private void initBookmarkMenu() {
+        btnCreateBookmark.setOnAction(event -> {
+            try {
+                System.out.println("came here");
+                FXMLLoader loader = new FXMLLoader(ProgrammingLife.class.getResource("/CreateBookmarkWindow.fxml"));
+                AnchorPane page = loader.load();
+                Scene scene = new Scene(page);
+                Stage bookmarkDialogStage = new Stage();
+                bookmarkDialogStage.setScene(scene);
+                bookmarkDialogStage.setTitle("Create Bookmark");
+                bookmarkDialogStage.initOwner(ProgrammingLife.getStage());
+                bookmarkDialogStage.showAndWait();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     /**
@@ -276,8 +299,6 @@ public class GuiController implements Observer {
                         + " Choose another start Node.", ButtonType.OK);
                 alert.show();
             }
-
-
         });
 
         btnDrawRandom.setOnAction(event -> {
@@ -345,7 +366,9 @@ public class GuiController implements Observer {
      * @return the ConsoleView to print to
      */
     private ConsoleView initConsole(AnchorPane parent) {
+        btnToggle.setSelected(false);
         final ConsoleView console = new ConsoleView(Charset.forName("UTF-8"));
+        console.setVisible(false);
         parent.getChildren().add(console);
 
         AnchorPane.setBottomAnchor(console, 0.d);
@@ -353,12 +376,19 @@ public class GuiController implements Observer {
         AnchorPane.setRightAnchor(console, 0.d);
         AnchorPane.setLeftAnchor(console, 0.d);
 
-        console.setMinHeight(50.d);
-        console.prefHeight(50.d);
-        console.maxHeight(50.d);
+        btnToggle.setOnAction(event -> {
+            if (console.isVisible()) {
+                console.setVisible(false);
+                anchorConsolePanel.setMaxHeight(0);
+                anchorConsolePanel.setMinHeight(0);
+            } else {
+                console.setVisible(true);
+                anchorConsolePanel.setMaxHeight(250);
+                anchorConsolePanel.setMinHeight(250);
+            }
+        });
 
         System.setOut(console.getOut());
-
         return console;
     }
 }
