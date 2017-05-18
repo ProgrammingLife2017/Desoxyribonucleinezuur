@@ -21,12 +21,14 @@ import programminglife.model.DataManager;
 import programminglife.model.GenomeGraph;
 import programminglife.model.exception.UnknownTypeException;
 import programminglife.parser.GraphParser;
+import programminglife.utility.FileProgressCounter;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Observable;
 import java.util.Observer;
-import java.nio.charset.Charset;
 import java.util.Optional;
 
 /**
@@ -63,6 +65,8 @@ public class GuiController implements Observer {
     private int translateY;
     private GraphController graphController;
 
+    private Thread parseThread;
+
     /**
      * The initialize will call the other methods that are run in the .
      */
@@ -86,11 +90,19 @@ public class GuiController implements Observer {
      * @throws FileNotFoundException if the {@link File} is not found.
      * @throws UnknownTypeException if the {@link File} is not compliant with the GFA standard.
      */
-    public void openFile(File file) throws FileNotFoundException, UnknownTypeException {
+    public void openFile(File file) throws IOException, UnknownTypeException {
         if (file != null) {
+            DataManager.initialize(file.getName());
+
             GraphParser graphParser = new GraphParser(file);
             graphParser.addObserver(this);
-            (new Thread(graphParser)).start();
+            graphParser.getProgressCounter().addObserver(this);
+
+            if (this.parseThread != null) {
+                this.parseThread.interrupt();
+            }
+            this.parseThread = new Thread(graphParser);
+            this.parseThread.start();
         }
     }
 
@@ -106,6 +118,12 @@ public class GuiController implements Observer {
             } else if (arg instanceof Exception) {
                 Exception e = (Exception) arg;
                 // TODO find out a smart way to catch Exceptions across threads
+                throw new RuntimeException(e);
+            }
+        } else if (o instanceof FileProgressCounter) {
+            FileProgressCounter progress = (FileProgressCounter) o;
+            if (progress.getLineCount() % 250 == 0) {
+                System.out.println(progress);
             }
         }
     }
@@ -140,9 +158,18 @@ public class GuiController implements Observer {
             try {
                 File file = fileChooser.showOpenDialog(ProgrammingLife.getStage());
                 this.openFile(file);
-            } catch (FileNotFoundException | UnknownTypeException e) {
-                // Should not happen, because it gets handled by FileChooser and ExtensionFilter
-                throw new RuntimeException("This should absolutely not have happened", e);
+            } catch (FileNotFoundException e) {
+                (new Alert(Alert.AlertType.ERROR,
+                        "This file was not found!",
+                        ButtonType.CLOSE)).show();
+            } catch (UnknownTypeException e) {
+                (new Alert(Alert.AlertType.ERROR,
+                        "This file is malformed!",
+                        ButtonType.CLOSE)).show();
+            } catch (IOException e) {
+                (new Alert(Alert.AlertType.ERROR,
+                        "An unexpected filesystem error occurred!",
+                        ButtonType.CLOSE)).show();
             }
         });
 

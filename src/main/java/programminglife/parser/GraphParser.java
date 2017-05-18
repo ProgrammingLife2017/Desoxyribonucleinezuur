@@ -2,10 +2,9 @@ package programminglife.parser;
 
 import com.diffplug.common.base.Errors;
 import com.diffplug.common.base.Throwing;
-import programminglife.model.GenomeGraph;
-import programminglife.model.Node;
-import programminglife.model.Segment;
+import programminglife.model.*;
 import programminglife.model.exception.UnknownTypeException;
+import programminglife.utility.FileProgressCounter;
 
 import java.io.*;
 import java.util.Observable;
@@ -21,6 +20,7 @@ public class GraphParser extends Observable implements Runnable {
     private File graphFile;
     private String name;
     private boolean verbose;
+    private FileProgressCounter progressCounter;
 
     /**
      * Initiates an empty graph and the {@link File} to parse.
@@ -31,6 +31,7 @@ public class GraphParser extends Observable implements Runnable {
         this.name = graphFile.getName();
         this.verbose = PARSE_LINE_VERBOSE_DEFAULT;
         this.graph = new GenomeGraph(name);
+        this.progressCounter = new FileProgressCounter("Lines read");
     }
 
     /**
@@ -74,11 +75,18 @@ public class GraphParser extends Observable implements Runnable {
             );
         }
 
+        System.out.println("Calculating number of lines in file");
+        int lineCount = (int)(new BufferedReader(new FileReader(this.graphFile))).lines().count();
+        System.out.printf("Done! %d lines.\n", lineCount);
+        this.progressCounter.setTotalLineCount(lineCount);
+
         BufferedReader reader = new BufferedReader(new FileReader(this.graphFile));
 
         try {
             reader.lines().forEach(Errors.rethrow().wrap((Throwing.Consumer<String>) line -> {
                 char type = line.charAt(0);
+
+                this.progressCounter.count();
 
                 switch (type) {
                     case 'S':
@@ -92,6 +100,15 @@ public class GraphParser extends Observable implements Runnable {
                         break;
                     default:
                         throw new UnknownTypeException(String.format("Unknown symbol '%c'", type));
+                }
+
+                if (progressCounter.getLineCount() % 500 == 0) {
+                    System.out.println(progressCounter);
+                }
+
+                if (Thread.currentThread().isInterrupted()) {
+                    System.out.printf("%s Stopping this thread gracefully...\n", Thread.currentThread());
+                    throw new InterruptedException("Thread was interrupted!");
                 }
             }));
         } catch (Errors.WrappedAsRuntimeException e) {
@@ -154,5 +171,9 @@ public class GraphParser extends Observable implements Runnable {
 
     public GenomeGraph getGraph() {
         return graph;
+    }
+
+    public FileProgressCounter getProgressCounter() {
+        return progressCounter;
     }
 }
