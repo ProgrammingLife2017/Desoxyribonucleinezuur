@@ -15,7 +15,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import programminglife.ProgrammingLife;
 import programminglife.model.Graph;
@@ -141,18 +140,16 @@ public class GuiController {
     private void initBookmarkMenu() {
 
         btnCreateBookmark.setOnAction(event -> {
-            try{
+            try {
                 System.out.println("came here");
                 FXMLLoader loader = new FXMLLoader();
                 loader.setLocation(ProgrammingLife.class.getResource("/CreateBookmarkWindow.fxml"));
-                AnchorPane page = (AnchorPane) loader.load();
-
-                Stage bookmarkDialogStage = new Stage();
-                bookmarkDialogStage.setTitle("Create Bookmark");
-                //bookmarkDialogStage.initModality(Modality.WINDOW_MODAL);
-                bookmarkDialogStage.initOwner(ProgrammingLife.getStage());
+                AnchorPane page = loader.load();
                 Scene scene = new Scene(page);
-
+                Stage bookmarkDialogStage = new Stage();
+                bookmarkDialogStage.setScene(scene);
+                bookmarkDialogStage.setTitle("Create Bookmark");
+                bookmarkDialogStage.initOwner(ProgrammingLife.getStage());
                 bookmarkDialogStage.showAndWait();
 
             } catch (IOException e) {
