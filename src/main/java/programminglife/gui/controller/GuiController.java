@@ -15,23 +15,40 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
+import jp.uphy.javafx.console.ConsoleView;
 import programminglife.ProgrammingLife;
 import programminglife.model.Graph;
 import programminglife.model.exception.UnknownTypeException;
+import programminglife.parser.GraphParser;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.NoSuchElementException;
+import java.util.Observable;
+import java.util.Observer;
+import java.nio.charset.Charset;
 import java.util.Optional;
 
 /**
  * The controller for the GUI that is used in the application.
  * The @FXML tag is needed in initialize so that javaFX knows what to do.
  */
-public class GuiController {
+
+
+
+
+public class GuiController implements Observer {
+    //static finals
+    private static final String INITIAL_CENTER_NODE = "1";
+    private static final String INITIAL_MAX_DRAW_DEPTH = "10";
+    private static final double INSTRUCTIONS_MIN_WIDTH = 800;
+    private static final double ABOUT_MIN_WIDTH = 500;
 
     //FXML imports.
     @FXML private MenuItem btnOpen;
     @FXML private MenuItem btnQuit;
+    @FXML private MenuItem btnAbout;
+    @FXML private MenuItem btnInstructions;
     @FXML private Button btnZoomIn;
     @FXML private Button btnZoomOut;
     @FXML private Button btnZoomReset;
@@ -48,13 +65,13 @@ public class GuiController {
     @FXML private AnchorPane anchorConsolePanel;
 
     //Privates used by method.
-//    private ConsoleView consoleView;
-    private TextArea consoleView;
+    private ConsoleView consoleView;
     private double orgSceneX, orgSceneY;
     private double orgTranslateX, orgTranslateY;
     private int translateX;
     private int translateY;
     private GraphController graphController;
+    private File file;
 
     /**
      * The initialize will call the other methods that are run in the .
@@ -63,13 +80,11 @@ public class GuiController {
     @SuppressWarnings("Unused")
     private void initialize() {
         this.graphController = new GraphController(null, this.grpDrawArea);
-
         initMenubar();
         initLeftControlpanelScreenModifiers();
         initLeftControlpanelDraw();
         initMouse();
         consoleView = initConsole(anchorConsolePanel);
-
         this.graphController.setConsole(consoleView);
     }
 
@@ -81,17 +96,27 @@ public class GuiController {
      */
     public void openFile(File file) throws FileNotFoundException, UnknownTypeException {
         if (file != null) {
-            consoleView.appendText("Parsing File...\n");
-            Graph graph = Graph.parse(file, true);
-            this.graphController.setGraph(graph);
-            consoleView.appendText(String.format("The graph has %d nodes\n", graph.size()));
+            GraphParser graphParser = new GraphParser(file);
+            graphParser.addObserver(this);
+            (new Thread(graphParser)).start();
+        }
+    }
 
-            disableGraphUIElements(false);
+    @Override
+    public void update(Observable o, Object arg) {
+        if (o instanceof GraphParser) {
+            if (arg instanceof Graph) {
+                Graph graph = (Graph) arg;
+                this.graphController.setGraph(graph);
 
-            ProgrammingLife.getStage().setTitle(graph.getId());
-            consoleView.appendText("File Parsed.\n");
-        } else {
-            throw new Error("WTF this file is null");
+                disableGraphUIElements(graph == null);
+
+                System.out.printf("%s File Parsed.\n", Thread.currentThread());
+                System.out.printf("%s The graph has %d nodes\n", Thread.currentThread(), graph.size());
+            } else if (arg instanceof Exception) {
+                Exception e = (Exception) arg;
+                // TODO find out a smart way to catch Exceptions across threads
+            }
         }
     }
 
@@ -105,9 +130,12 @@ public class GuiController {
             FileChooser fileChooser = new FileChooser();
             final ExtensionFilter extFilterGFA = new ExtensionFilter("GFA files (*.gfa)", "*.GFA");
             fileChooser.getExtensionFilters().add(extFilterGFA);
-
+            if (file != null){
+                File existDirectory = file.getParentFile();
+                fileChooser.setInitialDirectory(existDirectory);
+            }
             try {
-                File file = fileChooser.showOpenDialog(ProgrammingLife.getStage());
+                file = fileChooser.showOpenDialog(ProgrammingLife.getStage());
                 this.openFile(file);
             } catch (FileNotFoundException | UnknownTypeException e) {
                 // Should not happen, because it gets handled by FileChooser and ExtensionFilter
@@ -124,13 +152,47 @@ public class GuiController {
                 Platform.exit();
                 System.exit(0);
             }
-
             if (result.get() == ButtonType.CANCEL) {
                 a.close();
             }
         });
+
+        btnAbout.setOnAction(event -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("About");
+            alert.setHeaderText(null);
+            alert.setResizable(true);
+            alert.getDialogPane().setMinWidth(ABOUT_MIN_WIDTH);
+            alert.setContentText("This application is made by Contextproject group Desoxyribonucleïnezuur:\n\n"
+                    + "Ivo Wilms \n" + "Iwan Hoogenboom \n" + "Martijn van Meerten \n" + "Toine Hartman\n"
+                    + "Yannick Haveman");
+
+            alert.show();
+        });
+
+
+        btnInstructions.setOnAction(event -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Instructions");
+            alert.setHeaderText(null);
+            alert.setResizable(true);
+            alert.getDialogPane().setMinWidth(INSTRUCTIONS_MIN_WIDTH);
+            alert.setContentText("Open a gfa file, wait for it to be parsed.\n"
+                    + "Give the start node and the amount of layers (depth) to be drawn on the left.\n\n"
+                    + "Zoom using the zoom buttons or alt + scrollwheel.\n"
+                    + "Move the graph by pressing alt + dragging a node or edge.\n"
+                    + "Reset the zoom with reset zoom and jump back to the beginning"
+                    + " of the drawn graph with the Reset X/Y button.\n"
+                    + "The suprise me! button chooses a random start node and draws with the depth you gave.");
+            alert.show();
+        });
+
     }
 
+    /**
+     * Method to disable the UI Elements on the left of the GUI.
+     * @param isDisabled boolean, true disables the left anchor panel.
+     */
     private void disableGraphUIElements(boolean isDisabled) {
         anchorLeftControlPanel.setDisable(isDisabled);
     }
@@ -191,23 +253,31 @@ public class GuiController {
         disableGraphUIElements(true);
 
         btnDraw.setOnAction(event -> {
-            consoleView.appendText("Drawing graph...\n");
+            System.out.printf("%s Drawing graph...\n", Thread.currentThread());
 
-            int maxDepth = Integer.MAX_VALUE;
             int centerNode = 0;
+            int maxDepth = 0;
 
             try {
-                maxDepth = Integer.parseInt(txtMaxDrawDepth.getText());
                 centerNode = Integer.parseInt(txtCenterNode.getText());
+                maxDepth = Integer.parseInt(txtMaxDrawDepth.getText());
             } catch (NumberFormatException e) {
-                Alert alert = new Alert(Alert.AlertType.WARNING, "Input is not a number", ButtonType.OK);
+                Alert alert = new Alert(Alert.AlertType.WARNING, "Make sure you have entered a number as input.");
                 alert.show();
-                txtMaxDrawDepth.clear();
             }
 
-            this.graphController.clear();
-            this.graphController.draw(centerNode, maxDepth);
-            consoleView.appendText("Graph drawn.\n");
+            try {
+                this.graphController.getGraph().getNode(centerNode);
+                this.graphController.clear();
+                this.graphController.draw(centerNode, maxDepth);
+                System.out.printf("%s Graph drawn.\n", Thread.currentThread());
+            } catch (NoSuchElementException e) {
+                Alert alert = new Alert(Alert.AlertType.WARNING, "There is no node with this ID."
+                        + " Choose another start Node.", ButtonType.OK);
+                alert.show();
+            }
+
+
         });
 
         btnDrawRandom.setOnAction(event -> {
@@ -217,7 +287,10 @@ public class GuiController {
         });
 
         txtMaxDrawDepth.textProperty().addListener(new NumbersOnlyListener(txtMaxDrawDepth));
+        txtMaxDrawDepth.setText(INITIAL_MAX_DRAW_DEPTH);
+
         txtCenterNode.textProperty().addListener(new NumbersOnlyListener(txtCenterNode));
+        txtCenterNode.setText(INITIAL_CENTER_NODE);
     }
 
     /**
@@ -226,6 +299,10 @@ public class GuiController {
     private class NumbersOnlyListener implements ChangeListener<String> {
         private final TextField tf;
 
+        /**
+         * Constructor for the Listener.
+         * @param tf {@link TextField} is the text field on which the listener listens
+         */
         NumbersOnlyListener(TextField tf) {
             this.tf = tf;
         }
@@ -238,6 +315,9 @@ public class GuiController {
         }
     }
 
+    /**
+     * Initialises the mouse events.
+     */
     private void initMouse() {
         grpDrawArea.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
             orgSceneX = event.getSceneX();
@@ -259,9 +339,13 @@ public class GuiController {
         });
     }
 
-    private TextArea initConsole(AnchorPane parent) {
-//        final ConsoleView console = new ConsoleView(Charset.forName("UTF-8"));
-        final TextArea console = new TextArea();
+    /**
+     * Initialises the Console.
+     * @param parent is the {@link AnchorPane} in which the console is placed.
+     * @return the ConsoleView to print to
+     */
+    private ConsoleView initConsole(AnchorPane parent) {
+        final ConsoleView console = new ConsoleView(Charset.forName("UTF-8"));
         parent.getChildren().add(console);
 
         AnchorPane.setBottomAnchor(console, 0.d);
@@ -273,7 +357,7 @@ public class GuiController {
         console.prefHeight(50.d);
         console.maxHeight(50.d);
 
-//        System.setOut(console.getOut());
+        System.setOut(console.getOut());
 
         return console;
     }

@@ -1,10 +1,10 @@
 package programminglife.gui.controller;
 
 import javafx.scene.Group;
-import javafx.scene.control.TextArea;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import jp.uphy.javafx.console.ConsoleView;
 import programminglife.model.Graph;
 import programminglife.model.Node;
 import programminglife.model.XYCoordinate;
@@ -23,7 +23,7 @@ public class GraphController {
 
     private Graph graph;
     private Group grpDrawArea;
-    private TextArea console;
+    private ConsoleView console;
 
     /**
      * Initialize controller object.
@@ -35,7 +35,7 @@ public class GraphController {
         this.grpDrawArea = grpDrawArea;
     }
 
-    public void setConsole(TextArea console) {
+    public void setConsole(ConsoleView console) {
         this.console = console;
     }
 
@@ -51,7 +51,7 @@ public class GraphController {
     /**
      * Draw all nodes recursively on the screen.
      *
-     * @param origin
+     * @param origin The parent {@link Node} that initiated this draw call
      * @param node Draw this node and all its children recursively
      * @param offset Draws nodes at this offset from the top-left of the screen
      * @return a {@link Set} of all drawn {@link Node}s
@@ -75,10 +75,12 @@ public class GraphController {
 
     /**
      * Draw all nodes recursively on the screen.
-     * @param origin
+     * @param origin The parent {@link Node} that initiated this draw call
      * @param node Draw this node and all its children recursively
      * @param offset Draws nodes at this offset from the top-left of the screen
      * @param drawnNodes A set containing all drawn nodes
+     * @param maxDepth The max depth from root to draw nodes
+     * @return a {@link Set} of all drawn {@link Node}s
      */
     private Set<Node> drawDFS(Node origin, Node node, XYCoordinate offset, int maxDepth, Set<Node> drawnNodes) {
         boolean nodeIsDrawn = drawnNodes.contains(node);
@@ -93,7 +95,7 @@ public class GraphController {
             Line link = new Line(targetLeft.getX(), targetLeft.getY(), originRight.getX(), originRight.getY());
             link.setStroke(Color.DARKGRAY);
             link.setStrokeWidth(3);
-            link.setOnMouseClicked(event -> this.console.appendText(String.format("Link{%s -> %s}\n", origin, node)));
+            link.setOnMouseClicked(event -> System.out.printf("Link{%s -> %s}\n", origin, node));
 
             this.grpDrawArea.getChildren().add(link);
         }
@@ -132,11 +134,11 @@ public class GraphController {
      */
     private XYCoordinate drawNode(Node node) {
         node.setOnMouseClicked(event -> {
-            this.console.appendText(node.getSequence() + "\n");
-            this.console.appendText(String.format("%s (location %s, size %s)\n",
+            System.out.println(node.getSequence());
+            System.out.printf("%s (location %s, size %s)\n",
                     node.toString(),
                     node.getLocation(),
-                    node.getSize()));
+                    node.getSize());
         });
 
         node.setFill(Color.TRANSPARENT);

@@ -15,7 +15,6 @@ public class NodeTest {
     @Before
     public void setUp() throws Exception {
         node = new Node(1, "ATCG");
-        line = "S\t6\tC\t*\tORI:Z:TKK_04_0031.fasta\tCRD:Z:TKK_04_0031.fasta\tCRDCTG:Z:7000000219691771\tCTG:Z:7000000219691771\tSTART:Z:3039";
     }
 
     @Test
@@ -58,16 +57,6 @@ public class NodeTest {
         node.setSequence("GCTA");
 
         assertEquals("GCTA", node.getSequence());
-    }
-
-    @Test
-    public void parseSegmentTest() {
-        node = Node.parseSegment(line);
-
-        assertEquals(6, node.getIdentifier());
-        assertEquals("C", node.getSequence());
-        assertEquals(0, node.getParents().size());
-        assertEquals(0, node.getChildren().size());
     }
 
     @Test
