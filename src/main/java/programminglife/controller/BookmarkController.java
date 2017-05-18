@@ -17,6 +17,8 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Martijn van Meerten on 15-5-2017.
@@ -41,6 +43,16 @@ final class BookmarkController {
      */
     public static Bookmark loadBookmark(String graphName, String bookMarkName) {
         return loadBookmark(BOOKMARKPATH, graphName, bookMarkName);
+    }
+
+    /**
+     * Default all bookmark loading method.
+     * Uses the default bookmark path
+     * @param graphName The name of the graph from which to get the bookmarks.
+     * @return A List containing all bookmarks.
+     */
+    public static List<Bookmark> loadAllGraphBrookmarks(String graphName) {
+        return loadAllGraphBookmarks(BOOKMARKPATH, graphName);
     }
 
     /**
@@ -106,10 +118,7 @@ final class BookmarkController {
                 return null;
             }
             if (el.getNodeName().equals(bookmarkName)) {
-                return new Bookmark(Integer.parseInt(el.getElementsByTagName("ID").item(0).getTextContent()),
-                        Integer.parseInt(el.getElementsByTagName("radius").item(0).getTextContent()),
-                        el.getElementsByTagName("name").item(0).getTextContent(),
-                        el.getElementsByTagName("description").item(0).getTextContent());
+                return parseBookmark(el);
             }
         }
         return null;
@@ -200,6 +209,39 @@ final class BookmarkController {
     }
 
     /**
+     * Loads all bookmarks present from a particular graph.
+     * @param fileName The name of the bookmark file
+     * @param graphName The name of the graph
+     * @return A list containing all bookmarks for that graph
+     */
+    public static List<Bookmark> loadAllGraphBookmarks(String fileName, String graphName) {
+        List<Bookmark> result = new ArrayList<>();
+        checkFile(fileName);
+        Document dom;
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        try {
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            dom = builder.parse(fileName);
+            Element doc = dom.getDocumentElement();
+            Element graph = findTag(doc.getChildNodes(), graphName);
+            if (graph != null) {
+                NodeList nodeList = graph.getChildNodes();
+                if (nodeList != null) {
+                    for (int i = 0; i < nodeList.getLength(); i++) {
+                        if (nodeList.item(i).getNodeType() == Node.ELEMENT_NODE) {
+                            Element el = (Element) nodeList.item(i);
+                            result.add(parseBookmark(el));
+                        }
+                    }
+                }
+            }
+        } catch (ParserConfigurationException | SAXException | IOException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    /**
      * Find the tag in the xml file belonging to the graph name.
      * @param nodeList is the list of all graph tags
      * @param name is the name of the graph this method tries to find
@@ -220,7 +262,7 @@ final class BookmarkController {
     }
 
     /**
-     * Checks whether the given bookmark filepath exists.
+     * Checks whether the given bookmark fileName exists.
      * If not it will create the file with the necessary tags.
      * @param fileName The name of the bookmark file
      */
@@ -245,5 +287,20 @@ final class BookmarkController {
                 e.printStackTrace();
             }
         }
+    }
+
+    /**
+     * Parses an xml element to return a bookmark.
+     * @param el The xml element containing the bookmark
+     * @return A bookmark represented by the element
+     */
+    private static Bookmark parseBookmark(Element el) {
+        if (el != null) {
+            return new Bookmark(Integer.parseInt(el.getElementsByTagName("ID").item(0).getTextContent()),
+                    Integer.parseInt(el.getElementsByTagName("radius").item(0).getTextContent()),
+                    el.getElementsByTagName("name").item(0).getTextContent(),
+                    el.getElementsByTagName("description").item(0).getTextContent());
+        }
+        return null;
     }
 }

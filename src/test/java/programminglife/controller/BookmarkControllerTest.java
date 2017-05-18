@@ -5,6 +5,9 @@ import org.junit.Before;
 import org.junit.Test;
 import programminglife.model.Bookmark;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -33,7 +36,16 @@ public class BookmarkControllerTest {
     public void readTest() {
         Bookmark newBookmark = BookmarkController.loadBookmark(testPath,"test", "testbm");
         assertEquals(newBookmark, bookmark);
+    }
 
+    @Test
+    public void readAllGraphTest() {
+        BookmarkController.storeBookmark(testPath, "test", "testbm2", "testing", 2, 4);
+        List<Bookmark> actual = BookmarkController.loadAllGraphBookmarks(testPath, "test");
+        List<Bookmark> expected = new ArrayList<>();
+        expected.add(bookmark);
+        expected.add(new Bookmark(2, 4, "testbm2", "testing"));
+        assertEquals(expected, actual);
     }
 
     @Test
