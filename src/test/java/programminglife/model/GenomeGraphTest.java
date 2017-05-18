@@ -1,8 +1,6 @@
 package programminglife.model;
 
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 
 import java.io.File;
 import java.util.NoSuchElementException;
@@ -14,6 +12,8 @@ import static org.junit.Assert.assertTrue;
  * Created by toinehartman on 03/05/2017.
  */
 public class GenomeGraphTest {
+    private static final String TEST_DB = "test.db";
+
     GenomeGraph graph;
     Segment node;
     String link;
@@ -22,7 +22,7 @@ public class GenomeGraphTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        DataManager.initialize("test");
+        DataManager.initialize(TEST_DB);
 
         TEST_PATH = new File(GenomeGraphTest.class.getResource("/test.gfa").toURI()).getAbsolutePath();
         TEST_FAULTY_PATH = new File(
@@ -36,6 +36,16 @@ public class GenomeGraphTest {
         node = new Segment(3, "ATCG");
 
         graph.addNode(node);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        DataManager.clearDB(TEST_DB);
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+        DataManager.removeDB(TEST_DB);
     }
 
     @Test

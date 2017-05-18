@@ -1,8 +1,6 @@
 package programminglife.parser;
 
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 import programminglife.model.*;
 import programminglife.model.exception.UnknownTypeException;
 
@@ -19,6 +17,8 @@ import static org.junit.Assert.fail;
  * Created by toinehartman on 16/05/2017.
  */
 public class GraphParserTest implements Observer {
+    private static final String TEST_DB = "test.db";
+
     private static String TEST_PATH, TEST_FAULTY_PATH;
 
     private String linkLine, nodeLine;
@@ -26,7 +26,7 @@ public class GraphParserTest implements Observer {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        DataManager.initialize("test");
+        DataManager.initialize(TEST_DB);
 
         TEST_PATH = new File(GenomeGraphTest.class.getResource("/test.gfa").toURI()).getAbsolutePath();
         TEST_FAULTY_PATH = new File(
@@ -44,6 +44,16 @@ public class GraphParserTest implements Observer {
 
         linkLine = "L\t34\t+\t35\t+\t0M";
         nodeLine = "S\t6\tC\t*\tORI:Z:TKK_04_0031.fasta\tCRD:Z:TKK_04_0031.fasta\tCRDCTG:Z:7000000219691771\tCTG:Z:7000000219691771\tSTART:Z:3039";
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        DataManager.clearDB(TEST_DB);
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+        DataManager.removeDB(TEST_DB);
     }
 
     @Test(expected = UnknownTypeException.class)

@@ -22,6 +22,9 @@ import static org.junit.Assert.assertTrue;
  * This is only usable if you have a USA QWERTY layout on your keyboard!!!
  */
 public class GuiControllerTest extends FxRobot {
+    private static final String TEST_DB = "test.db";
+    private static final String TEST_File = "/test.gfa";
+
     private static Stage primaryStage;
     private ProgrammingLife pl;
     private String f;
@@ -29,7 +32,7 @@ public class GuiControllerTest extends FxRobot {
 
     public GuiControllerTest() {
         try {
-            f = new File(getClass().getResource("/test.gfa").toURI()).getAbsolutePath();
+            f = new File(getClass().getResource(TEST_File).toURI()).getAbsolutePath();
         } catch (URISyntaxException e) {
             f = null;
         }
@@ -37,7 +40,7 @@ public class GuiControllerTest extends FxRobot {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        DataManager.initialize("test");
+        DataManager.initialize(TEST_DB);
 
         try {
             primaryStage = FxToolkit.registerPrimaryStage();
@@ -54,6 +57,18 @@ public class GuiControllerTest extends FxRobot {
         } catch (TimeoutException e) {
             e.printStackTrace();
         }
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        DataManager.clearDB(TEST_DB);
+        DataManager.removeDB(TEST_File);
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+        DataManager.removeDB(TEST_DB);
+        DataManager.removeDB(TEST_File);
     }
 
     @Test
