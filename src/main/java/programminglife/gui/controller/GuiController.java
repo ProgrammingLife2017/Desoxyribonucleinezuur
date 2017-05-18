@@ -101,7 +101,7 @@ public class GuiController implements Observer {
             if (this.parseThread != null) {
                 this.parseThread.interrupt();
             }
-            this.parseThread = new Thread("draad");
+            this.parseThread = new Thread(graphParser);
             this.parseThread.start();
         }
     }
