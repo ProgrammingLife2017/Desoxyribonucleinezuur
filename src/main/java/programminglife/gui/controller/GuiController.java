@@ -49,6 +49,7 @@ public class GuiController implements Observer {
     @FXML private MenuItem btnLoadBookmark;
     @FXML private MenuItem btnAbout;
     @FXML private MenuItem btnInstructions;
+    @FXML private RadioMenuItem btnToggle;
     @FXML private Button btnZoomIn;
     @FXML private Button btnZoomOut;
     @FXML private Button btnZoomReset;
@@ -173,7 +174,6 @@ public class GuiController implements Observer {
             alert.show();
         });
 
-
         btnInstructions.setOnAction(event -> {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Instructions");
@@ -189,7 +189,6 @@ public class GuiController implements Observer {
                     + "The suprise me! button chooses a random start node and draws with the depth you gave.");
             alert.show();
         });
-
     }
 
     /**
@@ -200,7 +199,6 @@ public class GuiController implements Observer {
             try {
                 System.out.println("came here");
                 FXMLLoader loader = new FXMLLoader(ProgrammingLife.class.getResource("/CreateBookmarkWindow.fxml"));
-                GuiBookmarkController gc = loader.getController();
                 AnchorPane page = loader.load();
                 Scene scene = new Scene(page);
                 Stage bookmarkDialogStage = new Stage();
@@ -208,18 +206,9 @@ public class GuiController implements Observer {
                 bookmarkDialogStage.setTitle("Create Bookmark");
                 bookmarkDialogStage.initOwner(ProgrammingLife.getStage());
                 bookmarkDialogStage.showAndWait();
-
-                gc.getBtnOk().setOnAction(e -> {
-                    bookmarkDialogStage.close();
-                });
-                gc.getBtnCancel().setOnAction(e -> {
-                    bookmarkDialogStage.close();
-                });
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
         });
     }
 
@@ -310,8 +299,6 @@ public class GuiController implements Observer {
                         + " Choose another start Node.", ButtonType.OK);
                 alert.show();
             }
-
-
         });
 
         btnDrawRandom.setOnAction(event -> {
@@ -379,7 +366,9 @@ public class GuiController implements Observer {
      * @return the ConsoleView to print to
      */
     private ConsoleView initConsole(AnchorPane parent) {
+        btnToggle.setSelected(false);
         final ConsoleView console = new ConsoleView(Charset.forName("UTF-8"));
+        console.setVisible(false);
         parent.getChildren().add(console);
 
         AnchorPane.setBottomAnchor(console, 0.d);
@@ -387,12 +376,19 @@ public class GuiController implements Observer {
         AnchorPane.setRightAnchor(console, 0.d);
         AnchorPane.setLeftAnchor(console, 0.d);
 
-        console.setMinHeight(50.d);
-        console.prefHeight(50.d);
-        console.maxHeight(50.d);
+        btnToggle.setOnAction(event -> {
+            if (console.isVisible()) {
+                console.setVisible(false);
+                anchorConsolePanel.setMaxHeight(0);
+                anchorConsolePanel.setMinHeight(0);
+            } else {
+                console.setVisible(true);
+                anchorConsolePanel.setMaxHeight(250);
+                anchorConsolePanel.setMinHeight(250);
+            }
+        });
 
         System.setOut(console.getOut());
-
         return console;
     }
 }
