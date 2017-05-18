@@ -8,7 +8,6 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class Segment extends Rectangle implements Node<Segment> {
     private int id;
-    private String sequence;
 
     /**
      * Constructor for a node with an id.
@@ -124,7 +123,7 @@ public class Segment extends Rectangle implements Node<Segment> {
      * Setter for the dimension of the node.
      */
     private void setDrawDimensions() {
-        int segmentLength = this.getSequence().length();
+        int segmentLength = this.getSequenceLength();
         int width, height;
 
         width = 10 + (int) Math.pow(segmentLength, 1.0 / 2);
@@ -138,6 +137,6 @@ public class Segment extends Rectangle implements Node<Segment> {
      * @return the length of the sequence of this segment
      */
     public int getSequenceLength() {
-        return this.getSequence().length();
+        return DataManager.getSequenceLength(this.getIdentifier());
     }
 }
