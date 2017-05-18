@@ -8,13 +8,14 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class Segment extends Rectangle implements Node<Segment> {
     private int id;
+    private boolean drawDimensionsUpToDate = false;
 
     /**
      * Constructor for a node with an id.
      * @param id int.
      */
     public Segment(int id) {
-        this(id, "");
+        this(id, null);
     }
 
     /**
@@ -24,7 +25,9 @@ public class Segment extends Rectangle implements Node<Segment> {
      */
     public Segment(int id, String sequence) {
         this.id = id;
-        DataManager.setSequence(id, sequence);
+        if (sequence != null) {
+            DataManager.setSequence(id, sequence);
+        }
     }
 
     /**
@@ -41,18 +44,27 @@ public class Segment extends Rectangle implements Node<Segment> {
      */
     public void setSequence(String sequence) {
         DataManager.setSequence(this.id, sequence);
-        this.setDrawDimensions();
+        this.drawDimensionsUpToDate = false;
     }
 
     public XYCoordinate getRightBorderCenter() {
+        if (!drawDimensionsUpToDate) {
+            setDrawDimensions();
+        }
         return this.getCenter().add(this.getSize().getX() >> 1, 0);
     }
 
     public XYCoordinate getLeftBorderCenter() {
+        if (!drawDimensionsUpToDate) {
+            setDrawDimensions();
+        }
         return this.getCenter().add(-(this.getSize().getX() >> 1), 0);
     }
 
     public XYCoordinate getCenter() {
+        if (!drawDimensionsUpToDate) {
+            setDrawDimensions();
+        }
         return this.getLocation().add(this.getSize().multiply(0.5));
     }
 
@@ -82,6 +94,9 @@ public class Segment extends Rectangle implements Node<Segment> {
      * @return The size of the {@link Segment}
      */
     public XYCoordinate getSize() {
+        if (!drawDimensionsUpToDate) {
+            setDrawDimensions();
+        }
         return new XYCoordinate((int) this.getWidth(), (int) this.getHeight());
     }
 
@@ -92,6 +107,7 @@ public class Segment extends Rectangle implements Node<Segment> {
     void setSize(XYCoordinate size) {
         this.setWidth(size.getX());
         this.setHeight(size.getY());
+        this.drawDimensionsUpToDate = true;
     }
 
     /**
@@ -112,10 +128,16 @@ public class Segment extends Rectangle implements Node<Segment> {
     }
 
     public XYCoordinate getWidthCoordinate() {
+        if (!drawDimensionsUpToDate) {
+            setDrawDimensions();
+        }
         return new XYCoordinate((int) this.getWidth(), 0);
     }
 
     public XYCoordinate getHeightCoordinate() {
+        if (!drawDimensionsUpToDate) {
+            setDrawDimensions();
+        }
         return new XYCoordinate(0, (int) this.getHeight());
     }
 
@@ -130,6 +152,7 @@ public class Segment extends Rectangle implements Node<Segment> {
         height = 10;
 
         this.setSize(new XYCoordinate(width, height));
+        this.drawDimensionsUpToDate = true;
     }
 
     /**

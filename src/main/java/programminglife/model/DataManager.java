@@ -7,6 +7,7 @@ import org.mapdb.Serializer;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Map;
 
 /**
@@ -14,7 +15,7 @@ import java.util.Map;
  */
 public final class DataManager {
     private static final String SEQUENCE_MAP_SUFFIX = "_sequenceMap";
-    private static final String SEQUENCE__LENGTH_MAP_SUFFIX = "_sequenceLengthMap";
+    private static final String SEQUENCE_LENGTH_MAP_SUFFIX = "_sequenceLengthMap";
 
     private static DataManager ourInstance = null;
     private static String currentFileName = null;
@@ -55,14 +56,32 @@ public final class DataManager {
 
     /**
      * Create the DataManager and initialize the database.
-     * @param fileName The name of the cache file.
+     * @param name The name of the cache file.
+     *                 Note: this method will append .db if it doesn't already end with that.
      * @throws IOException when an IOException occurs while opening the database.
      */
-    private DataManager(String fileName) throws IOException {
-        this.currentFileName = fileName;
+    private DataManager(String name) throws IOException {
+        String fileName = toDBFile(name);
+
         System.out.printf("%s Setting up MapDB %s...\n", Thread.currentThread(), fileName);
+        this.currentFileName = fileName;
         this.db = DBMaker.fileDB(new File(fileName)).closeOnJvmShutdown().make();
         System.out.printf("%s MapDB %s set up!\n", Thread.currentThread(), fileName);
+    }
+
+    /**
+     * converts a name to the name that would be used for the cache.
+     * @param name The name to be converted
+     * @return The converted name.
+     */
+    public static String toDBFile(String name) {
+        if (name.endsWith(".fga")) {
+            name = name.substring(0, name.length() - 4);
+        }
+        if (!name.endsWith(".db")) {
+            name += ".db";
+        }
+        return name;
     }
 
     private DB getDb() {
@@ -90,14 +109,14 @@ public final class DataManager {
         return res;
     }
 
+
     /**
      * Get the HTreeMap cache for the sequence lengths of the current file.
      * @return the HTreeMap cache for the sequence lengths of the current file.
      */
     private static Map<Integer, Integer> getSequenceLengthMap() {
-        return getMap(currentFileName + SEQUENCE__LENGTH_MAP_SUFFIX, Serializer.INTEGER, Serializer.INTEGER);
+        return getMap(currentFileName + SEQUENCE_LENGTH_MAP_SUFFIX, Serializer.INTEGER, Serializer.INTEGER);
     }
-
 
     /**
      * Get the HTreeMap cache for the sequences of the current file.
@@ -120,7 +139,9 @@ public final class DataManager {
         DB db = DataManager.getInstance().getDb();
         if (db.exists(name)) {
 //            System.out.printf("%s Storage %s exists\n", Thread.currentThread(), name);
-            return db.get(name);
+            HTreeMap<K, V> res = db.get(name);
+            assert (res != null);
+            return res;
         } else {
             System.out.printf("%s Storage %s does not exist.\n%s Creating storage %s...\n",
                     Thread.currentThread(), name, Thread.currentThread(), name);
@@ -129,6 +150,8 @@ public final class DataManager {
                     .keySerializer(keySerializer)
                     .valueSerializer(valueSerializer)
                     .create();
+
+            assert (res != null);
             System.out.printf("%s Storage %s created\n", Thread.currentThread(), name);
 
             return res;
@@ -139,10 +162,15 @@ public final class DataManager {
      * close the database.
      */
     public static void close() {
-        System.out.printf("%s Closing MapDB...\n", Thread.currentThread());
-        DataManager.getInstance().getDb().commit();
-        DataManager.getInstance().getDb().close();
-        System.out.printf("%s MapDB closed\n", Thread.currentThread());
+        DB db = DataManager.getInstance().getDb();
+        if (db.isClosed()) {
+            System.out.printf("%s MapDB is already closed\n", Thread.currentThread());
+        } else {
+            System.out.printf("%s Closing MapDB...\n", Thread.currentThread());
+            db.commit();
+            db.close();
+            System.out.printf("%s MapDB closed\n", Thread.currentThread());
+        }
     }
 
     /**
@@ -170,6 +198,31 @@ public final class DataManager {
      * @return the length of the sequence.
      */
     public static int getSequenceLength(int nodeID) {
-        return getSequenceLengthMap().get(nodeID);
+        Integer res = getSequenceLengthMap().get(nodeID);
+        assert (res != null);
+        return res;
+    }
+
+    /**
+     * Remove and recreate database named name.
+     * By default, this method removes first converts the name with {@link #toDBFile(String)}
+     * @param name The name of the database to remove
+     * @throws IOException When something goes wrong with IO
+     */
+    public static void clearDB(String name) throws IOException {
+        removeDB(DataManager.toDBFile(name));
+                ourInstance = null;
+        initialize(currentFileName);
+    }
+
+    /**
+     * completely remove a database. This cannot be undone.
+     * By default, this method removes first converts the name with {@link #toDBFile(String)}
+     * @param name The name of the database to be removed.
+     * @throws IOException When something goes wrong with IO
+     */
+    public static void removeDB(String name) throws IOException {
+        close();
+        Files.deleteIfExists(new File(DataManager.toDBFile(name)).toPath());
     }
 }
