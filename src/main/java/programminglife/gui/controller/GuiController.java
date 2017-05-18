@@ -12,6 +12,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
@@ -23,10 +24,12 @@ import programminglife.parser.GraphParser;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.util.NoSuchElementException;
 import java.util.Observable;
 import java.util.Observer;
-import java.nio.charset.Charset;
 import java.util.Optional;
 
 /**
@@ -49,6 +52,7 @@ public class GuiController implements Observer {
     @FXML private MenuItem btnQuit;
     @FXML private MenuItem btnAbout;
     @FXML private MenuItem btnInstructions;
+    @FXML private RadioMenuItem btnToggle;
     @FXML private Button btnZoomIn;
     @FXML private Button btnZoomOut;
     @FXML private Button btnZoomReset;
@@ -62,7 +66,6 @@ public class GuiController implements Observer {
 
     @FXML private Group grpDrawArea;
     @FXML private AnchorPane anchorLeftControlPanel;
-    @FXML private AnchorPane anchorConsolePanel;
 
     //Privates used by method.
     private ConsoleView consoleView;
@@ -84,7 +87,7 @@ public class GuiController implements Observer {
         initLeftControlpanelScreenModifiers();
         initLeftControlpanelDraw();
         initMouse();
-        consoleView = initConsole(anchorConsolePanel);
+        consoleView = initConsole();
         this.graphController.setConsole(consoleView);
     }
 
@@ -130,7 +133,7 @@ public class GuiController implements Observer {
             FileChooser fileChooser = new FileChooser();
             final ExtensionFilter extFilterGFA = new ExtensionFilter("GFA files (*.gfa)", "*.GFA");
             fileChooser.getExtensionFilters().add(extFilterGFA);
-            if (file != null){
+            if (file != null) {
                 File existDirectory = file.getParentFile();
                 fileChooser.setInitialDirectory(existDirectory);
             }
@@ -341,24 +344,44 @@ public class GuiController implements Observer {
 
     /**
      * Initialises the Console.
-     * @param parent is the {@link AnchorPane} in which the console is placed.
-     * @return the ConsoleView to print to
+     * @return the ConsoleView to print to.
      */
-    private ConsoleView initConsole(AnchorPane parent) {
+    private ConsoleView initConsole() {
         final ConsoleView console = new ConsoleView(Charset.forName("UTF-8"));
-        parent.getChildren().add(console);
+        AnchorPane root = new AnchorPane();
+        btnToggle.setSelected(false);
+        console.setVisible(false);
+        root.setVisible(false);
+        Stage st = new Stage();
+        st.setScene(new Scene(root, 500, 500, Color.GRAY));
+        st.setMinWidth(500);
+        st.setMinHeight(250);
+        root.getChildren().add(console);
 
-        AnchorPane.setBottomAnchor(console, 0.d);
-        AnchorPane.setTopAnchor(console, 0.d);
-        AnchorPane.setRightAnchor(console, 0.d);
-        AnchorPane.setLeftAnchor(console, 0.d);
+        st.setOnCloseRequest(e -> {
+            btnToggle.setSelected(false);
+            root.setVisible(false);
+            console.setVisible(false);
+        });
 
-        console.setMinHeight(50.d);
-        console.prefHeight(50.d);
-        console.maxHeight(50.d);
+        root.setBottomAnchor(console, 0.d);
+        root.setTopAnchor(console, 0.d);
+        root.setRightAnchor(console, 0.d);
+        root.setLeftAnchor(console, 0.d);
+
+        btnToggle.setOnAction(event -> {
+            if (console.isVisible()) {
+                st.close();
+                root.setVisible(false);
+                console.setVisible(false);
+            } else {
+                st.show();
+                root.setVisible(true);
+                console.setVisible(true);
+            }
+        });
 
         System.setOut(console.getOut());
-
         return console;
     }
 }
