@@ -34,8 +34,6 @@ public class GraphController {
     public GraphController(GenomeGraph graph, Group grpDrawArea) {
         this.graph = graph;
         this.grpDrawArea = grpDrawArea;
-
-        DataManager.getInstance();
     }
 
     public void setConsole(ConsoleView console) {
