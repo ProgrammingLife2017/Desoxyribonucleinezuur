@@ -11,6 +11,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -69,6 +70,7 @@ final class BookmarkController {
      * @return the {@link Bookmark} you are trying to load.
      */
     public static Bookmark loadBookmark(String fileName, String graphName, String bookMarkName) {
+        checkFile(fileName);
         Document dom;
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         try {
@@ -118,10 +120,7 @@ final class BookmarkController {
      * @param radius The radius of the bookmark for searching.
      */
     public static void storeBookmark(String fileName, String graphName, String bookMarkName, String description, int nodeID, int radius) {
-        if (loadBookmark(graphName, bookMarkName) != null) {
-            return;
-        }
-
+        checkFile(fileName);
         try {
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = docFactory.newDocumentBuilder();
@@ -145,6 +144,7 @@ final class BookmarkController {
 
             Element graphTag = findTag(doc.getDocumentElement().getChildNodes(), graphName);
 
+            // No earlier bookmarks in this graph
            if (graphTag == null) {
                graphTag = doc.createElement(graphName);
                rootElement.appendChild(graphTag);
@@ -169,6 +169,7 @@ final class BookmarkController {
      * @param bookmarkName The name of the bookmark to be deleted.
      */
     public static void deleteBookmark(String fileName, String graphName, String bookmarkName) {
+        checkFile(fileName);
         try {
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = docFactory.newDocumentBuilder();
@@ -210,5 +211,33 @@ final class BookmarkController {
             }
         }
         return null;
+    }
+
+    /**
+     * Checks whether the given bookmark filepath exists.
+     * If not it will create the file with the necessary tags.
+     * @param fileName The name of the bookmark file
+     */
+    private static void checkFile(String fileName) {
+        File bookmarkFile = new File(fileName);
+        if (!bookmarkFile.exists()) {
+            try {
+                DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder builder = docFactory.newDocumentBuilder();
+                Document doc = builder.newDocument();
+                Element rootElement = doc.createElement("graphs");
+                doc.appendChild(rootElement);
+
+                TransformerFactory transformerFactory = TransformerFactory.newInstance();
+                Transformer transformer = transformerFactory.newTransformer();
+                DOMSource source = new DOMSource(doc);
+                StreamResult result = new StreamResult(bookmarkFile);
+
+                transformer.transform(source, result);
+
+            } catch (ParserConfigurationException | TransformerException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
