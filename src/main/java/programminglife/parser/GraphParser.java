@@ -4,6 +4,7 @@ import com.diffplug.common.base.Errors;
 import com.diffplug.common.base.Throwing;
 import programminglife.model.*;
 import programminglife.model.exception.UnknownTypeException;
+import programminglife.utility.FileProgressCounter;
 
 import java.io.*;
 import java.util.Observable;

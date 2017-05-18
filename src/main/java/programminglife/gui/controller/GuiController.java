@@ -17,11 +17,11 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import jp.uphy.javafx.console.ConsoleView;
 import programminglife.ProgrammingLife;
-import programminglife.model.FileProgressCounter;
 import programminglife.model.DataManager;
 import programminglife.model.GenomeGraph;
 import programminglife.model.exception.UnknownTypeException;
 import programminglife.parser.GraphParser;
+import programminglife.utility.FileProgressCounter;
 
 import java.io.File;
 import java.io.FileNotFoundException;
