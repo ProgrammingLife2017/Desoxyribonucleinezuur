@@ -11,7 +11,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -48,7 +47,8 @@ final class BookmarkController {
      * @param nodeID The ID of the node for searching.
      * @param radius The radius of the bookmark for searching.
      */
-    public static void storeBookmark(String graphName, String bookMarkName, String description, int nodeID, int radius) {
+    public static void storeBookmark(String graphName, String bookMarkName,
+                                     String description, int nodeID, int radius) {
         storeBookmark(BOOKMARKPATH, graphName, bookMarkName, description, nodeID, radius);
     }
 
@@ -119,7 +119,8 @@ final class BookmarkController {
      * @param nodeID The ID of the node for searching.
      * @param radius The radius of the bookmark for searching.
      */
-    public static void storeBookmark(String fileName, String graphName, String bookMarkName, String description, int nodeID, int radius) {
+    public static void storeBookmark(String fileName, String graphName, String bookMarkName,
+                                     String description, int nodeID, int radius) {
         checkFile(fileName);
         try {
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
