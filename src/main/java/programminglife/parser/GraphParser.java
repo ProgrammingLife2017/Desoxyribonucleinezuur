@@ -102,6 +102,10 @@ public class GraphParser extends Observable implements Runnable {
                         throw new UnknownTypeException(String.format("Unknown symbol '%c'", type));
                 }
 
+                if (progressCounter.getLineCount() % 500 == 0) {
+                    System.out.println(progressCounter);
+                }
+
                 if (Thread.currentThread().isInterrupted()) {
                     System.out.printf("%s Stopping this thread gracefully...\n", Thread.currentThread());
                     throw new InterruptedException("Thread was interrupted!");

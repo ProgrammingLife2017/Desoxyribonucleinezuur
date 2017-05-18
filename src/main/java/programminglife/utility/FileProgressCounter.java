@@ -30,7 +30,7 @@ public class FileProgressCounter extends Observable {
 
     @Override
     public String toString() {
-        return String.format("%s: %lf%%", this.description, this.percentage());
+        return String.format("%s: %f%%", this.description, this.percentage());
     }
 
     private double percentage() {
