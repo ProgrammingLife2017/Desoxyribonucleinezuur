@@ -354,6 +354,8 @@ public class GuiController implements Observer {
         root.setVisible(false);
         Stage st = new Stage();
         st.setScene(new Scene(root, 500, 500, Color.GRAY));
+        st.setMinWidth(500);
+        st.setMinHeight(250);
         root.getChildren().add(console);
 
         st.setOnCloseRequest(e -> {
