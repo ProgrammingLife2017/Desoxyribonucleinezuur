@@ -5,6 +5,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -14,6 +15,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import programminglife.ProgrammingLife;
 import programminglife.model.Graph;
@@ -21,6 +23,7 @@ import programminglife.model.exception.UnknownTypeException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Optional;
 
 /**
@@ -32,6 +35,9 @@ public class GuiController {
     //FXML imports.
     @FXML private MenuItem btnOpen;
     @FXML private MenuItem btnQuit;
+    @FXML private MenuItem btnCreateBookmark;
+    @FXML private MenuItem btnLoadBookmark;
+
     @FXML private Button btnZoomIn;
     @FXML private Button btnZoomOut;
     @FXML private Button btnZoomReset;
@@ -65,6 +71,7 @@ public class GuiController {
         this.graphController = new GraphController(null, this.grpDrawArea);
 
         initMenubar();
+        initBookmarkMenu();
         initLeftControlpanelScreenModifiers();
         initLeftControlpanelDraw();
         initMouse();
@@ -130,6 +137,32 @@ public class GuiController {
             }
         });
     }
+
+    private void initBookmarkMenu() {
+
+        btnCreateBookmark.setOnAction(event -> {
+            try{
+                System.out.println("came here");
+                FXMLLoader loader = new FXMLLoader();
+                loader.setLocation(ProgrammingLife.class.getResource("/CreateBookmarkWindow.fxml"));
+                AnchorPane page = (AnchorPane) loader.load();
+
+                Stage bookmarkDialogStage = new Stage();
+                bookmarkDialogStage.setTitle("Create Bookmark");
+                //bookmarkDialogStage.initModality(Modality.WINDOW_MODAL);
+                bookmarkDialogStage.initOwner(ProgrammingLife.getStage());
+                Scene scene = new Scene(page);
+
+                bookmarkDialogStage.showAndWait();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        });
+    }
+
+
 
     private void disableGraphUIElements(boolean isDisabled) {
         anchorLeftControlPanel.setDisable(isDisabled);
