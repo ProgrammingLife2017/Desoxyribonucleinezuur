@@ -1,7 +1,6 @@
 package programminglife.model;
 
 import javafx.scene.shape.Rectangle;
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 
 /**
