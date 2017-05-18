@@ -9,23 +9,28 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
+/**
+ * A class for managing persistent data. It can open one cache, which contains the information for one gfa file.
+ */
 public final class DataManager {
-    private static final String DB_FILE_PATH = "dbFile.db";
+    private static final String SEQUENCE_MAP_SUFFIX = "_sequence_map";
+
     private static DataManager ourInstance = null;
-    private static String currentCollectionName = null;
+    private static String currentfileName = null;
 
     private DB db;
 
     /**
      * Initialize this DataManager. Opens database and stuff.
+     * @param fileName The name of the cache file.
      * @throws IOException When an IO Exception occurs while opening the database.
      */
-    public static synchronized void initialize(String collectionName) throws IOException {
-        if (ourInstance == null) {
-            ourInstance = new DataManager();
+    public static synchronized void initialize(String fileName) throws IOException {
+        if (ourInstance != null) {
+            DataManager.close();
         }
 
-        currentCollectionName = collectionName;
+        ourInstance = new DataManager(fileName);
     }
 
     /**
@@ -36,7 +41,7 @@ public final class DataManager {
     public static DataManager getInstance() {
         if (ourInstance == null) {
             try {
-                initialize(currentCollectionName);
+                initialize(currentfileName);
             } catch (IOException e) {
                 throw new RuntimeException(
                         "DataManager had not been initialized and could not be initialized automatically",
@@ -49,12 +54,14 @@ public final class DataManager {
 
     /**
      * Create the DataManager and initialize the database.
+     * @param fileName The name of the cache file.
      * @throws IOException when an IOException occurs while opening the database.
      */
-    private DataManager() throws IOException {
-        System.out.printf("%s Setting up MapDB %s...\n", Thread.currentThread(), DB_FILE_PATH);
-        this.db = DBMaker.fileDB(new File(DB_FILE_PATH)).closeOnJvmShutdown().make();
-        System.out.printf("%s MapDB %s set up!\n", Thread.currentThread(), DB_FILE_PATH);
+    private DataManager(String fileName) throws IOException {
+        this.currentfileName = fileName;
+        System.out.printf("%s Setting up MapDB %s...\n", Thread.currentThread(), fileName);
+        this.db = DBMaker.fileDB(new File(fileName)).closeOnJvmShutdown().make();
+        System.out.printf("%s MapDB %s set up!\n", Thread.currentThread(), fileName);
     }
 
     public DB getDb() {
@@ -77,18 +84,19 @@ public final class DataManager {
      * @return A clean (empty) HTreeMap
      */
     public static Map<Integer, String> getCleanCollection(String collectionName) {
-        Map<Integer, String> res = getCollection(collectionName);
+        Map<Integer, String> res = getSequenceMap();
         res.clear();
         return res;
     }
 
     /**
      * Get the HTreeMap cache with this name.
-     * @param collectionName name for the cache
      * @return The HTreeMap associated with collectionName.
      */
-    public static Map<Integer, String> getCollection(String collectionName) {
+    public static Map<Integer, String> getSequenceMap() {
         DB db = DataManager.getInstance().getDb();
+        String collectionName = currentfileName + SEQUENCE_MAP_SUFFIX;
+
         if (db.exists(collectionName)) {
             System.out.printf("%s Storage %s exists\n", Thread.currentThread(), collectionName);
             return db.get(collectionName);
@@ -101,8 +109,6 @@ public final class DataManager {
                     .valueSerializer(Serializer.STRING_ASCII)
                     .create();
             System.out.printf("%s Storage %s created\n", Thread.currentThread(), collectionName);
-
-            currentCollectionName = collectionName;
 
             return res;
         }
@@ -118,11 +124,21 @@ public final class DataManager {
         System.out.printf("%s MapDB closed\n", Thread.currentThread());
     }
 
+    /**
+     * Get the sequence for the node with NodeId.
+     * @param nodeID ID of the node to get the sequence for.
+     * @return the sequence.
+     */
     public static String getSequence(int nodeID) {
-        return getCollection(currentCollectionName).get(nodeID);
+        return getSequenceMap().get(nodeID);
     }
 
-    public static String setSequence(int nodeID, String sequence) {
-        return getCollection(currentCollectionName).put(nodeID, sequence);
+    /**
+     * Set the sequence for the node with NodeId.
+     * @param nodeID ID of the node to set the sequence for.
+     * @param sequence new sequence.
+     */
+    public static void setSequence(int nodeID, String sequence) {
+        getSequenceMap().put(nodeID, sequence);
     }
 }
