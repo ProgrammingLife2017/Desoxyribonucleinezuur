@@ -24,7 +24,7 @@ import java.util.List;
  * Created by Martijn van Meerten on 15-5-2017.
  * This class is a controller for loading storing and deleting bookmarks.
  */
-final class BookmarkController {
+public final class BookmarkController {
     private static final String BOOKMARKPATH = "bookmarks.xml";
 
     /**
@@ -51,7 +51,7 @@ final class BookmarkController {
      * @param graphName The name of the graph from which to get the bookmarks.
      * @return A List containing all bookmarks.
      */
-    public static List<Bookmark> loadAllGraphBrookmarks(String graphName) {
+    public static List<Bookmark> loadAllGraphBookmarks(String graphName) {
         return loadAllGraphBookmarks(BOOKMARKPATH, graphName);
     }
 
@@ -223,7 +223,9 @@ final class BookmarkController {
             DocumentBuilder builder = factory.newDocumentBuilder();
             dom = builder.parse(fileName);
             Element doc = dom.getDocumentElement();
+            System.out.println(graphName);
             Element graph = findTag(doc.getChildNodes(), graphName);
+            System.out.println("Amounto of childo in bookmarko controllo" + graph.getChildNodes().getLength());
             if (graph != null) {
                 NodeList nodeList = graph.getChildNodes();
                 if (nodeList != null) {

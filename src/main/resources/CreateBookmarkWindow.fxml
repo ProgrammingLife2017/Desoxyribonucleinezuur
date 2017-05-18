@@ -3,7 +3,7 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<AnchorPane maxHeight="Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="295.0" prefWidth="452.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="programminglife.gui.controller.GuiBookmarkController">
+<AnchorPane maxHeight="Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="295.0" prefWidth="452.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="programminglife.gui.controller.GuiCreateBookmarkController">
    <children>
       <GridPane layoutX="228.0" layoutY="32.0" prefHeight="205.0" prefWidth="442.0" AnchorPane.bottomAnchor="58.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="32.0">
         <columnConstraints>
@@ -17,10 +17,10 @@
             <RowConstraints maxHeight="140.0" minHeight="10.0" prefHeight="140.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <TextArea prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <TextField prefHeight="17.0" prefWidth="90.0" GridPane.columnIndex="1" />
-            <TextField GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <TextField GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <TextArea fx:id="txtDescription" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <TextField fx:id="txtBookmarkName" prefHeight="17.0" prefWidth="90.0" GridPane.columnIndex="1" />
+            <TextField fx:id="txtId" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <TextField fx:id="txtRadius" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <Label fx:id="labelName" text="Bookmark Name:" />
             <Label fx:id="labelCenter" text="Center node:" GridPane.rowIndex="1" />
             <Label fx:id="labelRadius" text="Radius:" GridPane.rowIndex="2" />

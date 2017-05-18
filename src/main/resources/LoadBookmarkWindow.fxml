@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="programminglife.gui.controller.GuiLoadBookmarkController">
+   <children>
+      <TableView fx:id="tblBookmark" prefHeight="354.0" prefWidth="600.0">
+        <columns>
+          <TableColumn fx:id="clmnName" prefWidth="139.0" text="Name" />
+          <TableColumn fx:id="clmnDescription" prefWidth="460.0" text="Description" />
+        </columns>
+      </TableView>
+      <Button fx:id="btnOpenBookmark" layoutX="521.0" layoutY="354.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="65.0" text="Open" />
+      <Button fx:id="btnCancelBookmark" layoutX="14.0" layoutY="354.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="65.0" text="Cancel" />
+   </children>
+</AnchorPane>

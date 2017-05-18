@@ -200,8 +200,9 @@ public class GuiController implements Observer {
             try {
                 System.out.println("came here");
                 FXMLLoader loader = new FXMLLoader(ProgrammingLife.class.getResource("/CreateBookmarkWindow.fxml"));
-                GuiBookmarkController gc = loader.getController();
                 AnchorPane page = loader.load();
+                GuiCreateBookmarkController gc = loader.getController();
+                gc.setGraph(graphController.getGraph().getId());
                 Scene scene = new Scene(page);
                 Stage bookmarkDialogStage = new Stage();
                 bookmarkDialogStage.setScene(scene);
@@ -209,17 +210,30 @@ public class GuiController implements Observer {
                 bookmarkDialogStage.initOwner(ProgrammingLife.getStage());
                 bookmarkDialogStage.showAndWait();
 
-                gc.getBtnOk().setOnAction(e -> {
-                    bookmarkDialogStage.close();
-                });
-                gc.getBtnCancel().setOnAction(e -> {
-                    bookmarkDialogStage.close();
-                });
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
+        });
+
+        btnLoadBookmark.setOnAction(event -> {
+            try {
+                System.out.println("came load");
+                FXMLLoader loader = new FXMLLoader(ProgrammingLife.class.getResource("/LoadBookmarkWindow.fxml"));
+                AnchorPane page = loader.load();
+                GuiLoadBookmarkController gc = loader.getController();
+                System.out.println("gid " + graphController.getGraph().getId());
+                gc.setGraph(graphController.getGraph().getId());
+                Scene scene = new Scene(page);
+                Stage bookmarkDialogStage = new Stage();
+                bookmarkDialogStage.setScene(scene);
+                bookmarkDialogStage.setTitle("Load Bookmark");
+                bookmarkDialogStage.initOwner(ProgrammingLife.getStage());
+                bookmarkDialogStage.showAndWait();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         });
     }
 

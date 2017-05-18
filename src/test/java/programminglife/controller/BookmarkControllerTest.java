@@ -30,6 +30,7 @@ public class BookmarkControllerTest {
         BookmarkController.deleteBookmark(testPath, "deleteTestGraph", "deleteTest");
         BookmarkController.deleteBookmark(testPath, "writeTestGraph", "writeTest");
         BookmarkController.deleteBookmark(testPath, "writeTestGraph", "writeTeest");
+        BookmarkController.deleteBookmark(testPath, "test", "testbm2");
     }
 
     @Test
