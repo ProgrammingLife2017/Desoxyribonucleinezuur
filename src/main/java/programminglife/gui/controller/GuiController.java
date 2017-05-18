@@ -130,7 +130,7 @@ public class GuiController implements Observer {
             FileChooser fileChooser = new FileChooser();
             final ExtensionFilter extFilterGFA = new ExtensionFilter("GFA files (*.gfa)", "*.GFA");
             fileChooser.getExtensionFilters().add(extFilterGFA);
-            if (file != null){
+            if (file != null) {
                 File existDirectory = file.getParentFile();
                 fileChooser.setInitialDirectory(existDirectory);
             }

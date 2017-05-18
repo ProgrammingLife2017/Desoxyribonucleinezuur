@@ -25,6 +25,11 @@ import java.io.IOException;
 final class BookmarkController {
     private static final String BOOKMARKPATH = "bookmarks.xml";
 
+    /**
+     * This class should not be instantiated.
+     * The functionality of this class does not rely on any particular instance.
+     * It relies solely on the contents of the bookmarks file.
+     */
     private BookmarkController() { }
 
     /**
