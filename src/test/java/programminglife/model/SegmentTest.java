@@ -1,6 +1,7 @@
 package programminglife.model;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.HashSet;
@@ -10,6 +11,11 @@ import static org.junit.Assert.assertTrue;
 
 public class SegmentTest {
     Segment node;
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        DataManager.initialize("test");
+    }
 
     @Before
     public void setUp() throws Exception {

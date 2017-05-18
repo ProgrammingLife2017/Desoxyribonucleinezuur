@@ -22,6 +22,8 @@ public class GenomeGraphTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
+        DataManager.initialize("test");
+
         TEST_PATH = new File(GenomeGraphTest.class.getResource("/test.gfa").toURI()).getAbsolutePath();
         TEST_FAULTY_PATH = new File(
                 GenomeGraphTest.class.getClass().getResource("/test-faulty.gfa").toURI()
@@ -51,7 +53,7 @@ public class GenomeGraphTest {
         assertTrue(graph.contains(3));
     }
 
-    @Test(expected = NoSuchElementException.class)
+    @Test(expected = NullPointerException.class)
     public void getNodeTest1() {
         graph.getChildren(121);
     }

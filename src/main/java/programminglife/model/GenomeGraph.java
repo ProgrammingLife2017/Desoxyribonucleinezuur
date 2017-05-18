@@ -81,16 +81,6 @@ public class GenomeGraph implements Graph {
     }
 
     @Override
-    public Map<Node, Set<Node>> getChildrenAdjacencyList() {
-        throw new NotImplementedException("GenomeGraph#getChildrenAdjacencyList() is not yet implemented");
-    }
-
-    @Override
-    public Map<Node, Set<Node>> getParentsAdjacencyList() {
-        throw new NotImplementedException("GenomeGraph#getParentsAdjacencyList() is not yet implemented");
-    }
-
-    @Override
     public Set<Segment> getChildren(Node node) {
         return this.getChildren(node.getIdentifier());
     }

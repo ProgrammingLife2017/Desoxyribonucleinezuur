@@ -17,10 +17,6 @@ public interface Graph {
 
     int size();
 
-    Map<Node, Set<Node>> getChildrenAdjacencyList();
-
-    Map<Node, Set<Node>> getParentsAdjacencyList();
-
     Set<Segment> getChildren(Node node);
 
     Set<Segment> getChildren(int nodeID);

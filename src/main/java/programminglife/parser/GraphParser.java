@@ -25,11 +25,10 @@ public class GraphParser extends Observable implements Runnable {
     /**
      * Initiates an empty graph and the {@link File} to parse.
      * @param graphFile the file to parse the {@link GenomeGraph} from
-     * @param name The name to use for this Graph (this name is used to create the cache).
      */
-    public GraphParser(File graphFile, String name) {
+    public GraphParser(File graphFile) {
         this.graphFile = graphFile;
-        this.name = name;
+        this.name = graphFile.getName();
         this.verbose = PARSE_LINE_VERBOSE_DEFAULT;
         this.graph = new GenomeGraph(name);
     }

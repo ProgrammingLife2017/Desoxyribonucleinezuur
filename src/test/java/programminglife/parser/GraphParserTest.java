@@ -26,6 +26,8 @@ public class GraphParserTest implements Observer {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
+        DataManager.initialize("test");
+
         TEST_PATH = new File(GenomeGraphTest.class.getResource("/test.gfa").toURI()).getAbsolutePath();
         TEST_FAULTY_PATH = new File(
                 GenomeGraphTest.class.getClass().getResource("/test-faulty.gfa").toURI()
@@ -35,10 +37,10 @@ public class GraphParserTest implements Observer {
     @Before
     public void setUp() throws Exception {
         File testFile = new File(TEST_PATH);
-        graphParser = new GraphParser(testFile, testFile.getName());
+        graphParser = new GraphParser(testFile);
 
         File faultyTestFile = new File(TEST_FAULTY_PATH);
-        faultyGraphParser = new GraphParser(faultyTestFile, faultyTestFile.getName());
+        faultyGraphParser = new GraphParser(faultyTestFile);
 
         linkLine = "L\t34\t+\t35\t+\t0M";
         nodeLine = "S\t6\tC\t*\tORI:Z:TKK_04_0031.fasta\tCRD:Z:TKK_04_0031.fasta\tCRDCTG:Z:7000000219691771\tCTG:Z:7000000219691771\tSTART:Z:3039";
@@ -55,7 +57,6 @@ public class GraphParserTest implements Observer {
         GenomeGraph graph = graphParser.getGraph();
 
         assertEquals(8, graph.size());
-        assertEquals(9, graph.getChildrenAdjacencyList().values().stream().mapToInt(children -> children.size()).sum());
     }
 
     @Test

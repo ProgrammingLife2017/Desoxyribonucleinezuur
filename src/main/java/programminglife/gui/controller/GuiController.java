@@ -88,21 +88,9 @@ public class GuiController implements Observer {
      */
     public void openFile(File file) throws FileNotFoundException, UnknownTypeException {
         if (file != null) {
-            String name = file.getName();
-
-            if (DataManager.hasCache(name)) {
-                // load cache from datamanager
-                GenomeGraph graph = new GenomeGraph(name);
-
-                System.out.printf("%s Graph %s found in cache\n", Thread.currentThread(), name);
-                this.setGraph(graph);
-            } else {
-                // Parse graph and save it.
-                GraphParser graphParser = new GraphParser(file, name);
-                graphParser.addObserver(this);
-                System.out.printf("%s No cache found for %s, parsing graph...\n", Thread.currentThread(), name);
-                (new Thread(graphParser)).start();
-            }
+            GraphParser graphParser = new GraphParser(file);
+            graphParser.addObserver(this);
+            (new Thread(graphParser)).start();
         }
     }
 

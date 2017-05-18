@@ -7,6 +7,7 @@ import org.testfx.api.FxRobot;
 import org.testfx.api.FxToolkit;
 import org.testfx.util.WaitForAsyncUtils;
 import programminglife.ProgrammingLife;
+import programminglife.model.DataManager;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -35,7 +36,9 @@ public class GuiControllerTest extends FxRobot {
     }
 
     @BeforeClass
-    public static void setUpClass() {
+    public static void setUpClass() throws Exception {
+        DataManager.initialize("test");
+
         try {
             primaryStage = FxToolkit.registerPrimaryStage();
         } catch (TimeoutException e) {

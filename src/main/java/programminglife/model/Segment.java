@@ -26,7 +26,7 @@ public class Segment extends Rectangle implements Node<Segment> {
      */
     public Segment(int id, String sequence) {
         this.id = id;
-        // TODO save sequence to MapDB
+        DataManager.setSequence(id, sequence);
     }
 
     /**
@@ -34,8 +34,7 @@ public class Segment extends Rectangle implements Node<Segment> {
      * @return the sequence of base pairs
      */
     public String getSequence() {
-        // TODO get sequence from MapDB
-        throw new NotImplementedException("Segment#getSequence() is not yet implemented");
+        return DataManager.getSequence(this.id);
     }
 
     /**
@@ -43,10 +42,8 @@ public class Segment extends Rectangle implements Node<Segment> {
      * @param sequence A {@link String} representing the base pairs
      */
     public void setSequence(String sequence) {
-        // TODO set sequence in MapDB
+        DataManager.setSequence(this.id, sequence);
         this.setDrawDimensions();
-
-        throw new NotImplementedException("Segment#setSequence() is not yet implemented");
     }
 
     public XYCoordinate getRightBorderCenter() {

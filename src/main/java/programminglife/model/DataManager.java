@@ -20,10 +20,12 @@ public final class DataManager {
      * Initialize this DataManager. Opens database and stuff.
      * @throws IOException When an IO Exception occurs while opening the database.
      */
-    public static synchronized void initialize() throws IOException {
+    public static synchronized void initialize(String collectionName) throws IOException {
         if (ourInstance == null) {
             ourInstance = new DataManager();
         }
+
+        currentCollectionName = collectionName;
     }
 
     /**
@@ -34,7 +36,7 @@ public final class DataManager {
     public static DataManager getInstance() {
         if (ourInstance == null) {
             try {
-                initialize();
+                initialize(currentCollectionName);
             } catch (IOException e) {
                 throw new RuntimeException(
                         "DataManager had not been initialized and could not be initialized automatically",
@@ -118,5 +120,9 @@ public final class DataManager {
 
     public static String getSequence(int nodeID) {
         return getCollection(currentCollectionName).get(nodeID);
+    }
+
+    public static String setSequence(int nodeID, String sequence) {
+        return getCollection(currentCollectionName).put(nodeID, sequence);
     }
 }
