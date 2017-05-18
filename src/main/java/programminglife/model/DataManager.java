@@ -13,10 +13,11 @@ import java.util.Map;
  * A class for managing persistent data. It can open one cache, which contains the information for one gfa file.
  */
 public final class DataManager {
-    private static final String SEQUENCE_MAP_SUFFIX = "_sequence_map";
+    private static final String SEQUENCE_MAP_SUFFIX = "_sequenceMap";
+    private static final String SEQUENCE__LENGTH_MAP_SUFFIX = "_sequenceLengthMap";
 
     private static DataManager ourInstance = null;
-    private static String currentfileName = null;
+    private static String currentFileName = null;
 
     private DB db;
 
@@ -41,7 +42,7 @@ public final class DataManager {
     public static DataManager getInstance() {
         if (ourInstance == null) {
             try {
-                initialize(currentfileName);
+                initialize(currentFileName);
             } catch (IOException e) {
                 throw new RuntimeException(
                         "DataManager had not been initialized and could not be initialized automatically",
@@ -58,13 +59,13 @@ public final class DataManager {
      * @throws IOException when an IOException occurs while opening the database.
      */
     private DataManager(String fileName) throws IOException {
-        this.currentfileName = fileName;
+        this.currentFileName = fileName;
         System.out.printf("%s Setting up MapDB %s...\n", Thread.currentThread(), fileName);
         this.db = DBMaker.fileDB(new File(fileName)).closeOnJvmShutdown().make();
         System.out.printf("%s MapDB %s set up!\n", Thread.currentThread(), fileName);
     }
 
-    public DB getDb() {
+    private DB getDb() {
         return db;
     }
 
@@ -83,32 +84,52 @@ public final class DataManager {
      * @param collectionName name of collection
      * @return A clean (empty) HTreeMap
      */
-    public static Map<Integer, String> getCleanCollection(String collectionName) {
+    private static Map<Integer, String> getCleanCollection(String collectionName) {
         Map<Integer, String> res = getSequenceMap();
         res.clear();
         return res;
     }
 
     /**
-     * Get the HTreeMap cache with this name.
-     * @return The HTreeMap associated with collectionName.
+     * Get the HTreeMap cache for the sequence lengths of the current file.
+     * @return the HTreeMap cache for the sequence lengths of the current file.
      */
-    public static Map<Integer, String> getSequenceMap() {
-        DB db = DataManager.getInstance().getDb();
-        String collectionName = currentfileName + SEQUENCE_MAP_SUFFIX;
+    private static Map<Integer, Integer> getSequenceLengthMap() {
+        return getMap(currentFileName + SEQUENCE__LENGTH_MAP_SUFFIX, Serializer.INTEGER, Serializer.INTEGER);
+    }
 
-        if (db.exists(collectionName)) {
-            System.out.printf("%s Storage %s exists\n", Thread.currentThread(), collectionName);
-            return db.get(collectionName);
+
+    /**
+     * Get the HTreeMap cache for the sequences of the current file.
+     * @return the HTreeMap cache for the sequences of the current file.
+     */
+    private static Map<Integer, String> getSequenceMap() {
+        return getMap(currentFileName + SEQUENCE_MAP_SUFFIX, Serializer.INTEGER, Serializer.STRING_ASCII);
+    }
+
+    /**
+     * Get a disk-backed hashmap named name. If it doesn't exist, it is created using the provided serializers.
+     * @param name The name of the hashmap
+     * @param keySerializer The serializer for the keys
+     * @param valueSerializer The serializer for th values
+     * @param <K> The type of the keys
+     * @param <V> The type of the values.
+     * @return a disk-backed hashmap named name.
+     */
+    private static <K, V> Map<K, V> getMap(String name, Serializer<K> keySerializer, Serializer<V> valueSerializer) {
+        DB db = DataManager.getInstance().getDb();
+        if (db.exists(name)) {
+//            System.out.printf("%s Storage %s exists\n", Thread.currentThread(), name);
+            return db.get(name);
         } else {
             System.out.printf("%s Storage %s does not exist.\n%s Creating storage %s...\n",
-                    Thread.currentThread(), collectionName, Thread.currentThread(), collectionName);
-            HTreeMap<Integer, String> res = db
-                    .hashMap(collectionName)
-                    .keySerializer(Serializer.INTEGER)
-                    .valueSerializer(Serializer.STRING_ASCII)
+                    Thread.currentThread(), name, Thread.currentThread(), name);
+            HTreeMap<K, V> res = db
+                    .hashMap(name)
+                    .keySerializer(keySerializer)
+                    .valueSerializer(valueSerializer)
                     .create();
-            System.out.printf("%s Storage %s created\n", Thread.currentThread(), collectionName);
+            System.out.printf("%s Storage %s created\n", Thread.currentThread(), name);
 
             return res;
         }
@@ -140,5 +161,15 @@ public final class DataManager {
      */
     public static void setSequence(int nodeID, String sequence) {
         getSequenceMap().put(nodeID, sequence);
+        getSequenceLengthMap().put(nodeID, sequence.length());
+    }
+
+    /**
+     * Get the sequence length for the node with NodeId.
+     * @param nodeID ID of the node to get the sequence length for.
+     * @return the length of the sequence.
+     */
+    public static int getSequenceLength(int nodeID) {
+        return getSequenceLengthMap().get(nodeID);
     }
 }
