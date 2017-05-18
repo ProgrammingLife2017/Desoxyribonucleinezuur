@@ -3,6 +3,7 @@ package programminglife.gui.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 /**
@@ -12,6 +13,10 @@ public class GuiBookmarkController {
 
     @FXML private Button btnOk;
     @FXML private Button btnCancel;
+    @FXML private Label labelName;
+    @FXML private Label labelCenter;
+    @FXML private Label labelRadius;
+    @FXML private Label labelDescription;
 
     /**
      * Initialize method for BookmarkController.

@@ -21,10 +21,10 @@
             <TextField prefHeight="17.0" prefWidth="90.0" GridPane.columnIndex="1" />
             <TextField GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <TextField GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <Label text="Bookmark Name:" />
-            <Label text="Center node:" GridPane.rowIndex="1" />
-            <Label text="Radius:" GridPane.rowIndex="2" />
-            <Label text="Description:" GridPane.rowIndex="3" />
+            <Label fx:id="labelName" text="Bookmark Name:" />
+            <Label fx:id="labelCenter" text="Center node:" GridPane.rowIndex="1" />
+            <Label fx:id="labelRadius" text="Radius:" GridPane.rowIndex="2" />
+            <Label fx:id="labelDescription" text="Description:" GridPane.rowIndex="3" />
          </children>
       </GridPane>
       <Button fx:id="btnOk" layoutX="258.0" layoutY="245.0" mnemonicParsing="false" text="Ok" />
