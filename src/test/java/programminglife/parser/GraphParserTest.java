@@ -38,7 +38,7 @@ public class GraphParserTest implements Observer {
         File testFile = new File(TEST_PATH);
         graphParser = new GraphParser(testFile, testFile.getName());
 
-        File faultyTestFile = new File(TEST_PATH);
+        File faultyTestFile = new File(TEST_FAULTY_PATH);
         faultyGraphParser = new GraphParser(faultyTestFile, faultyTestFile.getName());
 
         linkLine = "L\t34\t+\t35\t+\t0M";
