@@ -61,7 +61,7 @@ public final class DataManager {
     private DataManager(String fileName) throws IOException {
         this.currentFileName = fileName;
         System.out.printf("%s Setting up MapDB %s...\n", Thread.currentThread(), fileName);
-        this.db = DBMaker.fileDB(new File(fileName)).closeOnJvmShutdown().make();
+        this.db = DBMaker.fileDB(new File(fileName + ".db")).closeOnJvmShutdown().make();
         System.out.printf("%s MapDB %s set up!\n", Thread.currentThread(), fileName);
     }
 
