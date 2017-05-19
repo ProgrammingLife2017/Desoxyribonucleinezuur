@@ -167,6 +167,8 @@ public class GuiController implements Observer {
         try {
             Files.createFile(new File("Recent.txt").toPath());
         } catch (FileAlreadyExistsException e) {
+            //This will always happen if a user has used the program before.
+            //Therefore it is unnecessary to handle further.
         } catch (IOException e) {
             Alert a = new Alert(Alert.AlertType.ERROR);
             a.setTitle("ERROR");
@@ -183,7 +185,9 @@ public class GuiController implements Observer {
                         try {
                             openFile(new File(mi.getText()));
                         } catch (IOException | UnknownTypeException e) {
-                            e.printStackTrace();
+                            (new Alert(Alert.AlertType.ERROR,
+                                    "This file is can't be opened!",
+                                    ButtonType.CLOSE)).show();
                         }
                     });
                     menuRecent.getItems().add(mi);
@@ -191,7 +195,9 @@ public class GuiController implements Observer {
                 }
                 sc.close();
             } catch (FileNotFoundException e) {
-                e.printStackTrace();
+                (new Alert(Alert.AlertType.ERROR,
+                        "This file cannot be found!",
+                        ButtonType.CLOSE)).show();
             }
         }
     }
@@ -220,7 +226,9 @@ public class GuiController implements Observer {
                         fw.close();
                     }
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    (new Alert(Alert.AlertType.ERROR,
+                            "Can't write to file!",
+                            ButtonType.CLOSE)).show();
                 }
             } catch (FileNotFoundException e) {
                 (new Alert(Alert.AlertType.ERROR,

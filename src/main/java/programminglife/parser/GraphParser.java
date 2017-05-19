@@ -117,13 +117,13 @@ public class GraphParser extends Observable implements Runnable {
                     default:
                         throw new UnknownTypeException(String.format("Unknown symbol '%c'", type));
                 }
-                int tmp;
+                int lineSkipFactor;
                 if (isCached) {
-                    tmp = 100;
+                    lineSkipFactor = 100;
                 } else {
-                    tmp = 1;
+                    lineSkipFactor = 1;
                 }
-                if (progressCounter.getLineCount() % (1000 * tmp) == 0) {
+                if (progressCounter.getLineCount() % (1000 * lineSkipFactor) == 0) {
                     System.out.println(progressCounter);
                 }
 
