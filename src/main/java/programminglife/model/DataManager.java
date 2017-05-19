@@ -144,7 +144,8 @@ public final class DataManager {
      * @param <V> The type of the values.
      * @return a disk-backed hashmap named name.
      */
-    private static <K, V> Map<K, V> getMap(DB db, String name, Serializer<K> keySerializer, Serializer<V> valueSerializer) {
+    private static <K, V> Map<K, V> getMap(DB db, String name,
+                                           Serializer<K> keySerializer, Serializer<V> valueSerializer) {
         if (db.exists(name)) {
             HTreeMap<K, V> res = db.get(name);
             assert (res != null);
@@ -235,5 +236,9 @@ public final class DataManager {
 
     public static void commit() {
         DataManager.getInstance().getDb().commit();
+    }
+
+    public static void rollback() {
+        DataManager.getInstance().getDb().rollback();
     }
 }

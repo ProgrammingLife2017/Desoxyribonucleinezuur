@@ -56,6 +56,7 @@ public class GraphParser extends Observable implements Runnable {
             this.setChanged();
             this.notifyObservers(this.graph);
         } catch (Exception e) {
+            DataManager.rollback();
             this.setChanged();
             this.notifyObservers(e);
         }
