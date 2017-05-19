@@ -22,4 +22,12 @@ public interface Graph<N extends Node<N>, E extends Edge<N>> extends Iterable<N>
      * @return the {@link Collection} of {@link Node}s
      */
     Collection<? extends N> getNodes();
+
+    int size();
+
+    /**
+     * @param node {@link Node} to check if it is contained in the graph.
+     * @return boolean with the result of the contains.
+     */
+    boolean contains(Node node);
 }
