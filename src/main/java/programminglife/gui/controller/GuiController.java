@@ -223,7 +223,8 @@ public class GuiController implements Observer {
                 AnchorPane page = loader.load();
                 GuiLoadBookmarkController gc = loader.getController();
                 System.out.println("gid " + graphController.getGraph().getId());
-                gc.setGraph(graphController.getGraph().getId());
+                gc.setGraphController(graphController);
+                gc.initColumns();
                 Scene scene = new Scene(page);
                 Stage bookmarkDialogStage = new Stage();
                 bookmarkDialogStage.setScene(scene);

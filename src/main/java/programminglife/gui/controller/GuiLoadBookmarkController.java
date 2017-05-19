@@ -16,6 +16,7 @@ import programminglife.model.Bookmark;
  */
 public class GuiLoadBookmarkController {
     private String graphName;
+    private GraphController graphController;
 
     @FXML private TableColumn<Bookmark, String> clmnName;
     @FXML private TableColumn<Bookmark, String> clmnDescription;
@@ -30,7 +31,6 @@ public class GuiLoadBookmarkController {
     @SuppressWarnings("unused")
     public void initialize() {
         initButtons();
-        initColumns();
     }
 
     /**
@@ -38,6 +38,9 @@ public class GuiLoadBookmarkController {
      */
     private void initButtons() {
         btnOpenBookmark.setOnAction(event -> {
+            Bookmark bookmark = tblBookmark.getSelectionModel().getSelectedItem();
+            graphController.clear();
+            graphController.draw(bookmark.getNodeID(), bookmark.getRadius());
             Stage s = (Stage) btnOpenBookmark.getScene().getWindow();
             s.close();
         });
@@ -50,7 +53,7 @@ public class GuiLoadBookmarkController {
     /**
      * Fills the columns with the names and descriptions of the bookmarks.
      */
-    private void initColumns() {
+    public void initColumns() {
         ObservableList<Bookmark> bookmarks = FXCollections.observableArrayList();
         for (Bookmark bm : BookmarkController.loadAllGraphBookmarks(graphName)) {
             bookmarks.add(bm);
@@ -61,7 +64,8 @@ public class GuiLoadBookmarkController {
 
     }
 
-    public void setGraph(String graphName) {
-        this.graphName = graphName;
+    public void setGraphController(GraphController graphController) {
+        this.graphController = graphController;
+        this.graphName = graphController.getGraph().getId();
     }
 }
