@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><graphs>
+    <test>
+        <testbm>
+            <name>testbm</name>
+            <ID>2</ID>
+            <radius>6</radius>
+            <description>testing</description>
+        </testbm>
+    </test>
+</graphs>

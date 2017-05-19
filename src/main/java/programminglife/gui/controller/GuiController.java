@@ -5,6 +5,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -46,6 +47,8 @@ public class GuiController implements Observer {
     //FXML imports.
     @FXML private MenuItem btnOpen;
     @FXML private MenuItem btnQuit;
+    @FXML private MenuItem btnCreateBookmark;
+    @FXML private MenuItem btnBookmarks;
     @FXML private MenuItem btnAbout;
     @FXML private MenuItem btnInstructions;
     @FXML private RadioMenuItem btnToggle;
@@ -56,6 +59,7 @@ public class GuiController implements Observer {
     @FXML private Button btnTranslateReset;
     @FXML private Button btnDraw;
     @FXML private Button btnDrawRandom;
+    @FXML private Menu menuBookmark;
 
     @FXML private TextField txtMaxDrawDepth;
     @FXML private TextField txtCenterNode;
@@ -78,10 +82,11 @@ public class GuiController implements Observer {
      * The initialize will call the other methods that are run in the .
      */
     @FXML
-    @SuppressWarnings("Unused")
+    @SuppressWarnings("unused")
     private void initialize() {
         this.graphController = new GraphController(null, this.grpDrawArea);
         initMenubar();
+        initBookmarkMenu();
         initLeftControlpanelScreenModifiers();
         initLeftControlpanelDraw();
         initMouse();
@@ -184,12 +189,14 @@ public class GuiController implements Observer {
             a.setTitle("Confirm Exit");
             a.setHeaderText("Do you really want to exit?");
             Optional<ButtonType> result = a.showAndWait();
-            if (result.get() == ButtonType.OK) {
-                Platform.exit();
-                System.exit(0);
-            }
-            if (result.get() == ButtonType.CANCEL) {
-                a.close();
+            if (result.isPresent()) {
+                if (result.get() == ButtonType.OK) {
+                    Platform.exit();
+                    System.exit(0);
+                }
+                if (result.get() == ButtonType.CANCEL) {
+                    a.close();
+                }
             }
         });
 
@@ -226,11 +233,38 @@ public class GuiController implements Observer {
     }
 
     /**
+     * Initializes the bookmark buttons in the menu.
+     */
+    private void initBookmarkMenu() {
+
+        btnBookmarks.setOnAction(event -> {
+            try {
+
+                FXMLLoader loader = new FXMLLoader(ProgrammingLife.class.getResource("/LoadBookmarkWindow.fxml"));
+                AnchorPane page = loader.load();
+                GuiLoadBookmarkController gc = loader.getController();
+                gc.setGraphController(graphController);
+                gc.initColumns();
+                Scene scene = new Scene(page);
+                Stage bookmarkDialogStage = new Stage();
+                bookmarkDialogStage.setScene(scene);
+                bookmarkDialogStage.setTitle("Load Bookmark");
+                bookmarkDialogStage.initOwner(ProgrammingLife.getStage());
+                bookmarkDialogStage.showAndWait();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    /**
      * Method to disable the UI Elements on the left of the GUI.
      * @param isDisabled boolean, true disables the left anchor panel.
      */
     private void disableGraphUIElements(boolean isDisabled) {
         anchorLeftControlPanel.setDisable(isDisabled);
+        menuBookmark.setDisable(isDisabled);
     }
 
     /**
