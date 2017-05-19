@@ -1,6 +1,7 @@
 package programminglife;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -74,6 +75,9 @@ public final class ProgrammingLife extends Application {
         Optional<ButtonType> closeResponse = closeConfirmation.showAndWait();
         if (!ButtonType.OK.equals(closeResponse.get())) {
             event.consume();
+        } else {
+            Platform.exit();
+            System.exit(0);
         }
     };
 

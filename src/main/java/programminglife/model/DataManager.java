@@ -244,10 +244,16 @@ public final class DataManager {
         Files.deleteIfExists(new File(DataManager.toDBFile(name)).toPath());
     }
 
+    /**
+     * Persist database to disk.
+     */
     public static void commit() {
         DataManager.getInstance().commit(DataManager.getInstance().getDb());
     }
 
+    /**
+     * Rolls back non-persistent changes in database.
+     */
     public static void rollback() {
         DataManager.getInstance().rollback(DataManager.getInstance().getDb());
     }
