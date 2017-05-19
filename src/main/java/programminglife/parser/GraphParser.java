@@ -1,8 +1,10 @@
 package programminglife.parser;
 
 import com.diffplug.common.base.Errors;
-import com.diffplug.common.base.Throwing;
-import programminglife.model.*;
+import programminglife.model.DataManager;
+import programminglife.model.GenomeGraph;
+import programminglife.model.Node;
+import programminglife.model.Segment;
 import programminglife.model.exception.UnknownTypeException;
 import programminglife.utility.FileProgressCounter;
 
@@ -21,17 +23,22 @@ public class GraphParser extends Observable implements Runnable {
     private String name;
     private boolean verbose;
     private FileProgressCounter progressCounter;
+    private long startTime;
+    private boolean isCached;
 
     /**
      * Initiates an empty graph and the {@link File} to parse.
      * @param graphFile the file to parse the {@link GenomeGraph} from
      */
-    public GraphParser(File graphFile) {
+    public GraphParser(File graphFile) throws IOException {
         this.graphFile = graphFile;
         this.name = graphFile.getName();
         this.verbose = PARSE_LINE_VERBOSE_DEFAULT;
         this.graph = new GenomeGraph(name);
         this.progressCounter = new FileProgressCounter("Lines read");
+        this.startTime = System.nanoTime();
+        this.isCached = DataManager.hasCache(this.name);
+        DataManager.initialize(this.name);
     }
 
     /**
@@ -40,8 +47,12 @@ public class GraphParser extends Observable implements Runnable {
     @Override
     public void run() {
         try {
-            System.out.printf("%s Parsing GenomeGraph on separate Thread", Thread.currentThread());
+            System.out.printf("[%s] Parsing GenomeGraph on separate Thread\n", Thread.currentThread().getName());
             parse(this.verbose);
+            DataManager.commit();
+
+            int secondsElapsed = (int) ((System.nanoTime() - this.startTime) / 1000000000.d);
+            System.out.printf("[%s] Parsing took %d seconds\n", Thread.currentThread().getName(), secondsElapsed);
             this.setChanged();
             this.notifyObservers(this.graph);
         } catch (Exception e) {
@@ -68,8 +79,8 @@ public class GraphParser extends Observable implements Runnable {
     protected synchronized void parse(boolean verbose) throws FileNotFoundException, UnknownTypeException {
         if (verbose) {
             System.out.printf(
-                    "%s Parsing file with name %s with path %s\n",
-                    Thread.currentThread(),
+                    "[%s] Parsing file with name %s with path %s\n",
+                    Thread.currentThread().getName(),
                     this.name,
                     this.graphFile.getAbsolutePath()
             );
@@ -83,14 +94,14 @@ public class GraphParser extends Observable implements Runnable {
         BufferedReader reader = new BufferedReader(new FileReader(this.graphFile));
 
         try {
-            reader.lines().forEach(Errors.rethrow().wrap((Throwing.Consumer<String>) line -> {
+            reader.lines().forEach(Errors.rethrow().wrap(line -> {
                 char type = line.charAt(0);
 
                 this.progressCounter.count();
 
                 switch (type) {
                     case 'S':
-                        this.parseSegment(line);
+                        if (!this.isCached) this.parseSegment(line);
                         break;
                     case 'L':
                         this.parseLink(line);
@@ -102,13 +113,13 @@ public class GraphParser extends Observable implements Runnable {
                         throw new UnknownTypeException(String.format("Unknown symbol '%c'", type));
                 }
 
-                if (progressCounter.getLineCount() % 500 == 0) {
+                if (progressCounter.getLineCount() % (1000 * (this.isCached ? 100 : 1)) == 0) {
                     System.out.println(progressCounter);
                 }
 
                 if (Thread.currentThread().isInterrupted()) {
-                    System.out.printf("%s Stopping this thread gracefully...\n", Thread.currentThread());
-                    throw new InterruptedException("Thread was interrupted!");
+                    DataManager.close();
+                    System.out.printf("[%s] Stopping this thread gracefully...\n", Thread.currentThread().getName());
                 }
             }));
         } catch (Errors.WrappedAsRuntimeException e) {

@@ -92,8 +92,6 @@ public class GuiController implements Observer {
      */
     public void openFile(File file) throws IOException, UnknownTypeException {
         if (file != null) {
-            DataManager.initialize(file.getName());
-
             GraphParser graphParser = new GraphParser(file);
             graphParser.addObserver(this);
             graphParser.getProgressCounter().addObserver(this);
@@ -112,7 +110,7 @@ public class GuiController implements Observer {
             if (arg instanceof GenomeGraph) {
                 GenomeGraph graph = (GenomeGraph) arg;
 
-                System.out.printf("%s File Parsed.\n", Thread.currentThread());
+                System.out.printf("[%s] File Parsed.\n", Thread.currentThread().getName());
 
                 this.setGraph(graph);
             } else if (arg instanceof Exception) {
@@ -137,10 +135,10 @@ public class GuiController implements Observer {
         disableGraphUIElements(graph == null);
 
         if (graph != null) {
-            System.out.printf("%s Graph was set to %s.\n", Thread.currentThread(), graph.getID());
-            System.out.printf("%s The graph has %d nodes\n", Thread.currentThread(), graph.size());
+            System.out.printf("[%s] Graph was set to %s.\n", Thread.currentThread().getName(), graph.getID());
+            System.out.printf("[%s] The graph has %d nodes\n", Thread.currentThread().getName(), graph.size());
         } else {
-            System.out.printf("%s graph was set to null.\n", Thread.currentThread());
+            System.out.printf("[%s] graph was set to null.\n", Thread.currentThread().getName());
         }
     }
 
@@ -252,7 +250,7 @@ public class GuiController implements Observer {
         disableGraphUIElements(true);
 
         btnDraw.setOnAction(event -> {
-            System.out.printf("%s Drawing graph...\n", Thread.currentThread());
+            System.out.printf("[%s] Drawing graph...\n", Thread.currentThread().getName());
 
             int maxDepth = Integer.MAX_VALUE;
             int centerNode = 0;
@@ -268,7 +266,7 @@ public class GuiController implements Observer {
 
             this.graphController.clear();
             this.graphController.draw(centerNode, maxDepth);
-            System.out.printf("%s GenomeGraph drawn.\n", Thread.currentThread());
+            System.out.printf("[%s] GenomeGraph drawn.\n", Thread.currentThread().getName());
         });
 
         btnDrawRandom.setOnAction(event -> {

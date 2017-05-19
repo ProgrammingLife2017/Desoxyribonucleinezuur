@@ -66,12 +66,15 @@ public final class DataManager {
     private DataManager(String name) throws IOException {
         String fileName = toDBFile(name);
 
-        System.out.printf("%s Setting up MapDB %s...\n", Thread.currentThread(), fileName);
+        System.out.printf("[%s] Setting up MapDB %s...\n", Thread.currentThread().getName(), fileName);
         this.currentFileName = fileName;
-        this.db = DBMaker.fileDB(new File(fileName)).closeOnJvmShutdown().make();
+        this.db = DBMaker.fileDB(new File(fileName))
+                .transactionEnable()
+                .closeOnJvmShutdown()
+                .make();
         this.sequenceMap = getMap(db, SEQUENCE_MAP_SUFFIX, Serializer.INTEGER, Serializer.STRING_ASCII);
         this.sequenceLengthMap = getMap(db, SEQUENCE_LENGTH_MAP_SUFFIX, Serializer.INTEGER, Serializer.INTEGER);
-        System.out.printf("%s MapDB %s set up!\n", Thread.currentThread(), fileName);
+        System.out.printf("[%s] MapDB %s set up!\n", Thread.currentThread().getName(), fileName);
     }
 
     /**
@@ -99,7 +102,7 @@ public final class DataManager {
      * @return true iff a cache exists for the file, false iff otherwise.
      */
     public static boolean hasCache(String name) {
-        return DataManager.getInstance().getDb().exists(name);
+        return Files.exists(new File(toDBFile(name)).toPath());
     }
 
     /**
@@ -143,13 +146,12 @@ public final class DataManager {
      */
     private static <K, V> Map<K, V> getMap(DB db, String name, Serializer<K> keySerializer, Serializer<V> valueSerializer) {
         if (db.exists(name)) {
-//            System.out.printf("%s Storage %s exists\n", Thread.currentThread(), name);
             HTreeMap<K, V> res = db.get(name);
             assert (res != null);
             return res;
         } else {
-            System.out.printf("%s Storage %s does not exist.\n%s Creating storage %s...\n",
-                    Thread.currentThread(), name, Thread.currentThread(), name);
+            System.out.printf("[%s] Storage %s does not exist.\n%s Creating storage %s...\n",
+                    Thread.currentThread().getName(), name, Thread.currentThread(), name);
             HTreeMap<K, V> res = db
                     .hashMap(name)
                     .keySerializer(keySerializer)
@@ -157,7 +159,7 @@ public final class DataManager {
                     .create();
 
             assert (res != null);
-            System.out.printf("%s Storage %s created\n", Thread.currentThread(), name);
+            System.out.printf("[%s] Storage %s created\n", Thread.currentThread().getName(), name);
 
             return res;
         }
@@ -169,12 +171,12 @@ public final class DataManager {
     public static void close() {
         DB db = DataManager.getInstance().getDb();
         if (db.isClosed()) {
-            System.out.printf("%s MapDB is already closed\n", Thread.currentThread());
+            System.out.printf("[%s] MapDB is already closed\n", Thread.currentThread().getName());
         } else {
-            System.out.printf("%s Closing MapDB...\n", Thread.currentThread());
-            db.commit();
+            System.out.printf("[%s] Closing MapDB...\n", Thread.currentThread().getName());
+            db.rollback();
             db.close();
-            System.out.printf("%s MapDB closed\n", Thread.currentThread());
+            System.out.printf("[%s] MapDB closed\n", Thread.currentThread().getName());
         }
     }
 
@@ -229,5 +231,9 @@ public final class DataManager {
     public static void removeDB(String name) throws IOException {
         close();
         Files.deleteIfExists(new File(DataManager.toDBFile(name)).toPath());
+    }
+
+    public static void commit() {
+        DataManager.getInstance().getDb().commit();
     }
 }
