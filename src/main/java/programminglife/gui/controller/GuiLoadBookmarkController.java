@@ -3,13 +3,18 @@ package programminglife.gui.controller;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import programminglife.ProgrammingLife;
 import programminglife.controller.BookmarkController;
 import programminglife.model.Bookmark;
 import programminglife.model.Graph;
 import programminglife.parser.GraphParser;
 
+import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Optional;
@@ -27,6 +32,7 @@ public class GuiLoadBookmarkController implements Observer {
     @FXML private Button btnOpenBookmark;
     @FXML private Button btnCancelBookmark;
     @FXML private Button btnDeleteBookmark;
+    @FXML private Button btnCreateBookmark;
     @FXML private TableView<Bookmark> tblBookmark;
 
     /**
@@ -63,6 +69,8 @@ public class GuiLoadBookmarkController implements Observer {
                 Bookmark bookmark = tblBookmark.getSelectionModel().getSelectedItem();
                 graphController.clear();
                 graphController.draw(bookmark.getNodeID(), bookmark.getRadius());
+                System.out.println("Loaded bookmark " + bookmark.getBookmarkName() + " Center Node: " + bookmark.getNodeID()
+                + " Radius: " + bookmark.getRadius());
                 Stage s = (Stage) btnOpenBookmark.getScene().getWindow();
                 s.close();
             }
@@ -77,7 +85,10 @@ public class GuiLoadBookmarkController implements Observer {
                 if (result.isPresent()) {
                     if (result.get() == ButtonType.OK) {
                         BookmarkController.deleteBookmark(graphName, bookmark.getBookmarkName());
+                        System.out.println("Deleted bookmark " + bookmark.getBookmarkName() + " Center Node: " + bookmark.getNodeID()
+                                + " Radius: " + bookmark.getRadius());
                         this.initColumns();
+
                     } else {
                         alert.close();
                     }
@@ -85,9 +96,30 @@ public class GuiLoadBookmarkController implements Observer {
                 Stage s = (Stage) btnDeleteBookmark.getScene().getWindow();
             }
         });
+
         btnCancelBookmark.setOnAction(event -> {
             Stage s = (Stage) btnCancelBookmark.getScene().getWindow();
             s.close();
+        });
+
+        btnCreateBookmark.setOnAction(event -> {
+            try {
+                FXMLLoader loader = new FXMLLoader(ProgrammingLife.class.getResource("/CreateBookmarkWindow.fxml"));
+                AnchorPane page = loader.load();
+                GuiCreateBookmarkController gc = loader.getController();
+                gc.setGraph(graphController.getGraph().getId());
+                Scene scene = new Scene(page);
+                Stage bookmarkDialogStage = new Stage();
+                bookmarkDialogStage.setScene(scene);
+                bookmarkDialogStage.setTitle("Create Bookmark");
+                bookmarkDialogStage.initOwner(ProgrammingLife.getStage());
+                bookmarkDialogStage.showAndWait();
+                this.initColumns();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
         });
     }
 

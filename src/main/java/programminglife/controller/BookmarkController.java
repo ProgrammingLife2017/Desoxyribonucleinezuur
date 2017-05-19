@@ -172,6 +172,8 @@ public final class BookmarkController {
             DOMSource source = new DOMSource(doc);
             StreamResult streamResult = new StreamResult(new File(fileName));
             transformer.transform(source, streamResult);
+            System.out.println("Created bookmark " + bookMarkName + " Center Node: " + nodeID
+                    + " Radius: " + radius);
         } catch (ParserConfigurationException | SAXException | IOException | TransformerException pce) {
             pce.printStackTrace();
         }
@@ -223,7 +225,6 @@ public final class BookmarkController {
             DocumentBuilder builder = factory.newDocumentBuilder();
             dom = builder.parse(fileName);
             Element doc = dom.getDocumentElement();
-            System.out.println(graphName);
             Element graph = findTag(doc.getChildNodes(), graphName);
             if (graph != null) {
                 NodeList nodeList = graph.getChildNodes();
