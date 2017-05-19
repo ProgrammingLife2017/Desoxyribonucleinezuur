@@ -22,7 +22,7 @@
             <MenuItem fx:id="btnInstructions" mnemonicParsing="false" text="Instructions" />
           </items>
         </Menu>
-        <Menu mnemonicParsing="false" text="Bookmarks">
+        <Menu fx:id="menuBookmark" mnemonicParsing="false" text="Bookmarks">
           <items>
             <MenuItem fx:id="btnCreateBookmark" mnemonicParsing="false" text="Create" />
             <MenuItem fx:id="btnLoadBookmark" mnemonicParsing="false" text="Load / Delete" />

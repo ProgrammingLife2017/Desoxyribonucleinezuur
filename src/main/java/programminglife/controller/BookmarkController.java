@@ -225,7 +225,6 @@ public final class BookmarkController {
             Element doc = dom.getDocumentElement();
             System.out.println(graphName);
             Element graph = findTag(doc.getChildNodes(), graphName);
-            System.out.println("Amounto of childo in bookmarko controllo" + graph.getChildNodes().getLength());
             if (graph != null) {
                 NodeList nodeList = graph.getChildNodes();
                 if (nodeList != null) {

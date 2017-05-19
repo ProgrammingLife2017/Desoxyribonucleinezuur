@@ -7,14 +7,18 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 import programminglife.controller.BookmarkController;
 import programminglife.model.Bookmark;
+import programminglife.model.Graph;
+import programminglife.parser.GraphParser;
 
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Optional;
 
 /**
  * Created by Martijn van Meerten.
  * Controller for loading bookmarks.
  */
-public class GuiLoadBookmarkController {
+public class GuiLoadBookmarkController implements Observer {
     private String graphName;
     private GraphController graphController;
 
@@ -104,5 +108,14 @@ public class GuiLoadBookmarkController {
     public void setGraphController(GraphController graphController) {
         this.graphController = graphController;
         this.graphName = graphController.getGraph().getId();
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        if (o instanceof GraphParser) {
+            if (arg instanceof Graph) {
+                graphName = ((Graph) arg).getId();
+            }
+        }
     }
 }

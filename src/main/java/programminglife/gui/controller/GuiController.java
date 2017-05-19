@@ -56,6 +56,7 @@ public class GuiController implements Observer {
     @FXML private Button btnTranslateReset;
     @FXML private Button btnDraw;
     @FXML private Button btnDrawRandom;
+    @FXML private Menu menuBookmark;
 
     @FXML private TextField txtMaxDrawDepth;
     @FXML private TextField txtCenterNode;
@@ -244,6 +245,7 @@ public class GuiController implements Observer {
      */
     private void disableGraphUIElements(boolean isDisabled) {
         anchorLeftControlPanel.setDisable(isDisabled);
+        menuBookmark.setDisable(isDisabled);
     }
 
     /**
