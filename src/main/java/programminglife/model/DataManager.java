@@ -235,14 +235,14 @@ public final class DataManager {
     }
 
     /**
-     * Commits the database.
+     * Persist database to disk.
      */
     public static void commit() {
         DataManager.getInstance().getDb().commit();
     }
 
     /**
-     * Rolls back the database.
+     * Rolls back non-persistent changes in database.
      */
     public static void rollback() {
         DataManager.getInstance().getDb().rollback();

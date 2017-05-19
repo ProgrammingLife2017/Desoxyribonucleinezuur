@@ -8,7 +8,7 @@ import java.util.Set;
 public interface Graph {
     /**
      * Getter for the ID.
-     * @return String.
+     * @return String with the ID.
      */
     String getID();
 
@@ -21,8 +21,8 @@ public interface Graph {
     /**
      * Add a node to the graph.
      * @param node Node.
-     * @param children Set<Node>.
-     * @param parents Set<Node>.
+     * @param children Set<Node> which contains the children.
+     * @param parents Set<Node> which contains the parents.
      */
     void addNode(Node node, Set<Node> children, Set<Node> parents);
 
@@ -35,49 +35,49 @@ public interface Graph {
     /**
      * Replaces a node.
      * @param node Node.
-     * @param children Set<Node>
-     * @param parents Set<Node>
+     * @param children Set<Node> of the children.
+     * @param parents Set<Node> of the parents.
      */
     void replaceNode(Node node, Set<Node> children, Set<Node> parents);
 
     /**
      * Gives the size of a graph.
-     * @return int.
+     * @return int of the size.
      */
     int size();
 
     /**
      * getter for the Children of a node.
      * @param node Node.
-     * @return Set<Segment>
+     * @return Set<Segment> of the children.
      */
     Set<Segment> getChildren(Node node);
 
     /**
      * getter for the Children of a node.
      * @param nodeID int.
-     * @return Set<Segment>
+     * @return Set<Segment> of the children.
      */
     Set<Segment> getChildren(int nodeID);
 
     /**
      * getter for the Parents of a node.
      * @param node Node.
-     * @return Set<Segment>
+     * @return Set<Segment> of the parents.
      */
     Set<Segment> getParents(Node node);
 
     /**
      * getter for the Parents of a node.
      * @param nodeID int.
-     * @return Set<Segment>
+     * @return Set<Segment> of the parents.
      */
     Set<Segment> getParents(int nodeID);
 
     /**
      * getter for the Genomes of a node.
      * @param node Node.
-     * @return Set<Segment>
+     * @return Set<Segment>.
      */
     Set<Genome> getGenomes(Node node);
 
@@ -97,8 +97,8 @@ public interface Graph {
 
     /**
      * Adds an edge between two nodes.
-     * @param source Node.
-     * @param destination Node.
+     * @param source Node of the source.
+     * @param destination Node of the destination.
      */
     void addEdge(Node source, Node destination);
 }
