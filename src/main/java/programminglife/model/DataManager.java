@@ -151,8 +151,8 @@ public final class DataManager {
             assert (res != null);
             return res;
         } else {
-            System.out.printf("[%s] Storage %s does not exist.\n%s Creating storage %s...\n",
-                    Thread.currentThread().getName(), name, Thread.currentThread(), name);
+            System.out.printf("[%s] Storage %s does not exist.\n[%s] Creating storage %s...\n",
+                    Thread.currentThread().getName(), name, Thread.currentThread().getName(), name);
             HTreeMap<K, V> res = db
                     .hashMap(name)
                     .keySerializer(keySerializer)

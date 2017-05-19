@@ -87,9 +87,9 @@ public class GraphParser extends Observable implements Runnable {
             );
         }
 
-        System.out.println("Calculating number of lines in file");
+        System.out.printf("[%s] Calculating number of lines in file\n", Thread.currentThread().getName());
         int lineCount = (int)(new BufferedReader(new FileReader(this.graphFile))).lines().count();
-        System.out.printf("Done! %d lines.\n", lineCount);
+        System.out.printf("[%s] Done! %d lines.\n", Thread.currentThread().getName(), lineCount);
         this.progressCounter.setTotalLineCount(lineCount);
 
         BufferedReader reader = new BufferedReader(new FileReader(this.graphFile));

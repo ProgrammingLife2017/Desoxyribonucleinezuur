@@ -8,17 +8,19 @@
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
-        <Menu mnemonicParsing="false" text="File">
+        <Menu fx:id="menuFile" mnemonicParsing="false" text="File">
           <items>
             <MenuItem fx:id="btnOpen" mnemonicParsing="false" text="Open" />
             <Menu mnemonicParsing="false" text="Open Recent" />
             <SeparatorMenuItem mnemonicParsing="false" />
+            <RadioMenuItem fx:id="btnToggle" mnemonicParsing="false" text="Toggle Console" />
             <MenuItem fx:id="btnQuit" mnemonicParsing="false" text="Quit" />
           </items>
         </Menu>
-        <Menu mnemonicParsing="false" text="Help">
+        <Menu fx:id="menuHelp" mnemonicParsing="false" text="Help">
           <items>
-            <MenuItem mnemonicParsing="false" text="About" />
+            <MenuItem fx:id="btnAbout" mnemonicParsing="false" text="About" />
+            <MenuItem fx:id="btnInstructions" mnemonicParsing="false" text="Instructions" />
           </items>
         </Menu>
       </menus>
@@ -36,17 +38,13 @@
                    <TextField fx:id="txtMaxDrawDepth" layoutX="-13.0" layoutY="283.0" minWidth="100.0" promptText="Max depth" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
                    <TextField fx:id="txtCenterNode" layoutX="20.0" layoutY="251.0" minWidth="100.0" promptText="Origin node" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
                    <Button fx:id="btnDrawRandom" layoutX="20.0" layoutY="350.0" minWidth="100.0" mnemonicParsing="false" text="Surprise me!" />
-               </children></AnchorPane>
-            <SplitPane dividerPositions="0.6951" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0">
-              <items>
-                <AnchorPane fx:id="anchorGraphPanel" minHeight="200" minWidth="600" prefHeight="400" prefWidth="600">
-                     <children>
-                         <Group fx:id="grpDrawArea" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                     </children>
-                  </AnchorPane>
-                <AnchorPane fx:id="anchorConsolePanel" minHeight="100" minWidth="300" prefHeight="100.0" prefWidth="600" />
-              </items>
-            </SplitPane>
+               </children>
+            </AnchorPane>
+            <AnchorPane fx:id="anchorGraphPanel" minHeight="200" minWidth="600" prefHeight="400" prefWidth="600">
+                <children>
+                    <Group fx:id="grpDrawArea" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                </children>
+            </AnchorPane>
         </items>
       </SplitPane>
   </children>
