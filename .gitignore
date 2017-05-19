@@ -14,6 +14,7 @@ buildNumber.properties
 # Data files (use data/test/ for small testing/validation files)
 data/real/
 bookmarks.xml
+Recent.txt
 
 # Database/cache files
 *.db
