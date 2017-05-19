@@ -82,10 +82,8 @@ public class GraphParser extends Observable implements Runnable {
     protected synchronized void parse(boolean verbose) throws FileNotFoundException, UnknownTypeException {
         if (verbose) {
             System.out.printf(
-                    "[%s] Parsing file with name %s with path %s\n",
-                    Thread.currentThread().getName(),
-                    this.name,
-                    this.graphFile.getAbsolutePath()
+                    "[%s] Parsing file with name %s with path %s\n", Thread.currentThread().getName(),
+                    this.name, this.graphFile.getAbsolutePath()
             );
         }
 

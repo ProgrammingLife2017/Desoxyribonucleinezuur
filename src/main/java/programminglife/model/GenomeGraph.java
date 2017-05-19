@@ -29,8 +29,8 @@ public class GenomeGraph implements Graph {
     /**
      * The constructor for a GenomeGraph.
      * @param id String.
-     * @param children Set<Integer> which contains the children.
-     * @param parents Set<Integer> which contains the parents.
+     * @param children {@link Set} which contains the children.
+     * @param parents {@link Set} which contains the parents.
      */
     public GenomeGraph(String id, Map<Integer, Set<Integer>> children, Map<Integer, Set<Integer>> parents) {
         this.children = children;

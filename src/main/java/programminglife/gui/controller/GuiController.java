@@ -261,27 +261,32 @@ public class GuiController implements Observer {
             }
         });
 
-        btnAbout.setOnAction(event -> {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("About");
-            alert.setHeaderText(null);
-            alert.setResizable(true);
-            alert.getDialogPane().setMinWidth(ABOUT_MIN_WIDTH);
-            alert.setContentText("This application is made by Contextproject group Desoxyribonucleïnezuur:\n\n"
-                    + "Ivo Wilms \n" + "Iwan Hoogenboom \n" + "Martijn van Meerten \n" + "Toine Hartman\n"
-                    + "Yannick Haveman");
-            alert.show();
-        });
+        btnAbout.setOnAction(e -> alert("About", true, ABOUT_MIN_WIDTH,
+                  "This application is made by Contextproject group Desoxyribonucleïnezuur:\n\n"
+                + "Ivo Wilms \n" + "Iwan Hoogenboom \n" + "Martijn van Meerten \n" + "Toine Hartman\n"
+                + "Yannick Haveman", Alert.AlertType.INFORMATION).show());
 
-        btnInstructions.setOnAction(event -> {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Instructions");
-            alert.setHeaderText(null);
-            alert.setResizable(true);
-            alert.getDialogPane().setMinWidth(INSTRUCTIONS_MIN_WIDTH);
-            alert.setContentText(informationText);
-            alert.show();
-        });
+        btnInstructions.setOnAction(e -> alert("Instructions", true,
+        INSTRUCTIONS_MIN_WIDTH, informationText, Alert.AlertType.INFORMATION).show());
+    }
+
+    /**
+     * Create a standard {@link Alert} for warnings/errors.
+     * @param title the title of the {@link Alert}.
+     * @param resizeable if it should be resizeable
+     * @param minWidth the minimum width
+     * @param text the contents of the {@link Alert}
+     * @param type an {@link Alert.AlertType} with denotes the type of information
+     * @return the shown {@link Alert} object
+     */
+    private Alert alert(String title, boolean resizeable, double minWidth, String text, Alert.AlertType type) {
+      Alert alert = new Alert(type);
+      alert.setTitle(title);
+      alert.setHeaderText(null);
+      alert.setResizable(true);
+      alert.getDialogPane().setMinWidth(minWidth);
+      alert.setContentText(text);
+      return alert;
     }
 
     /**
