@@ -16,6 +16,7 @@ data/
 
 # Database/cache files
 *.db
+*.db.*
 
 # Eclipse
 .project
