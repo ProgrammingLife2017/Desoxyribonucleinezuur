@@ -1,5 +1,7 @@
 package programminglife.controller;
 
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -96,7 +98,7 @@ public final class BookmarkController {
             Element doc = dom.getDocumentElement();
             return getBookmark(doc, graphName, bookMarkName);
         } catch (ParserConfigurationException | SAXException | IOException e) {
-            e.printStackTrace();
+            (new Alert(Alert.AlertType.ERROR, "This bookmark cannot be loaded.", ButtonType.CLOSE)).show();
         }
         return null;
     }
@@ -175,7 +177,7 @@ public final class BookmarkController {
             System.out.println("Created bookmark " + bookMarkName + " Center Node: " + nodeID
                     + " Radius: " + radius);
         } catch (ParserConfigurationException | SAXException | IOException | TransformerException pce) {
-            pce.printStackTrace();
+            (new Alert(Alert.AlertType.ERROR, "This bookmark cannot be stored.", ButtonType.CLOSE)).show();
         }
     }
 
@@ -206,7 +208,7 @@ public final class BookmarkController {
             }
 
         } catch (ParserConfigurationException | SAXException | IOException | TransformerException e) {
-            e.printStackTrace();
+            (new Alert(Alert.AlertType.ERROR, "This bookmark cannot be deleted.", ButtonType.CLOSE)).show();
         }
     }
 
@@ -238,7 +240,7 @@ public final class BookmarkController {
                 }
             }
         } catch (ParserConfigurationException | SAXException | IOException e) {
-            e.printStackTrace();
+            (new Alert(Alert.AlertType.ERROR, "The bookmarks cannot be loaded.", ButtonType.CLOSE)).show();
         }
         return result;
     }
@@ -285,9 +287,7 @@ public final class BookmarkController {
 
                 transformer.transform(source, result);
 
-            } catch (ParserConfigurationException | TransformerException e) {
-                e.printStackTrace();
-            }
+            } catch (ParserConfigurationException | TransformerException e) {}
         }
     }
 
