@@ -15,6 +15,7 @@ import programminglife.controller.BookmarkController;
 public class GuiCreateBookmarkController {
 
     private String graphName;
+    private GraphController graphController;
 
     @FXML private Button btnOk;
     @FXML private Button btnCancel;
@@ -41,6 +42,8 @@ public class GuiCreateBookmarkController {
                 nameSpaceAlert();
             } else if (!txtId.getText().matches("^[1-9]\\d*$")) {
                 intAlert("ID");
+            } else if (Integer.parseInt(txtId.getText()) > graphController.getGraph().size()) {
+                sizeAlert(graphController.getGraph().size());
             } else if (!txtRadius.getText().matches("^[1-9]\\d*$")) {
                intAlert("radius");
             } else {
@@ -54,6 +57,18 @@ public class GuiCreateBookmarkController {
             Stage s = (Stage) btnCancel.getScene().getWindow();
             s.close();
         });
+    }
+
+    /**
+     * Alert for when node id is too large for graph size.
+     * @param size The size of the graph
+     */
+    private void sizeAlert(int size) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("ID error");
+        alert.setHeaderText(null);
+        alert.setContentText("Node ID is larger than graph size: " + size);
+        alert.show();
     }
 
     /**
@@ -95,7 +110,12 @@ public class GuiCreateBookmarkController {
         return btnCancel;
     }
 
-    public void setGraph(String graphName) {
-        this.graphName = graphName;
+    /**
+     * Set the graphcontroller
+     * @param graphController The graphcontroller
+     */
+    public void setGraphController(GraphController graphController) {
+        this.graphController = graphController;
+        this.graphName = graphController.getGraph().getId();
     }
 }

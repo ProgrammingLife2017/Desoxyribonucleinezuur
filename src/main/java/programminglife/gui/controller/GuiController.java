@@ -203,7 +203,7 @@ public class GuiController implements Observer {
                 FXMLLoader loader = new FXMLLoader(ProgrammingLife.class.getResource("/CreateBookmarkWindow.fxml"));
                 AnchorPane page = loader.load();
                 GuiCreateBookmarkController gc = loader.getController();
-                gc.setGraph(graphController.getGraph().getId());
+                gc.setGraphController(graphController);
                 Scene scene = new Scene(page);
                 Stage bookmarkDialogStage = new Stage();
                 bookmarkDialogStage.setResizable(false);
