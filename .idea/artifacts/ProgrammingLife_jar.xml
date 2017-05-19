@@ -2,9 +2,16 @@
   <artifact type="jar" name="ProgrammingLife:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/ProgrammingLife_jar</output-path>
     <root id="archive" name="ProgrammingLife.jar">
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/src/main/java/whatever/META-INF/MANIFEST.MF" />
+      </element>
       <element id="module-output" name="ProgrammingLife" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/diffplug/durian/durian/3.4.0/durian-3.4.0.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/commons/commons-lang3/3.5/commons-lang3-3.5.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/junit/junit/4.12/junit-4.12.jar" path-in-jar="/" />
+      <element id="library" level="project" name="Maven: com.diffplug.durian:durian:3.4.0" />
+      <element id="library" level="project" name="Maven: org.apache.commons:commons-lang3:3.5" />
     </root>
   </artifact>
 </component>

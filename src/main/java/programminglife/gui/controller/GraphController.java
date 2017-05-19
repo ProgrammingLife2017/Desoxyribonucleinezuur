@@ -1,12 +1,12 @@
 package programminglife.gui.controller;
 
 import javafx.scene.Group;
-import javafx.scene.control.TextArea;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
-import programminglife.model.Graph;
-import programminglife.model.Node;
+import jp.uphy.javafx.console.ConsoleView;
+import programminglife.model.GenomeGraph;
+import programminglife.model.Segment;
 import programminglife.model.XYCoordinate;
 
 import java.util.HashSet;
@@ -21,66 +21,69 @@ public class GraphController {
     private static final XYCoordinate HORIZONTAL_OFFSET = new XYCoordinate(50, 0);
     private static final double CHILD_OFFSET = 1.7;
 
-    private Graph graph;
+    private GenomeGraph graph;
     private Group grpDrawArea;
-    private TextArea console;
+    private ConsoleView console;
 
     /**
      * Initialize controller object.
      * @param graph The genome graph to control
      * @param grpDrawArea The {@link Group} to draw in
      */
-    public GraphController(Graph graph, Group grpDrawArea) {
+    public GraphController(GenomeGraph graph, Group grpDrawArea) {
         this.graph = graph;
         this.grpDrawArea = grpDrawArea;
     }
 
-    public void setConsole(TextArea console) {
+    public void setConsole(ConsoleView console) {
         this.console = console;
     }
 
     /**
-     * Draw the {@link Graph} with DFS from {@link Node} 1.
-     * @param centerNode The {@link Node} to start drawing from
-     * @param maxDepth The max depth of child {@link Node}s to draw
+     * Draw the {@link GenomeGraph} with DFS from {@link Segment} 1.
+     * @param centerNode The {@link Segment} to start drawing from
+     * @param maxDepth The max depth of child {@link Segment}s to draw
      */
     public void draw(int centerNode, int maxDepth) {
-        this.drawDFS(null, this.getGraph().getNode(centerNode), INITIAL_OFFSET, maxDepth);
+        this.drawDFS(null, new Segment(centerNode), INITIAL_OFFSET, maxDepth);
     }
 
     /**
      * Draw all nodes recursively on the screen.
      *
-     * @param origin
+     * @param origin The parent {@link Segment} that initiated this draw call
      * @param node Draw this node and all its children recursively
      * @param offset Draws nodes at this offset from the top-left of the screen
-     * @return a {@link Set} of all drawn {@link Node}s
+     * @return a {@link Set} of all drawn {@link Segment}s
      */
-    private Set<Node> drawDFS(Node origin, Node node, XYCoordinate offset) {
+    private Set<Segment> drawDFS(Segment origin, Segment node, XYCoordinate offset) {
         return this.drawDFS(origin, node, offset, -1, new HashSet<>());
     }
 
     /**
      * Draw all nodes recursively on the screen.
      *
-     * @param origin The parent {@link Node} that initiated this draw call
-     * @param node Draw this {@link Node} and all its children recursively
+     * @param origin The parent {@link Segment} that initiated this draw call
+     * @param node Draw this {@link Segment} and all its children recursively
      * @param offset Draws nodes at this offset from the top-left of the screen
      * @param maxDepth The max depth from root to draw nodes
-     * @return a {@link Set} of all drawn {@link Node}s
+     * @return a {@link Set} of all drawn {@link Segment}s
      */
-    public Set<Node> drawDFS(Node origin, Node node, XYCoordinate offset, int maxDepth) {
+    public Set<Segment> drawDFS(Segment origin, Segment node, XYCoordinate offset, int maxDepth) {
         return this.drawDFS(origin, node, offset, maxDepth, new HashSet<>());
     }
 
     /**
      * Draw all nodes recursively on the screen.
-     * @param origin
+     * @param origin The parent {@link Segment} that initiated this draw call
      * @param node Draw this node and all its children recursively
      * @param offset Draws nodes at this offset from the top-left of the screen
      * @param drawnNodes A set containing all drawn nodes
+     * @param maxDepth The max depth from root to draw nodes
+     * @return a {@link Set} of all drawn {@link Segment}s
      */
-    private Set<Node> drawDFS(Node origin, Node node, XYCoordinate offset, int maxDepth, Set<Node> drawnNodes) {
+    private Set<Segment> drawDFS(Segment origin, Segment node,
+                                 XYCoordinate offset, int maxDepth, Set<Segment> drawnNodes) {
         boolean nodeIsDrawn = drawnNodes.contains(node);
         if (!nodeIsDrawn) {
             node.setLocation(offset);
@@ -93,7 +96,7 @@ public class GraphController {
             Line link = new Line(targetLeft.getX(), targetLeft.getY(), originRight.getX(), originRight.getY());
             link.setStroke(Color.DARKGRAY);
             link.setStrokeWidth(3);
-            link.setOnMouseClicked(event -> this.console.appendText(String.format("Link{%s -> %s}\n", origin, node)));
+            link.setOnMouseClicked(event -> System.out.printf("Link{%s -> %s}\n", origin, node));
 
             this.grpDrawArea.getChildren().add(link);
         }
@@ -103,7 +106,7 @@ public class GraphController {
             drawnNodes.add(node);
 
             int childCount = 0;
-            for (Node child : node.getChildren()) {
+            for (Segment child : this.getGraph().getChildren(node)) {
                 XYCoordinate newOffset = offset.add(HORIZONTAL_OFFSET)
                         .add(node.getWidthCoordinate())
                         .setY(INITIAL_OFFSET.getY() + (int) (CHILD_OFFSET * childCount * node.getHeight()));
@@ -115,6 +118,8 @@ public class GraphController {
         return drawnNodes;
     }
 
+
+
     /**
      * Draws the node on the canvas.
      *
@@ -122,21 +127,21 @@ public class GraphController {
      * @return The size of the node
      */
     private XYCoordinate drawNode(int nodeID) {
-        return this.drawNode(this.graph.getNode(nodeID));
+        return this.drawNode(new Segment(nodeID));
     }
 
     /**
-     * Draw a single {@link Node}.
-     * @param node the {@link Node} to draw
-     * @return the size of the drawn {@link Node}
+     * Draw a single {@link Segment}.
+     * @param node the {@link Segment} to draw
+     * @return the size of the drawn {@link Segment}
      */
-    private XYCoordinate drawNode(Node node) {
+    private XYCoordinate drawNode(Segment node) {
         node.setOnMouseClicked(event -> {
-            this.console.appendText(node.getSequence() + "\n");
-            this.console.appendText(String.format("%s (location %s, size %s)\n",
+            System.out.println(node.getSequence());
+            System.out.printf("%s (location %s, size %s)\n",
                     node.toString(),
                     node.getLocation(),
-                    node.getSize()));
+                    node.getSize());
         });
 
         node.setFill(Color.TRANSPARENT);
@@ -152,7 +157,7 @@ public class GraphController {
      * Getter for the graph.
      * @return - The graph
      */
-    public Graph getGraph() {
+    public GenomeGraph getGraph() {
         return graph;
     }
 
@@ -160,7 +165,7 @@ public class GraphController {
      * Setter for the graph.
      * @param graph The graph
      */
-    void setGraph(Graph graph) {
+    void setGraph(GenomeGraph graph) {
         this.graph = graph;
     }
 
