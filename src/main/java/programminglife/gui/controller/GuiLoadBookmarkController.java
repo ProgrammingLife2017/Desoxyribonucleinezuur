@@ -38,6 +38,10 @@ public class GuiLoadBookmarkController implements Observer {
         initButtons();
     }
 
+    /**
+     * Checks whether the user has selected a bookmark.
+     * @return True if selected, false otherwise.
+     */
     private boolean checkBookmarkSelection() {
         if (tblBookmark.getSelectionModel().getSelectedItem() == null) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
