@@ -23,6 +23,11 @@
             <MenuItem fx:id="btnInstructions" mnemonicParsing="false" text="Instructions" />
           </items>
         </Menu>
+        <Menu fx:id="menuBookmark" mnemonicParsing="false" text="Bookmarks">
+          <items>
+            <MenuItem fx:id="btnBookmarks" mnemonicParsing="false" text="Bookmarks" />
+          </items>
+        </Menu>
       </menus>
     </MenuBar>
       <SplitPane dividerPositions="0.15830721003134796" prefHeight="875.0" prefWidth="1000.0">

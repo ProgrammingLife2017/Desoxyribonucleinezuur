@@ -1,84 +1,104 @@
 package programminglife.model;
 
-import java.util.*;
+import java.util.Set;
 
 /**
- * Created by marti_000 on 25-4-2017.
+ * Interface for the graph.
  */
-public class Graph {
-    private String id;
-    private Set<Node> rootNodes;
-
+public interface Graph {
     /**
-     * A list of nodes ordered by ID. Assumption: Nodes appear in GFA file in sequential order.
+     * Getter for the ID.
+     * @return String.
      */
-    private Map<Integer, Node> nodes;
+    String getID();
 
     /**
-     * The contructor for a Graph.
-     * @param id String id.
-     */
-    public Graph(String id) {
-        this.nodes = new HashMap<>(500000, 0.9f);
-        this.id = id;
-        this.rootNodes = new HashSet<>();
-    }
-
-    /**
-     * Add method for a node.
+     * Add a node to the graph.
      * @param node Node.
-     * @return Node.
      */
-    public Node addNode(Node node) {
-        return this.nodes.put(node.getIdentifier(), node);
-    }
+    void addNode(Node node);
 
     /**
-     * get method for a node.
-     * @param id int.
-     * @return Node.
+     * Add a node to the graph.
+     * @param node Node.
+     * @param children Set<Node>.
+     * @param parents Set<Node>.
      */
-    public Node getNode(int id) {
-        if (this.nodes.containsKey(id)) {
-            return this.nodes.get(id);
-        } else {
-            throw new NoSuchElementException("There is no node with ID " + id);
-        }
-    }
-
-    public Collection<Node> getNodes() {
-        return this.nodes.values();
-    }
+    void addNode(Node node, Set<Node> children, Set<Node> parents);
 
     /**
-     * Get all root nodes (make sure to call {@link programminglife.parser.GraphParser#findRootNodes()} first.
-     * @return a {@link Set} of root nodes of the {@link Graph}.
+     * Replaces a node.
+     * @param node Node.
      */
-    public Set<Node> getRootNodes() {
-        return rootNodes;
-    }
+    void replaceNode(Node node);
 
     /**
-     * Get the {@link Graph} ID.
-     * @return the ID
+     * Replaces a node.
+     * @param node Node.
+     * @param children Set<Node>
+     * @param parents Set<Node>
      */
-    public String getId() {
-        return id;
-    }
+    void replaceNode(Node node, Set<Node> children, Set<Node> parents);
 
     /**
-     * Get the number of {@link Node}s in the {@link Graph}.
-     * @return the number of {@link Node}s
+     * Gives the size of a graph.
+     * @return int.
      */
-    public int size() {
-        return this.getNodes().size();
-    }
+    int size();
 
     /**
-     * @param node {@link Node} to check if it is contained in the graph.
-     * @return boolean with the result of the contains.
+     * getter for the Children of a node.
+     * @param node Node.
+     * @return Set<Segment>
      */
-    public boolean contains(Node node) {
-        return this.nodes.containsKey(node.getIdentifier());
-    }
+    Set<Segment> getChildren(Node node);
+
+    /**
+     * getter for the Children of a node.
+     * @param nodeID int.
+     * @return Set<Segment>
+     */
+    Set<Segment> getChildren(int nodeID);
+
+    /**
+     * getter for the Parents of a node.
+     * @param node Node.
+     * @return Set<Segment>
+     */
+    Set<Segment> getParents(Node node);
+
+    /**
+     * getter for the Parents of a node.
+     * @param nodeID int.
+     * @return Set<Segment>
+     */
+    Set<Segment> getParents(int nodeID);
+
+    /**
+     * getter for the Genomes of a node.
+     * @param node Node.
+     * @return Set<Segment>
+     */
+    Set<Genome> getGenomes(Node node);
+
+    /**
+     * Checks to see if the graph contains a certain node.
+     * @param node Node.
+     * @return boolean.
+     */
+    boolean contains(Node node);
+
+    /**
+     * Checks to see if the graph contains a certain node.
+     * @param nodeID int.
+     * @return boolean.
+     */
+    boolean contains(int nodeID);
+
+    /**
+     * Adds an edge between two nodes.
+     * @param source Node.
+     * @param destination Node.
+     */
+    void addEdge(Node source, Node destination);
 }

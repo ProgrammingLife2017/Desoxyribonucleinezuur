@@ -1,50 +1,53 @@
 package programminglife.model;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 import java.util.HashSet;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class NodeTest {
-    Node node;
-    String line;
+public class SegmentTest {
+    private static final String TEST_DB = "test.db";
+
+    Segment node;
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        DataManager.initialize(TEST_DB);
+    }
 
     @Before
     public void setUp() throws Exception {
-        node = new Node(1, "ATCG");
+        node = new Segment(1, "ATCG");
     }
+
+    @After
+    public void tearDown() throws Exception {
+        DataManager.clearDB(TEST_DB);
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+        DataManager.removeDB(TEST_DB);
+    }
+
+
 
     @Test
     public void NodeId() {
-        node = new Node(8);
+        node = new Segment(8);
 
         assertEquals(8, node.getIdentifier());
-        assertEquals("", node.getSequence());
-        assertEquals(0, node.getParents().size());
-        assertEquals(0, node.getChildren().size());
+        assertEquals(null, node.getSequence());
     }
 
     @Test
     public void NodeIdSequence() {
-        node = new Node(8, "ATCG");
+        node = new Segment(8, "ATCG");
 
         assertEquals(8, node.getIdentifier());
         assertEquals("ATCG", node.getSequence());
-        assertEquals(0, node.getParents().size());
-        assertEquals(0, node.getChildren().size());
-    }
-
-    @Test
-    public void NodeIdSequenceParentsChildren() {
-        node = new Node(8, "ATCG", new HashSet<>(), new HashSet<>());
-
-        assertEquals(8, node.getIdentifier());
-        assertEquals("ATCG", node.getSequence());
-        assertEquals(0, node.getParents().size());
-        assertEquals(0, node.getChildren().size());
     }
 
     @Test
@@ -57,32 +60,6 @@ public class NodeTest {
         node.setSequence("GCTA");
 
         assertEquals("GCTA", node.getSequence());
-    }
-
-    @Test
-    public void childrenTest() {
-        Node child1 = new Node(3);
-        Node child2 = new Node(16);
-        node.addChild(child1);
-        node.addChild(child2);
-
-        assertEquals(0, node.getParents().size());
-        assertEquals(2, node.getChildren().size());
-        assertTrue(node.getChildren().contains(child1));
-        assertTrue(node.getChildren().contains(child2));
-    }
-
-    @Test
-    public void parentsTest() {
-        Node child1 = new Node(3);
-        Node child2 = new Node(16);
-        node.addParent(child1);
-        node.addParent(child2);
-
-        assertEquals(0, node.getChildren().size());
-        assertEquals(2, node.getParents().size());
-        assertTrue(node.getParents().contains(child1));
-        assertTrue(node.getParents().contains(child2));
     }
 
     @Test

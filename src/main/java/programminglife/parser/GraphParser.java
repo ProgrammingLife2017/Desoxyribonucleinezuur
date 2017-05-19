@@ -1,13 +1,14 @@
 package programminglife.parser;
 
 import com.diffplug.common.base.Errors;
-import com.diffplug.common.base.Throwing;
-import programminglife.model.Graph;
+import programminglife.model.DataManager;
+import programminglife.model.GenomeGraph;
 import programminglife.model.Node;
+import programminglife.model.Segment;
 import programminglife.model.exception.UnknownTypeException;
+import programminglife.utility.FileProgressCounter;
 
 import java.io.*;
-import java.util.NoSuchElementException;
 import java.util.Observable;
 
 /**
@@ -17,18 +18,29 @@ public class GraphParser extends Observable implements Runnable {
 
     private static final boolean PARSE_LINE_VERBOSE_DEFAULT = true;
 
-    private Graph graph;
+    private GenomeGraph graph;
     private File graphFile;
+    private String name;
     private boolean verbose;
+    private FileProgressCounter progressCounter;
+    private long startTime;
+    private boolean isCached;
+
 
     /**
      * Initiates an empty graph and the {@link File} to parse.
-     * @param graphFile the file to parse the {@link Graph} from
+     * @param graphFile the file to parse the {@link GenomeGraph} from.
+     * @throws IOException when the file can't be read.
      */
-    public GraphParser(File graphFile) {
+    public GraphParser(File graphFile) throws IOException {
         this.graphFile = graphFile;
+        this.name = graphFile.getName();
         this.verbose = PARSE_LINE_VERBOSE_DEFAULT;
-        this.graph = new Graph("");
+        this.graph = new GenomeGraph(name);
+        this.progressCounter = new FileProgressCounter("Lines read");
+        this.startTime = System.nanoTime();
+        this.isCached = DataManager.hasCache(this.name);
+        DataManager.initialize(this.name);
     }
 
     /**
@@ -37,46 +49,64 @@ public class GraphParser extends Observable implements Runnable {
     @Override
     public void run() {
         try {
-            System.out.printf("%s Parsing Graph on separate Thread", Thread.currentThread());
+            System.out.printf("[%s] Parsing GenomeGraph on separate Thread\n", Thread.currentThread().getName());
             parse(this.verbose);
+            DataManager.commit();
+
+            int secondsElapsed = (int) ((System.nanoTime() - this.startTime) / 1000000000.d);
+            System.out.printf("[%s] Parsing took %d seconds\n", Thread.currentThread().getName(), secondsElapsed);
             this.setChanged();
             this.notifyObservers(this.graph);
         } catch (Exception e) {
+            DataManager.rollback();
             this.setChanged();
             this.notifyObservers(e);
         }
     }
 
     /**
-     * Parse a GFA file as a {@link Graph}.
+     * Parse a GFA file as a {@link GenomeGraph}.
      * @throws FileNotFoundException when no file is found at the given path.
      * @throws UnknownTypeException when an unknown identifier (H/S/L) is read from the file.
      */
-    protected synchronized void parse() throws FileNotFoundException, UnknownTypeException {
+    public synchronized void parse() throws FileNotFoundException, UnknownTypeException {
         parse(PARSE_LINE_VERBOSE_DEFAULT);
     }
 
     /**
-     * Parse a GFA file as a {@link Graph}.
+     * Parse a GFA file as a {@link GenomeGraph}.
      * @param verbose if log messages should be printed.
      * @throws FileNotFoundException when no file is found at the given path.
      * @throws UnknownTypeException when an unknown identifier (H/S/L) is read from the file.
      */
     protected synchronized void parse(boolean verbose) throws FileNotFoundException, UnknownTypeException {
         if (verbose) {
-            System.out.printf("%s Parsing file %s\n", Thread.currentThread(), this.graphFile.getAbsolutePath());
+            System.out.printf(
+                    "[%s] Parsing file with name %s with path %s\n",
+                    Thread.currentThread().getName(),
+                    this.name,
+                    this.graphFile.getAbsolutePath()
+            );
         }
 
+        System.out.printf("[%s] Calculating number of lines in file\n", Thread.currentThread().getName());
+        int lineCount = (int) (new BufferedReader(new FileReader(this.graphFile))).lines().count();
+        System.out.printf("[%s] Done! %d lines.\n", Thread.currentThread().getName(), lineCount);
+        this.progressCounter.setTotalLineCount(lineCount);
+
         BufferedReader reader = new BufferedReader(new FileReader(this.graphFile));
-        this.graph = new Graph(this.graphFile.getName());
 
         try {
-            reader.lines().forEach(Errors.rethrow().wrap((Throwing.Consumer<String>) line -> {
+            reader.lines().forEach(Errors.rethrow().wrap(line -> {
                 char type = line.charAt(0);
+
+                this.progressCounter.count();
 
                 switch (type) {
                     case 'S':
-                        this.parseSegment(line);
+                        if (!this.isCached) {
+                            this.parseSegment(line);
+                        }
                         break;
                     case 'L':
                         this.parseLink(line);
@@ -86,6 +116,20 @@ public class GraphParser extends Observable implements Runnable {
                         break;
                     default:
                         throw new UnknownTypeException(String.format("Unknown symbol '%c'", type));
+                }
+                int tmp;
+                if (isCached) {
+                    tmp = 100;
+                } else {
+                    tmp = 1;
+                }
+                if (progressCounter.getLineCount() % (1000 * tmp) == 0) {
+                    System.out.println(progressCounter);
+                }
+
+                if (Thread.currentThread().isInterrupted()) {
+                    DataManager.close();
+                    System.out.printf("[%s] Stopping this thread gracefully...\n", Thread.currentThread().getName());
                 }
             }));
         } catch (Errors.WrappedAsRuntimeException e) {
@@ -101,29 +145,23 @@ public class GraphParser extends Observable implements Runnable {
                 System.err.println("Unexpected (non-fatal) failure closing the GFA file.");
             }
         }
-
-        this.findRootNodes();
     }
 
     /**
-     * Parse a {@link String} representing a {@link Node}.
+     * Parse a {@link String} representing a {@link Segment}.
      * @param propertyString the {@link String} from a GFA file.
      */
     synchronized void parseSegment(String propertyString) {
         String[] properties = propertyString.split("\\s");
         assert (properties[0].equals("S")); // properties[0] is 'S'
-        int id = Integer.parseInt(properties[1]);
-        String segment = properties[2];
+        int segmentID = Integer.parseInt(properties[1]);
+        String sequence = properties[2];
         // properties[3] is +/-
         // rest of properties is unused
 
-        Node parsedNode = new Node(id, segment);
-        Node existingNode;
-        try {
-            existingNode = this.getGraph().getNode(parsedNode.getIdentifier());
-            existingNode.setSequence(parsedNode.getSequence());
-        } catch (NoSuchElementException e) {
-            this.getGraph().addNode(parsedNode);
+        Node segment = new Segment(segmentID, sequence);
+        if (!this.getGraph().contains(segmentID)) {
+            this.getGraph().addNode(segment);
         }
     }
 
@@ -139,38 +177,24 @@ public class GraphParser extends Observable implements Runnable {
         int destinationId = Integer.parseInt(properties[3]);
         // properties[4] and further are unused
 
-        Node sourceNode, destinationNode;
-
-        try {
-            sourceNode = this.getGraph().getNode(sourceId);
-        } catch (NoSuchElementException e) {
-            sourceNode = new Node(sourceId);
+        Node sourceNode = new Segment(sourceId);
+        Node destinationNode = new Segment(destinationId);
+        if (!this.getGraph().contains(sourceId)) {
             this.getGraph().addNode(sourceNode);
         }
 
-        try {
-            destinationNode = this.getGraph().getNode(destinationId);
-        } catch (NoSuchElementException e) {
-            destinationNode = new Node(destinationId);
+        if (!this.getGraph().contains(destinationId)) {
             this.getGraph().addNode(destinationNode);
         }
 
-        sourceNode.addChild(destinationNode);
-        destinationNode.addParent(sourceNode);
+        this.getGraph().addEdge(sourceNode, destinationNode);
     }
 
-    /**
-     * Find all {@link Node}s without parents and mark them as root nodes.
-     */
-    private synchronized void findRootNodes() {
-        for (Node n : this.getGraph().getNodes()) {
-            if (n != null && n.getParents().isEmpty()) {
-                this.getGraph().getRootNodes().add(n);
-            }
-        }
-    }
-
-    public Graph getGraph() {
+    public GenomeGraph getGraph() {
         return graph;
+    }
+
+    public FileProgressCounter getProgressCounter() {
+        return progressCounter;
     }
 }
