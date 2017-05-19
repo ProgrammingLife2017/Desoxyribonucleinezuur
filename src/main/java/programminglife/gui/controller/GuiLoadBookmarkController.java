@@ -3,12 +3,12 @@ package programminglife.gui.controller;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import programminglife.controller.BookmarkController;
 import programminglife.model.Bookmark;
+
+import java.util.Optional;
 
 /**
  * Created by Martijn van Meerten.
@@ -22,6 +22,7 @@ public class GuiLoadBookmarkController {
     @FXML private TableColumn<Bookmark, String> clmnDescription;
     @FXML private Button btnOpenBookmark;
     @FXML private Button btnCancelBookmark;
+    @FXML private Button btnDeleteBookmark;
     @FXML private TableView<Bookmark> tblBookmark;
 
     /**
@@ -33,16 +34,48 @@ public class GuiLoadBookmarkController {
         initButtons();
     }
 
+    private boolean checkBookmarkSelection() {
+        if (tblBookmark.getSelectionModel().getSelectedItem() == null) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("No bookmark selected");
+            alert.setContentText("Please select a bookmark to open");
+            alert.setHeaderText(null);
+            alert.show();
+            return false;
+        }
+        return true;
+    }
+
     /**
      * Initializes the buttons in the window.
      */
     private void initButtons() {
         btnOpenBookmark.setOnAction(event -> {
-            Bookmark bookmark = tblBookmark.getSelectionModel().getSelectedItem();
-            graphController.clear();
-            graphController.draw(bookmark.getNodeID(), bookmark.getRadius());
-            Stage s = (Stage) btnOpenBookmark.getScene().getWindow();
-            s.close();
+            if (checkBookmarkSelection()) {
+                Bookmark bookmark = tblBookmark.getSelectionModel().getSelectedItem();
+                graphController.clear();
+                graphController.draw(bookmark.getNodeID(), bookmark.getRadius());
+                Stage s = (Stage) btnOpenBookmark.getScene().getWindow();
+                s.close();
+            }
+        });
+        btnDeleteBookmark.setOnAction(event -> {
+            if (checkBookmarkSelection()) {
+                Bookmark bookmark = tblBookmark.getSelectionModel().getSelectedItem();
+                Alert alert =  new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Confirm Deletion");
+                alert.setHeaderText("Do you really want to delete bookmark: \"" + bookmark.getBookmarkName() + "\"?");
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.isPresent()) {
+                    if (result.get() == ButtonType.OK) {
+                        BookmarkController.deleteBookmark(graphName, bookmark.getBookmarkName());
+                        this.initColumns();
+                    } else {
+                        alert.close();
+                    }
+                }
+                Stage s = (Stage) btnDeleteBookmark.getScene().getWindow();
+            }
         });
         btnCancelBookmark.setOnAction(event -> {
             Stage s = (Stage) btnCancelBookmark.getScene().getWindow();
@@ -64,6 +97,10 @@ public class GuiLoadBookmarkController {
 
     }
 
+    /**
+     * Sets the graphController for drawing the bookmarks.
+     * @param graphController The graphcontroller for drawing
+     */
     public void setGraphController(GraphController graphController) {
         this.graphController = graphController;
         this.graphName = graphController.getGraph().getId();
