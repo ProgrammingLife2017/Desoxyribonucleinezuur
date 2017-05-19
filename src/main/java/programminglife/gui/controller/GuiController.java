@@ -19,9 +19,10 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import jp.uphy.javafx.console.ConsoleView;
 import programminglife.ProgrammingLife;
-import programminglife.model.Graph;
+import programminglife.model.GenomeGraph;
 import programminglife.model.exception.UnknownTypeException;
 import programminglife.parser.GraphParser;
+import programminglife.utility.FileProgressCounter;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -75,6 +76,8 @@ public class GuiController implements Observer {
     private GraphController graphController;
     private File file;
 
+    private Thread parseThread;
+
     /**
      * The initialize will call the other methods that are run in the .
      */
@@ -97,29 +100,55 @@ public class GuiController implements Observer {
      * @throws FileNotFoundException if the {@link File} is not found.
      * @throws UnknownTypeException if the {@link File} is not compliant with the GFA standard.
      */
-    private void openFile(File file) throws FileNotFoundException, UnknownTypeException {
+    public void openFile(File file) throws IOException, UnknownTypeException {
         if (file != null) {
             GraphParser graphParser = new GraphParser(file);
             graphParser.addObserver(this);
-            (new Thread(graphParser)).start();
+            graphParser.getProgressCounter().addObserver(this);
+
+            if (this.parseThread != null) {
+                this.parseThread.interrupt();
+            }
+            this.parseThread = new Thread(graphParser);
+            this.parseThread.start();
         }
     }
 
     @Override
     public void update(Observable o, Object arg) {
         if (o instanceof GraphParser) {
-            if (arg instanceof Graph) {
-                Graph graph = (Graph) arg;
-                this.graphController.setGraph(graph);
+            if (arg instanceof GenomeGraph) {
+                GenomeGraph graph = (GenomeGraph) arg;
 
-                disableGraphUIElements(graph == null);
+                System.out.printf("[%s] File Parsed.\n", Thread.currentThread().getName());
 
-                System.out.printf("%s File Parsed.\n", Thread.currentThread());
-                System.out.printf("%s The graph has %d nodes\n", Thread.currentThread(), graph.size());
+                this.setGraph(graph);
             } else if (arg instanceof Exception) {
                 Exception e = (Exception) arg;
                 // TODO find out a smart way to catch Exceptions across threads
+                throw new RuntimeException(e);
             }
+        } else if (o instanceof FileProgressCounter) {
+            FileProgressCounter progress = (FileProgressCounter) o;
+            if (progress.getLineCount() % 250 == 0) {
+                System.out.println(progress);
+            }
+        }
+    }
+
+    /**
+     * Set the graph for this GUIController.
+     * @param graph Graph to use.
+     */
+    public void setGraph(GenomeGraph graph) {
+        this.graphController.setGraph(graph);
+        disableGraphUIElements(graph == null);
+
+        if (graph != null) {
+            System.out.printf("[%s] Graph was set to %s.\n", Thread.currentThread().getName(), graph.getID());
+            System.out.printf("[%s] The graph has %d nodes\n", Thread.currentThread().getName(), graph.size());
+        } else {
+            System.out.printf("[%s] graph was set to null.\n", Thread.currentThread().getName());
         }
     }
 
@@ -140,9 +169,18 @@ public class GuiController implements Observer {
             try {
                 file = fileChooser.showOpenDialog(ProgrammingLife.getStage());
                 this.openFile(file);
-            } catch (FileNotFoundException | UnknownTypeException e) {
-                // Should not happen, because it gets handled by FileChooser and ExtensionFilter
-                throw new RuntimeException("This should absolutely not have happened", e);
+            } catch (FileNotFoundException e) {
+                (new Alert(Alert.AlertType.ERROR,
+                        "This file was not found!",
+                        ButtonType.CLOSE)).show();
+            } catch (UnknownTypeException e) {
+                (new Alert(Alert.AlertType.ERROR,
+                        "This file is malformed!",
+                        ButtonType.CLOSE)).show();
+            } catch (IOException e) {
+                (new Alert(Alert.AlertType.ERROR,
+                        "An unexpected filesystem error occurred!",
+                        ButtonType.CLOSE)).show();
             }
         });
 
@@ -285,7 +323,7 @@ public class GuiController implements Observer {
         disableGraphUIElements(true);
 
         btnDraw.setOnAction(event -> {
-            System.out.printf("%s Drawing graph...\n", Thread.currentThread());
+            System.out.printf("[%s] Drawing graph...\n", Thread.currentThread().getName());
 
             int centerNode = 0;
             int maxDepth = 0;
@@ -299,17 +337,14 @@ public class GuiController implements Observer {
             }
 
             try {
-                this.graphController.getGraph().getNode(centerNode);
                 this.graphController.clear();
                 this.graphController.draw(centerNode, maxDepth);
-                System.out.printf("%s Graph drawn.\n", Thread.currentThread());
+                System.out.printf("[%s] Graph drawn.\n", Thread.currentThread().getName());
             } catch (NoSuchElementException e) {
                 Alert alert = new Alert(Alert.AlertType.WARNING, "There is no node with this ID."
                         + " Choose another start Node.", ButtonType.OK);
                 alert.show();
             }
-
-
         });
 
         btnDrawRandom.setOnAction(event -> {

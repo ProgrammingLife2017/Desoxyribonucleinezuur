@@ -143,14 +143,14 @@ public class GuiLoadBookmarkController implements Observer {
      */
     public void setGraphController(GraphController graphController) {
         this.graphController = graphController;
-        this.graphName = graphController.getGraph().getId();
+        this.graphName = graphController.getGraph().getID();
     }
 
     @Override
     public void update(Observable o, Object arg) {
         if (o instanceof GraphParser) {
             if (arg instanceof Graph) {
-                graphName = ((Graph) arg).getId();
+                graphName = ((Graph) arg).getID();
             }
         }
     }

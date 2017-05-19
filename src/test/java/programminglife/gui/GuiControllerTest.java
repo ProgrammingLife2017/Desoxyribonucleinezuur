@@ -4,16 +4,15 @@ import javafx.scene.Group;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 import org.testfx.api.FxRobot;
 import org.testfx.api.FxToolkit;
 import org.testfx.util.WaitForAsyncUtils;
 import programminglife.ProgrammingLife;
+import programminglife.model.DataManager;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -28,6 +27,8 @@ import static org.junit.Assert.fail;
  * This is only usable if you have a USA QWERTY layout on your keyboard!!!
  */
 public class GuiControllerTest extends FxRobot {
+    private static final String TEST_DB = "test.db";
+    private static final String TEST_File = "/test.gfa";
 
     private static Stage primaryStage;
     private static String operatingSystem;
@@ -45,7 +46,8 @@ public class GuiControllerTest extends FxRobot {
     }
 
     @BeforeClass
-    public static void setUpClass() throws TimeoutException {
+    public static void setUpClass() throws Exception {
+        DataManager.initialize(TEST_DB);
         operatingSystem = System.getProperty("os.name").toLowerCase();
         primaryStage = FxToolkit.registerPrimaryStage();
     }
@@ -57,8 +59,16 @@ public class GuiControllerTest extends FxRobot {
     }
 
     @After
-    public void tearDown() throws TimeoutException {
+    public void tearDown() throws Exception {
+        DataManager.clearDB(TEST_DB);
+        DataManager.removeDB(TEST_File);
         FxToolkit.cleanupApplication(this.pl);
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+        DataManager.removeDB(TEST_DB);
+        DataManager.removeDB(TEST_File);
     }
 
     @Test

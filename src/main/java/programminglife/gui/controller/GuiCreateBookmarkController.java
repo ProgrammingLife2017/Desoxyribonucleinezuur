@@ -129,6 +129,6 @@ public class GuiCreateBookmarkController {
      */
     public void setGraphController(GraphController graphController) {
         this.graphController = graphController;
-        this.graphName = graphController.getGraph().getId();
+        this.graphName = graphController.getGraph().getID();
     }
 }

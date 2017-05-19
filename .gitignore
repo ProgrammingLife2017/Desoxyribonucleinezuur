@@ -17,7 +17,7 @@ bookmarks.xml
 
 # Database/cache files
 *.db
->>>>>>> origin/develop
+*.db.*
 
 # Eclipse
 .project

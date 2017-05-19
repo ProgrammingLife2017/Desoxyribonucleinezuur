@@ -217,6 +217,13 @@
             <version>-SNAPSHOT</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.mapdb/mapdb -->
+        <dependency>
+            <groupId>org.mapdb</groupId>
+            <artifactId>mapdb</artifactId>
+            <version>3.0.4</version>
+        </dependency>
+
         <!-- https://github.com/TestFX/TestFX -->
         <dependency>
             <groupId>org.testfx</groupId>
