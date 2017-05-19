@@ -5,6 +5,7 @@ import org.junit.*;
 import java.io.File;
 import java.util.NoSuchElementException;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -66,5 +67,21 @@ public class GenomeGraphTest {
     @Test(expected = NullPointerException.class)
     public void getNodeTest1() {
         graph.getChildren(121);
+    }
+
+    @Test
+    public void sizeTest() {
+        assertEquals(1,graph.size());
+        graph.addNode(new Segment(2,"AAAAT"));
+        assertEquals(2,graph.size());
+    }
+
+    @Test
+    public void containsTest() {
+        Node node2 = new Segment( 2, "ATTCTT");
+        graph.addNode(node2);
+        assertTrue(graph.contains(node2));
+        Node node3 = new Segment(37,"AAAAAAAA");
+        assertFalse(graph.contains(node3));
     }
 }
