@@ -65,7 +65,10 @@ public final class DataManager {
 
         System.out.printf("[%s] Setting up MapDB %s...\n", Thread.currentThread().getName(), fileName);
         this.currentFileName = fileName;
-        this.db = DBMaker.fileDB(new File(fileName)).closeOnJvmShutdown().make();
+        this.db = DBMaker.fileDB(new File(fileName))
+                .transactionEnable()
+                .closeOnJvmShutdown()
+                .make();
         System.out.printf("[%s] MapDB %s set up!\n", Thread.currentThread().getName(), fileName);
     }
 
@@ -94,7 +97,7 @@ public final class DataManager {
      * @return true iff a cache exists for the file, false iff otherwise.
      */
     public static boolean hasCache(String name) {
-        return DataManager.getInstance().getDb().exists(name);
+        return Files.exists(new File(toDBFile(name)).toPath());
     }
 
     /**
@@ -166,7 +169,7 @@ public final class DataManager {
             System.out.printf("[%s] MapDB is already closed\n", Thread.currentThread().getName());
         } else {
             System.out.printf("[%s] Closing MapDB...\n", Thread.currentThread().getName());
-            db.commit();
+            db.rollback();
             db.close();
             System.out.printf("[%s] MapDB closed\n", Thread.currentThread().getName());
         }
@@ -223,5 +226,9 @@ public final class DataManager {
     public static void removeDB(String name) throws IOException {
         close();
         Files.deleteIfExists(new File(DataManager.toDBFile(name)).toPath());
+    }
+
+    public static void commit() {
+        DataManager.getInstance().getDb().commit();
     }
 }

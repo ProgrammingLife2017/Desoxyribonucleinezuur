@@ -24,18 +24,21 @@ public class GraphParser extends Observable implements Runnable {
     private boolean verbose;
     private FileProgressCounter progressCounter;
     private long startTime;
+    private boolean isCached;
 
     /**
      * Initiates an empty graph and the {@link File} to parse.
      * @param graphFile the file to parse the {@link GenomeGraph} from
      */
-    public GraphParser(File graphFile) {
+    public GraphParser(File graphFile) throws IOException {
         this.graphFile = graphFile;
         this.name = graphFile.getName();
         this.verbose = PARSE_LINE_VERBOSE_DEFAULT;
         this.graph = new GenomeGraph(name);
         this.progressCounter = new FileProgressCounter("Lines read");
         this.startTime = System.nanoTime();
+        this.isCached = DataManager.hasCache(this.name);
+        DataManager.initialize(this.name);
     }
 
     /**
@@ -46,6 +49,7 @@ public class GraphParser extends Observable implements Runnable {
         try {
             System.out.printf("[%s] Parsing GenomeGraph on separate Thread\n", Thread.currentThread().getName());
             parse(this.verbose);
+            DataManager.commit();
 
             int secondsElapsed = (int) ((System.nanoTime() - this.startTime) / 1000000000.d);
             System.out.printf("[%s] Parsing took %d seconds\n", Thread.currentThread().getName(), secondsElapsed);
@@ -87,14 +91,6 @@ public class GraphParser extends Observable implements Runnable {
         System.out.printf("Done! %d lines.\n", lineCount);
         this.progressCounter.setTotalLineCount(lineCount);
 
-        boolean cachedTemp = false;
-
-        if (DataManager.hasCache(this.graph.getID())) {
-            System.out.printf("Cache %s already exists, not parsing segments", this.graph.getID());
-            cachedTemp = true;
-        }
-        final boolean cached = cachedTemp;
-
         BufferedReader reader = new BufferedReader(new FileReader(this.graphFile));
 
         try {
@@ -105,7 +101,7 @@ public class GraphParser extends Observable implements Runnable {
 
                 switch (type) {
                     case 'S':
-                        if (!cached) this.parseSegment(line);
+                        if (!this.isCached) this.parseSegment(line);
                         break;
                     case 'L':
                         this.parseLink(line);
@@ -117,7 +113,7 @@ public class GraphParser extends Observable implements Runnable {
                         throw new UnknownTypeException(String.format("Unknown symbol '%c'", type));
                 }
 
-                if (progressCounter.getLineCount() % 500 == 0) {
+                if (progressCounter.getLineCount() % (1000 * (this.isCached ? 100 : 1)) == 0) {
                     System.out.println(progressCounter);
                 }
 
