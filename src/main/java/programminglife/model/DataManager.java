@@ -21,6 +21,9 @@ public final class DataManager {
     private static String currentFileName = null;
 
     private DB db;
+    private Map<Integer, String> sequenceMap;
+    private Map<Integer, Integer> sequenceLengthMap;
+
 
     /**
      * Initialize this DataManager. Opens database and stuff.
@@ -66,6 +69,8 @@ public final class DataManager {
         System.out.printf("%s Setting up MapDB %s...\n", Thread.currentThread(), fileName);
         this.currentFileName = fileName;
         this.db = DBMaker.fileDB(new File(fileName)).closeOnJvmShutdown().make();
+        this.sequenceMap = getMap(db, SEQUENCE_MAP_SUFFIX, Serializer.INTEGER, Serializer.STRING_ASCII);
+        this.sequenceLengthMap = getMap(db, SEQUENCE_LENGTH_MAP_SUFFIX, Serializer.INTEGER, Serializer.INTEGER);
         System.out.printf("%s MapDB %s set up!\n", Thread.currentThread(), fileName);
     }
 
@@ -115,7 +120,7 @@ public final class DataManager {
      * @return the HTreeMap cache for the sequence lengths of the current file.
      */
     private static Map<Integer, Integer> getSequenceLengthMap() {
-        return getMap(currentFileName + SEQUENCE_LENGTH_MAP_SUFFIX, Serializer.INTEGER, Serializer.INTEGER);
+        return getInstance().sequenceLengthMap;
     }
 
     /**
@@ -123,11 +128,12 @@ public final class DataManager {
      * @return the HTreeMap cache for the sequences of the current file.
      */
     private static Map<Integer, String> getSequenceMap() {
-        return getMap(currentFileName + SEQUENCE_MAP_SUFFIX, Serializer.INTEGER, Serializer.STRING_ASCII);
+        return getInstance().sequenceMap;
     }
 
     /**
      * Get a disk-backed hashmap named name. If it doesn't exist, it is created using the provided serializers.
+     * @param db the db to get the map from.
      * @param name The name of the hashmap
      * @param keySerializer The serializer for the keys
      * @param valueSerializer The serializer for th values
@@ -135,8 +141,7 @@ public final class DataManager {
      * @param <V> The type of the values.
      * @return a disk-backed hashmap named name.
      */
-    private static <K, V> Map<K, V> getMap(String name, Serializer<K> keySerializer, Serializer<V> valueSerializer) {
-        DB db = DataManager.getInstance().getDb();
+    private static <K, V> Map<K, V> getMap(DB db, String name, Serializer<K> keySerializer, Serializer<V> valueSerializer) {
         if (db.exists(name)) {
 //            System.out.printf("%s Storage %s exists\n", Thread.currentThread(), name);
             HTreeMap<K, V> res = db.get(name);
