@@ -29,8 +29,8 @@ public class GenomeGraph implements Graph {
     /**
      * The constructor for a GenomeGraph.
      * @param id String.
-     * @param children Set<Integer>.
-     * @param parents Set<Integer>.
+     * @param children Set<Integer> which contains the children.
+     * @param parents Set<Integer> which contains the parents.
      */
     public GenomeGraph(String id, Map<Integer, Set<Integer>> children, Map<Integer, Set<Integer>> parents) {
         this.children = children;
@@ -126,8 +126,8 @@ public class GenomeGraph implements Graph {
 
     /**
      * Add a child to a node.
-     * @param node Node.
-     * @param child Node.
+     * @param node Node of the node to be edited.
+     * @param child Node of the child.
      */
     private void addChild(Node node, Node child) {
         this.children.get(node.getIdentifier()).add(child.getIdentifier());
@@ -135,8 +135,8 @@ public class GenomeGraph implements Graph {
 
     /**
      * Add a parent to a node.
-     * @param node Node.
-     * @param parent Node.
+     * @param node Node of the node to be edited.
+     * @param parent Node of the parent.
      */
     private void addParent(Node node, Node parent) {
         this.parents.get(node.getIdentifier()).add(parent.getIdentifier());
