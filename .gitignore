@@ -11,11 +11,9 @@ buildNumber.properties
 # Executable jar file
 *.jar
 
-# Data files (use data/test/ for small testing/validation files)
-data/real/
+# Application data files
+data/
 bookmarks.xml
-
-# Database/cache files
 *.db
 *.db.*
 
