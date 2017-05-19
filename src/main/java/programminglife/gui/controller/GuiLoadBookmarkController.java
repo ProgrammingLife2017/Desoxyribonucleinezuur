@@ -115,9 +115,8 @@ public class GuiLoadBookmarkController implements Observer {
                 bookmarkDialogStage.initOwner(ProgrammingLife.getStage());
                 bookmarkDialogStage.showAndWait();
                 this.initColumns();
-
             } catch (IOException e) {
-                e.printStackTrace();
+                (new Alert(Alert.AlertType.ERROR, "This bookmark cannot be created.", ButtonType.CLOSE)).show();
             }
 
         });

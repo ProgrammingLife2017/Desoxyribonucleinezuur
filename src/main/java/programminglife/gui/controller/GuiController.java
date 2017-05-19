@@ -291,7 +291,6 @@ public class GuiController implements Observer {
 
         btnBookmarks.setOnAction(event -> {
             try {
-
                 FXMLLoader loader = new FXMLLoader(ProgrammingLife.class.getResource("/LoadBookmarkWindow.fxml"));
                 AnchorPane page = loader.load();
                 GuiLoadBookmarkController gc = loader.getController();
@@ -303,9 +302,8 @@ public class GuiController implements Observer {
                 bookmarkDialogStage.setTitle("Load Bookmark");
                 bookmarkDialogStage.initOwner(ProgrammingLife.getStage());
                 bookmarkDialogStage.showAndWait();
-
             } catch (IOException e) {
-                e.printStackTrace();
+                (new Alert(Alert.AlertType.ERROR, "Bookmarks cannot be loaded.", ButtonType.CLOSE)).show();
             }
         });
     }
