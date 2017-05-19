@@ -126,8 +126,8 @@ public class GenomeGraph implements Graph {
 
     /**
      * Add a child to a node.
-     * @param node Node of the node to be edited.
-     * @param child Node of the child.
+     * @param node Node to which the child will be added.
+     * @param child Node of the child to be added.
      */
     private void addChild(Node node, Node child) {
         this.children.get(node.getIdentifier()).add(child.getIdentifier());
@@ -135,8 +135,8 @@ public class GenomeGraph implements Graph {
 
     /**
      * Add a parent to a node.
-     * @param node Node of the node to be edited.
-     * @param parent Node of the parent.
+     * @param node Node to which the parent will be added.
+     * @param parent Node of the parent to be added.
      */
     private void addParent(Node node, Node parent) {
         this.parents.get(node.getIdentifier()).add(parent.getIdentifier());

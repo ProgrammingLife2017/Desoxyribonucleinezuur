@@ -186,7 +186,7 @@ public class GuiController implements Observer {
                             openFile(new File(mi.getText()));
                         } catch (IOException | UnknownTypeException e) {
                             (new Alert(Alert.AlertType.ERROR,
-                                    "This file is can't be opened!",
+                                    "This file can't be opened!",
                                     ButtonType.CLOSE)).show();
                         }
                     });
@@ -227,7 +227,7 @@ public class GuiController implements Observer {
                     }
                 } catch (IOException e) {
                     (new Alert(Alert.AlertType.ERROR,
-                            "Can't write to file!",
+                            "Can't write to file! File: " + file.getName(),
                             ButtonType.CLOSE)).show();
                 }
             } catch (FileNotFoundException e) {
