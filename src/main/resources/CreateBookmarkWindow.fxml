@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
+<?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<AnchorPane maxHeight="Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="295.0" prefWidth="452.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="programminglife.gui.controller.GuiCreateBookmarkController">
+
+<AnchorPane maxHeight="Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="323.0" prefWidth="462.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="programminglife.gui.controller.GuiCreateBookmarkController">
    <children>
       <GridPane layoutX="228.0" layoutY="32.0" prefHeight="205.0" prefWidth="442.0" AnchorPane.bottomAnchor="58.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="32.0">
         <columnConstraints>
@@ -27,7 +28,7 @@
             <Label fx:id="labelDescription" text="Description:" GridPane.rowIndex="3" />
          </children>
       </GridPane>
-      <Button fx:id="btnOk" layoutX="258.0" layoutY="245.0" mnemonicParsing="false" text="Ok" />
-      <Button fx:id="btnCancel" layoutX="353.0" layoutY="245.0" mnemonicParsing="false" text="Cancel" />
+      <Button fx:id="btnOk" layoutX="332.0" layoutY="292.0" mnemonicParsing="false" text="Ok" />
+      <Button fx:id="btnCancel" layoutX="384.0" layoutY="292.0" mnemonicParsing="false" text="Cancel" />
    </children>
 </AnchorPane>

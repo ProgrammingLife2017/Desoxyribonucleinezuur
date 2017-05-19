@@ -206,6 +206,7 @@ public class GuiController implements Observer {
                 gc.setGraph(graphController.getGraph().getId());
                 Scene scene = new Scene(page);
                 Stage bookmarkDialogStage = new Stage();
+                bookmarkDialogStage.setResizable(false);
                 bookmarkDialogStage.setScene(scene);
                 bookmarkDialogStage.setTitle("Create Bookmark");
                 bookmarkDialogStage.initOwner(ProgrammingLife.getStage());

@@ -2,6 +2,7 @@ package programminglife.gui.controller;
 
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -36,15 +37,46 @@ public class GuiCreateBookmarkController {
      */
     private void initButtons() {
         btnOk.setOnAction(event -> {
-            BookmarkController.storeBookmark(graphName, txtBookmarkName.getText(), txtDescription.getText(),
-                    Integer.parseInt(txtId.getText()), Integer.parseInt(txtRadius.getText()));
-            Stage s = (Stage) btnOk.getScene().getWindow();
-            s.close();
+            if (txtBookmarkName.getText().contains(" ")) {
+                nameSpaceAlert();
+            } else if (!txtId.getText().matches("^[1-9]\\d*$")) {
+                intAlert("ID");
+            } else if (!txtRadius.getText().matches("^[1-9]\\d*$")) {
+               intAlert("radius");
+            } else {
+                BookmarkController.storeBookmark(graphName, txtBookmarkName.getText(), txtDescription.getText(),
+                        Integer.parseInt(txtId.getText()), Integer.parseInt(txtRadius.getText()));
+                Stage s = (Stage) btnOk.getScene().getWindow();
+                s.close();
+            }
         });
         btnCancel.setOnAction(event -> {
             Stage s = (Stage) btnCancel.getScene().getWindow();
             s.close();
         });
+    }
+
+    /**
+     * Check bookmark for positive integers.
+     * @param field The field that is not an integer
+     */
+    private void intAlert(String field) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(field + " error");
+        alert.setContentText("Bookmark " + field + " can only contains positive integers");
+        alert.setHeaderText(null);
+        alert.show();
+    }
+
+    /**
+     * Alerts the user if a space is present in the bookmark name.
+     */
+    private void nameSpaceAlert() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Name error");
+        alert.setContentText("Bookmark name can not contain spaces");
+        alert.setHeaderText(null);
+        alert.show();
     }
 
     /**
