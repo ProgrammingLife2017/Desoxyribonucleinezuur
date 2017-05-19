@@ -227,7 +227,7 @@ public class GuiController implements Observer {
                     }
                 } catch (IOException e) {
                     (new Alert(Alert.AlertType.ERROR,
-                            "Can't write to file! File: " + file.getName(),
+                            "Can't update the file containing the recently opened files!",
                             ButtonType.CLOSE)).show();
                 }
             } catch (FileNotFoundException e) {
