@@ -63,10 +63,10 @@ public final class DataManager {
     private DataManager(String name) throws IOException {
         String fileName = toDBFile(name);
 
-        System.out.printf("%s Setting up MapDB %s...\n", Thread.currentThread(), fileName);
+        System.out.printf("[%s] Setting up MapDB %s...\n", Thread.currentThread().getName(), fileName);
         this.currentFileName = fileName;
         this.db = DBMaker.fileDB(new File(fileName)).closeOnJvmShutdown().make();
-        System.out.printf("%s MapDB %s set up!\n", Thread.currentThread(), fileName);
+        System.out.printf("[%s] MapDB %s set up!\n", Thread.currentThread().getName(), fileName);
     }
 
     /**
@@ -138,13 +138,12 @@ public final class DataManager {
     private static <K, V> Map<K, V> getMap(String name, Serializer<K> keySerializer, Serializer<V> valueSerializer) {
         DB db = DataManager.getInstance().getDb();
         if (db.exists(name)) {
-//            System.out.printf("%s Storage %s exists\n", Thread.currentThread(), name);
             HTreeMap<K, V> res = db.get(name);
             assert (res != null);
             return res;
         } else {
-            System.out.printf("%s Storage %s does not exist.\n%s Creating storage %s...\n",
-                    Thread.currentThread(), name, Thread.currentThread(), name);
+            System.out.printf("[%s] Storage %s does not exist.\n%s Creating storage %s...\n",
+                    Thread.currentThread().getName(), name, Thread.currentThread(), name);
             HTreeMap<K, V> res = db
                     .hashMap(name)
                     .keySerializer(keySerializer)
@@ -152,7 +151,7 @@ public final class DataManager {
                     .create();
 
             assert (res != null);
-            System.out.printf("%s Storage %s created\n", Thread.currentThread(), name);
+            System.out.printf("[%s] Storage %s created\n", Thread.currentThread().getName(), name);
 
             return res;
         }
@@ -164,12 +163,12 @@ public final class DataManager {
     public static void close() {
         DB db = DataManager.getInstance().getDb();
         if (db.isClosed()) {
-            System.out.printf("%s MapDB is already closed\n", Thread.currentThread());
+            System.out.printf("[%s] MapDB is already closed\n", Thread.currentThread().getName());
         } else {
-            System.out.printf("%s Closing MapDB...\n", Thread.currentThread());
+            System.out.printf("[%s] Closing MapDB...\n", Thread.currentThread().getName());
             db.commit();
             db.close();
-            System.out.printf("%s MapDB closed\n", Thread.currentThread());
+            System.out.printf("[%s] MapDB closed\n", Thread.currentThread().getName());
         }
     }
 

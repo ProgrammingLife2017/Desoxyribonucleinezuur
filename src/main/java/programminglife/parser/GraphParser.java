@@ -1,8 +1,10 @@
 package programminglife.parser;
 
 import com.diffplug.common.base.Errors;
-import com.diffplug.common.base.Throwing;
-import programminglife.model.*;
+import programminglife.model.DataManager;
+import programminglife.model.GenomeGraph;
+import programminglife.model.Node;
+import programminglife.model.Segment;
 import programminglife.model.exception.UnknownTypeException;
 import programminglife.utility.FileProgressCounter;
 
@@ -21,6 +23,7 @@ public class GraphParser extends Observable implements Runnable {
     private String name;
     private boolean verbose;
     private FileProgressCounter progressCounter;
+    private long startTime;
 
     /**
      * Initiates an empty graph and the {@link File} to parse.
@@ -32,6 +35,7 @@ public class GraphParser extends Observable implements Runnable {
         this.verbose = PARSE_LINE_VERBOSE_DEFAULT;
         this.graph = new GenomeGraph(name);
         this.progressCounter = new FileProgressCounter("Lines read");
+        this.startTime = System.nanoTime();
     }
 
     /**
@@ -40,8 +44,11 @@ public class GraphParser extends Observable implements Runnable {
     @Override
     public void run() {
         try {
-            System.out.printf("%s Parsing GenomeGraph on separate Thread", Thread.currentThread());
+            System.out.printf("[%s] Parsing GenomeGraph on separate Thread\n", Thread.currentThread().getName());
             parse(this.verbose);
+
+            int secondsElapsed = (int) ((System.nanoTime() - this.startTime) / 1000000000.d);
+            System.out.printf("[%s] Parsing took %d seconds\n", Thread.currentThread().getName(), secondsElapsed);
             this.setChanged();
             this.notifyObservers(this.graph);
         } catch (Exception e) {
@@ -68,8 +75,8 @@ public class GraphParser extends Observable implements Runnable {
     protected synchronized void parse(boolean verbose) throws FileNotFoundException, UnknownTypeException {
         if (verbose) {
             System.out.printf(
-                    "%s Parsing file with name %s with path %s\n",
-                    Thread.currentThread(),
+                    "[%s] Parsing file with name %s with path %s\n",
+                    Thread.currentThread().getName(),
                     this.name,
                     this.graphFile.getAbsolutePath()
             );
@@ -80,17 +87,25 @@ public class GraphParser extends Observable implements Runnable {
         System.out.printf("Done! %d lines.\n", lineCount);
         this.progressCounter.setTotalLineCount(lineCount);
 
+        boolean cachedTemp = false;
+
+        if (DataManager.hasCache(this.graph.getID())) {
+            System.out.printf("Cache %s already exists, not parsing segments", this.graph.getID());
+            cachedTemp = true;
+        }
+        final boolean cached = cachedTemp;
+
         BufferedReader reader = new BufferedReader(new FileReader(this.graphFile));
 
         try {
-            reader.lines().forEach(Errors.rethrow().wrap((Throwing.Consumer<String>) line -> {
+            reader.lines().forEach(Errors.rethrow().wrap(line -> {
                 char type = line.charAt(0);
 
                 this.progressCounter.count();
 
                 switch (type) {
                     case 'S':
-                        this.parseSegment(line);
+                        if (!cached) this.parseSegment(line);
                         break;
                     case 'L':
                         this.parseLink(line);
@@ -107,8 +122,8 @@ public class GraphParser extends Observable implements Runnable {
                 }
 
                 if (Thread.currentThread().isInterrupted()) {
-                    System.out.printf("%s Stopping this thread gracefully...\n", Thread.currentThread());
-                    throw new InterruptedException("Thread was interrupted!");
+                    DataManager.close();
+                    System.out.printf("[%s] Stopping this thread gracefully...\n", Thread.currentThread().getName());
                 }
             }));
         } catch (Errors.WrappedAsRuntimeException e) {
