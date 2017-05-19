@@ -46,7 +46,7 @@ public class GuiController implements Observer {
     @FXML private MenuItem btnOpen;
     @FXML private MenuItem btnQuit;
     @FXML private MenuItem btnCreateBookmark;
-    @FXML private MenuItem btnLoadBookmark;
+    @FXML private MenuItem btnBookmarks;
     @FXML private MenuItem btnAbout;
     @FXML private MenuItem btnInstructions;
     @FXML private Button btnZoomIn;
@@ -197,34 +197,13 @@ public class GuiController implements Observer {
      * Initializes the bookmark buttons in the menu.
      */
     private void initBookmarkMenu() {
-        btnCreateBookmark.setOnAction(event -> {
+
+        btnBookmarks.setOnAction(event -> {
             try {
-                System.out.println("came here");
-                FXMLLoader loader = new FXMLLoader(ProgrammingLife.class.getResource("/CreateBookmarkWindow.fxml"));
-                AnchorPane page = loader.load();
-                GuiCreateBookmarkController gc = loader.getController();
-                gc.setGraphController(graphController);
-                Scene scene = new Scene(page);
-                Stage bookmarkDialogStage = new Stage();
-                bookmarkDialogStage.setResizable(false);
-                bookmarkDialogStage.setScene(scene);
-                bookmarkDialogStage.setTitle("Create Bookmark");
-                bookmarkDialogStage.initOwner(ProgrammingLife.getStage());
-                bookmarkDialogStage.showAndWait();
 
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        });
-
-        btnLoadBookmark.setOnAction(event -> {
-            try {
-                System.out.println("came load");
                 FXMLLoader loader = new FXMLLoader(ProgrammingLife.class.getResource("/LoadBookmarkWindow.fxml"));
                 AnchorPane page = loader.load();
                 GuiLoadBookmarkController gc = loader.getController();
-                System.out.println("gid " + graphController.getGraph().getId());
                 gc.setGraphController(graphController);
                 gc.initColumns();
                 Scene scene = new Scene(page);

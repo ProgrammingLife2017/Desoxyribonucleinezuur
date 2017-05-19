@@ -24,8 +24,7 @@
         </Menu>
         <Menu fx:id="menuBookmark" mnemonicParsing="false" text="Bookmarks">
           <items>
-            <MenuItem fx:id="btnCreateBookmark" mnemonicParsing="false" text="Create" />
-            <MenuItem fx:id="btnLoadBookmark" mnemonicParsing="false" text="Load / Delete" />
+            <MenuItem fx:id="btnBookmarks" mnemonicParsing="false" text="Bookmarks" />
           </items>
         </Menu>
       </menus>

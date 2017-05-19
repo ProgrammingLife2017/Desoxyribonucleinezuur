@@ -40,8 +40,10 @@ public class GuiCreateBookmarkController {
         btnOk.setOnAction(event -> {
             if (txtBookmarkName.getText().contains(" ")) {
                 nameSpaceAlert();
+            } else if (txtBookmarkName.getText().matches(".*\\d+.*")) {
+                nameIntAlert();
             } else if (!txtId.getText().matches("^[1-9]\\d*$")) {
-                intAlert("ID");
+                intAlert("Center Node");
             } else if (Integer.parseInt(txtId.getText()) > graphController.getGraph().size()) {
                 sizeAlert(graphController.getGraph().size());
             } else if (!txtRadius.getText().matches("^[1-9]\\d*$")) {
@@ -60,14 +62,25 @@ public class GuiCreateBookmarkController {
     }
 
     /**
+     * Alert for title if numbers are in name.
+     */
+    private void nameIntAlert() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Name error");
+        alert.setHeaderText(null);
+        alert.setContentText("Title can not contains numbers");
+        alert.show();
+    }
+
+    /**
      * Alert for when node id is too large for graph size.
      * @param size The size of the graph
      */
     private void sizeAlert(int size) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("ID error");
+        alert.setTitle("Center Node error");
         alert.setHeaderText(null);
-        alert.setContentText("Node ID is larger than graph size: " + size);
+        alert.setContentText("Center Node is larger than graph size: " + size);
         alert.show();
     }
 
