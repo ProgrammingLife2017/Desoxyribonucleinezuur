@@ -114,7 +114,7 @@ public class GraphParser extends Observable implements Runnable {
                         throw new UnknownTypeException(String.format("Unknown symbol '%c'", type));
                 }
 
-                if (progressCounter.getLineCount() % (1000 * (this.isCached ? 100 : 1)) == 0) {
+                if (progressCounter.getLineCount() % (10000 * (this.isCached ? 100 : 1)) == 0) {
                     System.out.println(progressCounter);
                 }
 
