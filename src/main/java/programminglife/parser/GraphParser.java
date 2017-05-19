@@ -26,9 +26,11 @@ public class GraphParser extends Observable implements Runnable {
     private long startTime;
     private boolean isCached;
 
+
     /**
      * Initiates an empty graph and the {@link File} to parse.
-     * @param graphFile the file to parse the {@link GenomeGraph} from
+     * @param graphFile the file to parse the {@link GenomeGraph} from.
+     * @throws IOException when the file can't be read.
      */
     public GraphParser(File graphFile) throws IOException {
         this.graphFile = graphFile;
@@ -88,7 +90,7 @@ public class GraphParser extends Observable implements Runnable {
         }
 
         System.out.printf("[%s] Calculating number of lines in file\n", Thread.currentThread().getName());
-        int lineCount = (int)(new BufferedReader(new FileReader(this.graphFile))).lines().count();
+        int lineCount = (int) (new BufferedReader(new FileReader(this.graphFile))).lines().count();
         System.out.printf("[%s] Done! %d lines.\n", Thread.currentThread().getName(), lineCount);
         this.progressCounter.setTotalLineCount(lineCount);
 
@@ -102,7 +104,9 @@ public class GraphParser extends Observable implements Runnable {
 
                 switch (type) {
                     case 'S':
-                        if (!this.isCached) this.parseSegment(line);
+                        if (!this.isCached) {
+                            this.parseSegment(line);
+                        }
                         break;
                     case 'L':
                         this.parseLink(line);
@@ -113,8 +117,13 @@ public class GraphParser extends Observable implements Runnable {
                     default:
                         throw new UnknownTypeException(String.format("Unknown symbol '%c'", type));
                 }
-
-                if (progressCounter.getLineCount() % (1000 * (this.isCached ? 100 : 1)) == 0) {
+                int lineSkipFactor;
+                if (isCached) {
+                    lineSkipFactor = 100;
+                } else {
+                    lineSkipFactor = 1;
+                }
+                if (progressCounter.getLineCount() % (1000 * lineSkipFactor) == 0) {
                     System.out.println(progressCounter);
                 }
 

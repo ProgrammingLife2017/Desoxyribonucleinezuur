@@ -28,7 +28,9 @@ public class GenomeGraph implements Graph {
 
     /**
      * The constructor for a GenomeGraph.
-     * @param id String id.
+     * @param id String.
+     * @param children Set<Integer> which contains the children.
+     * @param parents Set<Integer> which contains the parents.
      */
     public GenomeGraph(String id, Map<Integer, Set<Integer>> children, Map<Integer, Set<Integer>> parents) {
         this.children = children;
@@ -52,7 +54,8 @@ public class GenomeGraph implements Graph {
     @Override
     public void addNode(Node node, Set<Node> children, Set<Node> parents) {
         if (this.contains(node)) {
-            throw new NodeExistsException(String.format("%s already exists in graph %s", node.toString(), this.getID()));
+            throw new NodeExistsException(String.format("%s already exists in graph %s",
+                    node.toString(), this.getID()));
         }
 
         this.replaceNode(node, children, parents);
@@ -121,10 +124,20 @@ public class GenomeGraph implements Graph {
         this.addParent(destination, source);
     }
 
+    /**
+     * Add a child to a node.
+     * @param node Node to which the child will be added.
+     * @param child Node of the child to be added.
+     */
     private void addChild(Node node, Node child) {
         this.children.get(node.getIdentifier()).add(child.getIdentifier());
     }
 
+    /**
+     * Add a parent to a node.
+     * @param node Node to which the parent will be added.
+     * @param parent Node of the parent to be added.
+     */
     private void addParent(Node node, Node parent) {
         this.parents.get(node.getIdentifier()).add(parent.getIdentifier());
     }

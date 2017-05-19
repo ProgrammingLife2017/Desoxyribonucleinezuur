@@ -47,6 +47,10 @@ public class Segment extends Rectangle implements Node<Segment> {
         this.drawDimensionsUpToDate = false;
     }
 
+    /**
+     * getter for the center of the right border.
+     * @return XYCoordinate.
+     */
     public XYCoordinate getRightBorderCenter() {
         if (!drawDimensionsUpToDate) {
             setDrawDimensions();
@@ -54,6 +58,10 @@ public class Segment extends Rectangle implements Node<Segment> {
         return this.getCenter().add(this.getSize().getX() >> 1, 0);
     }
 
+    /**
+     * getter for the center of the left border.
+     * @return XYCoordinate.
+     */
     public XYCoordinate getLeftBorderCenter() {
         if (!drawDimensionsUpToDate) {
             setDrawDimensions();
@@ -61,6 +69,10 @@ public class Segment extends Rectangle implements Node<Segment> {
         return this.getCenter().add(-(this.getSize().getX() >> 1), 0);
     }
 
+    /**
+     * getter for the center.
+     * @return XYCoordinate.
+     */
     public XYCoordinate getCenter() {
         if (!drawDimensionsUpToDate) {
             setDrawDimensions();
@@ -127,6 +139,10 @@ public class Segment extends Rectangle implements Node<Segment> {
         this.setY(location.getY());
     }
 
+    /**
+     * getter for the width coordinate.
+     * @return XYCoordinate.
+     */
     public XYCoordinate getWidthCoordinate() {
         if (!drawDimensionsUpToDate) {
             setDrawDimensions();
@@ -134,6 +150,10 @@ public class Segment extends Rectangle implements Node<Segment> {
         return new XYCoordinate((int) this.getWidth(), 0);
     }
 
+    /**
+     * getter for the height coordinate.
+     * @return XYCoordinate.
+     */
     public XYCoordinate getHeightCoordinate() {
         if (!drawDimensionsUpToDate) {
             setDrawDimensions();

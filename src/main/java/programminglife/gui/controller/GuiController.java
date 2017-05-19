@@ -24,14 +24,11 @@ import programminglife.model.exception.UnknownTypeException;
 import programminglife.parser.GraphParser;
 import programminglife.utility.FileProgressCounter;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.Charset;
-import java.util.NoSuchElementException;
-import java.util.Observable;
-import java.util.Observer;
-import java.util.Optional;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.util.*;
 
 /**
  * The controller for the GUI that is used in the application.
@@ -51,6 +48,7 @@ public class GuiController implements Observer {
     @FXML private MenuItem btnBookmarks;
     @FXML private MenuItem btnAbout;
     @FXML private MenuItem btnInstructions;
+    @FXML private Menu menuRecent;
     @FXML private RadioMenuItem btnToggle;
     @FXML private Button btnZoomIn;
     @FXML private Button btnZoomOut;
@@ -68,6 +66,13 @@ public class GuiController implements Observer {
     @FXML private AnchorPane anchorLeftControlPanel;
 
     //Privates used by method.
+    private String informationText = "Open a gfa file, wait for it to be parsed.\n"
+            + "Give the start node and the amount of layers (depth) to be drawn on the left.\n\n"
+            + "Zoom using the zoom buttons or alt + scrollwheel.\n"
+            + "Move the graph by pressing alt + dragging a node or edge.\n"
+            + "Reset the zoom with reset zoom and jump back to the beginning"
+            + " of the drawn graph with the Reset X/Y button.\n"
+            + "The suprise me! button chooses a random start node and draws with the depth you gave.";
     private ConsoleView consoleView;
     private double orgSceneX, orgSceneY;
     private double orgTranslateX, orgTranslateY;
@@ -75,6 +80,8 @@ public class GuiController implements Observer {
     private int translateY;
     private GraphController graphController;
     private File file;
+    private File recentFile = new File("Recent.txt");
+    private String recentItems = "";
 
     private Thread parseThread;
 
@@ -85,6 +92,7 @@ public class GuiController implements Observer {
     @SuppressWarnings("unused")
     private void initialize() {
         this.graphController = new GraphController(null, this.grpDrawArea);
+        initRecent();
         initMenubar();
         initBookmarkMenu();
         initLeftControlpanelScreenModifiers();
@@ -97,7 +105,7 @@ public class GuiController implements Observer {
     /**
      * Open and parse a file.
      * @param file The {@link File} to open.
-     * @throws FileNotFoundException if the {@link File} is not found.
+     * @throws IOException if the {@link File} is not found.
      * @throws UnknownTypeException if the {@link File} is not compliant with the GFA standard.
      */
     public void openFile(File file) throws IOException, UnknownTypeException {
@@ -153,6 +161,48 @@ public class GuiController implements Observer {
     }
 
     /**
+     * Read out the file which contains all the recently opened files.
+     */
+    private void initRecent() {
+        try {
+            Files.createFile(new File("Recent.txt").toPath());
+        } catch (FileAlreadyExistsException e) {
+            //This will always happen if a user has used the program before.
+            //Therefore it is unnecessary to handle further.
+        } catch (IOException e) {
+            Alert a = new Alert(Alert.AlertType.ERROR);
+            a.setTitle("ERROR");
+            a.setContentText("Cannot create a file here, try again.");
+            return;
+        }
+        if (recentFile != null) {
+            try {
+                Scanner sc = new Scanner(recentFile);
+                while (sc.hasNextLine()) {
+                    String next = sc.nextLine();
+                    MenuItem mi = new MenuItem(next);
+                    mi.setOnAction(event -> {
+                        try {
+                            openFile(new File(mi.getText()));
+                        } catch (IOException | UnknownTypeException e) {
+                            (new Alert(Alert.AlertType.ERROR,
+                                    "This file can't be opened!",
+                                    ButtonType.CLOSE)).show();
+                        }
+                    });
+                    menuRecent.getItems().add(mi);
+                    recentItems = recentItems.concat(next + "\n");
+                }
+                sc.close();
+            } catch (FileNotFoundException e) {
+                (new Alert(Alert.AlertType.ERROR,
+                        "This file cannot be found!",
+                        ButtonType.CLOSE)).show();
+            }
+        }
+    }
+
+    /**
      * Initializes the open button so that the user can decide which file to open.
      * Sets the action for the open MenuItem.
      * Sets the event for the quit MenuItem.
@@ -169,6 +219,17 @@ public class GuiController implements Observer {
             try {
                 file = fileChooser.showOpenDialog(ProgrammingLife.getStage());
                 this.openFile(file);
+                try (BufferedWriter fw = new BufferedWriter(new FileWriter(recentFile, true))) {
+                    if (!recentItems.contains(file.getAbsolutePath())) {
+                        fw.write(file.getAbsolutePath() + "\n");
+                        fw.flush();
+                        fw.close();
+                    }
+                } catch (IOException e) {
+                    (new Alert(Alert.AlertType.ERROR,
+                            "Can't update the file containing the recently opened files!",
+                            ButtonType.CLOSE)).show();
+                }
             } catch (FileNotFoundException e) {
                 (new Alert(Alert.AlertType.ERROR,
                         "This file was not found!",
@@ -209,10 +270,8 @@ public class GuiController implements Observer {
             alert.setContentText("This application is made by Contextproject group Desoxyribonucleïnezuur:\n\n"
                     + "Ivo Wilms \n" + "Iwan Hoogenboom \n" + "Martijn van Meerten \n" + "Toine Hartman\n"
                     + "Yannick Haveman");
-
             alert.show();
         });
-
 
         btnInstructions.setOnAction(event -> {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -220,16 +279,9 @@ public class GuiController implements Observer {
             alert.setHeaderText(null);
             alert.setResizable(true);
             alert.getDialogPane().setMinWidth(INSTRUCTIONS_MIN_WIDTH);
-            alert.setContentText("Open a gfa file, wait for it to be parsed.\n"
-                    + "Give the start node and the amount of layers (depth) to be drawn on the left.\n\n"
-                    + "Zoom using the zoom buttons or alt + scrollwheel.\n"
-                    + "Move the graph by pressing alt + dragging a node or edge.\n"
-                    + "Reset the zoom with reset zoom and jump back to the beginning"
-                    + " of the drawn graph with the Reset X/Y button.\n"
-                    + "The suprise me! button chooses a random start node and draws with the depth you gave.");
+            alert.setContentText(informationText);
             alert.show();
         });
-
     }
 
     /**

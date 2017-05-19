@@ -69,8 +69,8 @@ public class GuiLoadBookmarkController implements Observer {
                 Bookmark bookmark = tblBookmark.getSelectionModel().getSelectedItem();
                 graphController.clear();
                 graphController.draw(bookmark.getNodeID(), bookmark.getRadius());
-                System.out.println("Loaded bookmark " + bookmark.getBookmarkName() + " Center Node: " + bookmark.getNodeID()
-                + " Radius: " + bookmark.getRadius());
+                System.out.println("Loaded bookmark " + bookmark.getBookmarkName()
+                        + " Center Node: " + bookmark.getNodeID() + " Radius: " + bookmark.getRadius());
                 Stage s = (Stage) btnOpenBookmark.getScene().getWindow();
                 s.close();
             }
@@ -85,8 +85,8 @@ public class GuiLoadBookmarkController implements Observer {
                 if (result.isPresent()) {
                     if (result.get() == ButtonType.OK) {
                         BookmarkController.deleteBookmark(graphName, bookmark.getBookmarkName());
-                        System.out.println("Deleted bookmark " + bookmark.getBookmarkName() + " Center Node: " + bookmark.getNodeID()
-                                + " Radius: " + bookmark.getRadius());
+                        System.out.println("Deleted bookmark " + bookmark.getBookmarkName()
+                                + " Center Node: " + bookmark.getNodeID() + " Radius: " + bookmark.getRadius());
                         this.initColumns();
 
                     } else {

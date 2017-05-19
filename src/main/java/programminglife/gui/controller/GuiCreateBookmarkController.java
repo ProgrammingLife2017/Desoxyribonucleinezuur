@@ -124,8 +124,8 @@ public class GuiCreateBookmarkController {
     }
 
     /**
-     * Set the graphcontroller
-     * @param graphController The graphcontroller
+     * Set the graphcontroller.
+     * @param graphController The graphcontroller.
      */
     public void setGraphController(GraphController graphController) {
         this.graphController = graphController;
