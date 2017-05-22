@@ -465,6 +465,7 @@ public class GuiController implements Observer {
 
     public ProgressBar getProgressBar() {
         return this.progressBar;
+    }
     /**
      * Sets the text field for drawing the graph.
      * @param center The center node
