@@ -1,10 +1,13 @@
 package programminglife.utility;
 
+import com.google.common.base.Charsets;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.Optional;
 
 /**
@@ -67,9 +70,12 @@ public final class Alerts {
         alert.setHeaderText(null);
         alert.setResizable(true);
         alert.getDialogPane().setMinWidth(ABOUT_MIN_WIDTH);
-        alert.setContentText("This application is made by Contextproject group Desoxyribonucleïnezuur:\n\n"
-                + "Ivo Wilms \n" + "Iwan Hoogenboom \n" + "Martijn van Meerten \n" + "Toine Hartman\n"
-                + "Yannick Haveman");
+        URL url = Alerts.class.getResource("/texts/About.txt");
+        try {
+            alert.setContentText(com.google.common.io.Resources.toString(url, Charsets.UTF_8));
+        } catch (IOException e) {
+            Alerts.error("Can't open the about file").show();
+        }
         alert.show();
     }
 
@@ -82,13 +88,12 @@ public final class Alerts {
         alert.setHeaderText(null);
         alert.setResizable(true);
         alert.getDialogPane().setMinWidth(INSTRUCTIONS_MIN_WIDTH);
-        alert.setContentText("Open a gfa file, wait for it to be parsed.\n"
-                + "Give the start node and the amount of layers (depth) to be drawn on the left.\n\n"
-                + "Zoom using the zoom buttons or alt + scrollwheel.\n"
-                + "Move the graph by pressing alt + dragging a node or edge.\n"
-                + "Reset the zoom with reset zoom and jump back to the beginning"
-                + " of the drawn graph with the Reset X/Y button.\n"
-                + "The suprise me! button chooses a random start node and draws with the depth you gave.");
+        URL url = Alerts.class.getResource("/texts/Instructions.txt");
+        try {
+            alert.setContentText(com.google.common.io.Resources.toString(url, Charsets.UTF_8));
+        } catch (IOException e) {
+            Alerts.error("Can't open the instructions file").show();
+        }
         alert.show();
     }
 }
