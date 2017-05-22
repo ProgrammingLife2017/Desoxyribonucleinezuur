@@ -96,7 +96,7 @@ public class GraphController {
             Line link = new Line(targetLeft.getX(), targetLeft.getY(), originRight.getX(), originRight.getY());
             link.setStroke(Color.DARKGRAY);
             link.setStrokeWidth(3);
-            link.setOnMouseClicked(event -> System.out.printf("Link{%s -> %s}\n", origin, node));
+            link.setOnMouseClicked(event -> System.out.printf("Link{%s -> %s}%n", origin, node));
 
             this.grpDrawArea.getChildren().add(link);
         }
@@ -138,7 +138,7 @@ public class GraphController {
     private XYCoordinate drawNode(Segment node) {
         node.setOnMouseClicked(event -> {
             System.out.println(node.getSequence());
-            System.out.printf("%s (location %s, size %s)\n",
+            System.out.printf("%s (location %s, size %s)%n",
                     node.toString(),
                     node.getLocation(),
                     node.getSize());
