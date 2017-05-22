@@ -8,6 +8,7 @@ import javafx.beans.property.StringProperty;
  * Class representing a bookmark. Consists of a location and radius.
  */
 public class Bookmark {
+    private String file;
     private int radius;
     private int nodeID;
     private String bookmarkName;
@@ -15,12 +16,14 @@ public class Bookmark {
 
     /**
      * Initialize a bookmark.
+     * @param file The graph file where this bookmark belongs to
      * @param bookmarkName this is the bookmarkName of the file in which this genome and location is present
      * @param nodeID is the ID of the node where the bookmark is present.
      * @param radius is the depth to which surrounding nodes will be visualized.
      * @param description The text describing this bookmark.
      */
-    public Bookmark(int nodeID, int radius, String bookmarkName, String description) {
+    public Bookmark(String file, int nodeID, int radius, String bookmarkName, String description) {
+        this.file = file;
         this.radius = radius;
         this.nodeID = nodeID;
         this.bookmarkName = bookmarkName;
@@ -33,6 +36,10 @@ public class Bookmark {
 
     public StringProperty getDescriptionProperty() {
         return new SimpleStringProperty(this.description);
+    }
+
+    public StringProperty getFileProperty() {
+        return new SimpleStringProperty(this.file);
     }
 
     public String getBookmarkName() {
@@ -72,11 +79,20 @@ public class Bookmark {
         return super.hashCode();
     }
 
+    public String getFile() {
+        return file;
+    }
+
+    public void setFile(String file) {
+        this.file = file;
+    }
+
     @Override
     public boolean equals(Object other) {
         if (other instanceof Bookmark) {
             Bookmark that = (Bookmark) other;
-            if (this.radius == that.getRadius()
+            if (this.file.equals(that.getFile())
+                    && this.radius == that.getRadius()
                     && this.nodeID == that.getNodeID()
                     && this.bookmarkName.equals(that.getBookmarkName())
                     && this.description.equals(that.getDescription())) {
@@ -88,7 +104,7 @@ public class Bookmark {
 
     @Override
     public String toString() {
-        return ("{name: " + this.bookmarkName
+        return ("{file: " + this.file + ", name: " + this.bookmarkName
                 + ", description: " + this.description
                 + ", ID " + this.nodeID
                 + ", radius: " + this.radius + "}");
