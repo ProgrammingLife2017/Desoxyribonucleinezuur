@@ -14,8 +14,6 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 import java.awt.*;
-import java.text.SimpleDateFormat;
-import java.util.Locale;
 import java.util.Optional;
 
 /**
@@ -27,11 +25,6 @@ public final class ProgrammingLife extends Application {
 
     private static Stage primaryStage;
     private static VBox vbox;
-
-    private static final String DATA_FOLDER = "data/";
-    private static final String TB_DATA = DATA_FOLDER + "real/TB10.gfa";
-    private static final String HUMAN_DATA = DATA_FOLDER + "real/chr19.hg38.w115.gfa";
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("m:ss.SSS", Locale.getDefault());
 
     /**
      * Main method for the application.

@@ -1,0 +1,6 @@
+Open a gfa file, wait for it to be parsed.
+Give the start node and the amount of layers (depth) to be drawn on the left.
+Zoom using the zoom buttons or alt + scroll wheel.
+Move the graph by pressing alt + dragging a node or edge.
+Reset the zoom with reset zoom and jump back to the beginning of the drawn graph with the Reset X/Y button.
+The surprise me! button chooses a random start node and draws with the depth you gave.

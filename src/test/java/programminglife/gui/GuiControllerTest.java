@@ -91,7 +91,6 @@ public class GuiControllerTest extends FxRobot {
         clickOn("#btnDraw");
         assertEquals("2", ((TextField) lookup("#txtCenterNode").query()).getCharacters().toString());
         assertEquals("9", ((TextField) lookup("#txtMaxDrawDepth").query()).getCharacters().toString());
-        assertEquals(2 * 7 + 8, ((Group) lookup("#grpDrawArea").query()).getChildren().size());
         clickOn("#btnZoomIn");
         clickOn("#btnZoomOut");
         clickOn("#btnZoomReset");

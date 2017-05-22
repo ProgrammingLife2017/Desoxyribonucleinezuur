@@ -21,8 +21,8 @@ public interface Graph {
     /**
      * Add a node to the graph.
      * @param node Node.
-     * @param children Set<Node> which contains the children.
-     * @param parents Set<Node> which contains the parents.
+     * @param children {@link Set} which contains the children.
+     * @param parents {@link Set} which contains the parents.
      */
     void addNode(Node node, Set<Node> children, Set<Node> parents);
 
@@ -35,8 +35,8 @@ public interface Graph {
     /**
      * Replaces a node.
      * @param node Node.
-     * @param children Set<Node> of the children.
-     * @param parents Set<Node> of the parents.
+     * @param children {@link Set} of the children.
+     * @param parents {@link Set} of the parents.
      */
     void replaceNode(Node node, Set<Node> children, Set<Node> parents);
 
@@ -48,50 +48,50 @@ public interface Graph {
 
     /**
      * getter for the Children of a node.
-     * @param node Node.
-     * @return Set<Segment> of the children.
+     * @param node the {@link Node} to get the children from.
+     * @return {@link Set} of the children.
      */
     Set<Segment> getChildren(Node node);
 
     /**
      * getter for the Children of a node.
-     * @param nodeID int.
-     * @return Set<Segment> of the children.
+     * @param nodeID the node ID to get children from
+     * @return {@link Set} of the children.
      */
     Set<Segment> getChildren(int nodeID);
 
     /**
      * getter for the Parents of a node.
      * @param node Node.
-     * @return Set<Segment> of the parents.
+     * @return {@link Set} of the parents.
      */
     Set<Segment> getParents(Node node);
 
     /**
      * getter for the Parents of a node.
      * @param nodeID int.
-     * @return Set<Segment> of the parents.
+     * @return {@link Set} of the parents.
      */
     Set<Segment> getParents(int nodeID);
 
     /**
      * getter for the Genomes of a node.
      * @param node Node.
-     * @return Set<Segment>.
+     * @return {@link Set}.
      */
     Set<Genome> getGenomes(Node node);
 
     /**
      * Checks to see if the graph contains a certain node.
-     * @param node Node.
-     * @return boolean.
+     * @param node the {@link Node} to check.
+     * @return if the {@link Node} is in the {@link Graph}
      */
     boolean contains(Node node);
 
     /**
      * Checks to see if the graph contains a certain node.
-     * @param nodeID int.
-     * @return boolean.
+     * @param nodeID node ID to check for if it is in the {@link Graph}
+     * @return if the {@link Node} is in the {@link Graph}
      */
     boolean contains(int nodeID);
 

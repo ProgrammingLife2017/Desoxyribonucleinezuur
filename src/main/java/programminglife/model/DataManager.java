@@ -66,7 +66,7 @@ public final class DataManager {
     private DataManager(String name) throws IOException {
         String fileName = toDBFile(name);
 
-        System.out.printf("[%s] Setting up MapDB %s...\n", Thread.currentThread().getName(), fileName);
+        System.out.printf("[%s] Setting up MapDB %s...%n", Thread.currentThread().getName(), fileName);
         this.currentFileName = fileName;
         this.db = DBMaker.fileDB(new File(fileName))
                 .fileMmapEnableIfSupported()
@@ -76,7 +76,7 @@ public final class DataManager {
                 .make();
         this.sequenceMap = getMap(db, SEQUENCE_MAP_SUFFIX, Serializer.INTEGER, Serializer.STRING_ASCII);
         this.sequenceLengthMap = getMap(db, SEQUENCE_LENGTH_MAP_SUFFIX, Serializer.INTEGER, Serializer.INTEGER);
-        System.out.printf("[%s] MapDB %s set up!\n", Thread.currentThread().getName(), fileName);
+        System.out.printf("[%s] MapDB %s set up!%n", Thread.currentThread().getName(), fileName);
     }
 
     /**
@@ -153,7 +153,7 @@ public final class DataManager {
             assert (res != null);
             return res;
         } else {
-            System.out.printf("[%s] Storage %s does not exist.\n[%s] Creating storage %s...\n",
+            System.out.printf("[%s] Storage %s does not exist.%n[%s] Creating storage %s...%n",
                     Thread.currentThread().getName(), name, Thread.currentThread().getName(), name);
             HTreeMap<K, V> res = db
                     .hashMap(name)
@@ -162,7 +162,7 @@ public final class DataManager {
                     .create();
 
             assert (res != null);
-            System.out.printf("[%s] Storage %s created\n", Thread.currentThread().getName(), name);
+            System.out.printf("[%s] Storage %s created%n", Thread.currentThread().getName(), name);
 
             return res;
         }
@@ -174,12 +174,12 @@ public final class DataManager {
     public static void close() {
         DB db = DataManager.getInstance().getDb();
         if (db.isClosed()) {
-            System.out.printf("[%s] MapDB is already closed\n", Thread.currentThread().getName());
+            System.out.printf("[%s] MapDB is already closed%n", Thread.currentThread().getName());
         } else {
-            System.out.printf("[%s] Closing MapDB...\n", Thread.currentThread().getName());
+            System.out.printf("[%s] Closing MapDB...%n", Thread.currentThread().getName());
             DataManager.getInstance().rollback(db);
             db.close();
-            System.out.printf("[%s] MapDB closed\n", Thread.currentThread().getName());
+            System.out.printf("[%s] MapDB closed%n", Thread.currentThread().getName());
         }
     }
 
@@ -188,7 +188,7 @@ public final class DataManager {
     }
 
     private void commit(DB db) {
-      return;
+      db.commit();
     }
 
     /**
