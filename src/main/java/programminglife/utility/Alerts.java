@@ -3,6 +3,7 @@ package programminglife.utility;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
@@ -12,8 +13,6 @@ import java.util.Optional;
 public final class Alerts {
     private static final double ABOUT_MIN_WIDTH = 500;
     private static final double INSTRUCTIONS_MIN_WIDTH = 800;
-
-    private static Alerts alerts;
 
     /**
      * Constructor for the Alert.
@@ -25,6 +24,7 @@ public final class Alerts {
      * @param message String containing the message to be given to the user.
      * @return Alert error.
      */
+    @NotNull
     public static Alert error(String message) {
         return new Alert(Alert.AlertType.ERROR, message, ButtonType.CLOSE);
     }
@@ -34,6 +34,7 @@ public final class Alerts {
      * @param message String containing the message to be given to the user.
      * @return Alert warning.
      */
+    @NotNull
     public static Alert warning(String message) {
         return new Alert(Alert.AlertType.WARNING, message, ButtonType.CLOSE);
     }

@@ -163,7 +163,7 @@ public class GuiController implements Observer {
             //This will always happen if a user has used the program before.
             //Therefore it is unnecessary to handle further.
         } catch (IOException e) {
-            Alerts.error("This file can't be opened").showAndWait();
+            Alerts.error("This file can't be opened").show();
             return;
         }
         if (recentFile != null) {
@@ -176,7 +176,7 @@ public class GuiController implements Observer {
                         try {
                             openFile(new File(mi.getText()));
                         } catch (IOException | UnknownTypeException e) {
-                            Alerts.error("This file can't be opened").showAndWait();
+                            Alerts.error("This file can't be opened").show();
                         }
                     });
                     menuRecent.getItems().add(mi);
@@ -184,7 +184,7 @@ public class GuiController implements Observer {
                 }
                 sc.close();
             } catch (FileNotFoundException e) {
-                Alerts.error("This file can't be found").showAndWait();
+                Alerts.error("This file can't be found").show();
             }
         }
     }
@@ -213,14 +213,14 @@ public class GuiController implements Observer {
                         fw.close();
                     }
                 } catch (IOException e) {
-                    Alerts.error("This file can't be updated").showAndWait();
+                    Alerts.error("This file can't be updated").show();
                 }
             } catch (FileNotFoundException e) {
-                Alerts.error("This file can't be found").showAndWait();
+                Alerts.error("This file can't be found").show();
             } catch (UnknownTypeException e) {
-                Alerts.error("This file is malformed").showAndWait();
+                Alerts.error("This file is malformed").show();
             } catch (IOException e) {
-                Alerts.error("This file can't be opened");
+                Alerts.error("This file can't be opened").show();
             }
         });
 
@@ -248,7 +248,7 @@ public class GuiController implements Observer {
                 bookmarkDialogStage.initOwner(ProgrammingLife.getStage());
                 bookmarkDialogStage.showAndWait();
             } catch (IOException e) {
-                Alerts.error("The bookmarks file can't be opened").showAndWait();
+                Alerts.error("The bookmarks file can't be opened").show();
             }
         });
     }
@@ -326,14 +326,14 @@ public class GuiController implements Observer {
                 centerNode = Integer.parseInt(txtCenterNode.getText());
                 maxDepth = Integer.parseInt(txtMaxDrawDepth.getText());
             } catch (NumberFormatException e) {
-                Alerts.warning("Input is not a number, try again with a number as input.").showAndWait();
+                Alerts.warning("Input is not a number, try again with a number as input.").show();
             }
             try {
                 this.graphController.clear();
                 this.graphController.draw(centerNode, maxDepth);
                 System.out.printf("[%s] Graph drawn.\n", Thread.currentThread().getName());
             } catch (NoSuchElementException e) {
-                Alerts.warning("The input is not a node, try again with a number that exists as a node.");
+                Alerts.warning("The input is not a node, try again with a number that exists as a node.").show();
             }
         });
 
