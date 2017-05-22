@@ -92,13 +92,6 @@ public class GraphParser extends Observable implements Runnable {
         System.out.printf("done (%d lines)%n", lineCount);
         this.progressCounter.setTotalLineCount(lineCount);
 
-//        int lineSkipFactor;
-//        if (isCached) {
-//            lineSkipFactor = 100;
-//        } else {
-//            lineSkipFactor = 1;
-//        }
-
         try (BufferedReader reader = new BufferedReader(new FileReader(this.graphFile))) {
             reader.lines().forEach(Errors.rethrow().wrap(line -> {
                 char type = line.charAt(0);
