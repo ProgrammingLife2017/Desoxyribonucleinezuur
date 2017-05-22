@@ -59,6 +59,7 @@ public class GuiController implements Observer {
     @FXML private Button btnDrawRandom;
     @FXML private Button btnBookmark;
     @FXML private Menu menuBookmark;
+    @FXML private ProgressBar progressBar;
 
     @FXML private TextField txtMaxDrawDepth;
     @FXML private TextField txtCenterNode;
@@ -129,9 +130,11 @@ public class GuiController implements Observer {
                 throw new RuntimeException(e);
             }
         } else if (o instanceof FileProgressCounter) {
+            progressBar.setVisible(true);
             FileProgressCounter progress = (FileProgressCounter) o;
-            if (progress.getLineCount() % 250 == 0) {
-                System.out.println(progress);
+            this.getProgressBar().setProgress(progress.percentage());
+            if (progressBar.getProgress() == 1.0d) {
+                progressBar.setVisible(false);
             }
         }
     }
@@ -455,6 +458,9 @@ public class GuiController implements Observer {
         return console;
     }
 
+    public ProgressBar getProgressBar() {
+        return this.progressBar;
+    }
     /**
      * Sets the text field for drawing the graph.
      * @param center The center node
