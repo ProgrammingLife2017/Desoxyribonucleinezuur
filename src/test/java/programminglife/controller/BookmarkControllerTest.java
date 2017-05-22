@@ -21,7 +21,7 @@ public class BookmarkControllerTest {
 
     @Before
     public void setup() {
-        bookmark = new Bookmark( 2, 6,"testbm", "testing");
+        bookmark = new Bookmark("test",2, 6,"testbm", "testing");
         testPath = BookmarkControllerTest.class.getResource("/bookmarkTest.xml").getPath();
     }
 
@@ -35,8 +35,8 @@ public class BookmarkControllerTest {
 
     @Test
     public void readTest() {
-        Bookmark newBookmark = BookmarkController.loadBookmark(testPath,"test", "testbm");
-        assertEquals(newBookmark, bookmark);
+        List<Bookmark> newBookmark = BookmarkController.loadAllGraphBookmarks(testPath,"test");
+        assertEquals(newBookmark.get(0), bookmark);
     }
 
     @Test
@@ -45,7 +45,7 @@ public class BookmarkControllerTest {
         List<Bookmark> actual = BookmarkController.loadAllGraphBookmarks(testPath, "test");
         List<Bookmark> expected = new ArrayList<>();
         expected.add(bookmark);
-        expected.add(new Bookmark(2, 4, "testbm2", "testing"));
+        expected.add(new Bookmark("test",2, 4, "testbm2", "testing"));
         assertEquals(expected, actual);
     }
 
@@ -53,13 +53,13 @@ public class BookmarkControllerTest {
     public void writeTest() {
         BookmarkController.storeBookmark(testPath, "writeTestGraph", "writeTest", "writing", 2, 4);
         BookmarkController.storeBookmark(testPath, "writeTestGraph", "writeTeest", "writing", 2, 4);
-        assertNotNull(BookmarkController.loadBookmark(testPath, "writeTestGraph", "writeTest"));
+        assertNotNull(BookmarkController.loadAllGraphBookmarks(testPath, "writeTestGraph"));
     }
 
     @Test
     public void deleteTest() {
         BookmarkController.storeBookmark(testPath, "deleteTestGraph", "deleteTest", "deleting", 3, 5);
         BookmarkController.deleteBookmark(testPath, "deleteTestGraph", "deleteTest");
-        assertNull(BookmarkController.loadBookmark(testPath, "deleteTestGraph", "deleteTest"));
+        assertEquals(new ArrayList<>(), BookmarkController.loadAllGraphBookmarks(testPath, "deleteTestGraph"));
     }
 }
