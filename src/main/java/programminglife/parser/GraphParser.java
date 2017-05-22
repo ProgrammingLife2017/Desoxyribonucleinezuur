@@ -66,20 +66,20 @@ public class GraphParser extends Observable implements Runnable {
 
     /**
      * Parse a GFA file as a {@link GenomeGraph}.
-     * @throws FileNotFoundException when no file is found at the given path.
+     * @throws IOException when no file is found at the given path.
      * @throws UnknownTypeException when an unknown identifier (H/S/L) is read from the file.
      */
-    public synchronized void parse() throws FileNotFoundException, UnknownTypeException {
+    public synchronized void parse() throws IOException, UnknownTypeException {
         parse(PARSE_LINE_VERBOSE_DEFAULT);
     }
 
     /**
      * Parse a GFA file as a {@link GenomeGraph}.
      * @param verbose if log messages should be printed.
-     * @throws FileNotFoundException when no file is found at the given path.
+     * @throws IOException when no file is found at the given path.
      * @throws UnknownTypeException when an unknown identifier (H/S/L) is read from the file.
      */
-    protected synchronized void parse(boolean verbose) throws FileNotFoundException, UnknownTypeException {
+    protected synchronized void parse(boolean verbose) throws IOException, UnknownTypeException {
         if (verbose) {
             System.out.printf(
                     "[%s] Parsing file with name %s with path %s%n", Thread.currentThread().getName(),
@@ -87,14 +87,12 @@ public class GraphParser extends Observable implements Runnable {
             );
         }
 
-        System.out.printf("[%s] Calculating number of lines in file%n", Thread.currentThread().getName());
-        int lineCount = (int) (new BufferedReader(new FileReader(this.graphFile))).lines().count();
-        System.out.printf("[%s] Done! %d lines.%n", Thread.currentThread().getName(), lineCount);
+        System.out.printf("[%s] Calculating number of lines in file... ", Thread.currentThread().getName());
+        int lineCount = countLines(this.graphFile.getPath());
+        System.out.printf("done (%d lines)%n", lineCount);
         this.progressCounter.setTotalLineCount(lineCount);
 
-        BufferedReader reader = new BufferedReader(new FileReader(this.graphFile));
-
-        try {
+        try (BufferedReader reader = new BufferedReader(new FileReader(this.graphFile))) {
             reader.lines().forEach(Errors.rethrow().wrap(line -> {
                 char type = line.charAt(0);
 
@@ -136,12 +134,31 @@ public class GraphParser extends Observable implements Runnable {
             } else {
                 throw e;
             }
-        } finally {
-            try {
-                reader.close();
-            } catch (IOException e) {
-                System.err.println("Unexpected (non-fatal) failure closing the GFA file.");
+        }
+    }
+
+    /**
+     * Count the number of newlines in a file.
+     *
+     * This method does not handle files with/without final newline differently,
+     * but as it is just for optimisation purposes, this does not matter.
+     * @param filename The file to count the number of lines of
+     * @return The number of lines in the file
+     * @throws IOException if the file cannot be found or another problem occurs opening the file.
+     */
+    private int countLines(String filename) throws IOException {
+        try (InputStream is = new BufferedInputStream(new FileInputStream(filename))) {
+            byte[] c = new byte[1024];
+            int count = 0;
+            int readChars;
+            while ((readChars = is.read(c)) != -1) {
+                for (int i = 0; i < readChars; ++i) {
+                    if (c[i] == '\n') {
+                        ++count;
+                    }
+                }
             }
+            return count + 1;
         }
     }
 

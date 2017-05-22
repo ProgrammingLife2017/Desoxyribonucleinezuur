@@ -176,8 +176,7 @@ public class GuiController implements Observer {
             return;
         }
         if (recentFile != null) {
-            try {
-                Scanner sc = new Scanner(recentFile);
+            try (Scanner sc = new Scanner(recentFile)) {
                 while (sc.hasNextLine()) {
                     String next = sc.nextLine();
                     MenuItem mi = new MenuItem(next);
@@ -193,7 +192,6 @@ public class GuiController implements Observer {
                     menuRecent.getItems().add(mi);
                     recentItems = recentItems.concat(next + System.getProperty("line.separator"));
                 }
-                sc.close();
             } catch (FileNotFoundException e) {
                 (new Alert(Alert.AlertType.ERROR,
                         "This file cannot be found!",
