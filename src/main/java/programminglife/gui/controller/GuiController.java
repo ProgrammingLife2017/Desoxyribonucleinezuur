@@ -66,7 +66,6 @@ public class GuiController implements Observer {
     @FXML private Group grpDrawArea;
     @FXML private AnchorPane anchorLeftControlPanel;
 
-    //Privates used by method.
     private ConsoleView consoleView;
     private double orgSceneX, orgSceneY;
     private double orgTranslateX, orgTranslateY;
@@ -121,7 +120,7 @@ public class GuiController implements Observer {
             if (arg instanceof GenomeGraph) {
                 GenomeGraph graph = (GenomeGraph) arg;
 
-                System.out.printf("[%s] File Parsed.\n", Thread.currentThread().getName());
+                System.out.printf("[%s] File Parsed.%n", Thread.currentThread().getName());
 
                 this.setGraph(graph);
             } else if (arg instanceof Exception) {
@@ -146,10 +145,10 @@ public class GuiController implements Observer {
         disableGraphUIElements(graph == null);
 
         if (graph != null) {
-            System.out.printf("[%s] Graph was set to %s.\n", Thread.currentThread().getName(), graph.getID());
-            System.out.printf("[%s] The graph has %d nodes\n", Thread.currentThread().getName(), graph.size());
+            System.out.printf("[%s] Graph was set to %s.%n", Thread.currentThread().getName(), graph.getID());
+            System.out.printf("[%s] The graph has %d nodes%n", Thread.currentThread().getName(), graph.size());
         } else {
-            System.out.printf("[%s] graph was set to null.\n", Thread.currentThread().getName());
+            System.out.printf("[%s] graph was set to null.%n", Thread.currentThread().getName());
         }
     }
 
@@ -167,8 +166,7 @@ public class GuiController implements Observer {
             return;
         }
         if (recentFile != null) {
-            try {
-                Scanner sc = new Scanner(recentFile);
+            try (Scanner sc = new Scanner(recentFile)) {
                 while (sc.hasNextLine()) {
                     String next = sc.nextLine();
                     MenuItem mi = new MenuItem(next);
@@ -180,9 +178,8 @@ public class GuiController implements Observer {
                         }
                     });
                     menuRecent.getItems().add(mi);
-                    recentItems = recentItems.concat(next + "\n");
+                    recentItems = recentItems.concat(next + System.getProperty("line.separator"));
                 }
-                sc.close();
             } catch (FileNotFoundException e) {
                 Alerts.error("This file can't be found").show();
             }
@@ -208,7 +205,7 @@ public class GuiController implements Observer {
                 this.openFile(file);
                 try (BufferedWriter fw = new BufferedWriter(new FileWriter(recentFile, true))) {
                     if (!recentItems.contains(file.getAbsolutePath())) {
-                        fw.write(file.getAbsolutePath() + "\n");
+                        fw.write(file.getAbsolutePath() + System.getProperty("line.separator"));
                         fw.flush();
                         fw.close();
                     }
@@ -318,7 +315,7 @@ public class GuiController implements Observer {
         disableGraphUIElements(true);
 
         btnDraw.setOnAction(event -> {
-            System.out.printf("[%s] Drawing graph...\n", Thread.currentThread().getName());
+            System.out.printf("[%s] Drawing graph...%n", Thread.currentThread().getName());
             int centerNode = 0;
             int maxDepth = 0;
 
@@ -331,7 +328,7 @@ public class GuiController implements Observer {
             try {
                 this.graphController.clear();
                 this.graphController.draw(centerNode, maxDepth);
-                System.out.printf("[%s] Graph drawn.\n", Thread.currentThread().getName());
+                System.out.printf("[%s] Graph drawn.%n", Thread.currentThread().getName());
             } catch (NoSuchElementException e) {
                 Alerts.warning("The input is not a node, try again with a number that exists as a node.").show();
             }

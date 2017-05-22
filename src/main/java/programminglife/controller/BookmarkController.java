@@ -286,7 +286,6 @@ public final class BookmarkController {
                 StreamResult result = new StreamResult(bookmarkFile);
 
                 transformer.transform(source, result);
-
             } catch (ParserConfigurationException | TransformerException e) { }
         }
     }
