@@ -8,6 +8,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import programminglife.model.Bookmark;
+import programminglife.utility.Alerts;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -72,7 +73,7 @@ public final class BookmarkController {
     }
 
     /**
-     * Checks wheter a bookmark exists.
+     * Checks whether a bookmark exists.
      * @param fileName The name of the bookmarks file
      * @param graphName The name of the graph file
      * @param bookmarkName The name of the bookmark
@@ -95,7 +96,7 @@ public final class BookmarkController {
                 }
             }
         } catch (ParserConfigurationException | SAXException | IOException e) {
-            (new Alert(Alert.AlertType.ERROR, "The bookmarks cannot be loaded.", ButtonType.CLOSE)).show();
+            Alerts.error("Bookmark file error").show();
         }
         return false;
     }
@@ -297,7 +298,9 @@ public final class BookmarkController {
                 StreamResult result = new StreamResult(bookmarkFile);
 
                 transformer.transform(source, result);
-            } catch (ParserConfigurationException | TransformerException e) { }
+            } catch (ParserConfigurationException | TransformerException e) {
+                Alerts.error("The file could not be found or created");
+            }
         }
     }
 
