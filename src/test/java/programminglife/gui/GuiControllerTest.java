@@ -39,7 +39,7 @@ public class GuiControllerTest extends FxRobot {
 
     public GuiControllerTest() {
         try {
-            testFileName = new File(getClass().getResource("/test.gfa").toURI()).getAbsolutePath();
+            testFileName = new File(getClass().getResource(TEST_File).toURI()).getAbsolutePath();
         } catch (URISyntaxException e) {
             e.printStackTrace();
             fail();
