@@ -95,6 +95,7 @@ public final class BookmarkController {
         try {
             DocumentBuilder builder = factory.newDocumentBuilder();
             dom = builder.parse(fileName);
+            dom.getDocumentElement().normalize();
             Element doc = dom.getDocumentElement();
             return getBookmark(doc, graphName, bookMarkName);
         } catch (ParserConfigurationException | SAXException | IOException e) {
@@ -111,15 +112,14 @@ public final class BookmarkController {
      * @return the {@link Bookmark} with the requested name and graph.
      */
     private static Bookmark getBookmark(Element doc, String graphName, String bookmarkName) {
-        NodeList nodeList = doc.getChildNodes();
+        NodeList nodeList = doc.getElementsByTagName("graph");
         Element graph = findTag(nodeList, graphName);
         if (graph != null) {
-            NodeList bookmarks = graph.getChildNodes();
+            NodeList bookmarks = graph.getElementsByTagName("bookmark");
             Element el = findTag(bookmarks, bookmarkName);
             if (el == null) {
                 return null;
-            }
-            if (el.getNodeName().equals(bookmarkName)) {
+            } else {
                 return parseBookmark(el);
             }
         }
@@ -138,13 +138,17 @@ public final class BookmarkController {
     public static void storeBookmark(String fileName, String graphName, String bookMarkName,
                                      String description, int nodeID, int radius) {
         checkFile(fileName);
+        if (loadBookmark(fileName, graphName, bookMarkName) != null) {
+            return;
+        }
         try {
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = docFactory.newDocumentBuilder();
             Document doc = builder.parse(fileName);
+            doc.getDocumentElement().normalize();
             Element rootElement = doc.getDocumentElement();
 
-            Element newBookmark = doc.createElement(bookMarkName);
+            Element newBookmark = doc.createElement("bookmark");
             Element nameTag = doc.createElement("name");
             nameTag.appendChild(doc.createTextNode(bookMarkName));
             Element descriptionTag = doc.createElement("description");
@@ -159,11 +163,14 @@ public final class BookmarkController {
             newBookmark.appendChild(radiusTag);
             newBookmark.appendChild(descriptionTag);
 
-            Element graphTag = findTag(doc.getDocumentElement().getChildNodes(), graphName);
+            Element graphTag = findTag(doc.getElementsByTagName("graph"), graphName);
 
             // No earlier bookmarks in this graph
            if (graphTag == null) {
-               graphTag = doc.createElement(graphName);
+               graphTag = doc.createElement("graph");
+               Element graphNameTag = doc.createElement("name");
+               graphNameTag.appendChild(doc.createTextNode(graphName));
+               graphTag.appendChild(graphNameTag);
                rootElement.appendChild(graphTag);
            }
 
@@ -193,10 +200,11 @@ public final class BookmarkController {
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = docFactory.newDocumentBuilder();
             Document doc = builder.parse(fileName);
-            Element graphTag = findTag(doc.getDocumentElement().getChildNodes(), graphName);
+            doc.getDocumentElement().normalize();
+            Element graphTag = findTag(doc.getElementsByTagName("graph"), graphName);
 
             if (graphTag != null) {
-                Element bookmarkTag = findTag(graphTag.getChildNodes(), bookmarkName);
+                Element bookmarkTag = findTag(graphTag.getElementsByTagName("bookmark"), bookmarkName);
                 if (bookmarkTag != null) {
                     graphTag.removeChild(bookmarkTag);
                     TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -226,10 +234,11 @@ public final class BookmarkController {
         try {
             DocumentBuilder builder = factory.newDocumentBuilder();
             dom = builder.parse(fileName);
+            dom.getDocumentElement().normalize();
             Element doc = dom.getDocumentElement();
-            Element graph = findTag(doc.getChildNodes(), graphName);
+            Element graph = findTag(doc.getElementsByTagName("graph"), graphName);
             if (graph != null) {
-                NodeList nodeList = graph.getChildNodes();
+                NodeList nodeList = graph.getElementsByTagName("bookmark");
                 if (nodeList != null) {
                     for (int i = 0; i < nodeList.getLength(); i++) {
                         if (nodeList.item(i).getNodeType() == Node.ELEMENT_NODE) {
@@ -256,7 +265,7 @@ public final class BookmarkController {
             for (int i = 0; i < nodeList.getLength(); i++) {
                 if (nodeList.item(i).getNodeType() == Node.ELEMENT_NODE) {
                     Element element = (Element) nodeList.item(i);
-                    if (element.getNodeName().equals(name)) {
+                    if (element.getElementsByTagName("name").item(0).getTextContent().equals(name)) {
                         return element;
                     }
                 }
