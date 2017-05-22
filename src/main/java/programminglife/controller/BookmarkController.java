@@ -37,17 +37,6 @@ public final class BookmarkController {
     private BookmarkController() { }
 
     /**
-     * Default bookmark loading method.
-     * Uses the default bookmark path.
-     * @param graphName is the name of the graph int which this bookmark exists.
-     * @param bookMarkName is the name of the bookmark (needs to be unique for bookmarks in the same graph).
-     * @return the {@link Bookmark} you are trying to load.
-     */
-    public static Bookmark loadBookmark(String graphName, String bookMarkName) {
-        return loadBookmark(BOOKMARKPATH, graphName, bookMarkName);
-    }
-
-    /**
      * Default all bookmark loading method.
      * Uses the default bookmark path
      * @param graphName The name of the graph from which to get the bookmarks.
@@ -65,10 +54,11 @@ public final class BookmarkController {
      * @param description The description of this bookmark.
      * @param nodeID The ID of the node for searching.
      * @param radius The radius of the bookmark for searching.
+     * @return true if the bookmark is stored and did not exist yet, false otherwise
      */
-    public static void storeBookmark(String graphName, String bookMarkName,
+    public static boolean storeBookmark(String graphName, String bookMarkName,
                                      String description, int nodeID, int radius) {
-        storeBookmark(BOOKMARKPATH, graphName, bookMarkName, description, nodeID, radius);
+        return storeBookmark(BOOKMARKPATH, graphName, bookMarkName, description, nodeID, radius);
     }
 
     /**
@@ -82,13 +72,13 @@ public final class BookmarkController {
     }
 
     /**
-     * Load a bookmark based on the graph's name and bookmark's name.
-     * @param fileName is the path of the bookmarks file location
-     * @param graphName is the name of the graph in which this bookmark exists.
-     * @param bookMarkName is the name of the bookmark (needs to be unique for bookmarks in the same graph).
-     * @return the {@link Bookmark} you are trying to load.
+     * Checks wheter a bookmark exists.
+     * @param fileName The name of the bookmarks file
+     * @param graphName The name of the graph file
+     * @param bookmarkName The name of the bookmark
+     * @return true if it exists, false otherwise
      */
-    public static Bookmark loadBookmark(String fileName, String graphName, String bookMarkName) {
+    private static boolean bookmarkExists(String fileName, String graphName, String bookmarkName) {
         checkFile(fileName);
         Document dom;
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -97,33 +87,17 @@ public final class BookmarkController {
             dom = builder.parse(fileName);
             dom.getDocumentElement().normalize();
             Element doc = dom.getDocumentElement();
-            return getBookmark(doc, graphName, bookMarkName);
-        } catch (ParserConfigurationException | SAXException | IOException e) {
-            (new Alert(Alert.AlertType.ERROR, "This bookmark cannot be loaded.", ButtonType.CLOSE)).show();
-        }
-        return null;
-    }
-
-    /**
-     * Searches through the dom to find the requested bookmark.
-     * @param doc the document element.
-     * @param graphName the name of the graph.
-     * @param bookmarkName the name of the bookmark
-     * @return the {@link Bookmark} with the requested name and graph.
-     */
-    private static Bookmark getBookmark(Element doc, String graphName, String bookmarkName) {
-        NodeList nodeList = doc.getElementsByTagName("graph");
-        Element graph = findTag(nodeList, graphName);
-        if (graph != null) {
-            NodeList bookmarks = graph.getElementsByTagName("bookmark");
-            Element el = findTag(bookmarks, bookmarkName);
-            if (el == null) {
-                return null;
-            } else {
-                return parseBookmark(el);
+            Element graph = findTag(doc.getElementsByTagName("graph"), graphName);
+            if (graph != null) {
+                Element bookmark = findTag(graph.getElementsByTagName("bookmark"), bookmarkName);
+                if (bookmark != null) {
+                    return true;
+                }
             }
+        } catch (ParserConfigurationException | SAXException | IOException e) {
+            (new Alert(Alert.AlertType.ERROR, "The bookmarks cannot be loaded.", ButtonType.CLOSE)).show();
         }
-        return null;
+        return false;
     }
 
     /**
@@ -134,12 +108,13 @@ public final class BookmarkController {
      * @param description The description of this bookmark.
      * @param nodeID The ID of the node for searching.
      * @param radius The radius of the bookmark for searching.
+     * @return true if the bookmark already exists, false otherwise.
      */
-    public static void storeBookmark(String fileName, String graphName, String bookMarkName,
+    public static boolean storeBookmark(String fileName, String graphName, String bookMarkName,
                                      String description, int nodeID, int radius) {
         checkFile(fileName);
-        if (loadBookmark(fileName, graphName, bookMarkName) != null) {
-            return;
+        if (bookmarkExists(fileName, graphName, bookMarkName)) {
+            return false;
         }
         try {
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -183,9 +158,11 @@ public final class BookmarkController {
             transformer.transform(source, streamResult);
             System.out.println("Created bookmark " + bookMarkName + " Center Node: " + nodeID
                     + " Radius: " + radius);
+            return true;
         } catch (ParserConfigurationException | SAXException | IOException | TransformerException pce) {
             (new Alert(Alert.AlertType.ERROR, "This bookmark cannot be stored.", ButtonType.CLOSE)).show();
         }
+        return false;
     }
 
     /**
@@ -239,12 +216,37 @@ public final class BookmarkController {
             Element graph = findTag(doc.getElementsByTagName("graph"), graphName);
             if (graph != null) {
                 NodeList nodeList = graph.getElementsByTagName("bookmark");
-                if (nodeList != null) {
-                    for (int i = 0; i < nodeList.getLength(); i++) {
-                        if (nodeList.item(i).getNodeType() == Node.ELEMENT_NODE) {
-                            Element el = (Element) nodeList.item(i);
-                            result.add(parseBookmark(el));
-                        }
+                result.addAll(parseBookmarks(graphName, nodeList));
+            }
+        } catch (ParserConfigurationException | SAXException | IOException e) {
+            (new Alert(Alert.AlertType.ERROR, "The bookmarks cannot be loaded.", ButtonType.CLOSE)).show();
+        }
+        return result;
+    }
+
+    /**
+     * Load all bookmarks from all files.
+     * @param fileName The bookmark file from which to read
+     * @return A map of lists containing all bookmarks
+     */
+    public static List<Bookmark> loadAllBookmarks(String fileName) {
+        List<Bookmark> result = new ArrayList<>();
+        checkFile(fileName);
+        Document dom;
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        try {
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            dom = builder.parse(fileName);
+            dom.getDocumentElement().normalize();
+            Element doc = dom.getDocumentElement();
+            NodeList graphs = doc.getElementsByTagName("graph");
+            if (graphs != null) {
+                for (int i = 0; i < graphs.getLength(); i++) {
+                    if (graphs.item(i).getNodeType() == Node.ELEMENT_NODE) {
+                        Element element = (Element) graphs.item(i);
+                        String graphName = element.getElementsByTagName("name").item(0).getTextContent();
+                        NodeList bookmarks = element.getElementsByTagName("bookmark");
+                        result.addAll(parseBookmarks(graphName, bookmarks));
                     }
                 }
             }
@@ -300,13 +302,35 @@ public final class BookmarkController {
     }
 
     /**
-     * Parses an xml element to return a bookmark.
-     * @param el The xml element containing the bookmark
+     * Parses a list of bookmark nodes and returns them.
+     * @param graphName The file these bookmarks are about.
+     * @param bookmarks The nodelist containing all bookmarks
      * @return A bookmark represented by the element
      */
-    private static Bookmark parseBookmark(Element el) {
+    private static List<Bookmark> parseBookmarks(String graphName, NodeList bookmarks) {
+        List<Bookmark> result = new ArrayList<>();
+        if (bookmarks != null) {
+            for (int j = 0; j < bookmarks.getLength(); j++) {
+                if (bookmarks.item(j).getNodeType() == Node.ELEMENT_NODE) {
+                    Element el = (Element) bookmarks.item(j);
+                    result.add(parseBookmark(graphName, el));
+                }
+            }
+            return result;
+        }
+        return null;
+    }
+
+    /**
+     * Parses an xml element to return a bookmark.
+     * @param graphName The file that this bookmark is about
+     * @param el The element containing the bookmark
+     * @return The bookmark from the element.
+     */
+    private static Bookmark parseBookmark(String graphName, Element el) {
         if (el != null) {
-            return new Bookmark(Integer.parseInt(el.getElementsByTagName("ID").item(0).getTextContent()),
+            return new Bookmark(graphName,
+                    Integer.parseInt(el.getElementsByTagName("ID").item(0).getTextContent()),
                     Integer.parseInt(el.getElementsByTagName("radius").item(0).getTextContent()),
                     el.getElementsByTagName("name").item(0).getTextContent(),
                     el.getElementsByTagName("description").item(0).getTextContent());

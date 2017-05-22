@@ -58,6 +58,7 @@ public class GuiController implements Observer {
     @FXML private Button btnTranslateReset;
     @FXML private Button btnDraw;
     @FXML private Button btnDrawRandom;
+    @FXML private Button btnBookmark;
     @FXML private Menu menuBookmark;
 
     @FXML private TextField txtMaxDrawDepth;
@@ -237,9 +238,11 @@ public class GuiController implements Observer {
                 AnchorPane page = loader.load();
                 GuiLoadBookmarkController gc = loader.getController();
                 gc.setGraphController(graphController);
+                gc.setGuiController(this);
                 gc.initColumns();
                 Scene scene = new Scene(page);
                 Stage bookmarkDialogStage = new Stage();
+                bookmarkDialogStage.setResizable(false);
                 bookmarkDialogStage.setScene(scene);
                 bookmarkDialogStage.setTitle("Load Bookmark");
                 bookmarkDialogStage.initOwner(ProgrammingLife.getStage());
@@ -340,6 +343,25 @@ public class GuiController implements Observer {
             btnDraw.fire();
         });
 
+        btnBookmark.setOnAction(event -> {
+            try {
+                FXMLLoader loader = new FXMLLoader(ProgrammingLife.class.getResource("/CreateBookmarkWindow.fxml"));
+                AnchorPane page = loader.load();
+                GuiCreateBookmarkController gc = loader.getController();
+                gc.setGraphController(graphController);
+                gc.setText(txtCenterNode.getText(), txtMaxDrawDepth.getText());
+                Scene scene = new Scene(page);
+                Stage bookmarkDialogStage = new Stage();
+                bookmarkDialogStage.setResizable(false);
+                bookmarkDialogStage.setScene(scene);
+                bookmarkDialogStage.setTitle("Create Bookmark");
+                bookmarkDialogStage.initOwner(ProgrammingLife.getStage());
+                bookmarkDialogStage.showAndWait();
+            } catch (IOException e) {
+                (new Alert(Alert.AlertType.ERROR, "This bookmark cannot be created.", ButtonType.CLOSE)).show();
+            }
+        });
+
         txtMaxDrawDepth.textProperty().addListener(new NumbersOnlyListener(txtMaxDrawDepth));
         txtMaxDrawDepth.setText(INITIAL_MAX_DRAW_DEPTH);
 
@@ -434,5 +456,15 @@ public class GuiController implements Observer {
 
         System.setOut(console.getOut());
         return console;
+    }
+
+    /**
+     * Sets the text field for drawing the graph.
+     * @param center The center node
+     * @param radius The radius of the subgraph
+     */
+    void setText(int center, int radius) {
+        txtCenterNode.setText(String.valueOf(center));
+        txtMaxDrawDepth.setText(String.valueOf(radius));
     }
 }

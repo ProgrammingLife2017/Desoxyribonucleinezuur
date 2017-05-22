@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.Group?>
 <?import javafx.scene.layout.*?>
 
-<VBox prefHeight="900.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="programminglife.gui.controller.GuiController">
+<VBox prefHeight="900.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="programminglife.gui.controller.GuiController">
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
@@ -43,6 +45,7 @@
                    <TextField fx:id="txtMaxDrawDepth" layoutX="-13.0" layoutY="283.0" minWidth="100.0" promptText="Max depth" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
                    <TextField fx:id="txtCenterNode" layoutX="20.0" layoutY="251.0" minWidth="100.0" promptText="Origin node" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
                    <Button fx:id="btnDrawRandom" layoutX="20.0" layoutY="350.0" minWidth="100.0" mnemonicParsing="false" text="Surprise me!" />
+                  <Button fx:id="btnBookmark" layoutX="27.0" layoutY="384.0" mnemonicParsing="false" text="Bookmark" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
                </children>
             </AnchorPane>
             <AnchorPane fx:id="anchorGraphPanel" minHeight="200" minWidth="600" prefHeight="400" prefWidth="600">
