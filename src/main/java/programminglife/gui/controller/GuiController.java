@@ -76,7 +76,6 @@ public class GuiController implements Observer {
     private File file;
     private File recentFile = new File("Recent.txt");
     private String recentItems = "";
-    private Alerts alerts = Alerts.getInstance();
     private Thread parseThread;
 
     /**
@@ -164,7 +163,7 @@ public class GuiController implements Observer {
             //This will always happen if a user has used the program before.
             //Therefore it is unnecessary to handle further.
         } catch (IOException e) {
-            this.alerts.cantCreateAlert();
+            Alerts.error("This file can't be opened").showAndWait();
             return;
         }
         if (recentFile != null) {
@@ -177,7 +176,7 @@ public class GuiController implements Observer {
                         try {
                             openFile(new File(mi.getText()));
                         } catch (IOException | UnknownTypeException e) {
-                            this.alerts.cantOpenAlert();
+                            Alerts.error("This file can't be opened").showAndWait();
                         }
                     });
                     menuRecent.getItems().add(mi);
@@ -185,7 +184,7 @@ public class GuiController implements Observer {
                 }
                 sc.close();
             } catch (FileNotFoundException e) {
-                this.alerts.cantFindAlert();
+                Alerts.error("This file can't be found").showAndWait();
             }
         }
     }
@@ -214,20 +213,20 @@ public class GuiController implements Observer {
                         fw.close();
                     }
                 } catch (IOException e) {
-                    this.alerts.cantUpdateRecentAlert();
+                    Alerts.error("This file can't be updated").showAndWait();
                 }
             } catch (FileNotFoundException e) {
-                this.alerts.cantFindAlert();
+                Alerts.error("This file can't be found").showAndWait();
             } catch (UnknownTypeException e) {
-                this.alerts.malformedAlert();
+                Alerts.error("This file is malformed").showAndWait();
             } catch (IOException e) {
-                this.alerts.unexpectedErrorAlert();
+                Alerts.error("This file can't be opened");
             }
         });
 
-        btnQuit.setOnAction(event -> this.alerts.quitAlert());
-        btnAbout.setOnAction(event -> this.alerts.infoAboutAlert());
-        btnInstructions.setOnAction(event -> this.alerts.infoInstructionAlert());
+        btnQuit.setOnAction(event -> Alerts.quitAlert());
+        btnAbout.setOnAction(event -> Alerts.infoAboutAlert());
+        btnInstructions.setOnAction(event -> Alerts.infoInstructionAlert());
     }
 
     /**
@@ -249,7 +248,7 @@ public class GuiController implements Observer {
                 bookmarkDialogStage.initOwner(ProgrammingLife.getStage());
                 bookmarkDialogStage.showAndWait();
             } catch (IOException e) {
-                this.alerts.loadBookmarkAlert();
+                Alerts.error("The bookmarks file can't be opened").showAndWait();
             }
         });
     }
@@ -327,14 +326,14 @@ public class GuiController implements Observer {
                 centerNode = Integer.parseInt(txtCenterNode.getText());
                 maxDepth = Integer.parseInt(txtMaxDrawDepth.getText());
             } catch (NumberFormatException e) {
-                this.alerts.notANumberAlert();
+                Alerts.warning("Input is not a number, try again with a number as input.").showAndWait();
             }
             try {
                 this.graphController.clear();
                 this.graphController.draw(centerNode, maxDepth);
                 System.out.printf("[%s] Graph drawn.\n", Thread.currentThread().getName());
             } catch (NoSuchElementException e) {
-                this.alerts.notANodeAlert();
+                Alerts.warning("The input is not a node, try again with a number that exists as a node.");
             }
         });
 

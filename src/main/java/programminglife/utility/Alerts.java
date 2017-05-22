@@ -21,92 +21,27 @@ public final class Alerts {
     private Alerts() { }
 
     /**
-     * return an instance of the alert class.
-     * @return Alerts.
+     * Alert method used if the alert is an error.
+     * @param message String containing the message to be given to the user.
+     * @return Alert error.
      */
-    public static synchronized Alerts getInstance() {
-        if (alerts == null) {
-            alerts = new Alerts();
-        }
-        return alerts;
+    public static Alert error(String message) {
+        return new Alert(Alert.AlertType.ERROR, message, ButtonType.CLOSE);
     }
 
     /**
-     * Alert method used if a file can't be opened.
+     * Alert method used if the alert is a warning.
+     * @param message String containing the message to be given to the user.
+     * @return Alert warning.
      */
-    public void cantOpenAlert() {
-        (new Alert(Alert.AlertType.ERROR, "This file can't be opened!", ButtonType.CLOSE)).show();
-    }
-
-    /**
-     * Alert method used if a file can't be saved.
-     */
-    public void cantSaveAlert() {
-        (new Alert(Alert.AlertType.ERROR, "This file can't be saved!", ButtonType.CLOSE)).show();
-    }
-
-    /**
-     * Alert method used if a file can't be found.
-     */
-    public void cantFindAlert() {
-        (new Alert(Alert.AlertType.ERROR, "This file can't be found!", ButtonType.CLOSE)).show();
-    }
-
-    /**
-     * Alert method used if a file can't be created.
-     */
-    public void cantCreateAlert() {
-        (new Alert(Alert.AlertType.ERROR, "This file can't be created!", ButtonType.CLOSE)).show();
-    }
-
-    /**
-     * Alert method used if a file can't be created.
-     */
-    public void cantUpdateRecentAlert() {
-        (new Alert(Alert.AlertType.ERROR, "The file containing the "
-                + "recent documents can't be updated!", ButtonType.CLOSE)).show();
-    }
-
-    /**
-     * Alert method used if a file is malformed.
-     */
-    public void malformedAlert() {
-        (new Alert(Alert.AlertType.ERROR, "This file is malformed!", ButtonType.CLOSE)).show();
-    }
-
-    /**
-     * Alert method used if a file can't be created.
-     */
-    public void unexpectedErrorAlert() {
-        (new Alert(Alert.AlertType.ERROR, "An unexpected filesystem error occurred!", ButtonType.CLOSE)).show();
-    }
-
-    /**
-     * Alert method used if the bookmarks can't be opened.
-     */
-    public void loadBookmarkAlert() {
-        (new Alert(Alert.AlertType.ERROR, "Bookmarks cannot be loaded.", ButtonType.CLOSE)).show();
-    }
-
-    /**
-     * Alert method used if the user didn't enter a number.
-     */
-    public void notANumberAlert() {
-        (new Alert(Alert.AlertType.WARNING, "Make sure you have entered a number as input.", ButtonType.CLOSE)).show();
-    }
-
-    /**
-     * Alert method used if the user entered a number that isn't a node.
-     */
-    public void notANodeAlert() {
-        (new Alert(Alert.AlertType.WARNING, "There isn't a node with this ID, "
-                + "choose another.", ButtonType.CLOSE)).show();
+    public static Alert warning(String message) {
+        return new Alert(Alert.AlertType.WARNING, message, ButtonType.CLOSE);
     }
 
     /**
      * Alert method used if the user wants to quit.
      */
-    public void quitAlert() {
+    public static void quitAlert() {
         Alert a = new Alert(Alert.AlertType.CONFIRMATION);
         a.setTitle("Confirm Exit");
         a.setHeaderText("Do you really want to exit?");
@@ -125,7 +60,7 @@ public final class Alerts {
     /**
      * Alert method used to show the infomation from the group.
      */
-    public void infoAboutAlert() {
+    public static void infoAboutAlert() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("About");
         alert.setHeaderText(null);
@@ -140,7 +75,7 @@ public final class Alerts {
     /**
      * Alert method used to show the information from the instructions.
      */
-    public void infoInstructionAlert() {
+    public static void infoInstructionAlert() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Instructions");
         alert.setHeaderText(null);
