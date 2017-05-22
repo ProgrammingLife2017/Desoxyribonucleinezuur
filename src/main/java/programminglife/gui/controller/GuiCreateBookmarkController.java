@@ -38,38 +38,24 @@ public class GuiCreateBookmarkController {
      */
     private void initButtons() {
         btnOk.setOnAction(event -> {
-            if (txtBookmarkName.getText().contains(" ")) {
-                nameSpaceAlert();
-            } else if (txtBookmarkName.getText().matches(".*\\d+.*")) {
-                nameIntAlert();
-            } else if (!txtId.getText().matches("^[1-9]\\d*$")) {
+            if (!txtId.getText().matches("^[1-9]\\d*$")) {
                 intAlert("Center Node");
             } else if (Integer.parseInt(txtId.getText()) > graphController.getGraph().size()) {
                 sizeAlert(graphController.getGraph().size());
             } else if (!txtRadius.getText().matches("^[1-9]\\d*$")) {
-               intAlert("radius");
+                intAlert("radius");
             } else {
                 BookmarkController.storeBookmark(graphName, txtBookmarkName.getText(), txtDescription.getText(),
                         Integer.parseInt(txtId.getText()), Integer.parseInt(txtRadius.getText()));
                 Stage s = (Stage) btnOk.getScene().getWindow();
                 s.close();
+                //}
             }
         });
         btnCancel.setOnAction(event -> {
             Stage s = (Stage) btnCancel.getScene().getWindow();
             s.close();
         });
-    }
-
-    /**
-     * Alert for title if numbers are in name.
-     */
-    private void nameIntAlert() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Name error");
-        alert.setHeaderText(null);
-        alert.setContentText("Title can not contains numbers");
-        alert.show();
     }
 
     /**
@@ -92,17 +78,6 @@ public class GuiCreateBookmarkController {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(field + " error");
         alert.setContentText("Bookmark " + field + " can only contains positive integers");
-        alert.setHeaderText(null);
-        alert.show();
-    }
-
-    /**
-     * Alerts the user if a space is present in the bookmark name.
-     */
-    private void nameSpaceAlert() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Name error");
-        alert.setContentText("Bookmark name can not contain spaces");
         alert.setHeaderText(null);
         alert.show();
     }
