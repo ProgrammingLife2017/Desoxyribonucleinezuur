@@ -27,6 +27,9 @@ public class FileProgressCounter extends Observable {
         this.lineCount = 0;
         this.totalLineCount = totalLineCount;
         this.description = description;
+
+        this.setChanged();
+        this.notifyObservers(this);
     }
 
     /**
@@ -34,6 +37,9 @@ public class FileProgressCounter extends Observable {
      */
     public void count() {
         this.lineCount++;
+
+        this.setChanged();
+        this.notifyObservers(this);
     }
 
     public void setTotalLineCount(int totalLineCount) {
@@ -49,11 +55,29 @@ public class FileProgressCounter extends Observable {
      * Calculates how much percent has been loaded.
      * @return percentage of file parsed.
      */
-    private double percentage() {
-        return this.lineCount * 100.d / this.totalLineCount;
+    public double percentage() {
+        return this.lineCount / (double) this.totalLineCount;
     }
 
     public int getLineCount() {
         return lineCount;
+    }
+
+    /**
+     * set the line count to the max so that it is 100%.
+     * @param count int equal to the totalLineCount
+     */
+    private void setLineCount(int count) {
+        this.lineCount = count;
+
+        this.setChanged();
+        this.notifyObservers(this);
+    }
+
+    /**
+     * Tells the ProgressBar loading is finished so it becomes invisible.
+     */
+    public void finished() {
+        this.setLineCount(this.totalLineCount);
     }
 }
