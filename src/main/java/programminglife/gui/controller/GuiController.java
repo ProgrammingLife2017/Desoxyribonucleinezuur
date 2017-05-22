@@ -208,6 +208,7 @@ public class GuiController implements Observer {
                         fw.write(file.getAbsolutePath() + System.getProperty("line.separator"));
                         fw.flush();
                         fw.close();
+                        initRecent();
                     }
                 } catch (IOException e) {
                     Alerts.error("This file can't be updated").show();
