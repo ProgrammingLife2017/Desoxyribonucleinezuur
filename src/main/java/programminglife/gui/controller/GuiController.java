@@ -277,7 +277,7 @@ public class GuiController implements Observer {
             root.add(f1, 1, 0);
             root.add(new Label("Y value"), 0, 1);
             root.add(f2, 1, 1);
-            root.add(ok, 1, 2);
+            root.add(translate, 1, 2);
             Stage s = new Stage();
             s.setScene(new Scene(root, 300, 200));
             s.show();
