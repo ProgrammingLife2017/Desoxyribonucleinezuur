@@ -287,7 +287,7 @@ public final class BookmarkController {
 
                 transformer.transform(source, result);
 
-            } catch (ParserConfigurationException | TransformerException e) {}
+            } catch (ParserConfigurationException | TransformerException e) { }
         }
     }
 
