@@ -69,7 +69,9 @@ public final class DataManager {
         System.out.printf("[%s] Setting up MapDB %s...%n", Thread.currentThread().getName(), fileName);
         this.currentFileName = fileName;
         this.db = DBMaker.fileDB(new File(fileName))
-                .transactionEnable()
+                .fileMmapEnableIfSupported()
+                .fileMmapPreclearDisable()
+                .cleanerHackEnable()
                 .closeOnJvmShutdown()
                 .make();
         this.sequenceMap = getMap(db, SEQUENCE_MAP_SUFFIX, Serializer.INTEGER, Serializer.STRING_ASCII);
@@ -175,10 +177,18 @@ public final class DataManager {
             System.out.printf("[%s] MapDB is already closed%n", Thread.currentThread().getName());
         } else {
             System.out.printf("[%s] Closing MapDB...%n", Thread.currentThread().getName());
-            db.rollback();
+            DataManager.getInstance().rollback(db);
             db.close();
             System.out.printf("[%s] MapDB closed%n", Thread.currentThread().getName());
         }
+    }
+
+    private void rollback(DB db) {
+      return;
+    }
+
+    private void commit(DB db) {
+      db.commit();
     }
 
     /**
@@ -238,13 +248,13 @@ public final class DataManager {
      * Persist database to disk.
      */
     public static void commit() {
-        DataManager.getInstance().getDb().commit();
+        DataManager.getInstance().commit(DataManager.getInstance().getDb());
     }
 
     /**
      * Rolls back non-persistent changes in database.
      */
     public static void rollback() {
-        DataManager.getInstance().getDb().rollback();
+        DataManager.getInstance().rollback(DataManager.getInstance().getDb());
     }
 }

@@ -28,7 +28,6 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
-import java.util.NoSuchElementException;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Scanner;
@@ -209,6 +208,7 @@ public class GuiController implements Observer {
                         fw.write(file.getAbsolutePath() + System.getProperty("line.separator"));
                         fw.flush();
                         fw.close();
+                        initRecent();
                     }
                 } catch (IOException e) {
                     Alerts.error("This file can't be updated").show();
@@ -328,12 +328,14 @@ public class GuiController implements Observer {
             } catch (NumberFormatException e) {
                 Alerts.warning("Input is not a number, try again with a number as input.").show();
             }
-            try {
+
+            if (graphController.getGraph().contains(centerNode)) {
                 this.graphController.clear();
                 this.graphController.draw(centerNode, maxDepth);
                 System.out.printf("[%s] Graph drawn.%n", Thread.currentThread().getName());
-            } catch (NoSuchElementException e) {
-                Alerts.warning("The input is not a node, try again with a number that exists as a node.").show();
+            } else {
+                Alerts.warning("The centernode is not a existing node, "
+                        + "try again with a number that exists as a node.").show();
             }
         });
 
