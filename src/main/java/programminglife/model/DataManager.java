@@ -8,6 +8,7 @@ import org.mapdb.Serializer;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Map;
 
 /**
@@ -237,11 +238,12 @@ public final class DataManager {
      * completely remove a database. This cannot be undone.
      * By default, this method removes first converts the name with {@link #toDBFile(String)}
      * @param name The name of the database to be removed.
+     * @return true if the file was removed, false if it did not exist
      * @throws IOException When something goes wrong with IO
      */
-    public static void removeDB(String name) throws IOException {
-        close();
-        Files.deleteIfExists(new File(DataManager.toDBFile(name)).toPath());
+    public static boolean removeDB(String name) throws IOException {
+        System.out.printf("[%s] Removing database %s%n", name);
+        return Files.deleteIfExists(Paths.get(new File(DataManager.toDBFile(name)).getName()));
     }
 
     /**
