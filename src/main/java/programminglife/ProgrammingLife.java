@@ -74,12 +74,14 @@ public final class ProgrammingLife extends Application {
      * Process command line arguments.
      * @param guiCtrl the {@link GuiController}, needed for opening files
      * @throws IOException if a specified file cannot be opened
+     * @throws UnknownTypeException if the file is malformed
      */
     private void arguments(GuiController guiCtrl) throws IOException, UnknownTypeException {
         Parameters params = this.getParameters();
         if (params.getNamed().containsKey("file")) {
             String fileName = params.getNamed().get("file");
             if (params.getUnnamed().contains("--clean")) {
+                DataManager.initialize(fileName);
                 DataManager.removeDB(fileName);
             }
             File file = new File(fileName);

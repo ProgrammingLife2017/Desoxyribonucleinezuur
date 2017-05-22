@@ -184,10 +184,18 @@ public final class DataManager {
         }
     }
 
+    /**
+     * Stub for future-proofing. Rolls back changes to the DB.
+     * @param db the {@link DB} to roll back.
+     */
     private void rollback(DB db) {
       return;
     }
 
+    /**
+     * Commit/persist the changes to the database
+     * @param db the {@link DB} to persist changes of
+     */
     private void commit(DB db) {
       db.commit();
     }
@@ -243,6 +251,7 @@ public final class DataManager {
      */
     public static boolean removeDB(String name) throws IOException {
         System.out.printf("[%s] Removing database %s%n", Thread.currentThread().getName(), name);
+        close();
         return Files.deleteIfExists(Paths.get(new File(DataManager.toDBFile(name)).getName()));
     }
 
