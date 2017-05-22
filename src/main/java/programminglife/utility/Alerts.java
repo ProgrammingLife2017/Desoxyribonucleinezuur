@@ -73,10 +73,10 @@ public final class Alerts {
         URL url = Alerts.class.getResource("/texts/About.txt");
         try {
             alert.setContentText(com.google.common.io.Resources.toString(url, Charsets.UTF_8));
+            alert.show();
         } catch (IOException e) {
             Alerts.error("Can't open the about file").show();
         }
-        alert.show();
     }
 
     /**
@@ -91,9 +91,9 @@ public final class Alerts {
         URL url = Alerts.class.getResource("/texts/Instructions.txt");
         try {
             alert.setContentText(com.google.common.io.Resources.toString(url, Charsets.UTF_8));
+            alert.show();
         } catch (IOException e) {
             Alerts.error("Can't open the instructions file").show();
         }
-        alert.show();
     }
 }
