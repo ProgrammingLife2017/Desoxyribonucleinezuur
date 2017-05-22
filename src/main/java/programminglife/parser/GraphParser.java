@@ -49,12 +49,12 @@ public class GraphParser extends Observable implements Runnable {
     @Override
     public void run() {
         try {
-            System.out.printf("[%s] Parsing GenomeGraph on separate Thread\n", Thread.currentThread().getName());
+            System.out.printf("[%s] Parsing GenomeGraph on separate Thread%n", Thread.currentThread().getName());
             parse(this.verbose);
             DataManager.commit();
 
             int secondsElapsed = (int) ((System.nanoTime() - this.startTime) / 1000000000.d);
-            System.out.printf("[%s] Parsing took %d seconds\n", Thread.currentThread().getName(), secondsElapsed);
+            System.out.printf("[%s] Parsing took %d seconds%n", Thread.currentThread().getName(), secondsElapsed);
             this.setChanged();
             this.notifyObservers(this.graph);
         } catch (Exception e) {
@@ -82,14 +82,14 @@ public class GraphParser extends Observable implements Runnable {
     protected synchronized void parse(boolean verbose) throws FileNotFoundException, UnknownTypeException {
         if (verbose) {
             System.out.printf(
-                    "[%s] Parsing file with name %s with path %s\n", Thread.currentThread().getName(),
+                    "[%s] Parsing file with name %s with path %s%n", Thread.currentThread().getName(),
                     this.name, this.graphFile.getAbsolutePath()
             );
         }
 
-        System.out.printf("[%s] Calculating number of lines in file\n", Thread.currentThread().getName());
+        System.out.printf("[%s] Calculating number of lines in file%n", Thread.currentThread().getName());
         int lineCount = (int) (new BufferedReader(new FileReader(this.graphFile))).lines().count();
-        System.out.printf("[%s] Done! %d lines.\n", Thread.currentThread().getName(), lineCount);
+        System.out.printf("[%s] Done! %d lines.%n", Thread.currentThread().getName(), lineCount);
         this.progressCounter.setTotalLineCount(lineCount);
 
         BufferedReader reader = new BufferedReader(new FileReader(this.graphFile));
@@ -127,7 +127,7 @@ public class GraphParser extends Observable implements Runnable {
 
                 if (Thread.currentThread().isInterrupted()) {
                     DataManager.close();
-                    System.out.printf("[%s] Stopping this thread gracefully...\n", Thread.currentThread().getName());
+                    System.out.printf("[%s] Stopping this thread gracefully...%n", Thread.currentThread().getName());
                 }
             }));
         } catch (Errors.WrappedAsRuntimeException e) {

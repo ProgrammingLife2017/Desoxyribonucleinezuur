@@ -66,13 +66,13 @@ public class GuiController implements Observer {
     @FXML private AnchorPane anchorLeftControlPanel;
 
     //Privates used by method.
-    private String informationText = "Open a gfa file, wait for it to be parsed.\n"
-            + "Give the start node and the amount of layers (depth) to be drawn on the left.\n\n"
-            + "Zoom using the zoom buttons or alt + scrollwheel.\n"
-            + "Move the graph by pressing alt + dragging a node or edge.\n"
+    private String informationText = String.format("Open a gfa file, wait for it to be parsed.%n"
+            + "Give the start node and the amount of layers (depth) to be drawn on the left.%n%n"
+            + "Zoom using the zoom buttons or alt + scrollwheel.%n"
+            + "Move the graph by pressing alt + dragging a node or edge.%n"
             + "Reset the zoom with reset zoom and jump back to the beginning"
-            + " of the drawn graph with the Reset X/Y button.\n"
-            + "The suprise me! button chooses a random start node and draws with the depth you gave.";
+            + " of the drawn graph with the Reset X/Y button.%n"
+            + "The suprise me! button chooses a random start node and draws with the depth you gave.");
     private ConsoleView consoleView;
     private double orgSceneX, orgSceneY;
     private double orgTranslateX, orgTranslateY;
@@ -128,7 +128,7 @@ public class GuiController implements Observer {
             if (arg instanceof GenomeGraph) {
                 GenomeGraph graph = (GenomeGraph) arg;
 
-                System.out.printf("[%s] File Parsed.\n", Thread.currentThread().getName());
+                System.out.printf("[%s] File Parsed.%n", Thread.currentThread().getName());
 
                 this.setGraph(graph);
             } else if (arg instanceof Exception) {
@@ -153,10 +153,10 @@ public class GuiController implements Observer {
         disableGraphUIElements(graph == null);
 
         if (graph != null) {
-            System.out.printf("[%s] Graph was set to %s.\n", Thread.currentThread().getName(), graph.getID());
-            System.out.printf("[%s] The graph has %d nodes\n", Thread.currentThread().getName(), graph.size());
+            System.out.printf("[%s] Graph was set to %s.%n", Thread.currentThread().getName(), graph.getID());
+            System.out.printf("[%s] The graph has %d nodes%n", Thread.currentThread().getName(), graph.size());
         } else {
-            System.out.printf("[%s] graph was set to null.\n", Thread.currentThread().getName());
+            System.out.printf("[%s] graph was set to null.%n", Thread.currentThread().getName());
         }
     }
 
@@ -191,7 +191,7 @@ public class GuiController implements Observer {
                         }
                     });
                     menuRecent.getItems().add(mi);
-                    recentItems = recentItems.concat(next + "\n");
+                    recentItems = recentItems.concat(next + System.getProperty("line.separator"));
                 }
                 sc.close();
             } catch (FileNotFoundException e) {
@@ -221,7 +221,7 @@ public class GuiController implements Observer {
                 this.openFile(file);
                 try (BufferedWriter fw = new BufferedWriter(new FileWriter(recentFile, true))) {
                     if (!recentItems.contains(file.getAbsolutePath())) {
-                        fw.write(file.getAbsolutePath() + "\n");
+                        fw.write(file.getAbsolutePath() + System.getProperty("line.separator"));
                         fw.flush();
                         fw.close();
                     }
@@ -262,9 +262,9 @@ public class GuiController implements Observer {
         });
 
         btnAbout.setOnAction(e -> alert("About", true, ABOUT_MIN_WIDTH,
-                  "This application is made by Contextproject group Desoxyribonucleïnezuur:\n\n"
-                + "Ivo Wilms \n" + "Iwan Hoogenboom \n" + "Martijn van Meerten \n" + "Toine Hartman\n"
-                + "Yannick Haveman", Alert.AlertType.INFORMATION).show());
+                  String.format("This application is made by Contextproject group Desoxyribonucleïnezuur:%n%n"
+                + "Ivo Wilms %n" + "Iwan Hoogenboom %n" + "Martijn van Meerten %n" + "Toine Hartman%n"
+                + "Yannick Haveman"), Alert.AlertType.INFORMATION).show());
 
         btnInstructions.setOnAction(e -> alert("Instructions", true,
         INSTRUCTIONS_MIN_WIDTH, informationText, Alert.AlertType.INFORMATION).show());
@@ -378,7 +378,7 @@ public class GuiController implements Observer {
         disableGraphUIElements(true);
 
         btnDraw.setOnAction(event -> {
-            System.out.printf("[%s] Drawing graph...\n", Thread.currentThread().getName());
+            System.out.printf("[%s] Drawing graph...%n", Thread.currentThread().getName());
 
             int centerNode = 0;
             int maxDepth = 0;
@@ -394,7 +394,7 @@ public class GuiController implements Observer {
             try {
                 this.graphController.clear();
                 this.graphController.draw(centerNode, maxDepth);
-                System.out.printf("[%s] Graph drawn.\n", Thread.currentThread().getName());
+                System.out.printf("[%s] Graph drawn.%n", Thread.currentThread().getName());
             } catch (NoSuchElementException e) {
                 Alert alert = new Alert(Alert.AlertType.WARNING, "There is no node with this ID."
                         + " Choose another start Node.", ButtonType.OK);
