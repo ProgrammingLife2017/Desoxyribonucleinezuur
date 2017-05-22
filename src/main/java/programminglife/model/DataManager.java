@@ -45,16 +45,6 @@ public final class DataManager {
      * @return The singleton DataManager instance.
      */
     public static DataManager getInstance() {
-        if (ourInstance == null) {
-            try {
-                initialize(currentFileName);
-            } catch (IOException e) {
-                throw new RuntimeException(
-                        "DataManager had not been initialized and could not be initialized automatically",
-                        e
-                );
-            }
-        }
         return ourInstance;
     }
 
@@ -173,14 +163,16 @@ public final class DataManager {
      * close the database.
      */
     public static void close() {
-        DB db = DataManager.getInstance().getDb();
-        if (db.isClosed()) {
-            System.out.printf("[%s] MapDB is already closed%n", Thread.currentThread().getName());
-        } else {
-            System.out.printf("[%s] Closing MapDB...%n", Thread.currentThread().getName());
-            DataManager.getInstance().rollback(db);
-            db.close();
-            System.out.printf("[%s] MapDB closed%n", Thread.currentThread().getName());
+        if (DataManager.getInstance() != null) {
+            DB db = DataManager.getInstance().getDb();
+            if (db.isClosed()) {
+                System.out.printf("[%s] MapDB is already closed%n", Thread.currentThread().getName());
+            } else {
+                System.out.printf("[%s] Closing MapDB...%n", Thread.currentThread().getName());
+                DataManager.getInstance().rollback(db);
+                db.close();
+                System.out.printf("[%s] MapDB closed%n", Thread.currentThread().getName());
+            }
         }
     }
 
@@ -252,7 +244,7 @@ public final class DataManager {
     public static boolean removeDB(String name) throws IOException {
         System.out.printf("[%s] Removing database %s%n", Thread.currentThread().getName(), name);
         close();
-        return Files.deleteIfExists(Paths.get(new File(DataManager.toDBFile(name)).getName()));
+        return Files.deleteIfExists(Paths.get(DataManager.toDBFile(name)));
     }
 
     /**

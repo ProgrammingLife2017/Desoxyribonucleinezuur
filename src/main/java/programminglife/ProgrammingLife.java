@@ -81,7 +81,6 @@ public final class ProgrammingLife extends Application {
         if (params.getNamed().containsKey("file")) {
             String fileName = params.getNamed().get("file");
             if (params.getUnnamed().contains("--clean")) {
-                DataManager.initialize(fileName);
                 DataManager.removeDB(fileName);
             }
             File file = new File(fileName);

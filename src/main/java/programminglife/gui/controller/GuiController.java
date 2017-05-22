@@ -206,11 +206,11 @@ public class GuiController implements Observer {
                 file = fileChooser.showOpenDialog(ProgrammingLife.getStage());
                 if (file != null) {
                     this.openFile(file);
-                    try (BufferedWriter fw = new BufferedWriter(new FileWriter(recentFile, true))) {
+                    try (BufferedWriter recentsWriter = new BufferedWriter(new FileWriter(recentFile, true))) {
                         if (!recentItems.contains(file.getAbsolutePath())) {
-                            fw.write(file.getAbsolutePath() + System.getProperty("line.separator"));
-                            fw.flush();
-                            fw.close();
+                            recentsWriter.write(file.getAbsolutePath() + System.getProperty("line.separator"));
+                            recentsWriter.flush();
+                            recentsWriter.close();
                             initRecent();
                         }
                     } catch (IOException e) {
