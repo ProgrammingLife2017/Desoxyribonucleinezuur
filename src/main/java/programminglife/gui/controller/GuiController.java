@@ -272,7 +272,7 @@ public class GuiController implements Observer {
             GridPane root = new GridPane();
             TextField f1 = new TextField();
             TextField f2 = new TextField();
-            Button ok = new Button("Translate");
+            Button translate = new Button("Translate");
             root.add(new Label("X value"), 0, 0);
             root.add(f1, 1, 0);
             root.add(new Label("Y value"), 0, 1);
@@ -281,7 +281,7 @@ public class GuiController implements Observer {
             Stage s = new Stage();
             s.setScene(new Scene(root, 300, 200));
             s.show();
-            ok.setOnAction(event2 -> {
+            translate.setOnAction(event2 -> {
                 this.translateX = Integer.valueOf(f1.getText());
                 this.translateY = Integer.valueOf(f2.getText());
                 grpDrawArea.setTranslateX(grpDrawArea.getTranslateX() + this.translateX);
@@ -289,7 +289,7 @@ public class GuiController implements Observer {
                 s.close();
             });
         });
-//
+
         btnTranslateReset.setOnAction(event -> {
             grpDrawArea.setTranslateX(0);
             grpDrawArea.setTranslateY(0);
