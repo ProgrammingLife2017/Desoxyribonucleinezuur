@@ -26,9 +26,11 @@ import java.util.Optional;
 public class GuiLoadBookmarkController implements Observer {
     private String graphName;
     private GraphController graphController;
+    private GuiController guiController;
 
     @FXML private TableColumn<Bookmark, String> clmnName;
     @FXML private TableColumn<Bookmark, String> clmnDescription;
+    @FXML private TableColumn<Bookmark, String> clmnFile;
     @FXML private Button btnOpenBookmark;
     @FXML private Button btnCancelBookmark;
     @FXML private Button btnDeleteBookmark;
@@ -67,6 +69,7 @@ public class GuiLoadBookmarkController implements Observer {
         btnOpenBookmark.setOnAction(event -> {
             if (checkBookmarkSelection()) {
                 Bookmark bookmark = tblBookmark.getSelectionModel().getSelectedItem();
+                guiController.setText(bookmark.getNodeID(), bookmark.getRadius());
                 graphController.clear();
                 graphController.draw(bookmark.getNodeID(), bookmark.getRadius());
                 System.out.println("Loaded bookmark " + bookmark.getBookmarkName()
@@ -110,6 +113,7 @@ public class GuiLoadBookmarkController implements Observer {
                 gc.setGraphController(graphController);
                 Scene scene = new Scene(page);
                 Stage bookmarkDialogStage = new Stage();
+                bookmarkDialogStage.setResizable(false);
                 bookmarkDialogStage.setScene(scene);
                 bookmarkDialogStage.setTitle("Create Bookmark");
                 bookmarkDialogStage.initOwner(ProgrammingLife.getStage());
@@ -130,6 +134,7 @@ public class GuiLoadBookmarkController implements Observer {
         for (Bookmark bm : BookmarkController.loadAllGraphBookmarks(graphName)) {
             bookmarks.add(bm);
         }
+        clmnFile.setCellValueFactory(cellData -> cellData.getValue().getFileProperty());
         clmnName.setCellValueFactory(cellData -> cellData.getValue().getNameProperty());
         clmnDescription.setCellValueFactory(cellData -> cellData.getValue().getDescriptionProperty());
         tblBookmark.setItems(bookmarks);
@@ -143,6 +148,15 @@ public class GuiLoadBookmarkController implements Observer {
     public void setGraphController(GraphController graphController) {
         this.graphController = graphController;
         this.graphName = graphController.getGraph().getID();
+    }
+
+    /**
+     * Sets the guicontroller for controlling the menu.
+     * Is used for setting center node and radius text fields.
+     * @param guiController The gui controller
+     */
+    public void setGuiController(GuiController guiController) {
+        this.guiController = guiController;
     }
 
     @Override
