@@ -172,7 +172,9 @@ public class GuiController implements Observer {
                     mi.setOnAction(event -> {
                         try {
                             openFile(new File(mi.getText()));
-                        } catch (IOException | UnknownTypeException e) {
+                        } catch (UnknownTypeException e) {
+                            Alerts.error("This file is malformed and cannot be parsed").show();
+                        } catch (IOException e) {
                             Alerts.error("This file can't be opened").show();
                         }
                     });
@@ -216,10 +218,10 @@ public class GuiController implements Observer {
                 }
             } catch (FileNotFoundException e) {
                 Alerts.error("This file can't be found").show();
-            } catch (UnknownTypeException e) {
-                Alerts.error("This file is malformed").show();
             } catch (IOException e) {
                 Alerts.error("This file can't be opened").show();
+            } catch (UnknownTypeException e) {
+                Alerts.error("This file is malformed and cannot be parsed").show();
             }
         });
 

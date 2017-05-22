@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import programminglife.gui.controller.GuiController;
 import programminglife.model.DataManager;
+import programminglife.model.exception.UnknownTypeException;
 import programminglife.utility.Alerts;
 
 import java.awt.*;
@@ -64,6 +65,8 @@ public final class ProgrammingLife extends Application {
             arguments(ctrl);
         } catch (IOException e) {
             Alerts.warning("An error occured opening the specified file!").show();
+        } catch (UnknownTypeException e) {
+            Alerts.error("This file is malformed and cannot be opened").show();
         }
     }
 
@@ -72,7 +75,7 @@ public final class ProgrammingLife extends Application {
      * @param guiCtrl the {@link GuiController}, needed for opening files
      * @throws IOException if a specified file cannot be opened
      */
-    private void arguments(GuiController guiCtrl) throws IOException {
+    private void arguments(GuiController guiCtrl) throws IOException, UnknownTypeException {
         Parameters params = this.getParameters();
         if (params.getNamed().containsKey("file")) {
             String fileName = params.getNamed().get("file");

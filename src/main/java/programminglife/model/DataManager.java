@@ -242,7 +242,7 @@ public final class DataManager {
      * @throws IOException When something goes wrong with IO
      */
     public static boolean removeDB(String name) throws IOException {
-        System.out.printf("[%s] Removing database %s%n", name);
+        System.out.printf("[%s] Removing database %s%n", Thread.currentThread().getName(), name);
         return Files.deleteIfExists(Paths.get(new File(DataManager.toDBFile(name)).getName()));
     }
 
