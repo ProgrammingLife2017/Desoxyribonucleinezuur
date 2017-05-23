@@ -23,25 +23,4 @@ public interface Node<N extends Node<N>> {
         // TODO create a data structure to store bookmarks/annotation
         throw new NotImplementedException("Node#getBookmarks() is not yet implemented");
     }
-
-    /**
-     * Getter for the sequence of a node.
-     * @return String sequence.
-     */
-    String getSequence();
-
-    /**
-     * Sets the sequence of a node.
-     * @param sequence String.
-     */
-    void setSequence(String sequence);
-
-    /**
-     * Static getter for the sequence of a nodeID.
-     * @param nodeID int.
-     * @return String sequence.
-     */
-    static String getSequence(int nodeID) {
-        return DataManager.getSequence(nodeID);
-    }
 }
