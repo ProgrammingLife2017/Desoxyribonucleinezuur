@@ -28,7 +28,6 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
-import java.util.NoSuchElementException;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Scanner;
@@ -58,7 +57,9 @@ public class GuiController implements Observer {
     @FXML private Button btnTranslateReset;
     @FXML private Button btnDraw;
     @FXML private Button btnDrawRandom;
+    @FXML private Button btnBookmark;
     @FXML private Menu menuBookmark;
+    @FXML private ProgressBar progressBar;
 
     @FXML private TextField txtMaxDrawDepth;
     @FXML private TextField txtCenterNode;
@@ -129,9 +130,11 @@ public class GuiController implements Observer {
                 throw new RuntimeException(e);
             }
         } else if (o instanceof FileProgressCounter) {
+            progressBar.setVisible(true);
             FileProgressCounter progress = (FileProgressCounter) o;
-            if (progress.getLineCount() % 250 == 0) {
-                System.out.println(progress);
+            this.getProgressBar().setProgress(progress.percentage());
+            if (progressBar.getProgress() == 1.0d) {
+                progressBar.setVisible(false);
             }
         }
     }
@@ -173,7 +176,9 @@ public class GuiController implements Observer {
                     mi.setOnAction(event -> {
                         try {
                             openFile(new File(mi.getText()));
-                        } catch (IOException | UnknownTypeException e) {
+                        } catch (UnknownTypeException e) {
+                            Alerts.error("This file is malformed and cannot be parsed").show();
+                        } catch (IOException e) {
                             Alerts.error("This file can't be opened").show();
                         }
                     });
@@ -202,22 +207,25 @@ public class GuiController implements Observer {
             }
             try {
                 file = fileChooser.showOpenDialog(ProgrammingLife.getStage());
-                this.openFile(file);
-                try (BufferedWriter fw = new BufferedWriter(new FileWriter(recentFile, true))) {
-                    if (!recentItems.contains(file.getAbsolutePath())) {
-                        fw.write(file.getAbsolutePath() + System.getProperty("line.separator"));
-                        fw.flush();
-                        fw.close();
+                if (file != null) {
+                    this.openFile(file);
+                    try (BufferedWriter recentsWriter = new BufferedWriter(new FileWriter(recentFile, true))) {
+                        if (!recentItems.contains(file.getAbsolutePath())) {
+                            recentsWriter.write(file.getAbsolutePath() + System.getProperty("line.separator"));
+                            recentsWriter.flush();
+                            recentsWriter.close();
+                            initRecent();
+                        }
+                    } catch (IOException e) {
+                        Alerts.error("This file can't be updated").show();
                     }
-                } catch (IOException e) {
-                    Alerts.error("This file can't be updated").show();
                 }
             } catch (FileNotFoundException e) {
                 Alerts.error("This file can't be found").show();
-            } catch (UnknownTypeException e) {
-                Alerts.error("This file is malformed").show();
             } catch (IOException e) {
                 Alerts.error("This file can't be opened").show();
+            } catch (UnknownTypeException e) {
+                Alerts.error("This file is malformed and cannot be parsed").show();
             }
         });
 
@@ -237,9 +245,11 @@ public class GuiController implements Observer {
                 AnchorPane page = loader.load();
                 GuiLoadBookmarkController gc = loader.getController();
                 gc.setGraphController(graphController);
+                gc.setGuiController(this);
                 gc.initColumns();
                 Scene scene = new Scene(page);
                 Stage bookmarkDialogStage = new Stage();
+                bookmarkDialogStage.setResizable(false);
                 bookmarkDialogStage.setScene(scene);
                 bookmarkDialogStage.setTitle("Load Bookmark");
                 bookmarkDialogStage.initOwner(ProgrammingLife.getStage());
@@ -325,12 +335,14 @@ public class GuiController implements Observer {
             } catch (NumberFormatException e) {
                 Alerts.warning("Input is not a number, try again with a number as input.").show();
             }
-            try {
+
+            if (graphController.getGraph().contains(centerNode)) {
                 this.graphController.clear();
                 this.graphController.draw(centerNode, maxDepth);
                 System.out.printf("[%s] Graph drawn.%n", Thread.currentThread().getName());
-            } catch (NoSuchElementException e) {
-                Alerts.warning("The input is not a node, try again with a number that exists as a node.").show();
+            } else {
+                Alerts.warning("The centernode is not a existing node, "
+                        + "try again with a number that exists as a node.").show();
             }
         });
 
@@ -338,6 +350,25 @@ public class GuiController implements Observer {
             int randomNodeID = (int) Math.ceil(Math.random() * this.graphController.getGraph().size());
             txtCenterNode.setText(Integer.toString(randomNodeID));
             btnDraw.fire();
+        });
+
+        btnBookmark.setOnAction(event -> {
+            try {
+                FXMLLoader loader = new FXMLLoader(ProgrammingLife.class.getResource("/CreateBookmarkWindow.fxml"));
+                AnchorPane page = loader.load();
+                GuiCreateBookmarkController gc = loader.getController();
+                gc.setGraphController(graphController);
+                gc.setText(txtCenterNode.getText(), txtMaxDrawDepth.getText());
+                Scene scene = new Scene(page);
+                Stage bookmarkDialogStage = new Stage();
+                bookmarkDialogStage.setResizable(false);
+                bookmarkDialogStage.setScene(scene);
+                bookmarkDialogStage.setTitle("Create Bookmark");
+                bookmarkDialogStage.initOwner(ProgrammingLife.getStage());
+                bookmarkDialogStage.showAndWait();
+            } catch (IOException e) {
+                (new Alert(Alert.AlertType.ERROR, "This bookmark cannot be created.", ButtonType.CLOSE)).show();
+            }
         });
 
         txtMaxDrawDepth.textProperty().addListener(new NumbersOnlyListener(txtMaxDrawDepth));
@@ -400,20 +431,11 @@ public class GuiController implements Observer {
     private ConsoleView initConsole() {
         final ConsoleView console = new ConsoleView(Charset.forName("UTF-8"));
         AnchorPane root = new AnchorPane();
-        btnToggle.setSelected(false);
-        console.setVisible(false);
-        root.setVisible(false);
         Stage st = new Stage();
         st.setScene(new Scene(root, 500, 500, Color.GRAY));
         st.setMinWidth(500);
         st.setMinHeight(250);
         root.getChildren().add(console);
-
-        st.setOnCloseRequest(e -> {
-            btnToggle.setSelected(false);
-            root.setVisible(false);
-            console.setVisible(false);
-        });
 
         root.setBottomAnchor(console, 0.d);
         root.setTopAnchor(console, 0.d);
@@ -421,18 +443,31 @@ public class GuiController implements Observer {
         root.setLeftAnchor(console, 0.d);
 
         btnToggle.setOnAction(event -> {
-            if (console.isVisible()) {
-                st.close();
-                root.setVisible(false);
-                console.setVisible(false);
-            } else {
+            if (btnToggle.isSelected()) {
                 st.show();
-                root.setVisible(true);
-                console.setVisible(true);
+            } else {
+                st.close();
             }
         });
 
+        st.show();
+        btnToggle.setSelected(true);
+        root.visibleProperty().bind(btnToggle.selectedProperty());
+
         System.setOut(console.getOut());
         return console;
+    }
+
+    public ProgressBar getProgressBar() {
+        return this.progressBar;
+    }
+    /**
+     * Sets the text field for drawing the graph.
+     * @param center The center node
+     * @param radius The radius of the subgraph
+     */
+    void setText(int center, int radius) {
+        txtCenterNode.setText(String.valueOf(center));
+        txtMaxDrawDepth.setText(String.valueOf(radius));
     }
 }

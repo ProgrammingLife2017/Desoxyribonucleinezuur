@@ -113,15 +113,6 @@ public class GraphParser extends Observable implements Runnable {
                     default:
                         throw new UnknownTypeException(String.format("Unknown symbol '%c'", type));
                 }
-                int lineSkipFactor;
-                if (isCached) {
-                    lineSkipFactor = 100;
-                } else {
-                    lineSkipFactor = 1;
-                }
-                if (progressCounter.getLineCount() % (1000 * lineSkipFactor) == 0) {
-                    System.out.println(progressCounter);
-                }
 
                 if (Thread.currentThread().isInterrupted()) {
                     DataManager.close();
@@ -135,6 +126,8 @@ public class GraphParser extends Observable implements Runnable {
                 throw e;
             }
         }
+
+        this.progressCounter.finished();
     }
 
     /**

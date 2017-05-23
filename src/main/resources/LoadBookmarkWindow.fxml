@@ -9,7 +9,8 @@
    <children>
       <TableView fx:id="tblBookmark" prefHeight="354.0" prefWidth="600.0">
         <columns>
-          <TableColumn fx:id="clmnName" prefWidth="139.0" text="Name" />
+            <TableColumn fx:id="clmnFile" prefWidth="107.0" text="File" />
+          <TableColumn fx:id="clmnName" prefWidth="107.0" text="Name" />
           <TableColumn fx:id="clmnDescription" prefWidth="460.0" text="Description" />
         </columns>
       </TableView>

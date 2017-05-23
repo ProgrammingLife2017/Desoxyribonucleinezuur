@@ -18,6 +18,7 @@ import static org.junit.Assert.*;
  */
 public class GraphParserTest implements Observer {
     private static final String TEST_DB = "test.db";
+    private static final String TEST_FAULTY_DB = "test-faulty.db";
 
     private static String TEST_PATH, TEST_FAULTY_PATH;
 
@@ -49,11 +50,13 @@ public class GraphParserTest implements Observer {
     @After
     public void tearDown() throws Exception {
         DataManager.clearDB(TEST_DB);
+        DataManager.clearDB(TEST_FAULTY_DB);
     }
 
     @AfterClass
     public static void tearDownClass() throws Exception {
         DataManager.removeDB(TEST_DB);
+        DataManager.removeDB(TEST_FAULTY_DB);
     }
 
     @Test(expected = UnknownTypeException.class)

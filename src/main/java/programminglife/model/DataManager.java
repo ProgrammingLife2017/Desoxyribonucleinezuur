@@ -8,6 +8,7 @@ import org.mapdb.Serializer;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Map;
 
 /**
@@ -44,16 +45,6 @@ public final class DataManager {
      * @return The singleton DataManager instance.
      */
     public static DataManager getInstance() {
-        if (ourInstance == null) {
-            try {
-                initialize(currentFileName);
-            } catch (IOException e) {
-                throw new RuntimeException(
-                        "DataManager had not been initialized and could not be initialized automatically",
-                        e
-                );
-            }
-        }
         return ourInstance;
     }
 
@@ -69,7 +60,9 @@ public final class DataManager {
         System.out.printf("[%s] Setting up MapDB %s...%n", Thread.currentThread().getName(), fileName);
         this.currentFileName = fileName;
         this.db = DBMaker.fileDB(new File(fileName))
-                .transactionEnable()
+                .fileMmapEnableIfSupported()
+                .fileMmapPreclearDisable()
+                .cleanerHackEnable()
                 .closeOnJvmShutdown()
                 .make();
         this.sequenceMap = getMap(db, SEQUENCE_MAP_SUFFIX, Serializer.INTEGER, Serializer.STRING_ASCII);
@@ -83,7 +76,7 @@ public final class DataManager {
      * @return The converted name.
      */
     public static String toDBFile(String name) {
-        if (name.toLowerCase().endsWith(".fga")) {
+        if (name.toLowerCase().endsWith(".gfa")) {
             name = name.substring(0, name.length() - 4);
         }
         if (!name.toLowerCase().endsWith(".db")) {
@@ -170,15 +163,33 @@ public final class DataManager {
      * close the database.
      */
     public static void close() {
-        DB db = DataManager.getInstance().getDb();
-        if (db.isClosed()) {
-            System.out.printf("[%s] MapDB is already closed%n", Thread.currentThread().getName());
-        } else {
-            System.out.printf("[%s] Closing MapDB...%n", Thread.currentThread().getName());
-            db.rollback();
-            db.close();
-            System.out.printf("[%s] MapDB closed%n", Thread.currentThread().getName());
+        if (DataManager.getInstance() != null) {
+            DB db = DataManager.getInstance().getDb();
+            if (db.isClosed()) {
+                System.out.printf("[%s] MapDB is already closed%n", Thread.currentThread().getName());
+            } else {
+                System.out.printf("[%s] Closing MapDB...%n", Thread.currentThread().getName());
+                DataManager.getInstance().rollback(db);
+                db.close();
+                System.out.printf("[%s] MapDB closed%n", Thread.currentThread().getName());
+            }
         }
+    }
+
+    /**
+     * Stub for future-proofing. Rolls back changes to the DB.
+     * @param db the {@link DB} to roll back.
+     */
+    private void rollback(DB db) {
+      return;
+    }
+
+    /**
+     * Commit/persist the changes to the database.
+     * @param db the {@link DB} to persist changes of
+     */
+    private void commit(DB db) {
+      db.commit();
     }
 
     /**
@@ -227,24 +238,26 @@ public final class DataManager {
      * completely remove a database. This cannot be undone.
      * By default, this method removes first converts the name with {@link #toDBFile(String)}
      * @param name The name of the database to be removed.
+     * @return true if the file was removed, false if it did not exist
      * @throws IOException When something goes wrong with IO
      */
-    public static void removeDB(String name) throws IOException {
+    public static boolean removeDB(String name) throws IOException {
+        System.out.printf("[%s] Removing database %s%n", Thread.currentThread().getName(), name);
         close();
-        Files.deleteIfExists(new File(DataManager.toDBFile(name)).toPath());
+        return Files.deleteIfExists(Paths.get(DataManager.toDBFile(name)));
     }
 
     /**
      * Persist database to disk.
      */
     public static void commit() {
-        DataManager.getInstance().getDb().commit();
+        DataManager.getInstance().commit(DataManager.getInstance().getDb());
     }
 
     /**
      * Rolls back non-persistent changes in database.
      */
     public static void rollback() {
-        DataManager.getInstance().getDb().rollback();
+        DataManager.getInstance().rollback(DataManager.getInstance().getDb());
     }
 }

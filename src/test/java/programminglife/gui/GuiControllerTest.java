@@ -1,5 +1,6 @@
 package programminglife.gui;
 
+import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -38,7 +39,7 @@ public class GuiControllerTest extends FxRobot {
 
     public GuiControllerTest() {
         try {
-            testFileName = new File(getClass().getResource("/test.gfa").toURI()).getAbsolutePath();
+            testFileName = new File(getClass().getResource(TEST_File).toURI()).getAbsolutePath();
         } catch (URISyntaxException e) {
             e.printStackTrace();
             fail();
@@ -67,6 +68,7 @@ public class GuiControllerTest extends FxRobot {
 
     @AfterClass
     public static void tearDownClass() throws Exception {
+        Platform.exit();
         DataManager.removeDB(TEST_DB);
         DataManager.removeDB(TEST_File);
     }

@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><graphs>
-    <test>
-        <testbm>
+    <graph>
+        <name>test</name>
+        <bookmark>
             <name>testbm</name>
             <ID>2</ID>
             <radius>6</radius>
             <description>testing</description>
-        </testbm>
-    </test>
+        </bookmark>
+    </graph>
 </graphs>
