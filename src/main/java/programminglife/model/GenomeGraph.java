@@ -3,10 +3,7 @@ package programminglife.model;
 import org.apache.commons.lang3.NotImplementedException;
 import programminglife.model.exception.NodeExistsException;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -17,6 +14,12 @@ public class GenomeGraph implements Graph {
 
     private Map<Integer, Set<Integer>> children;
     private Map<Integer, Set<Integer>> parents;
+
+    /**
+     * Name-indexed map of genomes.
+     */
+    private List<String> genomeOrder;
+    private Map<String, Genome> genomes;
 
     /**
      * Create a genomeGraph with name.
@@ -36,6 +39,8 @@ public class GenomeGraph implements Graph {
         this.children = children;
         this.parents = parents;
         this.id = id;
+        this.genomes = new HashMap<>();
+        this.genomeOrder = new ArrayList<>();
     }
 
     /**
@@ -140,5 +145,41 @@ public class GenomeGraph implements Graph {
      */
     private void addParent(Node node, Node parent) {
         this.parents.get(node.getIdentifier()).add(parent.getIdentifier());
+    }
+
+    /**
+     * Add a {@link Genome} to this {@link GenomeGraph}.
+     * @param genome
+     */
+    public void addGenome(Genome genome) {
+        this.genomes.put(genome.getName(), genome);
+        this.genomeOrder.add(genome.getName());
+    }
+
+    public Genome getGenome(String name) {
+        Genome res = this.genomes.get(name);
+        if (res != null) {
+            return res;
+        } else {
+            throw new NoSuchElementException(
+                    String.format("The Graph %s does not contain a genome with name %s",
+                            this.getID(), name));
+        }
+    }
+
+    /**
+     * Get the {@link Genome}s of this {@link GenomeGraph}.
+     * @return a {@link Collection} of {@link Genome}s
+     */
+    public Collection<Genome> getGenomes() {
+        return this.genomes.values();
+    }
+
+    public boolean containsGenome(String genomeName) {
+        return this.genomes.containsKey(genomeName);
+    }
+
+    public List<String> getGenomeOrder() {
+        return genomeOrder;
     }
 }

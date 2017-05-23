@@ -78,7 +78,7 @@ public class GraphParserTest implements Observer {
     }
 
     @Test
-    public void parseSegmentTest() {
+    public void parseSegmentTest() throws UnknownTypeException {
         graphParser.parseSegment(nodeLine);
         Graph g = graphParser.getGraph();
 
