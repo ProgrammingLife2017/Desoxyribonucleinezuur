@@ -80,10 +80,11 @@ public final class ProgrammingLife extends Application {
         Parameters params = this.getParameters();
         if (params.getNamed().containsKey("file")) {
             String fileName = params.getNamed().get("file");
-            if (params.getUnnamed().contains("--clean")) {
-                DataManager.removeDB(fileName);
-            }
             File file = new File(fileName);
+            if (params.getUnnamed().contains("--clean")) {
+                boolean removed = DataManager.removeDB(file.getName());
+                System.out.printf("[%s] Removed: %b\n", Thread.currentThread().getName(), removed);
+            }
             guiCtrl.openFile(file);
         }
     }

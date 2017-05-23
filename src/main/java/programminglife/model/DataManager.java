@@ -76,7 +76,7 @@ public final class DataManager {
      * @return The converted name.
      */
     public static String toDBFile(String name) {
-        if (name.toLowerCase().endsWith(".fga")) {
+        if (name.toLowerCase().endsWith(".gfa")) {
             name = name.substring(0, name.length() - 4);
         }
         if (!name.toLowerCase().endsWith(".db")) {
@@ -185,7 +185,7 @@ public final class DataManager {
     }
 
     /**
-     * Commit/persist the changes to the database
+     * Commit/persist the changes to the database.
      * @param db the {@link DB} to persist changes of
      */
     private void commit(DB db) {
