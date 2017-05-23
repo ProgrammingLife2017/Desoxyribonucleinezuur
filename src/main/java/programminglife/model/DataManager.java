@@ -185,7 +185,7 @@ public final class DataManager {
     }
 
     /**
-     * Commit/persist the changes to the database
+     * Commit/persist the changes to the database.
      * @param db the {@link DB} to persist changes of
      */
     private void commit(DB db) {
