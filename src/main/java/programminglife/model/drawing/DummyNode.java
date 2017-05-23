@@ -12,7 +12,7 @@ public class DummyNode implements DrawableNode {
     private XYCoordinate loc;
 
     public DummyNode() {
-        this.loc = new XYCoordinate(0,0);
+        this.loc = new XYCoordinate(0, 0);
     }
 
     @Override
