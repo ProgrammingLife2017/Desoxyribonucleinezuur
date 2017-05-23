@@ -6,14 +6,21 @@ import java.util.Collection;
 import java.util.HashSet;
 
 /**
- * Created by Ivo on 2017-05-23.
+ * A type of {@link DrawableNode}. It is used by {@link SubGraph#layout()} to lay out the edges better.
+ * This is a {@link programminglife.model.Node} for the {@link SubGraph},
+ * but not an actual Node within {@link programminglife.model.GenomeGraph}.
  */
 public class DummyNode implements DrawableNode {
     private XYCoordinate loc;
 
+    /**
+     * Default empty constructor. Set location to (0,0).
+     */
     public DummyNode() {
         this.loc = new XYCoordinate(0, 0);
     }
+
+    // TODO: implement the methods.
 
     @Override
     public int getIdentifier() {

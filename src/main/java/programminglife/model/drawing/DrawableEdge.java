@@ -3,7 +3,8 @@ package programminglife.model.drawing;
 import programminglife.model.*;
 
 /**
- * Created by Ivo on 2017-05-23.
+ * An {@link Edge} that also implements {@link Drawable}.
+ * @param <N> The type of {@link DrawableNode DrawableNodes} this edge connects.
  */
 public interface DrawableEdge<N extends DrawableNode<N>> extends Edge<N>, Drawable {
 

@@ -6,7 +6,7 @@ import programminglife.model.Link;
 import java.util.Collection;
 
 /**
- * Created by Ivo on 2017-05-23.
+ * A {@link Link} that also Implements {@link Drawable}.
  */
 public class DrawableLink implements DrawableEdge<DrawableSegment> {
     private Link link;

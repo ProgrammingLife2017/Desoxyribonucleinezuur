@@ -6,15 +6,20 @@ import programminglife.model.XYCoordinate;
 import java.util.Collection;
 
 /**
- * Created by Ivo on 2017-05-23.
+ * A {@link Segment} that also Implements {@link Drawable}.
  */
 public class DrawableSegment implements DrawableNode<DrawableSegment> {
-
     private Segment segment;
 
+    /**
+     * Create a DrawableSegment from a Segment.
+     * @param segment The segment to create this DrawableSegment from.
+     */
     public DrawableSegment(Segment segment) {
         this.segment = segment;
     }
+
+    // TODO: implement methods
 
     @Override
     public Collection<DrawableEdge<DrawableSegment>> getChildren() {

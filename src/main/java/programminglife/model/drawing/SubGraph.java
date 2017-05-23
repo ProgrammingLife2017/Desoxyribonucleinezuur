@@ -1,18 +1,30 @@
 package programminglife.model.drawing;
 
-import org.jetbrains.annotations.NotNull;
 import programminglife.model.Node;
 import programminglife.model.XYCoordinate;
 
 import java.util.*;
 
-// TODO: rename to better name
-public class Drawing<N extends DrawableNode<N>> {
+/**
+ * A part of a {@link programminglife.model.Graph}. It uses a centerNode and a radius.
+ * Roughly, every node reachable within radius steps from centerNode is included in this graph.
+ * When updating the centerNode or the radius, it also updates the Nodes within this SubGraph.
+ * @param <N> The type of {@link DrawableNode DrawableNodes} this SubGraph stores.
+ */
+public class SubGraph<N extends DrawableNode<N>> {
     /**
      * How much do we go further than radius to make sure we don't miss any important nodes?
      */
     private static final int OVERSHOOT = 2;
+
+    /**
+     * The amount of padding between layers (horizontal padding).
+     */
     private static final int LAYER_PADDING = 20;
+
+    /**
+     * The amount of padding between nodes within a Layer (vertical padding).
+     */
     private static final int LINE_PADDING = 20;
 
     private Set<DrawableNode<N>> nodes;
@@ -20,23 +32,40 @@ public class Drawing<N extends DrawableNode<N>> {
     private Node centerNode;
     private int radius;
 
-    public Drawing(Node centerNode, int radius) {
+    /**
+     * Create a SubGraph using a centerNode and a radius around that centerNode.
+     * This SubGraph will include all Nodes within radius steps to a parent,
+     * and then another 2radius steps to a child, and symmetrically the same with children / parents reversed.
+     * @param centerNode The centerNode
+     * @param radius The radius
+     */
+    public SubGraph(Node centerNode, int radius) {
         // TODO
         // tactic: first go to all parents at exactly radius, then find all children of those parents
     }
 
+    /**
+     * Draw this SubGraph on the screen.
+     */
     public void draw() {
         // TODO
         // use layout if not done already
     }
 
+    /**
+     * Find out which {@link Drawable} is at the given location.
+     * @param loc The location to search for Drawables.
+     * @return The {@link Drawable} that is on top at the given location.
+     */
     public Drawable atLocation(XYCoordinate loc) {
         // TODO
         return null;
     }
 
+    /**
+     * Lay out the {@link Drawable Drawables} in this SubGraph.
+     */
     public void layout() {
-        // TODO
         List<Layer<N>> layers = findLayers();
 
         int x = 0;
@@ -49,9 +78,14 @@ public class Drawing<N extends DrawableNode<N>> {
             x += layer.getWidth() + LAYER_PADDING;
         }
 
-        // TODO: translate so that the centernode is at 0,0;
+        // TODO: translate so that the centerNode is at 0,0;
     }
 
+    /**
+     * Put all nodes in {@link Layer Layers}. This method is used when {@link #layout() laying out} the graph.
+     * This will put each node in a Layer one higher than each of its parents.
+     * @return A {@link List} of Layers with all the nodes (all nodes are divided over the Layers).
+     */
     private List<Layer<N>> findLayers() {
         List<DrawableNode<N>> sorted = topoSort();
         Map<DrawableNode<N>, Integer> nodeLevel = new HashMap<>();
@@ -79,6 +113,10 @@ public class Drawing<N extends DrawableNode<N>> {
         return res;
     }
 
+    /**
+     * Sort each Layer to minimize edge crossings between the Layers.
+     * @param layers The layers to sort.
+     */
     private void sortWithinLayers(List<Layer<N>> layers) {
         // TODO: improve to reduce edge crossings
         // note: in case of ambiguity in choosing what node to draw first, use node with lowest id
@@ -156,6 +194,12 @@ public class Drawing<N extends DrawableNode<N>> {
         return res;
     }
 
+    /**
+     * Set the centerNode of this SubGraph.
+     * Nodes that are now outside the radius of this SubGraph will be removed,
+     * and Nodes that are now inside will be added.
+     * @param centerNode The new centerNode.
+     */
     public void setCenterNode(Node centerNode) {
         // TODO
         // drop nodes that are now outside radius
@@ -163,6 +207,12 @@ public class Drawing<N extends DrawableNode<N>> {
         // drop nodes that are only connected via nodes now outside radius?
     }
 
+    /**
+     * Set the radius of this SubGraph.
+     * Nodes that are now outside the radius of this SubGraph will be removed,
+     * and Nodes that are now inside will be added.
+     * @param radius The new radius.
+     */
     public void setRadius(int radius) {
         // TODO
         // when getting bigger: include new nodes
