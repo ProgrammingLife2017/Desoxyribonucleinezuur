@@ -1,12 +1,10 @@
 package programminglife.model.drawing;
 
+import org.jetbrains.annotations.NotNull;
 import programminglife.model.Node;
 import programminglife.model.XYCoordinate;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 // TODO: rename to better name
 public class Drawing<N extends DrawableNode<N>> {
@@ -39,14 +37,12 @@ public class Drawing<N extends DrawableNode<N>> {
 
     public void layout() {
         // TODO
-        // note: in case of ambiguity in choosing what node to draw first, use node with lowest id
-        // (to break ties and make layout deterministic)
-        List<Layer> layers = findLayers();
+        List<Layer<N>> layers = findLayers();
 
         int x = 0;
         int y = 0;
-        for (Layer layer : layers) {
-            for (DrawableNode d : layer) {
+        for (Layer<N> layer : layers) {
+            for (DrawableNode<N> d : layer) {
                 d.setLocation(new XYCoordinate(x, y));
                 y += LINE_PADDING;
             }
@@ -56,14 +52,40 @@ public class Drawing<N extends DrawableNode<N>> {
         // TODO: translate so that the centernode is at 0,0;
     }
 
-    private List<Layer> findLayers() {
-        // TODO
-        return null;
+    private List<Layer<N>> findLayers() {
+        List<DrawableNode<N>> sorted = topoSort();
+        Map<DrawableNode<N>, Integer> nodeLevel = new HashMap<>();
+        List<Layer<N>> res = new ArrayList<>();
+
+        for (DrawableNode<N> node : sorted) {
+            int maxParentLevel = -1;
+            for (DrawableEdge<N> edge : node.getParents()) {
+                Integer parentLevel = nodeLevel.get(edge.getStart());
+                if (parentLevel == null) {
+                    continue;
+                } else if (maxParentLevel < parentLevel) {
+                    maxParentLevel = parentLevel;
+                }
+            }
+            maxParentLevel++; // we want this node one level higher than the highest parent.
+            nodeLevel.put(node, maxParentLevel);
+            if (res.size() <= maxParentLevel) {
+                res.add(new Layer<>());
+            }
+            res.get(maxParentLevel).add(node);
+        }
+
+        // TODO: create dummy nodes for edges
+        return res;
     }
 
-    private List<Layer> sortWithinLayers(List<Layer> layers) {
-        // TODO
-        return null;
+    private void sortWithinLayers(List<Layer<N>> layers) {
+        // TODO: improve to reduce edge crossings
+        // note: in case of ambiguity in choosing what node to draw first, use node with lowest id
+        // (to break ties and make layout deterministic)
+        for (Layer<N> l : layers) {
+            l.sort(Comparator.comparingInt(Node::getIdentifier));
+        }
     }
 
     /**

@@ -3,15 +3,16 @@ package programminglife.model.drawing;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
 /**
  * Created by Ivo on 2017-05-23.
  */
-public class Layer implements Iterable<DrawableNode> {
+public class Layer<N extends DrawableNode<N>> implements Iterable<DrawableNode<N>> {
     private int width;
-    private List<DrawableNode> nodes;
+    private List<DrawableNode<N>> nodes;
 
     public Layer() {
         this.width = 0;
@@ -26,13 +27,17 @@ public class Layer implements Iterable<DrawableNode> {
         this.width = width;
     }
 
-    public void add(DrawableNode node) {
+    public void add(DrawableNode<N> node) {
         this.nodes.add(node);
     }
 
     @NotNull
     @Override
-    public Iterator<DrawableNode> iterator() {
+    public Iterator<DrawableNode<N>> iterator() {
         return nodes.iterator();
+    }
+
+    public void sort(Comparator<? super DrawableNode<N>> c) {
+        this.nodes.sort(c);
     }
 }
