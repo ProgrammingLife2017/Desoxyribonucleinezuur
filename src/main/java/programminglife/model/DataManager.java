@@ -76,7 +76,7 @@ public final class DataManager {
      * @return The converted name.
      */
     public static String toDBFile(String name) {
-        if (name.toLowerCase().endsWith(".fga")) {
+        if (name.toLowerCase().endsWith(".gfa")) {
             name = name.substring(0, name.length() - 4);
         }
         if (!name.toLowerCase().endsWith(".db")) {
