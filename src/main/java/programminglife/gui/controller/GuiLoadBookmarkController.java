@@ -30,7 +30,6 @@ public class GuiLoadBookmarkController implements Observer {
     @FXML private Button btnCancelBookmark;
     @FXML private Button btnDeleteBookmark;
     @FXML private Button btnCreateBookmark;
-//    @FXML private TableView<Bookmark> tblBookmark;
     @FXML private Accordion accordionBookmark;
     private List<TableView<Bookmark>> tableViews;
 
@@ -48,7 +47,7 @@ public class GuiLoadBookmarkController implements Observer {
      * @return True if selected, false otherwise.
      */
     private Bookmark checkBookmarkSelection() {
-        Bookmark bookmark = null;
+        Bookmark bookmark;
         for (TableView<Bookmark> tableView : tableViews) {
             if (tableView.getSelectionModel().getSelectedItem() != null) {
                 bookmark = tableView.getSelectionModel().getSelectedItem();
@@ -65,7 +64,7 @@ public class GuiLoadBookmarkController implements Observer {
                 return null;
             }
         }
-        return bookmark;
+        return null;
     }
 
     /**
@@ -93,7 +92,7 @@ public class GuiLoadBookmarkController implements Observer {
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.isPresent()) {
                     if (result.get() == ButtonType.OK) {
-                        BookmarkController.deleteBookmark(graphName, bookmark.getBookmarkName());
+                        BookmarkController.deleteBookmark(graphName ,bookmark.getBookmarkName());
                         System.out.println("Deleted bookmark " + bookmark.getBookmarkName()
                                 + " Center Node: " + bookmark.getNodeID() + " Radius: " + bookmark.getRadius());
                         initBookmarks();
@@ -102,7 +101,6 @@ public class GuiLoadBookmarkController implements Observer {
                     }
                 }
             }
-            Stage s = (Stage) btnDeleteBookmark.getScene().getWindow();
         });
 
         btnCancelBookmark.setOnAction(event -> {
@@ -123,7 +121,7 @@ public class GuiLoadBookmarkController implements Observer {
                 bookmarkDialogStage.setTitle("Create Bookmark");
                 bookmarkDialogStage.initOwner(ProgrammingLife.getStage());
                 bookmarkDialogStage.showAndWait();
-                this.initBookmarks();
+                initBookmarks();
             } catch (IOException e) {
                 (new Alert(Alert.AlertType.ERROR, "This bookmark cannot be created.", ButtonType.CLOSE)).show();
             }
@@ -132,18 +130,19 @@ public class GuiLoadBookmarkController implements Observer {
     }
 
     private void createTableView(String graph, List<Bookmark> bookmarks) {
-        TableColumn<Bookmark, String> tableColumn = new TableColumn<Bookmark, String>();
+        TableColumn<Bookmark, String> tableColumn = new TableColumn<>();
         tableColumn.setText("Name");
         tableColumn.setId("Name" + graph);
         tableColumn.setPrefWidth(120);
 
-        TableColumn<Bookmark, String> tableColumn1 = new TableColumn<Bookmark, String>();
+        TableColumn<Bookmark, String> tableColumn1 = new TableColumn<>();
         tableColumn1.setText("Description");
         tableColumn1.setId("Description" + graph);
         tableColumn1.setPrefWidth(460);
 
         TableView<Bookmark> tableView = new TableView<>();
-        tableView.getColumns().addAll(tableColumn, tableColumn1);
+        tableView.getColumns().add(0, tableColumn);
+        tableView.getColumns().add(1, tableColumn1);
         tableViews.add(tableView);
 
         AnchorPane anchorPane = new AnchorPane();
@@ -153,19 +152,22 @@ public class GuiLoadBookmarkController implements Observer {
         titledPane.setText(graph);
 
         titledPane.setContent(anchorPane);
-
+        accordionBookmark.getPanes().add(titledPane);
 
         ObservableList<Bookmark> bookmarksList = FXCollections.observableArrayList();
         for (Bookmark bm : bookmarks) {
-            bookmarksList.add(bm);
+            bookmarksList.addAll(bm);
         }
         tableColumn.setCellValueFactory(cellData -> cellData.getValue().getNameProperty());
         tableColumn1.setCellValueFactory(cellData -> cellData.getValue().getDescriptionProperty());
         tableView.setItems(bookmarksList);
-        accordionBookmark.getPanes().add(titledPane);
     }
 
+    /**
+     * Initializes the bookmarks from the different graphs.
+     */
     public void initBookmarks() {
+        accordionBookmark.getPanes().clear();
         tableViews = new ArrayList<>();
 
         Map<String, List<Bookmark>> bookmarks = BookmarkController.loadAllBookmarks();
@@ -173,21 +175,6 @@ public class GuiLoadBookmarkController implements Observer {
             createTableView(graphBookmarks.getKey(), graphBookmarks.getValue());
         }
     }
-
-//    /**
-//     * Fills the columns with the names and descriptions of the bookmarks.
-//     */
-//    public void initColumns() {
-//        ObservableList<Bookmark> bookmarks = FXCollections.observableArrayList();
-//        for (Bookmark bm : BookmarkController.loadAllGraphBookmarks(graphName)) {
-//            bookmarks.add(bm);
-//        }
-//        clmnFile.setCellValueFactory(cellData -> cellData.getValue().getFileProperty());
-//        clmnName.setCellValueFactory(cellData -> cellData.getValue().getNameProperty());
-//        clmnDescription.setCellValueFactory(cellData -> cellData.getValue().getDescriptionProperty());
-//        tblBookmark.setItems(bookmarks);
-//
-//    }
 
     /**
      * Sets the graphController for drawing the bookmarks.
