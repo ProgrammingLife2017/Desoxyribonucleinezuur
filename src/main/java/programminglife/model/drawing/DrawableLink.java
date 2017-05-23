@@ -2,14 +2,13 @@ package programminglife.model.drawing;
 
 import programminglife.model.Genome;
 import programminglife.model.Link;
-import programminglife.model.Segment;
 
 import java.util.Collection;
 
 /**
  * Created by Ivo on 2017-05-23.
  */
-public class DrawableLink implements DrawableEdge<Segment> {
+public class DrawableLink implements DrawableEdge<DrawableSegment> {
     private Link link;
 
     @Override
@@ -18,13 +17,13 @@ public class DrawableLink implements DrawableEdge<Segment> {
     }
 
     @Override
-    public Segment getStart() {
-        return this.link.getStart();
+    public DrawableSegment getStart() {
+        return null;
     }
 
     @Override
-    public Segment getEnd() {
-        return this.link.getEnd();
+    public DrawableSegment getEnd() {
+        return null;
     }
 
 }
