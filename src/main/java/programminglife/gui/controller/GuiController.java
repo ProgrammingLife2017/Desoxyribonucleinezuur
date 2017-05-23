@@ -241,12 +241,12 @@ public class GuiController implements Observer {
 
         btnBookmarks.setOnAction(event -> {
             try {
-                FXMLLoader loader = new FXMLLoader(ProgrammingLife.class.getResource("/LoadBookmarkWindow.fxml"));
+                FXMLLoader loader = new FXMLLoader(ProgrammingLife.class.getResource("/LoadBookmarkWindow2.fxml"));
                 AnchorPane page = loader.load();
                 GuiLoadBookmarkController gc = loader.getController();
                 gc.setGraphController(graphController);
                 gc.setGuiController(this);
-                gc.initColumns();
+                gc.initBookmarks();
                 Scene scene = new Scene(page);
                 Stage bookmarkDialogStage = new Stage();
                 bookmarkDialogStage.setResizable(false);

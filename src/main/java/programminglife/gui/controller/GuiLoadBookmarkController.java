@@ -15,9 +15,7 @@ import programminglife.model.Graph;
 import programminglife.parser.GraphParser;
 
 import java.io.IOException;
-import java.util.Observable;
-import java.util.Observer;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Created by Martijn van Meerten.
@@ -28,14 +26,13 @@ public class GuiLoadBookmarkController implements Observer {
     private GraphController graphController;
     private GuiController guiController;
 
-    @FXML private TableColumn<Bookmark, String> clmnName;
-    @FXML private TableColumn<Bookmark, String> clmnDescription;
-    @FXML private TableColumn<Bookmark, String> clmnFile;
     @FXML private Button btnOpenBookmark;
     @FXML private Button btnCancelBookmark;
     @FXML private Button btnDeleteBookmark;
     @FXML private Button btnCreateBookmark;
-    @FXML private TableView<Bookmark> tblBookmark;
+//    @FXML private TableView<Bookmark> tblBookmark;
+    @FXML private Accordion accordionBookmark;
+    private List<TableView<Bookmark>> tableViews;
 
     /**
      * Initialize method for BookmarkController.
@@ -50,16 +47,25 @@ public class GuiLoadBookmarkController implements Observer {
      * Checks whether the user has selected a bookmark.
      * @return True if selected, false otherwise.
      */
-    private boolean checkBookmarkSelection() {
-        if (tblBookmark.getSelectionModel().getSelectedItem() == null) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("No bookmark selected");
-            alert.setContentText("Please select a bookmark to open");
-            alert.setHeaderText(null);
-            alert.show();
-            return false;
+    private Bookmark checkBookmarkSelection() {
+        Bookmark bookmark = null;
+        for (TableView<Bookmark> tableView : tableViews) {
+            if (tableView.getSelectionModel().getSelectedItem() != null) {
+                bookmark = tableView.getSelectionModel().getSelectedItem();
+                return bookmark;
+            }
         }
-        return true;
+        for (TableView<Bookmark> tableView : tableViews) {
+            if (tableView.getSelectionModel().getSelectedItem() == null) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("No bookmark selected");
+                alert.setContentText("Please select a bookmark to open");
+                alert.setHeaderText(null);
+                alert.show();
+                return null;
+            }
+        }
+        return bookmark;
     }
 
     /**
@@ -67,8 +73,8 @@ public class GuiLoadBookmarkController implements Observer {
      */
     private void initButtons() {
         btnOpenBookmark.setOnAction(event -> {
-            if (checkBookmarkSelection()) {
-                Bookmark bookmark = tblBookmark.getSelectionModel().getSelectedItem();
+            Bookmark bookmark = checkBookmarkSelection();
+            if (bookmark != null) {
                 guiController.setText(bookmark.getNodeID(), bookmark.getRadius());
                 graphController.clear();
                 graphController.draw(bookmark.getNodeID(), bookmark.getRadius());
@@ -79,9 +85,9 @@ public class GuiLoadBookmarkController implements Observer {
             }
         });
         btnDeleteBookmark.setOnAction(event -> {
-            if (checkBookmarkSelection()) {
-                Bookmark bookmark = tblBookmark.getSelectionModel().getSelectedItem();
-                Alert alert =  new Alert(Alert.AlertType.CONFIRMATION);
+            Bookmark bookmark = checkBookmarkSelection();
+            if (bookmark != null) {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle("Confirm Deletion");
                 alert.setHeaderText("Do you really want to delete bookmark: \"" + bookmark.getBookmarkName() + "\"?");
                 Optional<ButtonType> result = alert.showAndWait();
@@ -90,14 +96,13 @@ public class GuiLoadBookmarkController implements Observer {
                         BookmarkController.deleteBookmark(graphName, bookmark.getBookmarkName());
                         System.out.println("Deleted bookmark " + bookmark.getBookmarkName()
                                 + " Center Node: " + bookmark.getNodeID() + " Radius: " + bookmark.getRadius());
-                        this.initColumns();
-
+                        initBookmarks();
                     } else {
                         alert.close();
                     }
                 }
-                Stage s = (Stage) btnDeleteBookmark.getScene().getWindow();
             }
+            Stage s = (Stage) btnDeleteBookmark.getScene().getWindow();
         });
 
         btnCancelBookmark.setOnAction(event -> {
@@ -118,7 +123,7 @@ public class GuiLoadBookmarkController implements Observer {
                 bookmarkDialogStage.setTitle("Create Bookmark");
                 bookmarkDialogStage.initOwner(ProgrammingLife.getStage());
                 bookmarkDialogStage.showAndWait();
-                this.initColumns();
+                this.initBookmarks();
             } catch (IOException e) {
                 (new Alert(Alert.AlertType.ERROR, "This bookmark cannot be created.", ButtonType.CLOSE)).show();
             }
@@ -126,20 +131,63 @@ public class GuiLoadBookmarkController implements Observer {
         });
     }
 
-    /**
-     * Fills the columns with the names and descriptions of the bookmarks.
-     */
-    public void initColumns() {
-        ObservableList<Bookmark> bookmarks = FXCollections.observableArrayList();
-        for (Bookmark bm : BookmarkController.loadAllGraphBookmarks(graphName)) {
-            bookmarks.add(bm);
-        }
-        clmnFile.setCellValueFactory(cellData -> cellData.getValue().getFileProperty());
-        clmnName.setCellValueFactory(cellData -> cellData.getValue().getNameProperty());
-        clmnDescription.setCellValueFactory(cellData -> cellData.getValue().getDescriptionProperty());
-        tblBookmark.setItems(bookmarks);
+    private void createTableView(String graph, List<Bookmark> bookmarks) {
+        TableColumn<Bookmark, String> tableColumn = new TableColumn<Bookmark, String>();
+        tableColumn.setText("Name");
+        tableColumn.setId("Name" + graph);
+        tableColumn.setPrefWidth(120);
 
+        TableColumn<Bookmark, String> tableColumn1 = new TableColumn<Bookmark, String>();
+        tableColumn1.setText("Description");
+        tableColumn1.setId("Description" + graph);
+        tableColumn1.setPrefWidth(460);
+
+        TableView<Bookmark> tableView = new TableView<>();
+        tableView.getColumns().addAll(tableColumn, tableColumn1);
+        tableViews.add(tableView);
+
+        AnchorPane anchorPane = new AnchorPane();
+        anchorPane.getChildren().add(tableView);
+
+        TitledPane titledPane = new TitledPane();
+        titledPane.setText(graph);
+
+        titledPane.setContent(anchorPane);
+
+
+        ObservableList<Bookmark> bookmarksList = FXCollections.observableArrayList();
+        for (Bookmark bm : bookmarks) {
+            bookmarksList.add(bm);
+        }
+        tableColumn.setCellValueFactory(cellData -> cellData.getValue().getNameProperty());
+        tableColumn1.setCellValueFactory(cellData -> cellData.getValue().getDescriptionProperty());
+        tableView.setItems(bookmarksList);
+        accordionBookmark.getPanes().add(titledPane);
     }
+
+    public void initBookmarks() {
+        tableViews = new ArrayList<>();
+
+        Map<String, List<Bookmark>> bookmarks = BookmarkController.loadAllBookmarks();
+        for (Map.Entry<String, List<Bookmark>> graphBookmarks : bookmarks.entrySet()) {
+            createTableView(graphBookmarks.getKey(), graphBookmarks.getValue());
+        }
+    }
+
+//    /**
+//     * Fills the columns with the names and descriptions of the bookmarks.
+//     */
+//    public void initColumns() {
+//        ObservableList<Bookmark> bookmarks = FXCollections.observableArrayList();
+//        for (Bookmark bm : BookmarkController.loadAllGraphBookmarks(graphName)) {
+//            bookmarks.add(bm);
+//        }
+//        clmnFile.setCellValueFactory(cellData -> cellData.getValue().getFileProperty());
+//        clmnName.setCellValueFactory(cellData -> cellData.getValue().getNameProperty());
+//        clmnDescription.setCellValueFactory(cellData -> cellData.getValue().getDescriptionProperty());
+//        tblBookmark.setItems(bookmarks);
+//
+//    }
 
     /**
      * Sets the graphController for drawing the bookmarks.

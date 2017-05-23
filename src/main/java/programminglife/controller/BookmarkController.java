@@ -13,6 +13,7 @@ import programminglife.utility.Alerts;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -21,7 +22,9 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Martijn van Meerten on 15-5-2017.
@@ -45,6 +48,10 @@ public final class BookmarkController {
      */
     public static List<Bookmark> loadAllGraphBookmarks(String graphName) {
         return loadAllGraphBookmarks(BOOKMARKPATH, graphName);
+    }
+
+    public static Map<String, List<Bookmark>> loadAllBookmarks() {
+        return loadAllBookmarks(BOOKMARKPATH);
     }
 
     /**
@@ -154,6 +161,8 @@ public final class BookmarkController {
 
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
             DOMSource source = new DOMSource(doc);
             StreamResult streamResult = new StreamResult(new File(fileName));
             transformer.transform(source, streamResult);
@@ -230,8 +239,8 @@ public final class BookmarkController {
      * @param fileName The bookmark file from which to read
      * @return A map of lists containing all bookmarks
      */
-    public static List<Bookmark> loadAllBookmarks(String fileName) {
-        List<Bookmark> result = new ArrayList<>();
+    public static Map<String, List<Bookmark>> loadAllBookmarks(String fileName) {
+        Map<String, List<Bookmark>> result = new HashMap<>();
         checkFile(fileName);
         Document dom;
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -247,7 +256,7 @@ public final class BookmarkController {
                         Element element = (Element) graphs.item(i);
                         String graphName = element.getElementsByTagName("name").item(0).getTextContent();
                         NodeList bookmarks = element.getElementsByTagName("bookmark");
-                        result.addAll(parseBookmarks(graphName, bookmarks));
+                        result.put(graphName, parseBookmarks(graphName, bookmarks));
                     }
                 }
             }
