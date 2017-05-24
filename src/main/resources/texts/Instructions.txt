@@ -24,4 +24,3 @@ Usage of files:
     - A .gfa file which is used by the program can be stored at any location the user desires.
     - The first time a file is loaded its path will be stored in the application to be used by certain functions.
     - If a file is edited in any manner those functions might not work anymore and the file will need to be updated.
-    - The file can be updated by using the built in file chooser to direct the application to its new location.
