@@ -92,7 +92,7 @@ public class GuiLoadBookmarkController implements Observer {
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.isPresent()) {
                     if (result.get() == ButtonType.OK) {
-                        BookmarkController.deleteBookmark(graphName ,bookmark.getBookmarkName());
+                        BookmarkController.deleteBookmark(graphName, bookmark.getBookmarkName());
                         System.out.println("Deleted bookmark " + bookmark.getBookmarkName()
                                 + " Center Node: " + bookmark.getNodeID() + " Radius: " + bookmark.getRadius());
                         initBookmarks();
@@ -129,6 +129,11 @@ public class GuiLoadBookmarkController implements Observer {
         });
     }
 
+    /**
+     * Creates the tableview with the menu's for the bookmarks.
+     * @param graph String the graph for which we have bookmarks.
+     * @param bookmarks List of bookmarks that are created for the graphs.
+     */
     private void createTableView(String graph, List<Bookmark> bookmarks) {
         TableColumn<Bookmark, String> tableColumn = new TableColumn<>();
         tableColumn.setText("Name");
@@ -147,6 +152,10 @@ public class GuiLoadBookmarkController implements Observer {
 
         AnchorPane anchorPane = new AnchorPane();
         anchorPane.getChildren().add(tableView);
+        AnchorPane.setBottomAnchor(tableView, 0.d);
+        AnchorPane.setTopAnchor(tableView, 0.d);
+        AnchorPane.setLeftAnchor(tableView, 0.d);
+        AnchorPane.setRightAnchor(tableView, 0.d);
 
         TitledPane titledPane = new TitledPane();
         titledPane.setText(graph);
