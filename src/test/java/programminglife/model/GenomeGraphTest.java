@@ -3,11 +3,8 @@ package programminglife.model;
 import org.junit.*;
 
 import java.io.File;
-import java.util.NoSuchElementException;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Created by toinehartman on 03/05/2017.
@@ -23,8 +20,6 @@ public class GenomeGraphTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        DataManager.initialize(TEST_DB);
-
         TEST_PATH = new File(GenomeGraphTest.class.getResource("/test.gfa").toURI()).getAbsolutePath();
         TEST_FAULTY_PATH = new File(
                 GenomeGraphTest.class.getClass().getResource("/test-faulty.gfa").toURI()
@@ -34,14 +29,14 @@ public class GenomeGraphTest {
     @Before
     public void setUp() throws Exception {
         graph = new GenomeGraph("test graph");
-        node = new Segment(3, "ATCG");
+        node = new Segment(graph, 3, "ATCG");
 
         graph.addNode(node);
     }
 
     @After
     public void tearDown() throws Exception {
-        DataManager.clearDB(TEST_DB);
+        graph.removeCache();
     }
 
     @AfterClass
@@ -51,7 +46,7 @@ public class GenomeGraphTest {
 
     @Test
     public void addNodeTest() throws Exception {
-        Segment secondNode = new Segment(8);
+        Segment secondNode = new Segment(graph, 8);
         graph.addNode(secondNode);
 
         assertEquals(2, graph.size());
@@ -72,16 +67,16 @@ public class GenomeGraphTest {
     @Test
     public void sizeTest() {
         assertEquals(1,graph.size());
-        graph.addNode(new Segment(2,"AAAAT"));
+        graph.addNode(new Segment(graph, 2,"AAAAT"));
         assertEquals(2,graph.size());
     }
 
     @Test
     public void containsTest() {
-        Node node2 = new Segment( 2, "ATTCTT");
+        Node node2 = new Segment(graph, 2, "ATTCTT");
         graph.addNode(node2);
         assertTrue(graph.contains(node2));
-        Node node3 = new Segment(37,"AAAAAAAA");
+        Node node3 = new Segment(graph, 37,"AAAAAAAA");
         assertFalse(graph.contains(node3));
     }
 }

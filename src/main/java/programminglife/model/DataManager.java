@@ -1,5 +1,6 @@
 package programminglife.model;
 
+import org.jetbrains.annotations.NotNull;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.HTreeMap;
@@ -10,6 +11,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 /**
  * A class for managing persistent data. It can open one cache, which contains the information for one gfa file.
@@ -19,60 +21,37 @@ public final class DataManager {
     private static final String SEQUENCE_LENGTH_MAP_NAME = "sequenceLengthMap";
     private static final String GENOME_NAMES_MAP_NAME = "genomeNamesMap";
 
-    private static DataManager ourInstance = null;
-    private static String currentFileName = null;
-
+    private String dbFileName;
     private DB db;
     private Map<Integer, String> sequenceMap;
     private Map<Integer, Integer> sequenceLengthMap;
     private Map<Integer, String> genomeNamesMap;
 
-
-    /**
-     * Initialize this DataManager. Opens database and stuff.
-     * @param fileName The name of the cache file.
-     * @throws IOException When an IO Exception occurs while opening the database.
-     */
-    public static synchronized void initialize(String fileName) throws IOException {
-        if (ourInstance != null) {
-            DataManager.close();
-        }
-
-        ourInstance = new DataManager(fileName);
-    }
-
-    /**
-     * get the instance of this singleton. This will throw a RunTimeException if initialize has not
-     * been called successfully beforehand and it could not be initialized automatically.
-     * @return The singleton DataManager instance.
-     */
-    public static DataManager getInstance() {
-        return ourInstance;
-    }
-
     /**
      * Create the DataManager and initialize the database.
-     * @param name The name of the cache file.
+     * @param name The name of the {@link DataManager}.
      *                 Note: this method will append .db if it doesn't already end with that.
-     * @throws IOException when an IOException occurs while opening the database.
      */
-    private DataManager(String name) throws IOException {
-        String fileName = toDBFile(name);
-
-        System.out.printf("[%s] Setting up MapDB %s...%n", Thread.currentThread().getName(), fileName);
-        this.currentFileName = fileName;
-        this.db = DBMaker.fileDB(new File(fileName))
+    public DataManager(String name) {
+        this.dbFileName = toDBFile(name);
+        System.out.printf("[%s] Setting up cache (%s)...%n", Thread.currentThread().getName(), this.dbFileName);
+        this.db = DBMaker.fileDB(new File(this.dbFileName))
                 .fileMmapEnableIfSupported()
                 .fileMmapPreclearDisable()
                 .cleanerHackEnable()
                 .closeOnJvmShutdown()
+                .checksumHeaderBypass()
                 .make();
+        this.initialize();
+    }
 
+    /**
+     * Initialize all collections in the cache.
+     */
+    private void initialize() {
         this.sequenceMap = getMap(db, SEQUENCE_MAP_NAME, Serializer.INTEGER, Serializer.STRING_ASCII);
         this.sequenceLengthMap = getMap(db, SEQUENCE_LENGTH_MAP_NAME, Serializer.INTEGER, Serializer.INTEGER);
         this.genomeNamesMap = getMap(db, GENOME_NAMES_MAP_NAME, Serializer.INTEGER, Serializer.STRING_ASCII);
-
-        System.out.printf("[%s] MapDB %s set up!%n", Thread.currentThread().getName(), fileName);
     }
 
     /**
@@ -80,7 +59,8 @@ public final class DataManager {
      * @param name The name to be converted
      * @return The converted name.
      */
-    public static String toDBFile(String name) {
+    @NotNull
+    private static String toDBFile(String name) {
         if (name.toLowerCase().endsWith(".gfa")) {
             name = name.substring(0, name.length() - 4);
         }
@@ -90,50 +70,38 @@ public final class DataManager {
         return name;
     }
 
-    private DB getDb() {
-        return db;
-    }
-
     /**
      * Check whether a cache exists for file named name.
      * @param name collection to check for
      * @return true iff a cache exists for the file, false iff otherwise.
      */
+    @NotNull
     public static boolean hasCache(String name) {
-        return Files.exists(new File(toDBFile(name)).toPath());
+        return Files.exists(Paths.get(toDBFile(name)));
     }
 
     /**
-     * Create a clean (empty) Segment storage.
-     * WARNING: this operation overwrites the cache collection, if it exists.
-     * @param collectionName name of collection
-     * @return A clean (empty) HTreeMap
+     * Get the HTreeMap cache for the cached sequence lengths.
+     * @return the HTreeMap cache for the sequence lengths.
      */
-    private static Map<Integer, String> getCleanCollection(String collectionName) {
-        Map<Integer, String> res = getSequenceMap();
-        res.clear();
-        return res;
-    }
-
-
-    /**
-     * Get the HTreeMap cache for the sequence lengths of the current file.
-     * @return the HTreeMap cache for the sequence lengths of the current file.
-     */
-    private static Map<Integer, Integer> getSequenceLengthMap() {
-        return getInstance().sequenceLengthMap;
+    private Map<Integer, Integer> getSequenceLengthMap() {
+        return this.sequenceLengthMap;
     }
 
     /**
-     * Get the HTreeMap cache for the sequences of the current file.
-     * @return the HTreeMap cache for the sequences of the current file.
+     * Get the HTreeMap cache for the cached sequences.
+     * @return the HTreeMap cache for the sequences.
      */
-    private static Map<Integer, String> getSequenceMap() {
-        return getInstance().sequenceMap;
+    private Map<Integer, String> getSequenceMap() {
+        return this.sequenceMap;
     }
 
-    private static Map<Integer, String> getGenomeNamesMap() {
-        return getInstance().genomeNamesMap;
+    /**
+     * Get the HTreeMap cache for the cached genomes.
+     * @return the HTreeMap cache for the sequences.
+     */
+    private Map<Integer, String> getGenomeNamesMap() {
+        return this.genomeNamesMap;
     }
 
     /**
@@ -146,6 +114,7 @@ public final class DataManager {
      * @param <V> The type of the values.
      * @return a disk-backed hashmap named name.
      */
+    @NotNull
     private static <K, V> Map<K, V> getMap(DB db, String name,
                                            Serializer<K> keySerializer, Serializer<V> valueSerializer) {
         if (db.exists(name)) {
@@ -153,8 +122,6 @@ public final class DataManager {
             assert (res != null);
             return res;
         } else {
-            System.out.printf("[%s] Storage %s does not exist.%n[%s] Creating storage %s...%n",
-                    Thread.currentThread().getName(), name, Thread.currentThread().getName(), name);
             HTreeMap<K, V> res = db
                     .hashMap(name)
                     .keySerializer(keySerializer)
@@ -162,43 +129,19 @@ public final class DataManager {
                     .create();
 
             assert (res != null);
-            System.out.printf("[%s] Storage %s created%n", Thread.currentThread().getName(), name);
-
             return res;
         }
     }
 
     /**
-     * close the database.
+     * Close the database.
+     * @throws IOException when unexpected things happen while closing
      */
-    public static void close() {
-        if (DataManager.getInstance() != null) {
-            DB db = DataManager.getInstance().getDb();
-            if (db.isClosed()) {
-                System.out.printf("[%s] MapDB is already closed%n", Thread.currentThread().getName());
-            } else {
-                System.out.printf("[%s] Closing MapDB...%n", Thread.currentThread().getName());
-                DataManager.getInstance().rollback(db);
-                db.close();
-                System.out.printf("[%s] MapDB closed%n", Thread.currentThread().getName());
-            }
+    public void close() throws IOException {
+        if (!this.db.isClosed()) {
+            System.out.printf("[%s] Closing MapDB...%n", Thread.currentThread().getName());
+            this.db.close();
         }
-    }
-
-    /**
-     * Stub for future-proofing. Rolls back changes to the DB.
-     * @param db the {@link DB} to roll back.
-     */
-    private void rollback(DB db) {
-      return;
-    }
-
-    /**
-     * Commit/persist the changes to the database.
-     * @param db the {@link DB} to persist changes of
-     */
-    private void commit(DB db) {
-      db.commit();
     }
 
     /**
@@ -206,8 +149,13 @@ public final class DataManager {
      * @param nodeID ID of the node to get the sequence for.
      * @return the sequence.
      */
-    public static String getSequence(int nodeID) {
-        return getSequenceMap().get(nodeID);
+    @NotNull
+    public String getSequence(int nodeID) {
+        if (getSequenceMap().containsKey(nodeID)) {
+            return getSequenceMap().get(nodeID);
+        } else {
+            throw new NoSuchElementException(String.format("No sequence is cached for node %d", nodeID));
+        }
     }
 
     /**
@@ -215,7 +163,8 @@ public final class DataManager {
      * @param nodeID ID of the node to set the sequence for.
      * @param sequence new sequence.
      */
-    public static void setSequence(int nodeID, String sequence) {
+    @NotNull
+    public void setSequence(int nodeID, String sequence) {
         getSequenceMap().put(nodeID, sequence);
         getSequenceLengthMap().put(nodeID, sequence.length());
     }
@@ -225,67 +174,74 @@ public final class DataManager {
      * @param nodeID ID of the node to get the sequence length for.
      * @return the length of the sequence.
      */
-    public static int getSequenceLength(int nodeID) {
-        Integer res = getSequenceLengthMap().get(nodeID);
-        assert (res != null);
-        return res;
+    @NotNull
+    public int getSequenceLength(int nodeID) {
+        if (getSequenceLengthMap().containsKey(nodeID)) {
+            return getSequenceLengthMap().get(nodeID);
+        } else {
+            throw new NoSuchElementException(String.format("No sequence length is cached for node %d", nodeID));
+        }
     }
 
     /**
      * Get the name of a {@link Genome} based on its index.
-     * @param index the index (0-based) of the {@link Genome} in the GFA header
+     * @param genomeID the index (0-based) of the {@link Genome} in the GFA header
      * @return the name of the {@link Genome}
      */
-    public static String getGenomeName(int index) {
-        return getGenomeNamesMap().get(index);
+    @NotNull
+    public String getGenomeName(int genomeID) {
+        if (getGenomeNamesMap().containsKey(genomeID)) {
+            return getGenomeNamesMap().get(genomeID);
+        } else {
+            throw new NoSuchElementException(String.format("No name is cached for genome %d", genomeID));
+        }
     }
 
     /**
      * Add the name of a {@link Genome}, index is previous one + 1.
-     * @param genome the name of the {@link Genome} to add
+     * @param genomeName the name of the {@link Genome} to add
      */
-    public static void addGenomeName(String genome) {
+    @NotNull
+    public void addGenomeName(String genomeName) {
         int index = getGenomeNamesMap().size();
-        System.out.printf("Genome %d: %s%n", index, genome);
-        getGenomeNamesMap().put(index, genome);
+        getGenomeNamesMap().put(index, genomeName);
     }
 
     /**
-     * Remove and recreate database named name.
-     * By default, this method removes first converts the name with {@link #toDBFile(String)}
-     * @param name The name of the database to remove
-     * @throws IOException When something goes wrong with IO
-     */
-    public static void clearDB(String name) throws IOException {
-        removeDB(DataManager.toDBFile(name));
-                ourInstance = null;
-        initialize(currentFileName);
-    }
-
-    /**
-     * completely remove a database. This cannot be undone.
-     * By default, this method removes first converts the name with {@link #toDBFile(String)}
-     * @param name The name of the database to be removed.
+     * Completely remove a database. This cannot be undone.
      * @return true if the file was removed, false if it did not exist
-     * @throws IOException When something goes wrong with IO
+     * @throws IOException when something strange happenes during deletion
+     */
+    public boolean removeDB() throws IOException {
+        System.out.printf("[%s] Removing database %s%n", Thread.currentThread().getName(), this.dbFileName);
+        close();
+        return Files.deleteIfExists(Paths.get(this.dbFileName));
+    }
+
+    /**
+     * Remove a cache file.
+     * @param name the name of the file to remove
+     * @return true if the file was deleted
+     * @throws IOException when strange things happen
      */
     public static boolean removeDB(String name) throws IOException {
-        System.out.printf("[%s] Removing database %s%n", Thread.currentThread().getName(), name);
-        close();
-        return Files.deleteIfExists(Paths.get(DataManager.toDBFile(name)));
+        return Files.deleteIfExists(Paths.get(toDBFile(name)));
     }
 
     /**
-     * Persist database to disk.
+     * Persist cache to disk.
      */
-    public static void commit() {
-        DataManager.getInstance().commit(DataManager.getInstance().getDb());
+    public void commit() {
+        this.db.commit();
     }
 
     /**
      * Rolls back non-persistent changes in database.
+     * @throws IOException when something strange happens during deletion
      */
-    public static void rollback() {
-        DataManager.getInstance().rollback(DataManager.getInstance().getDb());
+    public void rollback() throws IOException {
+        // TODO find a way to handle a partially complete cache
+        // Just removing the cache is the best solution for now
+        this.removeDB();
     }
 }

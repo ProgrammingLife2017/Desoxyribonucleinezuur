@@ -17,6 +17,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import jp.uphy.javafx.console.ConsoleView;
+import org.jetbrains.annotations.NotNull;
 import programminglife.ProgrammingLife;
 import programminglife.model.GenomeGraph;
 import programminglife.model.exception.UnknownTypeException;
@@ -143,16 +144,13 @@ public class GuiController implements Observer {
      * Set the graph for this GUIController.
      * @param graph Graph to use.
      */
+    @NotNull
     public void setGraph(GenomeGraph graph) {
         this.graphController.setGraph(graph);
         disableGraphUIElements(graph == null);
 
-        if (graph != null) {
-            System.out.printf("[%s] Graph was set to %s.%n", Thread.currentThread().getName(), graph.getID());
-            System.out.printf("[%s] The graph has %d nodes%n", Thread.currentThread().getName(), graph.size());
-        } else {
-            System.out.printf("[%s] graph was set to null.%n", Thread.currentThread().getName());
-        }
+        System.out.printf("[%s] Graph was set to %s.%n", Thread.currentThread().getName(), graph.getID());
+        System.out.printf("[%s] The graph has %d nodes%n", Thread.currentThread().getName(), graph.size());
     }
 
     /**

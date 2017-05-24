@@ -21,7 +21,6 @@ public class GraphParser extends Observable implements Runnable {
     private String name;
     private boolean verbose;
     private FileProgressCounter progressCounter;
-    private long startTime;
     private boolean isCached;
 
 
@@ -34,11 +33,9 @@ public class GraphParser extends Observable implements Runnable {
         this.graphFile = graphFile;
         this.name = graphFile.getName();
         this.verbose = PARSE_LINE_VERBOSE_DEFAULT;
-        this.graph = new GenomeGraph(name);
         this.progressCounter = new FileProgressCounter("Lines read");
-        this.startTime = System.nanoTime();
         this.isCached = DataManager.hasCache(this.name);
-        DataManager.initialize(this.name);
+        this.graph = new GenomeGraph(name);
     }
 
     /**
@@ -48,20 +45,17 @@ public class GraphParser extends Observable implements Runnable {
     public void run() {
         try {
             System.out.printf("[%s] Parsing GenomeGraph on separate Thread%n", Thread.currentThread().getName());
+            long startTime = System.nanoTime();
             parse(this.verbose);
-            DataManager.commit();
 
-            int secondsElapsed = (int) ((System.nanoTime() - this.startTime) / 1000000000.d);
+            int secondsElapsed = (int) ((System.nanoTime() - startTime) / 1000000000.d);
             System.out.printf("[%s] Parsing took %d seconds%n", Thread.currentThread().getName(), secondsElapsed);
             this.setChanged();
             this.notifyObservers(this.graph);
-
-            this.graph.getGenomes().forEach(genome -> {
-                System.out.printf("Genome '%s' has %d segments%n", genome.getName(), genome.getSize());
-            });
-            System.out.printf("Average # of nodes in genome: %.1f%n", this.graph.getGenomes().stream().mapToInt(g -> g.getSize()).average().getAsDouble());
         } catch (Exception e) {
-            DataManager.rollback();
+            try {
+                this.getGraph().rollback();
+            } catch (IOException eio) { }
             this.setChanged();
             this.notifyObservers(e);
         }
@@ -118,7 +112,7 @@ public class GraphParser extends Observable implements Runnable {
                 }
 
                 if (Thread.currentThread().isInterrupted()) {
-                    DataManager.close();
+                    this.getGraph().rollback();
                     System.out.printf("[%s] Stopping this thread gracefully...%n", Thread.currentThread().getName());
                 }
             }));
@@ -130,6 +124,7 @@ public class GraphParser extends Observable implements Runnable {
             }
         }
 
+        this.getGraph().commit();
         this.progressCounter.finished();
     }
 
@@ -175,7 +170,7 @@ public class GraphParser extends Observable implements Runnable {
         String[] genomeNames = properties[4].split(";");
         genomeNames[0] = genomeNames[0].substring(6);
 
-        Segment segment = new Segment(segmentID, sequence);
+        Segment segment = new Segment(this.graph, segmentID, sequence);
         if (!this.getGraph().contains(segmentID)) {
             this.getGraph().addNode(segment);
         }
@@ -186,10 +181,10 @@ public class GraphParser extends Observable implements Runnable {
             } else {
                 try {
                     int genomeID = Integer.parseInt(genomeName);
-                    String name = DataManager.getGenomeName(genomeID);
+                    String name = this.getGraph().getGenomeName(genomeID);
                     this.getGraph().getGenome(name).addSegment(segment);
                 } catch (NumberFormatException | NoSuchElementException e) {
-                    throw new UnknownTypeException(String.format("Genome '%s' does not exist in this graph", genomeName));
+                    throw new UnknownTypeException(String.format("Genome %s does not exist in this graph", genomeName));
                 }
             }
         }
@@ -207,8 +202,8 @@ public class GraphParser extends Observable implements Runnable {
         int destinationId = Integer.parseInt(properties[3]);
         // properties[4] and further are unused
 
-        Node sourceNode = new Segment(sourceId);
-        Node destinationNode = new Segment(destinationId);
+        Node sourceNode = new Segment(this.graph, sourceId);
+        Node destinationNode = new Segment(this.graph, destinationId);
         if (!this.getGraph().contains(sourceId)) {
             this.getGraph().addNode(sourceNode);
         }

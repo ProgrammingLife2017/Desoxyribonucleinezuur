@@ -1,7 +1,6 @@
 package programminglife.gui;
 
 import javafx.application.Platform;
-import javafx.scene.Group;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
@@ -13,14 +12,11 @@ import programminglife.ProgrammingLife;
 import programminglife.model.DataManager;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 /**
  * This test class is there to interactively test the GUI. It is capable of clicking on certain buttons and items
@@ -48,7 +44,6 @@ public class GuiControllerTest extends FxRobot {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        DataManager.initialize(TEST_DB);
         operatingSystem = System.getProperty("os.name").toLowerCase();
         primaryStage = FxToolkit.registerPrimaryStage();
     }
@@ -61,7 +56,7 @@ public class GuiControllerTest extends FxRobot {
 
     @After
     public void tearDown() throws Exception {
-        DataManager.clearDB(TEST_DB);
+        DataManager.removeDB(TEST_DB);
         DataManager.removeDB(TEST_File);
         FxToolkit.cleanupApplication(this.pl);
     }

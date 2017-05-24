@@ -1,8 +1,10 @@
 package programminglife.model;
 
 import org.apache.commons.lang3.NotImplementedException;
+import org.jetbrains.annotations.NotNull;
 import programminglife.model.exception.NodeExistsException;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -11,21 +13,21 @@ import java.util.stream.Collectors;
  */
 public class GenomeGraph implements Graph {
     private String id;
+    private DataManager cache;
 
+    // TODO cache graph structure
     private Map<Integer, Set<Integer>> children;
     private Map<Integer, Set<Integer>> parents;
 
-    /**
-     * Name-indexed map of genomes.
-     */
+    // TODO cache genomes
     private Map<String, Genome> genomes;
 
     /**
-     * Create a genomeGraph with name.
-     * @param name name of the graph
+     * Create a genomeGraph with id.
+     * @param id id of the graph
      */
-    public GenomeGraph(String name) {
-        this(name, new HashMap<>(), new HashMap<>());
+    public GenomeGraph(String id) {
+        this(id, new HashMap<>(), new HashMap<>());
     }
 
     /**
@@ -35,10 +37,11 @@ public class GenomeGraph implements Graph {
      * @param parents {@link Set} which contains the parents.
      */
     public GenomeGraph(String id, Map<Integer, Set<Integer>> children, Map<Integer, Set<Integer>> parents) {
+        this.id = id;
         this.children = children;
         this.parents = parents;
-        this.id = id;
         this.genomes = new HashMap<>();
+        this.cache = new DataManager(id);
     }
 
     /**
@@ -93,7 +96,7 @@ public class GenomeGraph implements Graph {
 
     @Override
     public Set<Segment> getChildren(int nodeID) {
-        return this.children.get(nodeID).stream().map(id -> new Segment(id)).collect(Collectors.toSet());
+        return this.children.get(nodeID).stream().map(id -> new Segment(this, id)).collect(Collectors.toSet());
     }
 
     @Override
@@ -103,7 +106,7 @@ public class GenomeGraph implements Graph {
 
     @Override
     public Set<Segment> getParents(int nodeID) {
-        return this.parents.get(nodeID).stream().map(id -> new Segment(id)).collect(Collectors.toSet());
+        return this.parents.get(nodeID).stream().map(id -> new Segment(this, id)).collect(Collectors.toSet());
     }
 
     @Override
@@ -150,8 +153,17 @@ public class GenomeGraph implements Graph {
      * @param genome the {@link Genome} to add
      */
     public void addGenome(Genome genome) {
+        this.cache.addGenomeName(genome.getName());
         this.genomes.put(genome.getName(), genome);
-        DataManager.addGenomeName(genome.getName());
+    }
+
+    /**
+     * Get the name of a {@link Genome}.
+     * @param id the id of the {@link Genome} as it occurs in the GFA header
+     * @return its name as described in the GFA header
+     */
+    public String getGenomeName(int id) {
+        return this.cache.getGenomeName(id);
     }
 
     /**
@@ -185,5 +197,58 @@ public class GenomeGraph implements Graph {
      */
     public boolean containsGenome(String genomeName) {
         return this.genomes.containsKey(genomeName);
+    }
+
+    /**
+     * Set the sequence for a {@link Segment}.
+     * @param nodeID the ID of the {@link Segment}
+     * @param sequence the sequence {@link String}
+     */
+    @NotNull
+    public void setSequence(int nodeID, String sequence) {
+        this.cache.setSequence(nodeID, sequence);
+    }
+
+    /**
+     * Get the sequence of a {@link Segment}.
+     * @param nodeID the ID of the {@link Segment}
+     * @return the sequence {@link String}
+     */
+    @NotNull
+    public String getSequence(int nodeID) {
+        return this.cache.getSequence(nodeID);
+    }
+
+    /**
+     * Get the sequence length of a {@link Segment}.
+     * @param nodeID the ID of the {@link Segment}
+     * @return the sequence length {@link String}
+     */
+    @NotNull
+    public int getSequenceLength(int nodeID) {
+        return this.cache.getSequenceLength(nodeID);
+    }
+
+    /**
+     * Roll back the latest changes to the cache.
+     * @throws IOException when something strange happens during deletion
+     */
+    public void rollback() throws IOException {
+        this.cache.rollback();
+    }
+
+    /**
+     * Commit all changes to the cache.
+     */
+    public void commit() {
+        this.cache.commit();
+    }
+
+    /**
+     * Remove the cache file for this {@link GenomeGraph}.
+     * @throws IOException if something strange happens
+     */
+    public void removeCache() throws IOException {
+        this.cache.removeDB();
     }
 }

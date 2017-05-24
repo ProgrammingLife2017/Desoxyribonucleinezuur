@@ -35,13 +35,4 @@ public interface Node<N extends Node<N>> {
      * @param sequence String.
      */
     void setSequence(String sequence);
-
-    /**
-     * Static getter for the sequence of a nodeID.
-     * @param nodeID int.
-     * @return String sequence.
-     */
-    static String getSequence(int nodeID) {
-        return DataManager.getSequence(nodeID);
-    }
 }
