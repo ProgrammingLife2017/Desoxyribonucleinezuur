@@ -32,6 +32,7 @@ public class GuiLoadBookmarkController {
     @FXML private Button btnCancelBookmark;
     @FXML private Button btnDeleteBookmark;
     @FXML private Button btnCreateBookmark;
+    @FXML private Button btnShowInfo;
     @FXML private Accordion accordionBookmark;
     private List<TableView<Bookmark>> tableViews;
 
@@ -113,6 +114,8 @@ public class GuiLoadBookmarkController {
         });
 
         btnCreateBookmark.setOnAction(event -> createBookmark());
+
+        btnShowInfo.setOnAction(event -> showInfo());
     }
 
     /**
@@ -135,6 +138,18 @@ public class GuiLoadBookmarkController {
             initBookmarks();
         } catch (IOException e) {
             (new Alert(Alert.AlertType.ERROR, "This bookmark cannot be created.", ButtonType.CLOSE)).show();
+        }
+    }
+
+    /**
+     * Shows the complete info of a bookmark.
+     */
+    private void showInfo() {
+        Bookmark bookmark = checkBookmarkSelection();
+        if (bookmark != null) {
+            Alerts.infoBookmarkAlert(String.format("Name: %s"
+                            + "%nNode ID: %d%nNode radius: %d%nDescription: %s", bookmark.getBookmarkName(),
+                    bookmark.getNodeID(), bookmark.getRadius(), bookmark.getDescription()));
         }
     }
 
