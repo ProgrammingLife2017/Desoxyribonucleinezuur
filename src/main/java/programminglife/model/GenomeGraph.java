@@ -18,7 +18,6 @@ public class GenomeGraph implements Graph {
     /**
      * Name-indexed map of genomes.
      */
-    private List<String> genomeOrder;
     private Map<String, Genome> genomes;
 
     /**
@@ -40,7 +39,6 @@ public class GenomeGraph implements Graph {
         this.parents = parents;
         this.id = id;
         this.genomes = new HashMap<>();
-        this.genomeOrder = new ArrayList<>();
     }
 
     /**
@@ -149,13 +147,18 @@ public class GenomeGraph implements Graph {
 
     /**
      * Add a {@link Genome} to this {@link GenomeGraph}.
-     * @param genome
+     * @param genome the {@link Genome} to add
      */
     public void addGenome(Genome genome) {
         this.genomes.put(genome.getName(), genome);
-        this.genomeOrder.add(genome.getName());
+        DataManager.addGenomeName(genome.getName());
     }
 
+    /**
+     * Get the {@link Genome} by name.
+     * @param name the name as in the GFA header
+     * @return the {@link Genome} with this name
+     */
     public Genome getGenome(String name) {
         Genome res = this.genomes.get(name);
         if (res != null) {
@@ -175,11 +178,12 @@ public class GenomeGraph implements Graph {
         return this.genomes.values();
     }
 
+    /**
+     * Check if this {@link GenomeGraph} contains a {@link Genome}.
+     * @param genomeName the name to look up
+     * @return if this {@link Genome} is in there
+     */
     public boolean containsGenome(String genomeName) {
         return this.genomes.containsKey(genomeName);
-    }
-
-    public List<String> getGenomeOrder() {
-        return genomeOrder;
     }
 }

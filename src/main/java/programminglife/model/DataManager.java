@@ -15,8 +15,9 @@ import java.util.Map;
  * A class for managing persistent data. It can open one cache, which contains the information for one gfa file.
  */
 public final class DataManager {
-    private static final String SEQUENCE_MAP_SUFFIX = "_sequenceMap";
-    private static final String SEQUENCE_LENGTH_MAP_SUFFIX = "_sequenceLengthMap";
+    private static final String SEQUENCE_MAP_NAME = "sequenceMap";
+    private static final String SEQUENCE_LENGTH_MAP_NAME = "sequenceLengthMap";
+    private static final String GENOME_NAMES_MAP_NAME = "genomeNamesMap";
 
     private static DataManager ourInstance = null;
     private static String currentFileName = null;
@@ -24,6 +25,7 @@ public final class DataManager {
     private DB db;
     private Map<Integer, String> sequenceMap;
     private Map<Integer, Integer> sequenceLengthMap;
+    private Map<Integer, String> genomeNamesMap;
 
 
     /**
@@ -65,8 +67,11 @@ public final class DataManager {
                 .cleanerHackEnable()
                 .closeOnJvmShutdown()
                 .make();
-        this.sequenceMap = getMap(db, SEQUENCE_MAP_SUFFIX, Serializer.INTEGER, Serializer.STRING_ASCII);
-        this.sequenceLengthMap = getMap(db, SEQUENCE_LENGTH_MAP_SUFFIX, Serializer.INTEGER, Serializer.INTEGER);
+
+        this.sequenceMap = getMap(db, SEQUENCE_MAP_NAME, Serializer.INTEGER, Serializer.STRING_ASCII);
+        this.sequenceLengthMap = getMap(db, SEQUENCE_LENGTH_MAP_NAME, Serializer.INTEGER, Serializer.INTEGER);
+        this.genomeNamesMap = getMap(db, GENOME_NAMES_MAP_NAME, Serializer.INTEGER, Serializer.STRING_ASCII);
+
         System.out.printf("[%s] MapDB %s set up!%n", Thread.currentThread().getName(), fileName);
     }
 
@@ -125,6 +130,10 @@ public final class DataManager {
      */
     private static Map<Integer, String> getSequenceMap() {
         return getInstance().sequenceMap;
+    }
+
+    private static Map<Integer, String> getGenomeNamesMap() {
+        return getInstance().genomeNamesMap;
     }
 
     /**
@@ -220,6 +229,25 @@ public final class DataManager {
         Integer res = getSequenceLengthMap().get(nodeID);
         assert (res != null);
         return res;
+    }
+
+    /**
+     * Get the name of a {@link Genome} based on its index.
+     * @param index the index (0-based) of the {@link Genome} in the GFA header
+     * @return the name of the {@link Genome}
+     */
+    public static String getGenomeName(int index) {
+        return getGenomeNamesMap().get(index);
+    }
+
+    /**
+     * Add the name of a {@link Genome}, index is previous one + 1.
+     * @param genome the name of the {@link Genome} to add
+     */
+    public static void addGenomeName(String genome) {
+        int index = getGenomeNamesMap().size();
+        System.out.printf("Genome %d: %s%n", index, genome);
+        getGenomeNamesMap().put(index, genome);
     }
 
     /**

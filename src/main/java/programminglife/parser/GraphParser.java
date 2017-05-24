@@ -6,6 +6,7 @@ import programminglife.model.exception.UnknownTypeException;
 import programminglife.utility.FileProgressCounter;
 
 import java.io.*;
+import java.util.NoSuchElementException;
 import java.util.Observable;
 
 /**
@@ -58,7 +59,7 @@ public class GraphParser extends Observable implements Runnable {
             this.graph.getGenomes().forEach(genome -> {
                 System.out.printf("Genome '%s' has %d segments%n", genome.getName(), genome.getSize());
             });
-            System.out.printf("Average # of nodes in genome: %.1f\n", this.graph.getGenomes().stream().mapToInt(g -> g.getSize()).average().getAsDouble());
+            System.out.printf("Average # of nodes in genome: %.1f%n", this.graph.getGenomes().stream().mapToInt(g -> g.getSize()).average().getAsDouble());
         } catch (Exception e) {
             DataManager.rollback();
             this.setChanged();
@@ -160,6 +161,7 @@ public class GraphParser extends Observable implements Runnable {
     /**
      * Parse a {@link String} representing a {@link Segment}.
      * @param propertyString the {@link String} from a GFA file.
+     * @throws UnknownTypeException when a {@link Segment} references a {@link Genome} that is not in the GFA header
      */
     synchronized void parseSegment(String propertyString) throws UnknownTypeException {
         String[] properties = propertyString.split("\\s");
@@ -184,9 +186,9 @@ public class GraphParser extends Observable implements Runnable {
             } else {
                 try {
                     int genomeID = Integer.parseInt(genomeName);
-                    String name = this.getGraph().getGenomeOrder().get(genomeID);
+                    String name = DataManager.getGenomeName(genomeID);
                     this.getGraph().getGenome(name).addSegment(segment);
-                } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+                } catch (NumberFormatException | NoSuchElementException e) {
                     throw new UnknownTypeException(String.format("Genome '%s' does not exist in this graph", genomeName));
                 }
             }
@@ -226,16 +228,16 @@ public class GraphParser extends Observable implements Runnable {
         String[] properties = propertyString.split("\\s");
         assert (properties[0].equals("H"));
         if (properties[1].startsWith("ORI:Z:")) {
-            String names[] = properties[1].split(";");
+            String[] names = properties[1].split(";");
             names[0] = names[0].substring(6);
             for (String name : names) {
                 this.getGraph().addGenome(new Genome(name));
             }
         } else if (properties[1].startsWith("VN:Z:")) {
             // Version, ignored
-            System.out.printf("[%s] Version: %s\n", Thread.currentThread().getName(), properties[1].substring(5));
+            System.out.printf("[%s] Version: %s%n", Thread.currentThread().getName(), properties[1].substring(5));
         } else {
-            System.out.printf("[%s] Unrecognized header: %s\n", Thread.currentThread().getName(), properties[1]);
+            System.out.printf("[%s] Unrecognized header: %s%n", Thread.currentThread().getName(), properties[1]);
         }
     }
 

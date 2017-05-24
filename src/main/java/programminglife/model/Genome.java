@@ -81,6 +81,10 @@ public class Genome {
         return name;
     }
 
+    /**
+     * Add a {@link Segment} to this {@link Genome}.
+     * @param segment the specific {@link Segment}
+     */
     public void addSegment(Segment segment) {
         int coordinate;
         try {
