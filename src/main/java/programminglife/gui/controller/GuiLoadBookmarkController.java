@@ -207,8 +207,8 @@ public class GuiLoadBookmarkController {
     }
 
     /**
-     * Sets the create button of bookmark to active if a graph is loaded.
-     * @param active Boolean that determines if the button is active.
+     * Sets the create bookmark button to active when a file is opened.
+     * @param active true for active, false for inactive
      */
     public void setBtnCreateBookmarkActive(Boolean active) {
         btnCreateBookmark.setDisable(!active);

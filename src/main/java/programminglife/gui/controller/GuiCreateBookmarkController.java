@@ -38,30 +38,28 @@ public class GuiCreateBookmarkController {
      */
     private void initButtons() {
         btnOk.setOnAction(event -> {
-            int size = guiController.getGraphController().getGraph().size();
             String name = guiController.getGraphController().getGraph().getID();
             int inputRadius = 0;
             int inputCenter = 0;
             try {
-                inputRadius = Integer.parseInt(txtId.getText());
-                inputCenter = Integer.parseInt(txtRadius.getText());
+                inputCenter = Integer.parseInt(txtId.getText());
+                inputRadius = Integer.parseInt(txtRadius.getText());
+                if (!guiController.getGraphController().getGraph().contains(inputCenter)) {
+                    Alerts.warning("Center node is not present in graph").show();
+                } else if (inputRadius < 0) {
+                    Alerts.warning("Radius can only contain positive integers").show();
+                } else if (!BookmarkController.storeBookmark(name, guiController.getFile().getAbsolutePath(),
+                        txtBookmarkName.getText(), txtDescription.getText(),
+                        inputCenter, inputRadius)) {
+                    Alerts.warning("Bookmarks must have unique names in files").show();
+                } else {
+                    Stage s = (Stage) btnOk.getScene().getWindow();
+                    s.close();
+                }
             } catch (NumberFormatException e) {
-                Alerts.warning("Input is bigger than the maximum int");
+                Alerts.warning("Center node and radius input should be numeric values below 2 billion").show();
             }
-            if (inputCenter <= 0) {
-                Alerts.warning("Center node can only contain positive integers").show();
-            } else if (inputCenter > size) {
-                Alerts.warning("Center node is larger than graph size: " + size).show();
-            } else if (inputRadius < 0) {
-                Alerts.warning("Radius can only contain positive integers").show();
-            } else if (!BookmarkController.storeBookmark(name, guiController.getFile().getAbsolutePath(),
-                    txtBookmarkName.getText(), txtDescription.getText(),
-                    inputCenter, inputRadius)) {
-                Alerts.warning("Bookmarks must have unique names in files").show();
-            } else {
-                Stage s = (Stage) btnOk.getScene().getWindow();
-                s.close();
-            }
+
         });
         btnCancel.setOnAction(event -> {
             Stage s = (Stage) btnCancel.getScene().getWindow();
