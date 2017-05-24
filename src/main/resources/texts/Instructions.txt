@@ -3,8 +3,8 @@ Main area:
     - Move the graph by pressing alt + dragging a node or edge.
 
 Top menu:
-    - Open will show a menu where the file to opened can be chosen.
-    - Open recent will show files that have been used previously
+    - Open will show a menu where the file to be opened can be chosen.
+    - Open recent will show files that have been used previously.
     - Toggle console will toggle the console useful for advanced users.
     - Quit will close the application after confirmation.
 
