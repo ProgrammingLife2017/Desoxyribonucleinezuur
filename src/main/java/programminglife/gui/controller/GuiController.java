@@ -241,7 +241,7 @@ public class GuiController implements Observer {
 
         btnBookmarks.setOnAction(event -> {
             try {
-                FXMLLoader loader = new FXMLLoader(ProgrammingLife.class.getResource("/LoadBookmarkWindow2.fxml"));
+                FXMLLoader loader = new FXMLLoader(ProgrammingLife.class.getResource("/LoadBookmarkWindow.fxml"));
                 AnchorPane page = loader.load();
                 GuiLoadBookmarkController gc = loader.getController();
                 gc.setGraphController(graphController);
@@ -437,10 +437,10 @@ public class GuiController implements Observer {
         st.setMinHeight(250);
         root.getChildren().add(console);
 
-        root.setBottomAnchor(console, 0.d);
-        root.setTopAnchor(console, 0.d);
-        root.setRightAnchor(console, 0.d);
-        root.setLeftAnchor(console, 0.d);
+        AnchorPane.setBottomAnchor(console, 0.d);
+        AnchorPane.setTopAnchor(console, 0.d);
+        AnchorPane.setRightAnchor(console, 0.d);
+        AnchorPane.setLeftAnchor(console, 0.d);
 
         btnToggle.setOnAction(event -> {
             if (btnToggle.isSelected()) {
@@ -458,7 +458,7 @@ public class GuiController implements Observer {
         return console;
     }
 
-    public ProgressBar getProgressBar() {
+    private ProgressBar getProgressBar() {
         return this.progressBar;
     }
     /**

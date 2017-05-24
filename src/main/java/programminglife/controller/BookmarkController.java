@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by Martijn van Meerten on 15-5-2017.
  * This class is a controller for loading storing and deleting bookmarks.
  */
 public final class BookmarkController {
@@ -50,6 +49,10 @@ public final class BookmarkController {
         return loadAllGraphBookmarks(BOOKMARKPATH, graphName);
     }
 
+    /**
+     * Loads all the bookmarks and puts them in a Map.
+     * @return Map containing the bookmarks with their keys.
+     */
     public static Map<String, List<Bookmark>> loadAllBookmarks() {
         return loadAllBookmarks(BOOKMARKPATH);
     }
