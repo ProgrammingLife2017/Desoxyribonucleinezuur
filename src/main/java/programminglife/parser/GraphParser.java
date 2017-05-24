@@ -34,7 +34,7 @@ public class GraphParser extends Observable implements Runnable {
         this.name = graphFile.getName();
         this.verbose = PARSE_LINE_VERBOSE_DEFAULT;
         this.progressCounter = new FileProgressCounter("Lines read");
-        this.isCached = DataManager.hasCache(this.name);
+        this.isCached = Cache.hasCache(this.name);
         this.graph = new GenomeGraph(name);
     }
 

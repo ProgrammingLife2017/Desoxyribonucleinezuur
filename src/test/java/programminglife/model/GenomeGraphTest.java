@@ -1,6 +1,7 @@
 package programminglife.model;
 
 import org.junit.*;
+import programminglife.parser.Cache;
 
 import java.io.File;
 
@@ -41,7 +42,7 @@ public class GenomeGraphTest {
 
     @AfterClass
     public static void tearDownClass() throws Exception {
-        DataManager.removeDB(TEST_DB);
+        Cache.removeDB(TEST_DB);
     }
 
     @Test

@@ -51,8 +51,8 @@ public class GraphParserTest implements Observer {
 
     @AfterClass
     public static void tearDownClass() throws Exception {
-        DataManager.removeDB(TEST_DB);
-        DataManager.removeDB(TEST_FAULTY_DB);
+        Cache.removeDB(TEST_DB);
+        Cache.removeDB(TEST_FAULTY_DB);
     }
 
     @Test(expected = UnknownTypeException.class)

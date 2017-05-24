@@ -9,7 +9,7 @@ import org.testfx.api.FxRobot;
 import org.testfx.api.FxToolkit;
 import org.testfx.util.WaitForAsyncUtils;
 import programminglife.ProgrammingLife;
-import programminglife.model.DataManager;
+import programminglife.parser.Cache;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -56,16 +56,16 @@ public class GuiControllerTest extends FxRobot {
 
     @After
     public void tearDown() throws Exception {
-        DataManager.removeDB(TEST_DB);
-        DataManager.removeDB(TEST_File);
+        Cache.removeDB(TEST_DB);
+        Cache.removeDB(TEST_File);
         FxToolkit.cleanupApplication(this.pl);
     }
 
     @AfterClass
     public static void tearDownClass() throws Exception {
         Platform.exit();
-        DataManager.removeDB(TEST_DB);
-        DataManager.removeDB(TEST_File);
+        Cache.removeDB(TEST_DB);
+        Cache.removeDB(TEST_File);
     }
 
     @Test

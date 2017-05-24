@@ -1,10 +1,11 @@
-package programminglife.model;
+package programminglife.parser;
 
 import org.jetbrains.annotations.NotNull;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.HTreeMap;
 import org.mapdb.Serializer;
+import programminglife.model.Genome;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,7 +17,7 @@ import java.util.NoSuchElementException;
 /**
  * A class for managing persistent data. It can open one cache, which contains the information for one gfa file.
  */
-public final class DataManager {
+public final class Cache {
     private static final String SEQUENCE_MAP_NAME = "sequenceMap";
     private static final String SEQUENCE_LENGTH_MAP_NAME = "sequenceLengthMap";
     private static final String GENOME_NAMES_MAP_NAME = "genomeNamesMap";
@@ -28,11 +29,11 @@ public final class DataManager {
     private Map<Integer, String> genomeNamesMap;
 
     /**
-     * Create the DataManager and initialize the database.
-     * @param name The name of the {@link DataManager}.
+     * Create the Cache and initialize the database.
+     * @param name The name of the {@link Cache}.
      *                 Note: this method will append .db if it doesn't already end with that.
      */
-    public DataManager(String name) {
+    public Cache(String name) {
         this.dbFileName = toDBFile(name);
         System.out.printf("[%s] Setting up cache (%s)...%n", Thread.currentThread().getName(), this.dbFileName);
         this.db = DBMaker.fileDB(new File(this.dbFileName))

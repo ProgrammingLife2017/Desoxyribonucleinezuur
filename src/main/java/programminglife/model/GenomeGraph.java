@@ -3,6 +3,7 @@ package programminglife.model;
 import org.apache.commons.lang3.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
 import programminglife.model.exception.NodeExistsException;
+import programminglife.parser.Cache;
 
 import java.io.IOException;
 import java.util.*;
@@ -13,7 +14,7 @@ import java.util.stream.Collectors;
  */
 public class GenomeGraph implements Graph {
     private String id;
-    private DataManager cache;
+    private Cache cache;
 
     // TODO cache graph structure
     private Map<Integer, Set<Integer>> children;
@@ -41,7 +42,7 @@ public class GenomeGraph implements Graph {
         this.children = children;
         this.parents = parents;
         this.genomes = new HashMap<>();
-        this.cache = new DataManager(id);
+        this.cache = new Cache(id);
     }
 
     /**

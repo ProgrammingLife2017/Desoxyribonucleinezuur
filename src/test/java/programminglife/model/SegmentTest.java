@@ -4,6 +4,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
+import programminglife.parser.Cache;
 
 import java.util.NoSuchElementException;
 
@@ -28,7 +29,7 @@ public class SegmentTest {
 
     @AfterClass
     public static void tearDownClass() throws Exception {
-        DataManager.removeDB(TEST_DB);
+        Cache.removeDB(TEST_DB);
     }
 
 
