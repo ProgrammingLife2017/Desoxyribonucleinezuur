@@ -60,24 +60,7 @@ public class GuiCreateBookmarkController {
         });
     }
 
-    /**
-     * Getter for the Ok Button.
-     * @return Button.
-     */
-    public Button getBtnOk() {
-        return btnOk;
-    }
-
-    /**
-     * Getter for the Cancel Button.
-     * @return Button.
-     */
-    public Button getBtnCancel() {
-        return btnCancel;
-    }
-
-
-    public void setGuiController(GuiController guiController) {
+    void setGuiController(GuiController guiController) {
         this.guiController = guiController;
     }
 
@@ -86,7 +69,7 @@ public class GuiCreateBookmarkController {
      * @param center The text to fill the center area with
      * @param radius The text to fill the radius area with
      */
-    public void setText(String center, String radius) {
+    void setText(String center, String radius) {
         txtId.setText(center);
         txtRadius.setText(radius);
     }

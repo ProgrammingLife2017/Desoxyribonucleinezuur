@@ -22,11 +22,9 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Created by Martijn van Meerten.
  * Controller for loading bookmarks.
  */
 public class GuiLoadBookmarkController {
-    private String graphName;
     private GuiController guiController;
 
     @FXML private Button btnOpenBookmark;
@@ -112,9 +110,7 @@ public class GuiLoadBookmarkController {
             s.close();
         });
 
-        btnCreateBookmark.setOnAction(event -> {
-            createBookmark();
-        });
+        btnCreateBookmark.setOnAction(event -> createBookmark());
     }
 
     /**
@@ -186,7 +182,7 @@ public class GuiLoadBookmarkController {
     /**
      * Initializes the bookmarks from the different graphs.
      */
-    public void initBookmarks() {
+    void initBookmarks() {
         accordionBookmark.getPanes().clear();
         tableViews = new ArrayList<>();
 
@@ -201,7 +197,7 @@ public class GuiLoadBookmarkController {
      * Is used for setting center node and radius text fields.
      * @param guiController The gui controller
      */
-    public void setGuiController(GuiController guiController) {
+    void setGuiController(GuiController guiController) {
         this.guiController = guiController;
     }
 }

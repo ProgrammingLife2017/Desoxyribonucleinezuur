@@ -58,7 +58,6 @@ public class GuiController implements Observer {
     @FXML private Button btnDraw;
     @FXML private Button btnDrawRandom;
     @FXML private Button btnBookmark;
-    @FXML private Menu menuBookmark;
     @FXML private ProgressBar progressBar;
 
     @FXML private TextField txtMaxDrawDepth;
@@ -479,7 +478,7 @@ public class GuiController implements Observer {
         this.file = file;
     }
 
-    public GraphController getGraphController() {
+    GraphController getGraphController() {
         return this.graphController;
     }
 }

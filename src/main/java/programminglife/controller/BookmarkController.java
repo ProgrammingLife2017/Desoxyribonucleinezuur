@@ -40,16 +40,6 @@ public final class BookmarkController {
     private BookmarkController() { }
 
     /**
-     * Default all bookmark loading method.
-     * Uses the default bookmark path
-     * @param graphName The name of the graph from which to get the bookmarks.
-     * @return A List containing all bookmarks.
-     */
-    public static List<Bookmark> loadAllGraphBookmarks(String graphName) {
-        return loadAllGraphBookmarks(BOOKMARKPATH, graphName);
-    }
-
-    /**
      * Loads all the bookmarks and puts them in a Map.
      * @return Map containing the bookmarks with their keys.
      */
@@ -123,7 +113,7 @@ public final class BookmarkController {
      * @param radius The radius of the bookmark for searching.
      * @return true if the bookmark already exists, false otherwise.
      */
-    public static boolean storeBookmark(String fileName, String filePath, String graphName, String bookMarkName,
+    static boolean storeBookmark(String fileName, String filePath, String graphName, String bookMarkName,
                                      String description, int nodeID, int radius) {
         checkFile(fileName);
         if (bookmarkExists(fileName, graphName, bookMarkName)) {
@@ -189,7 +179,7 @@ public final class BookmarkController {
      * @param graphName The name of the graph.
      * @param bookmarkName The name of the bookmark to be deleted.
      */
-    public static void deleteBookmark(String fileName, String graphName, String bookmarkName) {
+    static void deleteBookmark(String fileName, String graphName, String bookmarkName) {
         checkFile(fileName);
         try {
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -221,7 +211,7 @@ public final class BookmarkController {
      * @param graphName The name of the graph
      * @return A list containing all bookmarks for that graph
      */
-    public static List<Bookmark> loadAllGraphBookmarks(String fileName, String graphName) {
+    static List<Bookmark> loadAllGraphBookmarks(String fileName, String graphName) {
         List<Bookmark> result = new ArrayList<>();
         checkFile(fileName);
         Document dom;
@@ -247,7 +237,7 @@ public final class BookmarkController {
      * @param fileName The bookmark file from which to read
      * @return A map of lists containing all bookmarks
      */
-    public static Map<String, List<Bookmark>> loadAllBookmarks(String fileName) {
+    private static Map<String, List<Bookmark>> loadAllBookmarks(String fileName) {
         Map<String, List<Bookmark>> result = new HashMap<>();
         checkFile(fileName);
         Document dom;
