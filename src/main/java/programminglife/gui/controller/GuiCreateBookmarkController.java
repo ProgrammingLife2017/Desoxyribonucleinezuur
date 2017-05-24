@@ -37,7 +37,6 @@ public class GuiCreateBookmarkController {
      */
     private void initButtons() {
         btnOk.setOnAction(event -> {
-            int size = guiController.getGraphController().getGraph().size();
             String name = guiController.getGraphController().getGraph().getID();
             int inputRadius = 0;
             int inputCenter = 0;

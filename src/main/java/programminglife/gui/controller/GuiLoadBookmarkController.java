@@ -202,6 +202,10 @@ public class GuiLoadBookmarkController {
         this.guiController = guiController;
     }
 
+    /**
+     * Sets the create bookmark button to active when a file is opened.
+     * @param active true for active, false for inactive
+     */
     public void setBtnCreateBookmarkActive(Boolean active) {
         btnCreateBookmark.setDisable(!active);
     }
