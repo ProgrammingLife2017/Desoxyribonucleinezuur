@@ -40,6 +40,7 @@ public class GuiLoadBookmarkController {
     @FXML
     @SuppressWarnings("unused")
     public void initialize() {
+        btnCreateBookmark.setDisable(true);
         initButtons();
     }
 
@@ -199,5 +200,9 @@ public class GuiLoadBookmarkController {
      */
     void setGuiController(GuiController guiController) {
         this.guiController = guiController;
+    }
+
+    public void setBtnCreateBookmarkActive(Boolean active) {
+        btnCreateBookmark.setDisable(!active);
     }
 }

@@ -247,6 +247,9 @@ public class GuiController implements Observer {
                 GuiLoadBookmarkController gc = loader.getController();
                 gc.setGuiController(this);
                 gc.initBookmarks();
+                if (this.graphController.getGraph() != null) {
+                    gc.setBtnCreateBookmarkActive(true);
+                }
                 Scene scene = new Scene(page);
                 Stage bookmarkDialogStage = new Stage();
                 bookmarkDialogStage.setResizable(false);
