@@ -39,15 +39,23 @@ public class GuiCreateBookmarkController {
         btnOk.setOnAction(event -> {
             int size = guiController.getGraphController().getGraph().size();
             String name = guiController.getGraphController().getGraph().getID();
-            if (!txtId.getText().matches("^[1-9]\\d*$")) {
+            int inputRadius = 0;
+            int inputCenter = 0;
+            try {
+                inputRadius = Integer.parseInt(txtId.getText());
+                inputCenter = Integer.parseInt(txtRadius.getText());
+            } catch (NumberFormatException e) {
+                Alerts.warning("Input is bigger than the maximum int");
+            }
+            if (inputCenter <= 0) {
                 Alerts.warning("Center node can only contain positive integers").show();
-            } else if (Integer.parseInt(txtId.getText()) > size) {
+            } else if (inputCenter > size) {
                 Alerts.warning("Center node is larger than graph size: " + size).show();
-            } else if (!txtRadius.getText().matches("^[1-9]\\d*$")) {
+            } else if (inputRadius < 0) {
                 Alerts.warning("Radius can only contain positive integers").show();
             } else if (!BookmarkController.storeBookmark(name, guiController.getFile().getAbsolutePath(),
                     txtBookmarkName.getText(), txtDescription.getText(),
-                    Integer.parseInt(txtId.getText()), Integer.parseInt(txtRadius.getText()))) {
+                    inputCenter, inputRadius)) {
                 Alerts.warning("Bookmarks must have unique names in files").show();
             } else {
                 Stage s = (Stage) btnOk.getScene().getWindow();
