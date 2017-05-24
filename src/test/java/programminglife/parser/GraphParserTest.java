@@ -17,7 +17,7 @@ import static org.junit.Assert.*;
  * Created by toinehartman on 16/05/2017.
  */
 public class GraphParserTest implements Observer {
-    private static final String TEST_DB = "test-gui.gfa.db";
+    private static final String TEST_DB = "test.gfa.db";
     private static final String TEST_FAULTY_DB = "test-faulty.gfa.db";
 
     private static String TEST_PATH, TEST_FAULTY_PATH;
@@ -29,7 +29,7 @@ public class GraphParserTest implements Observer {
     public static void setUpClass() throws Exception {
         DataManager.initialize(TEST_DB);
 
-        TEST_PATH = new File(GenomeGraphTest.class.getResource("/test-gui.gfa").toURI()).getAbsolutePath();
+        TEST_PATH = new File(GenomeGraphTest.class.getResource("/test.gfa").toURI()).getAbsolutePath();
         TEST_FAULTY_PATH = new File(
                 GenomeGraphTest.class.getClass().getResource("/test-faulty.gfa").toURI()
         ).getAbsolutePath();

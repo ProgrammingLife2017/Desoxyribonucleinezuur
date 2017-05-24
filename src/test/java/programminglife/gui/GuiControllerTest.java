@@ -26,8 +26,9 @@ import static org.junit.Assert.fail;
  * This is only usable if you have a USA QWERTY layout on your keyboard!!!
  */
 public class GuiControllerTest extends FxRobot {
-    private static final String TEST_DB = "test.db";
+    private static final String TEST_DB = "test-gui.gfa.db";
     private static final String TEST_File = "/test-gui.gfa";
+    private static final String TEST_DB2 = "test-gui.db";
 
     private static Stage primaryStage;
     private static String operatingSystem;
@@ -60,7 +61,7 @@ public class GuiControllerTest extends FxRobot {
     @After
     public void tearDown() throws Exception {
         DataManager.clearDB(TEST_DB);
-        DataManager.removeDB(TEST_File);
+        DataManager.removeDB(TEST_DB2);
         FxToolkit.cleanupApplication(this.pl);
     }
 

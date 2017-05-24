@@ -24,7 +24,7 @@ public class GenomeGraphTest {
     public static void setUpClass() throws Exception {
         DataManager.initialize(TEST_DB);
 
-        TEST_PATH = new File(GenomeGraphTest.class.getResource("/test-gui.gfa").toURI()).getAbsolutePath();
+        TEST_PATH = new File(GenomeGraphTest.class.getResource("/test.gfa").toURI()).getAbsolutePath();
         TEST_FAULTY_PATH = new File(
                 GenomeGraphTest.class.getClass().getResource("/test-faulty.gfa").toURI()
         ).getAbsolutePath();
