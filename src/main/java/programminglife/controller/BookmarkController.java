@@ -61,15 +61,16 @@ public final class BookmarkController {
      * Default bookmark storing method.
      * Uses the default bookmark path.
      * @param graphName The name of the graph file.
+     * @param path The path of the graph file
      * @param bookMarkName The name of the bookmark (must be unique for the graph).
      * @param description The description of this bookmark.
      * @param nodeID The ID of the node for searching.
      * @param radius The radius of the bookmark for searching.
      * @return true if the bookmark is stored and did not exist yet, false otherwise
      */
-    public static boolean storeBookmark(String graphName, String bookMarkName,
+    public static boolean storeBookmark(String graphName, String path, String bookMarkName,
                                      String description, int nodeID, int radius) {
-        return storeBookmark(BOOKMARKPATH, graphName, bookMarkName, description, nodeID, radius);
+        return storeBookmark(BOOKMARKPATH, path, graphName, bookMarkName, description, nodeID, radius);
     }
 
     /**
@@ -114,6 +115,7 @@ public final class BookmarkController {
     /**
      * Store a bookmark in bookmarks.xml.
      * @param fileName The path of the bookmarks file.
+     * @param filePath The absolute path of the graph file.
      * @param graphName The name of the graph file.
      * @param bookMarkName The name of the bookmark (must be unique for the graph.
      * @param description The description of this bookmark.
@@ -121,7 +123,7 @@ public final class BookmarkController {
      * @param radius The radius of the bookmark for searching.
      * @return true if the bookmark already exists, false otherwise.
      */
-    public static boolean storeBookmark(String fileName, String graphName, String bookMarkName,
+    public static boolean storeBookmark(String fileName, String filePath, String graphName, String bookMarkName,
                                      String description, int nodeID, int radius) {
         checkFile(fileName);
         if (bookmarkExists(fileName, graphName, bookMarkName)) {
@@ -143,11 +145,14 @@ public final class BookmarkController {
             radiusTag.appendChild(doc.createTextNode(String.valueOf(radius)));
             Element iDTag = doc.createElement("ID");
             iDTag.appendChild(doc.createTextNode(String.valueOf(nodeID)));
+            Element pathTag = doc.createElement("path");
+            pathTag.appendChild(doc.createTextNode(filePath));
 
             newBookmark.appendChild(nameTag);
             newBookmark.appendChild(iDTag);
             newBookmark.appendChild(radiusTag);
             newBookmark.appendChild(descriptionTag);
+            newBookmark.appendChild(pathTag);
 
             Element graphTag = findTag(doc.getElementsByTagName("graph"), graphName);
 
@@ -345,6 +350,7 @@ public final class BookmarkController {
     private static Bookmark parseBookmark(String graphName, Element el) {
         if (el != null) {
             return new Bookmark(graphName,
+                    el.getElementsByTagName("path").item(0).getTextContent(),
                     Integer.parseInt(el.getElementsByTagName("ID").item(0).getTextContent()),
                     Integer.parseInt(el.getElementsByTagName("radius").item(0).getTextContent()),
                     el.getElementsByTagName("name").item(0).getTextContent(),

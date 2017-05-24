@@ -103,6 +103,7 @@ public class GuiController implements Observer {
      */
     public void openFile(File file) throws IOException, UnknownTypeException {
         if (file != null) {
+            disableGraphUIElements(true);
             GraphParser graphParser = new GraphParser(file);
             graphParser.addObserver(this);
             graphParser.getProgressCounter().addObserver(this);
@@ -175,7 +176,8 @@ public class GuiController implements Observer {
                     MenuItem mi = new MenuItem(next);
                     mi.setOnAction(event -> {
                         try {
-                            openFile(new File(mi.getText()));
+                            file = new File(mi.getText());
+                            openFile(file);
                         } catch (UnknownTypeException e) {
                             Alerts.error("This file is malformed and cannot be parsed").show();
                         } catch (IOException e) {
@@ -244,7 +246,6 @@ public class GuiController implements Observer {
                 FXMLLoader loader = new FXMLLoader(ProgrammingLife.class.getResource("/LoadBookmarkWindow.fxml"));
                 AnchorPane page = loader.load();
                 GuiLoadBookmarkController gc = loader.getController();
-                gc.setGraphController(graphController);
                 gc.setGuiController(this);
                 gc.initBookmarks();
                 Scene scene = new Scene(page);
@@ -266,7 +267,6 @@ public class GuiController implements Observer {
      */
     private void disableGraphUIElements(boolean isDisabled) {
         anchorLeftControlPanel.setDisable(isDisabled);
-        menuBookmark.setDisable(isDisabled);
     }
 
     /**
@@ -357,7 +357,7 @@ public class GuiController implements Observer {
                 FXMLLoader loader = new FXMLLoader(ProgrammingLife.class.getResource("/CreateBookmarkWindow.fxml"));
                 AnchorPane page = loader.load();
                 GuiCreateBookmarkController gc = loader.getController();
-                gc.setGraphController(graphController);
+                gc.setGuiController(this);
                 gc.setText(txtCenterNode.getText(), txtMaxDrawDepth.getText());
                 Scene scene = new Scene(page);
                 Stage bookmarkDialogStage = new Stage();
@@ -469,5 +469,17 @@ public class GuiController implements Observer {
     void setText(int center, int radius) {
         txtCenterNode.setText(String.valueOf(center));
         txtMaxDrawDepth.setText(String.valueOf(radius));
+    }
+
+    public File getFile() {
+        return this.file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
+    }
+
+    public GraphController getGraphController() {
+        return this.graphController;
     }
 }

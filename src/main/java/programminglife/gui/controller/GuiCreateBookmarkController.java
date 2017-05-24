@@ -14,8 +14,7 @@ import programminglife.utility.Alerts;
  */
 public class GuiCreateBookmarkController {
 
-    private String graphName;
-    private GraphController graphController;
+    private GuiController guiController;
 
     @FXML private Button btnOk;
     @FXML private Button btnCancel;
@@ -38,13 +37,16 @@ public class GuiCreateBookmarkController {
      */
     private void initButtons() {
         btnOk.setOnAction(event -> {
+            int size = guiController.getGraphController().getGraph().size();
+            String name = guiController.getGraphController().getGraph().getID();
             if (!txtId.getText().matches("^[1-9]\\d*$")) {
                 Alerts.warning("Center node can only contain positive integers").show();
-            } else if (Integer.parseInt(txtId.getText()) > graphController.getGraph().size()) {
-                Alerts.warning("Center node is larger than graph size: " + graphController.getGraph().size()).show();
+            } else if (Integer.parseInt(txtId.getText()) > size) {
+                Alerts.warning("Center node is larger than graph size: " + size).show();
             } else if (!txtRadius.getText().matches("^[1-9]\\d*$")) {
                 Alerts.warning("Radius can only contain positive integers").show();
-            } else if (!BookmarkController.storeBookmark(graphName, txtBookmarkName.getText(), txtDescription.getText(),
+            } else if (!BookmarkController.storeBookmark(name, guiController.getFile().getAbsolutePath(),
+                    txtBookmarkName.getText(), txtDescription.getText(),
                     Integer.parseInt(txtId.getText()), Integer.parseInt(txtRadius.getText()))) {
                 Alerts.warning("Bookmarks must have unique names in files").show();
             } else {
@@ -74,13 +76,9 @@ public class GuiCreateBookmarkController {
         return btnCancel;
     }
 
-    /**
-     * Set the graphcontroller.
-     * @param graphController The graphcontroller.
-     */
-    public void setGraphController(GraphController graphController) {
-        this.graphController = graphController;
-        this.graphName = graphController.getGraph().getID();
+
+    public void setGuiController(GuiController guiController) {
+        this.guiController = guiController;
     }
 
     /**

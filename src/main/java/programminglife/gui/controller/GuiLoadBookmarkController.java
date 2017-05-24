@@ -11,19 +11,22 @@ import javafx.stage.Stage;
 import programminglife.ProgrammingLife;
 import programminglife.controller.BookmarkController;
 import programminglife.model.Bookmark;
-import programminglife.model.Graph;
-import programminglife.parser.GraphParser;
+import programminglife.model.exception.UnknownTypeException;
+import programminglife.utility.Alerts;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Created by Martijn van Meerten.
  * Controller for loading bookmarks.
  */
-public class GuiLoadBookmarkController implements Observer {
+public class GuiLoadBookmarkController {
     private String graphName;
-    private GraphController graphController;
     private GuiController guiController;
 
     @FXML private Button btnOpenBookmark;
@@ -54,16 +57,7 @@ public class GuiLoadBookmarkController implements Observer {
                 return bookmark;
             }
         }
-        for (TableView<Bookmark> tableView : tableViews) {
-            if (tableView.getSelectionModel().getSelectedItem() == null) {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("No bookmark selected");
-                alert.setContentText("Please select a bookmark to open");
-                alert.setHeaderText(null);
-                alert.show();
-                return null;
-            }
-        }
+        Alerts.warning("No bookmark selected").show();
         return null;
     }
 
@@ -74,9 +68,19 @@ public class GuiLoadBookmarkController implements Observer {
         btnOpenBookmark.setOnAction(event -> {
             Bookmark bookmark = checkBookmarkSelection();
             if (bookmark != null) {
+                if (guiController.getFile() == null
+                        || !bookmark.getPath().equals(guiController.getFile().getAbsolutePath())) {
+                    File file = new File(bookmark.getPath());
+                    try {
+                        guiController.setFile(file);
+                        guiController.openFile(file);
+                    } catch (IOException | UnknownTypeException e) {
+                        Alerts.error("File location has changed");
+                    }
+                }
+                guiController.getGraphController().clear();
                 guiController.setText(bookmark.getNodeID(), bookmark.getRadius());
-                graphController.clear();
-                graphController.draw(bookmark.getNodeID(), bookmark.getRadius());
+
                 System.out.println("Loaded bookmark " + bookmark.getBookmarkName()
                         + " Center Node: " + bookmark.getNodeID() + " Radius: " + bookmark.getRadius());
                 Stage s = (Stage) btnOpenBookmark.getScene().getWindow();
@@ -92,7 +96,7 @@ public class GuiLoadBookmarkController implements Observer {
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.isPresent()) {
                     if (result.get() == ButtonType.OK) {
-                        BookmarkController.deleteBookmark(graphName, bookmark.getBookmarkName());
+                        BookmarkController.deleteBookmark(bookmark.getFile(), bookmark.getBookmarkName());
                         System.out.println("Deleted bookmark " + bookmark.getBookmarkName()
                                 + " Center Node: " + bookmark.getNodeID() + " Radius: " + bookmark.getRadius());
                         initBookmarks();
@@ -109,24 +113,31 @@ public class GuiLoadBookmarkController implements Observer {
         });
 
         btnCreateBookmark.setOnAction(event -> {
-            try {
-                FXMLLoader loader = new FXMLLoader(ProgrammingLife.class.getResource("/CreateBookmarkWindow.fxml"));
-                AnchorPane page = loader.load();
-                GuiCreateBookmarkController gc = loader.getController();
-                gc.setGraphController(graphController);
-                Scene scene = new Scene(page);
-                Stage bookmarkDialogStage = new Stage();
-                bookmarkDialogStage.setResizable(false);
-                bookmarkDialogStage.setScene(scene);
-                bookmarkDialogStage.setTitle("Create Bookmark");
-                bookmarkDialogStage.initOwner(ProgrammingLife.getStage());
-                bookmarkDialogStage.showAndWait();
-                initBookmarks();
-            } catch (IOException e) {
-                (new Alert(Alert.AlertType.ERROR, "This bookmark cannot be created.", ButtonType.CLOSE)).show();
-            }
-
+            createBookmark();
         });
+    }
+
+    /**
+     * Called when create bookmark button is triggered.
+     * Creates a new bookmark and stores it.
+     */
+    private void createBookmark() {
+        try {
+            FXMLLoader loader = new FXMLLoader(ProgrammingLife.class.getResource("/CreateBookmarkWindow.fxml"));
+            AnchorPane page = loader.load();
+            GuiCreateBookmarkController gc = loader.getController();
+            gc.setGuiController(guiController);
+            Scene scene = new Scene(page);
+            Stage bookmarkDialogStage = new Stage();
+            bookmarkDialogStage.setResizable(false);
+            bookmarkDialogStage.setScene(scene);
+            bookmarkDialogStage.setTitle("Create Bookmark");
+            bookmarkDialogStage.initOwner(ProgrammingLife.getStage());
+            bookmarkDialogStage.showAndWait();
+            initBookmarks();
+        } catch (IOException e) {
+            (new Alert(Alert.AlertType.ERROR, "This bookmark cannot be created.", ButtonType.CLOSE)).show();
+        }
     }
 
     /**
@@ -186,29 +197,11 @@ public class GuiLoadBookmarkController implements Observer {
     }
 
     /**
-     * Sets the graphController for drawing the bookmarks.
-     * @param graphController The graphcontroller for drawing
-     */
-    public void setGraphController(GraphController graphController) {
-        this.graphController = graphController;
-        this.graphName = graphController.getGraph().getID();
-    }
-
-    /**
      * Sets the guicontroller for controlling the menu.
      * Is used for setting center node and radius text fields.
      * @param guiController The gui controller
      */
     public void setGuiController(GuiController guiController) {
         this.guiController = guiController;
-    }
-
-    @Override
-    public void update(Observable o, Object arg) {
-        if (o instanceof GraphParser) {
-            if (arg instanceof Graph) {
-                graphName = ((Graph) arg).getID();
-            }
-        }
     }
 }

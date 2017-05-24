@@ -6,6 +6,7 @@
             <ID>2</ID>
             <radius>6</radius>
             <description>testing</description>
+            <path>dummypath</path>
         </bookmark>
     </graph>
 </graphs>
