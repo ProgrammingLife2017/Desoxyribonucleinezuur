@@ -1,7 +1,6 @@
 package programminglife.gui;
 
 import javafx.application.Platform;
-import javafx.scene.Group;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
@@ -13,7 +12,6 @@ import programminglife.ProgrammingLife;
 import programminglife.model.DataManager;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -29,7 +27,7 @@ import static org.junit.Assert.fail;
  */
 public class GuiControllerTest extends FxRobot {
     private static final String TEST_DB = "test.db";
-    private static final String TEST_File = "/test.gfa";
+    private static final String TEST_File = "/test-gui.gfa";
 
     private static Stage primaryStage;
     private static String operatingSystem;
@@ -68,9 +66,9 @@ public class GuiControllerTest extends FxRobot {
 
     @AfterClass
     public static void tearDownClass() throws Exception {
-        Platform.exit();
         DataManager.removeDB(TEST_DB);
         DataManager.removeDB(TEST_File);
+        Platform.exit();
     }
 
     @Test
@@ -87,12 +85,12 @@ public class GuiControllerTest extends FxRobot {
         openAndParseFile(testFileName);
 
         clickOn("#txtMaxDrawDepth").type(KeyCode.BACK_SPACE);
-        clickOn("#txtMaxDrawDepth").type(KeyCode.DIGIT9);
+        clickOn("#txtMaxDrawDepth").type(KeyCode.DIGIT4);
         clickOn("#txtCenterNode").type(KeyCode.BACK_SPACE);
         clickOn("#txtCenterNode").type(KeyCode.DIGIT2);
         clickOn("#btnDraw");
         assertEquals("2", ((TextField) lookup("#txtCenterNode").query()).getCharacters().toString());
-        assertEquals("9", ((TextField) lookup("#txtMaxDrawDepth").query()).getCharacters().toString());
+        assertEquals("4", ((TextField) lookup("#txtMaxDrawDepth").query()).getCharacters().toString());
         clickOn("#btnZoomIn");
         clickOn("#btnZoomOut");
         clickOn("#btnZoomReset");
