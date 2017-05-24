@@ -29,6 +29,7 @@ public class GuiCreateBookmarkController {
     @FXML
     @SuppressWarnings("unused")
     public void initialize() {
+        txtDescription.setWrapText(true);
         initButtons();
     }
 

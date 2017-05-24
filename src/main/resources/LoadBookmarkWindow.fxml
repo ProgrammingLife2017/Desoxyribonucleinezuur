@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.Pane?>
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="programminglife.gui.controller.GuiLoadBookmarkController">
    <children>
-      <Pane layoutY="-1.0" prefHeight="25.0" prefWidth="600.0">
+      <Pane layoutY="-1.0" prefHeight="25.0" prefWidth="800.0">
          <children>
             <Button fx:id="btnOpenBookmark" layoutX="0.0" mnemonicParsing="false" prefWidth="100.0" text="Open" />
             <Button fx:id="btnCancelBookmark" layoutX="300.0" mnemonicParsing="false" prefWidth="100.0" text="Cancel" />
@@ -13,7 +13,7 @@
             <Button fx:id="btnCreateBookmark" layoutX="100.0" mnemonicParsing="false" prefWidth="100.0" text="Create" />
          </children>
       </Pane>
-      <Accordion fx:id="accordionBookmark" layoutY="24.0" prefHeight="285.0" prefWidth="600.0">
+      <Accordion fx:id="accordionBookmark" layoutY="24.0" prefHeight="350.0" prefWidth="600.0">
       </Accordion>
    </children>
 </AnchorPane>

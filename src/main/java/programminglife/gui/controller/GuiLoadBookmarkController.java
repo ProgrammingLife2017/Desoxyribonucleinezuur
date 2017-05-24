@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import programminglife.ProgrammingLife;
 import programminglife.controller.BookmarkController;
@@ -147,15 +148,18 @@ public class GuiLoadBookmarkController {
         tableColumn.setText("Name");
         tableColumn.setId("Name" + graph);
         tableColumn.setPrefWidth(120);
+        tableColumn.setResizable(false);
 
         TableColumn<Bookmark, String> tableColumn1 = new TableColumn<>();
         tableColumn1.setText("Description");
         tableColumn1.setId("Description" + graph);
-        tableColumn1.setPrefWidth(460);
+        tableColumn1.setPrefWidth(455);
+        tableColumn1.setResizable(false);
 
         TableView<Bookmark> tableView = new TableView<>();
         tableView.getColumns().add(0, tableColumn);
         tableView.getColumns().add(1, tableColumn1);
+        tableView.setFixedCellSize(Region.USE_COMPUTED_SIZE);
         tableViews.add(tableView);
 
         AnchorPane anchorPane = new AnchorPane();
@@ -202,6 +206,10 @@ public class GuiLoadBookmarkController {
         this.guiController = guiController;
     }
 
+    /**
+     * Sets the create button of bookmark to active if a graph is loaded.
+     * @param active Boolean that determines if the button is active.
+     */
     public void setBtnCreateBookmarkActive(Boolean active) {
         btnCreateBookmark.setDisable(!active);
     }
