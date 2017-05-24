@@ -252,4 +252,12 @@ public class GenomeGraph implements Graph {
     public void removeCache() throws IOException {
         this.cache.removeDB();
     }
+
+    /**
+     * Closes the cache of the {@link GenomeGraph}.
+     * @throws IOException when strange things happen
+     */
+    public void close() throws IOException {
+        this.cache.close();
+    }
 }

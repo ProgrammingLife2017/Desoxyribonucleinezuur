@@ -104,6 +104,10 @@ public class GuiController implements Observer {
      */
     public void openFile(File file) throws IOException, UnknownTypeException {
         if (file != null) {
+            if (this.graphController != null && this.graphController.getGraph() != null) {
+                this.graphController.getGraph().close();
+            }
+
             GraphParser graphParser = new GraphParser(file);
             graphParser.addObserver(this);
             graphParser.getProgressCounter().addObserver(this);

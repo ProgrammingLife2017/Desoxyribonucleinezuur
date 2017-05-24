@@ -124,7 +124,6 @@ public class GraphParser extends Observable implements Runnable {
             }
         }
 
-        this.getGraph().commit();
         this.progressCounter.finished();
     }
 
