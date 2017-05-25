@@ -9,14 +9,10 @@ import java.util.*;
  * A part of a {@link programminglife.model.Graph}. It uses a centerNode and a radius.
  * Roughly, every node reachable within radius steps from centerNode is included in this graph.
  * When updating the centerNode or the radius, it also updates the Nodes within this SubGraph.
- * @param <N> The type of {@link DrawableNode DrawableNodes} this SubGraph stores.
+ * @param <N> The type of {@link Node Nodes} this SubGraph stores.
+ * @param <D> The type of {@link DrawableNode DrawableNodes} this SubGraph uses to print the Nodes of type N.
  */
-public class SubGraph<N extends DrawableNode<N>> {
-    /**
-     * How much do we go further than radius to make sure we don't miss any important nodes?
-     */
-    private static final int OVERSHOOT = 2;
-
+public class SubGraph<N extends Node<N>, D extends DrawableNode<N, D>> {
     /**
      * The amount of padding between layers (horizontal padding).
      */
@@ -27,9 +23,15 @@ public class SubGraph<N extends DrawableNode<N>> {
      */
     private static final int LINE_PADDING = 20;
 
-    private Set<DrawableNode<N>> nodes;
-    private Set<DrawableEdge<N>> edges;
-    private Node centerNode;
+    private Set<D> nodes;
+    private Set<DrawableEdge<D>> edges;
+    private D centerNode;
+    /**
+     * The radius around the center node. Eventually,
+     * this SubGraph should only include nodes with a *longest* path of at most radius.
+     * Radius is zero-based, i.e. a radius of 0 is only the centerNode,
+     * radius of 1 is centerNode plus all its children and parents, etc.
+     */
     private int radius;
 
     /**
@@ -39,16 +41,136 @@ public class SubGraph<N extends DrawableNode<N>> {
      * @param centerNode The centerNode
      * @param radius The radius
      */
-    public SubGraph(Node centerNode, int radius) {
+    public SubGraph(N centerNode, int radius) {
         // TODO
         // tactic: first go to all parents at exactly radius, then find all children of those parents
+        D centerDrawableNode = centerNode.getDrawable();
+        this.centerNode = centerDrawableNode;
+        this.radius = radius;
+
+        // TODO: also go from all parents to children within 2*radius + 1; and vice-versa from children.
+        this.nodes = findParents(centerDrawableNode, radius);
+        this.nodes.addAll(findChildren(centerDrawableNode, radius));
+    }
+
+    // TODO: change findParents and findChildren to reliably only find nodes with a *longest* path of at most radius.
+    // (maybe give that their own method, or possibly two methods with a
+    // boolean flag for using longest or shortest path as determining factor for the radius)
+
+    /**
+     * Find the parents for a single {@link DrawableNode} up to radius.
+     * This method returns a set with all nodes with a shortest path of at most radius.
+     * @param node The node to start from.
+     * @param radius Number indicating the number of steps to take.
+     * @return A set of all ancestors within radius steps.
+     */
+    private Set<D> findParents(D node, int radius) {
+        Set<D> nodeSet = new HashSet<>();
+        nodeSet.add(node);
+        return findParents(nodeSet, radius);
+    }
+
+    /**
+     * Find the parents for a set of {@link DrawableNode DrawableNodes} up to radius.
+     * This method returns a set with all nodes with a shortest
+     * path of at most radius to at least one of the nodes in the set.
+     * @param nodes The set of nodes to start from.
+     * @param radius Number indicating the number of steps to take.
+     * @return A set of all ancestors within radius steps.
+     */
+    private Set<D> findParents(Set<D> nodes, int radius) {
+        Set<D> found = new HashSet<>();
+        for (D node : nodes) {
+            findParents(found, node, radius);
+        }
+        return found;
+    }
+
+    /**
+     * Find the parents for a single {@link DrawableNode} up to radius.
+     * This method returns a set with all nodes with a shortest path of at most radius.
+     * @param found The Set of nodes that have been found. Nodes found by this method will be added to the set.
+     * @param node The node to start from.
+     * @param radius Number indicating the number of steps to take.
+     */
+    private void findParents(Set<D> found, D node, int radius) {
+        // TODO: improve datastructure so that parents can be safely skipped if already found
+        // it can currently not safely be skipped: 0-1-2-3-4
+        //                                            \_/
+        // assuming radius 3, if you find the nodes in the order 0, 1, 2, 3,
+        // you cannot skip 3 as that would then miss 4 (which is also within radius 3, via 0-1-3-4)
+        if (radius <= 0) {
+            return;
+        }
+        radius--; // decrease radius once instead of multiple times within the loop;
+        for (DrawableEdge<D> edge : node.getParents()) {
+            D parent = edge.getStart();
+            if (!found.add(parent)) {
+                findParents(found, parent, radius);
+            }
+        }
+    }
+
+    /**
+     * Find the parents for a single {@link DrawableNode} up to radius.
+     * This method returns a set with all nodes with a shortest path of at most radius.
+     * @param node The node to start from.
+     * @param radius Number indicating the number of steps to take.
+     * @return A set of all ancestors within radius steps.
+     */
+    private Set<D> findChildren(D node, int radius) {
+        Set<D> nodeSet = new HashSet<>();
+        nodeSet.add(node);
+        return findChildren(nodeSet, radius);
+    }
+
+    /**
+     * Find the parents for a set of {@link DrawableNode DrawableNodes} up to radius.
+     * This method returns a set with all nodes with a shortest
+     * path of at most radius to at least one of the nodes in the set.
+     * @param nodes The set of nodes to start from.
+     * @param radius Number indicating the number of steps to take.
+     * @return A set of all ancestors within radius steps.
+     */
+    private Set<D> findChildren(Set<D> nodes, int radius) {
+        Set<D> found = new HashSet<>();
+        for (D node : nodes) {
+            findChildren(found, node, radius);
+        }
+        return found;
+    }
+
+    /**
+     * Find the parents for a single {@link DrawableNode} up to radius.
+     * This method returns a set with all nodes with a shortest path of at most radius.
+     * @param found The Set of nodes that have been found. Nodes found by this method will be added to the set.
+     * @param node The node to start from.
+     * @param radius Number indicating the number of steps to take.
+     */
+    private void findChildren(Set<D> found, D node, int radius) {
+        // TODO: improve datastructure so that parents can be safely skipped if already found
+        // it can currently not safely be skipped: 0-1-2-3-4
+        //                                            \_/
+        // assuming radius 3, if you find the nodes in the order 0, 1, 2, 3,
+        // you cannot skip 3 as that would then miss 4 (which is also within radius 3, via 0-1-3-4)
+        if (radius <= 0) {
+            return;
+        }
+        radius--; // decrease radius once instead of multiple times within the loop;
+        for (DrawableEdge<D> edge : node.getChildren()) {
+            D child = edge.getEnd();
+            if (!found.add(child)) {
+                findChildren(found, child, radius);
+            }
+        }
     }
 
     /**
      * Draw this SubGraph on the screen.
      */
     public void draw() {
-        // TODO
+        // TODO: implement;
+        throw new Error("Not implemented yet");
         // use layout if not done already
     }
 
@@ -58,20 +180,20 @@ public class SubGraph<N extends DrawableNode<N>> {
      * @return The {@link Drawable} that is on top at the given location.
      */
     public Drawable atLocation(XYCoordinate loc) {
-        // TODO
-        return null;
+        // TODO: implement;
+        throw new Error("Not implemented yet");
     }
 
     /**
      * Lay out the {@link Drawable Drawables} in this SubGraph.
      */
     public void layout() {
-        List<Layer<N>> layers = findLayers();
+        List<Layer<D>> layers = findLayers();
 
         int x = 0;
         int y = 0;
-        for (Layer<N> layer : layers) {
-            for (DrawableNode<N> d : layer) {
+        for (Layer<D> layer : layers) {
+            for (D d : layer) {
                 d.setLocation(new XYCoordinate(x, y));
                 y += LINE_PADDING;
             }
@@ -86,14 +208,14 @@ public class SubGraph<N extends DrawableNode<N>> {
      * This will put each node in a Layer one higher than each of its parents.
      * @return A {@link List} of Layers with all the nodes (all nodes are divided over the Layers).
      */
-    private List<Layer<N>> findLayers() {
-        List<DrawableNode<N>> sorted = topoSort();
-        Map<DrawableNode<N>, Integer> nodeLevel = new HashMap<>();
-        List<Layer<N>> res = new ArrayList<>();
+    private List<Layer<D>> findLayers() {
+        List<D> sorted = topoSort();
+        Map<D, Integer> nodeLevel = new HashMap<>();
+        List<Layer<D>> res = new ArrayList<>();
 
-        for (DrawableNode<N> node : sorted) {
+        for (D node : sorted) {
             int maxParentLevel = -1;
-            for (DrawableEdge<N> edge : node.getParents()) {
+            for (DrawableEdge<D> edge : node.getParents()) {
                 Integer parentLevel = nodeLevel.get(edge.getStart());
                 if (parentLevel == null) {
                     continue;
@@ -130,15 +252,15 @@ public class SubGraph<N extends DrawableNode<N>> {
      * Topologically sort the nodes from this graph.
      * @return a topologically sorted list of nodes
      */
-    public List<DrawableNode<N>> topoSort() {
+    public List<D> topoSort() {
         // TODO: check that graph is not circular. Easiest way is by having a
         // parent-step counter and making sure it doesn't go higher than the number of nodes.
 
         // topo sorted list
-        ArrayList<DrawableNode<N>> res = new ArrayList<>(this.nodes.size());
+        ArrayList<D> res = new ArrayList<>(this.nodes.size());
 
         // nodes that have not yet been added to the list.
-        ArrayList<DrawableNode<N>> nodes = new ArrayList<>(this.nodes);
+        ArrayList<D> nodes = new ArrayList<>(this.nodes);
 
         // tactic:
         // {
@@ -148,13 +270,13 @@ public class SubGraph<N extends DrawableNode<N>> {
         // }
         // Repeat until all nodes are added to the list.
         while (!nodes.isEmpty()) {
-            DrawableNode<N> n = nodes.get(nodes.size() - 1);
+            D n = nodes.get(nodes.size() - 1);
 
             findAllParentsAdded:
             while (true) {
-                Collection<DrawableEdge<N>> parents = n.getParents();
-                for (DrawableEdge<N> e : parents) {
-                    DrawableNode<N> p = e.getStart();
+                Collection<? extends DrawableEdge<D>> parents = n.getParents();
+                for (DrawableEdge<D> e : parents) {
+                    D p = e.getStart();
                     if (nodes.contains(p)) {
                         // there is a parent of n in nodes, so this parent should go before in res.
                         assert (!res.contains(p));

@@ -1,16 +1,16 @@
 package programminglife.model.drawing;
 
+import programminglife.model.Node;
 import programminglife.model.XYCoordinate;
 
 import java.util.Collection;
-import java.util.HashSet;
 
 /**
  * A type of {@link DrawableNode}. It is used by {@link SubGraph#layout()} to lay out the edges better.
  * This is a {@link programminglife.model.Node} for the {@link SubGraph},
  * but not an actual Node within {@link programminglife.model.GenomeGraph}.
  */
-public class DummyNode implements DrawableNode {
+public class DummyNode implements DrawableNode<DummyNode.None, DummyNode> {
     private XYCoordinate loc;
 
     /**
@@ -23,16 +23,6 @@ public class DummyNode implements DrawableNode {
     // TODO: implement the methods.
 
     @Override
-    public int getIdentifier() {
-        return -1;
-    }
-
-    @Override
-    public Collection<Object> getBookmarks() {
-        return new HashSet<>();
-    }
-
-    @Override
     public void setLocation(XYCoordinate newLoc) {
         this.loc = newLoc;
     }
@@ -43,42 +33,79 @@ public class DummyNode implements DrawableNode {
     }
 
     @Override
-    public Collection<DrawableEdge> getChildren() {
-        return null;
+    public Collection<DrawableEdge<DummyNode>> getChildren() {
+        throw new Error("This method has not yet been implemented");
     }
 
     @Override
-    public Collection<DrawableEdge> getParents() {
-        return null;
+    public Collection<DrawableEdge<DummyNode>> getParents() {
+        throw new Error("This method has not yet been implemented");
     }
 
     @Override
     public int getWidth() {
-        return 0;
+        throw new Error("This method has not yet been implemented");
     }
 
     @Override
     public int getHeight() {
-        return 0;
+        throw new Error("This method has not yet been implemented");
     }
 
     @Override
     public XYCoordinate getDimensions() {
-        return null;
+        throw new Error("This method has not yet been implemented");
     }
 
     @Override
     public void setDimension(XYCoordinate dimensions) {
-
+        throw new Error("This method has not yet been implemented");
     }
 
     @Override
     public void setWidth(int width) {
-
+        throw new Error("This method has not yet been implemented");
     }
 
     @Override
     public void setHeight(int height) {
+        throw new Error("This method has not yet been implemented");
+    }
 
+    @Override
+    public int getIdentifier() {
+        throw new Error("This method has not yet been implemented");
+    }
+
+    @Override
+    public DummyNode getDrawable() {
+        return this;
+    }
+
+    /**
+     * Class to represent that DummyNode does not represent any actual nodes.
+     */
+    static final class None implements Node<None> {
+
+        /**
+         * private constructor to prevent creation.
+         */
+        private None() {
+        }
+
+        @Override
+        public int getIdentifier() {
+            throw new Error("This class should not be used");
+        }
+
+        @Override
+        public Collection<Object> getBookmarks() {
+            throw new Error("This class should not be used");
+        }
+
+        @Override
+        public DummyNode getDrawable() {
+            throw new Error("This class should not be used");
+        }
     }
 }

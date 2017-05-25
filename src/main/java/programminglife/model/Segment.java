@@ -2,6 +2,7 @@ package programminglife.model;
 
 import javafx.scene.shape.Rectangle;
 import org.apache.commons.lang3.StringUtils;
+import programminglife.model.drawing.DrawableSegment;
 
 /**
  * Created by marti_000 on 25-4-2017.
@@ -86,6 +87,11 @@ public class Segment extends Rectangle implements Node<Segment> {
      */
     public int getIdentifier() {
         return this.id;
+    }
+
+    @Override
+    public DrawableSegment getDrawable() {
+        return new DrawableSegment(this);
     }
 
     /**

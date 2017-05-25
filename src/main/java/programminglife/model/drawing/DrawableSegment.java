@@ -8,7 +8,7 @@ import java.util.Collection;
 /**
  * A {@link Segment} that also Implements {@link Drawable}.
  */
-public class DrawableSegment implements DrawableNode<DrawableSegment> {
+public class DrawableSegment implements DrawableNode<Segment, DrawableSegment> {
     private Segment segment;
 
     /**
@@ -22,12 +22,12 @@ public class DrawableSegment implements DrawableNode<DrawableSegment> {
     // TODO: implement methods
 
     @Override
-    public Collection<DrawableEdge<DrawableSegment>> getChildren() {
+    public Collection<DrawableLink> getChildren() {
         return null;
     }
 
     @Override
-    public Collection<DrawableEdge<DrawableSegment>> getParents() {
+    public Collection<DrawableLink> getParents() {
         return null;
     }
 
@@ -77,7 +77,7 @@ public class DrawableSegment implements DrawableNode<DrawableSegment> {
     }
 
     @Override
-    public Collection<Object> getBookmarks() {
-        return null;
+    public DrawableSegment getDrawable() {
+        return this;
     }
 }

@@ -7,21 +7,23 @@ import java.util.Collection;
 
 /**
  * A {@link Node} that implements {@link Drawable}.
- * @param <N> The type of Node this is.
- *           Just use like this: <code>class FooNode implements DrawableNode<FooNode></code>
+ * @param <N> The type of Nodes this DrawableNode represents.
+ *           (answers the question: what type of Node can I draw with this DrawableNode?)
+ * @param <D> The type of {@link DrawableNode DrawableNodes} this can have as children / parents.
+ *
  */
-public interface DrawableNode<N extends DrawableNode<N>> extends Node<N>, Drawable {
+public interface DrawableNode<N extends Node<N>, D extends DrawableNode<N, D>> extends Node<D>, Drawable {
     /**
      * Get the {@link DrawableEdge DrawableEdges} connecting this DrawableNode to its children.
      * @return the {@link DrawableEdge DrawableEdges} connecting this DrawableNode to its children.
      */
-    Collection<DrawableEdge<N>> getChildren();
+    Collection<? extends DrawableEdge<D>> getChildren();
 
     /**
      * Get the {@link DrawableEdge DrawableEdges} connecting this DrawableNode to its parents.
      * @return the {@link DrawableEdge DrawableEdges} connecting this DrawableNode to its parents.
      */
-    Collection<DrawableEdge<N>> getParents();
+    Collection<? extends DrawableEdge<D>> getParents();
 
     /**
      * Set the location of this DrawableNode.

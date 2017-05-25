@@ -1,6 +1,7 @@
 package programminglife.model.drawing;
 
 import org.jetbrains.annotations.NotNull;
+import programminglife.model.Node;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -14,9 +15,9 @@ import java.util.List;
  * @see SubGraph#layout()
  * @see SubGraph#findLayers()
  */
-public class Layer<N extends DrawableNode<N>> implements Iterable<DrawableNode<N>> {
+public class Layer<N extends Node<N>> implements Iterable<N> {
     private int width;
-    private List<DrawableNode<N>> nodes;
+    private List<N> nodes;
 
     /**
      * Default empty constructor.
@@ -38,7 +39,7 @@ public class Layer<N extends DrawableNode<N>> implements Iterable<DrawableNode<N
      * Add a {@link DrawableNode} to this Layer.
      * @param node the node to add.
      */
-    public void add(DrawableNode<N> node) {
+    public void add(N node) {
         this.nodes.add(node);
     }
 
@@ -48,7 +49,7 @@ public class Layer<N extends DrawableNode<N>> implements Iterable<DrawableNode<N
      */
     @NotNull
     @Override
-    public Iterator<DrawableNode<N>> iterator() {
+    public Iterator<N> iterator() {
         return nodes.iterator();
     }
 
@@ -56,7 +57,7 @@ public class Layer<N extends DrawableNode<N>> implements Iterable<DrawableNode<N
      * sort the {@link DrawableNode DrawableNodes} in this layer according to the order of the {@link Comparator} c.
      * @param c A {@link Comparator} which imposes a total ordering on the nodes.
      */
-    public void sort(Comparator<? super DrawableNode<N>> c) {
+    public void sort(Comparator<? super N> c) {
         this.nodes.sort(c);
     }
 }

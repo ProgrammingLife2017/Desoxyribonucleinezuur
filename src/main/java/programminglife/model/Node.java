@@ -1,12 +1,13 @@
 package programminglife.model;
 
 import org.apache.commons.lang3.NotImplementedException;
+import programminglife.model.drawing.DrawableNode;
 
 import java.util.Collection;
 
 /**
  * An Interface for node objects.
- * @param <N> the implementation of {@link Node} to use
+ * @param <N> The subtype of Node. Use like this: {@code class FooNode implements Node<FooNode>}
  */
 public interface Node<N extends Node<N>> {
     /**
@@ -23,4 +24,11 @@ public interface Node<N extends Node<N>> {
         // TODO create a data structure to store bookmarks/annotation
         throw new NotImplementedException("Node#getBookmarks() is not yet implemented");
     }
+
+    /**
+     * Get a {@link DrawableNode} that can represent this node.
+     * @param <D> The type of DrawableNodes this method returns.
+     * @return a {@link DrawableNode} that can represent this node.
+     */
+    <D extends DrawableNode<N, D>> D getDrawable();
 }
