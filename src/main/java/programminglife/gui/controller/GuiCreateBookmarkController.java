@@ -48,8 +48,10 @@ public class GuiCreateBookmarkController {
                     Alerts.warning("Center node is not present in graph").show();
                 } else if (inputRadius < 0) {
                     Alerts.warning("Radius can only contain positive integers").show();
-                } else if (!txtBookmarkName.getText().matches(".*\\w.*")) {
+                } else if (txtBookmarkName.getText().length() == 0) {
                     Alerts.warning("Bookmark must contain a name").show();
+                } else if (!txtBookmarkName.getText().matches("\\S.*\\S")) {
+                    Alerts.warning("Bookmark name must begin and end with a valid character").show();
                 } else if (!BookmarkController.storeBookmark(name, guiController.getFile().getAbsolutePath(),
                         txtBookmarkName.getText(), txtDescription.getText(),
                         inputCenter, inputRadius)) {
