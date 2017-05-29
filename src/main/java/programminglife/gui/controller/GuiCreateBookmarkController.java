@@ -39,8 +39,8 @@ public class GuiCreateBookmarkController {
     private void initButtons() {
         btnOk.setOnAction(event -> {
             String name = guiController.getGraphController().getGraph().getID();
-            int inputRadius = 0;
-            int inputCenter = 0;
+            int inputRadius;
+            int inputCenter;
             try {
                 inputCenter = Integer.parseInt(txtId.getText());
                 inputRadius = Integer.parseInt(txtRadius.getText());
@@ -51,10 +51,9 @@ public class GuiCreateBookmarkController {
                 } else if (txtBookmarkName.getText().length() == 0) {
                     Alerts.warning("Bookmark must contain a name").show();
                 } else if (!txtBookmarkName.getText().matches("\\S.*\\S")) {
-                    Alerts.warning("Bookmark name must begin and end with a valid character").show();
+                    Alerts.warning("Bookmark name must begin and end with a non whitespace character").show();
                 } else if (!BookmarkController.storeBookmark(name, guiController.getFile().getAbsolutePath(),
-                        txtBookmarkName.getText(), txtDescription.getText(),
-                        inputCenter, inputRadius)) {
+                        txtBookmarkName.getText(), txtDescription.getText(), inputCenter, inputRadius)) {
                     Alerts.warning("Bookmarks must have unique names in files").show();
                 } else {
                     Stage s = (Stage) btnOk.getScene().getWindow();
