@@ -65,50 +65,58 @@ public class GuiLoadBookmarkController {
      * Initializes the buttons in the window.
      */
     private void initButtons() {
-        btnOpenBookmark.setOnAction(event -> {
-            Bookmark bookmark = checkBookmarkSelection();
-            if (bookmark != null) {
-                if (guiController.getFile() == null
-                        || !bookmark.getPath().equals(guiController.getFile().getAbsolutePath())) {
-                    File file = new File(bookmark.getPath());
-                    try {
-                        guiController.setFile(file);
-                        guiController.openFile(file);
-                    } catch (IOException | UnknownTypeException e) {
-                        Alerts.error("File location has changed");
-                    }
-                }
-                guiController.getGraphController().clear();
-                guiController.setText(bookmark.getNodeID(), bookmark.getRadius());
-
-                System.out.println("Loaded bookmark " + bookmark.getBookmarkName()
-                        + " Center Node: " + bookmark.getNodeID() + " Radius: " + bookmark.getRadius());
-                Stage s = (Stage) btnOpenBookmark.getScene().getWindow();
-                s.close();
-            }
-        });
-        btnDeleteBookmark.setOnAction(event -> {
-            Bookmark bookmark = checkBookmarkSelection();
-            if (bookmark != null) {
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle("Confirm Deletion");
-                alert.setHeaderText("Do you really want to delete bookmark: \"" + bookmark.getBookmarkName() + "\"?");
-                Optional<ButtonType> result = alert.showAndWait();
-                if (result.isPresent()) {
-                    if (result.get() == ButtonType.OK) {
-                        BookmarkController.deleteBookmark(bookmark.getFile(), bookmark.getBookmarkName());
-                        System.out.println("Deleted bookmark " + bookmark.getBookmarkName()
-                                + " Center Node: " + bookmark.getNodeID() + " Radius: " + bookmark.getRadius());
-                        initBookmarks();
-                    } else {
-                        alert.close();
-                    }
-                }
-            }
-        });
+        btnOpenBookmark.setOnAction(event -> buttonOpen());
+        btnDeleteBookmark.setOnAction(event -> buttonDelete());
         btnCreateBookmark.setOnAction(event -> createBookmark());
-
         btnShowInfo.setOnAction(event -> showInfo());
+    }
+
+    /**
+     * Handles the actions of the open bookmark button.
+     */
+    private void buttonOpen() {
+        Bookmark bookmark = checkBookmarkSelection();
+        if (bookmark != null) {
+            if (guiController.getFile() == null
+                    || !bookmark.getPath().equals(guiController.getFile().getAbsolutePath())) {
+                File file = new File(bookmark.getPath());
+                try {
+                    guiController.setFile(file);
+                    guiController.openFile(file);
+                } catch (IOException | UnknownTypeException e) {
+                    Alerts.error("File location has changed");
+                }
+            }
+            guiController.getGraphController().clear();
+            guiController.setText(bookmark.getNodeID(), bookmark.getRadius());
+
+            System.out.println("Loaded bookmark " + bookmark.getBookmarkName()
+                    + " Center Node: " + bookmark.getNodeID() + " Radius: " + bookmark.getRadius());
+            ((Stage) btnOpenBookmark.getScene().getWindow()).close();
+        }
+    }
+
+    /**
+     * Handles the actions of the delete bookmark button.
+     */
+    private void buttonDelete() {
+        Bookmark bookmark = checkBookmarkSelection();
+        if (bookmark != null) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Confirm Deletion");
+            alert.setHeaderText("Do you really want to delete bookmark: \"" + bookmark.getBookmarkName() + "\"?");
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.isPresent()) {
+                if (result.get() == ButtonType.OK) {
+                    BookmarkController.deleteBookmark(bookmark.getFile(), bookmark.getBookmarkName());
+                    System.out.println("Deleted bookmark " + bookmark.getBookmarkName()
+                            + " Center Node: " + bookmark.getNodeID() + " Radius: " + bookmark.getRadius());
+                    initBookmarks();
+                } else {
+                    alert.close();
+                }
+            }
+        }
     }
 
     /**
@@ -152,14 +160,12 @@ public class GuiLoadBookmarkController {
      * @param bookmarks List of bookmarks that are created for the graphs.
      */
     private void createTableView(String graph, List<Bookmark> bookmarks) {
-        TableColumn<Bookmark, String> tableColumn = new TableColumn<>();
-        tableColumn.setText("Name");
+        TableColumn<Bookmark, String> tableColumn = new TableColumn<>("Name");
         tableColumn.setId("Name" + graph);
         tableColumn.setPrefWidth(120);
         tableColumn.setResizable(false);
 
-        TableColumn<Bookmark, String> tableColumn1 = new TableColumn<>();
-        tableColumn1.setText("Description");
+        TableColumn<Bookmark, String> tableColumn1 = new TableColumn<>("Description");
         tableColumn1.setId("Description" + graph);
         tableColumn1.setPrefWidth(455);
         tableColumn1.setResizable(false);
@@ -167,11 +173,9 @@ public class GuiLoadBookmarkController {
         TableView<Bookmark> tableView = new TableView<>();
         tableView.getColumns().add(0, tableColumn);
         tableView.getColumns().add(1, tableColumn1);
-        tableView.setFixedCellSize(Region.USE_COMPUTED_SIZE);
         tableViews.add(tableView);
 
-        AnchorPane anchorPane = new AnchorPane();
-        anchorPane.getChildren().add(tableView);
+        AnchorPane anchorPane = new AnchorPane(tableView);
         AnchorPane.setBottomAnchor(tableView, 0.d);
         AnchorPane.setTopAnchor(tableView, 0.d);
         AnchorPane.setLeftAnchor(tableView, 0.d);

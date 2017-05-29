@@ -44,7 +44,6 @@ public class GuiController implements Observer {
     //FXML imports.
     @FXML private MenuItem btnOpen;
     @FXML private MenuItem btnQuit;
-    @FXML private MenuItem btnCreateBookmark;
     @FXML private MenuItem btnBookmarks;
     @FXML private MenuItem btnAbout;
     @FXML private MenuItem btnInstructions;
@@ -210,16 +209,7 @@ public class GuiController implements Observer {
                 file = fileChooser.showOpenDialog(ProgrammingLife.getStage());
                 if (file != null) {
                     this.openFile(file);
-                    try (BufferedWriter recentsWriter = new BufferedWriter(new FileWriter(recentFile, true))) {
-                        if (!recentItems.contains(file.getAbsolutePath())) {
-                            recentsWriter.write(file.getAbsolutePath() + System.getProperty("line.separator"));
-                            recentsWriter.flush();
-                            recentsWriter.close();
-                            initRecent();
-                        }
-                    } catch (IOException e) {
-                        Alerts.error("This file can't be updated").show();
-                    }
+                    updateRecent();
                 }
             } catch (FileNotFoundException e) {
                 Alerts.error("This file can't be found").show();
@@ -233,6 +223,22 @@ public class GuiController implements Observer {
         btnQuit.setOnAction(event -> Alerts.quitAlert());
         btnAbout.setOnAction(event -> Alerts.infoAboutAlert());
         btnInstructions.setOnAction(event -> Alerts.infoInstructionAlert());
+    }
+
+    /**
+     * Updates the recent files file after opening a file.
+     */
+    private void updateRecent() {
+        try (BufferedWriter recentsWriter = new BufferedWriter(new FileWriter(recentFile, true))) {
+            if (!recentItems.contains(file.getAbsolutePath())) {
+                recentsWriter.write(file.getAbsolutePath() + System.getProperty("line.separator"));
+                recentsWriter.flush();
+                recentsWriter.close();
+                initRecent();
+            }
+        } catch (IOException e) {
+            Alerts.error("This file can't be updated").show();
+        }
     }
 
     /**
@@ -354,24 +360,7 @@ public class GuiController implements Observer {
             btnDraw.fire();
         });
 
-        btnBookmark.setOnAction(event -> {
-            try {
-                FXMLLoader loader = new FXMLLoader(ProgrammingLife.class.getResource("/CreateBookmarkWindow.fxml"));
-                AnchorPane page = loader.load();
-                GuiCreateBookmarkController gc = loader.getController();
-                gc.setGuiController(this);
-                gc.setText(txtCenterNode.getText(), txtMaxDrawDepth.getText());
-                Scene scene = new Scene(page);
-                Stage bookmarkDialogStage = new Stage();
-                bookmarkDialogStage.setResizable(false);
-                bookmarkDialogStage.setScene(scene);
-                bookmarkDialogStage.setTitle("Create Bookmark");
-                bookmarkDialogStage.initOwner(ProgrammingLife.getStage());
-                bookmarkDialogStage.showAndWait();
-            } catch (IOException e) {
-                (new Alert(Alert.AlertType.ERROR, "This bookmark cannot be created.", ButtonType.CLOSE)).show();
-            }
-        });
+        btnBookmark.setOnAction(event -> buttonBookmark());
 
         txtMaxDrawDepth.textProperty().addListener(new NumbersOnlyListener(txtMaxDrawDepth));
         txtMaxDrawDepth.setText(INITIAL_MAX_DRAW_DEPTH);
@@ -399,6 +388,28 @@ public class GuiController implements Observer {
             if (!newValue.matches("\\d")) {
                 tf.setText(newValue.replaceAll("[^\\d]", ""));
             }
+        }
+    }
+
+    /**
+     * Handles the events of the bookmark button.
+     */
+    private void buttonBookmark() {
+        try {
+            FXMLLoader loader = new FXMLLoader(ProgrammingLife.class.getResource("/CreateBookmarkWindow.fxml"));
+            AnchorPane page = loader.load();
+            GuiCreateBookmarkController gc = loader.getController();
+            gc.setGuiController(this);
+            gc.setText(txtCenterNode.getText(), txtMaxDrawDepth.getText());
+            Scene scene = new Scene(page);
+            Stage bookmarkDialogStage = new Stage();
+            bookmarkDialogStage.setResizable(false);
+            bookmarkDialogStage.setScene(scene);
+            bookmarkDialogStage.setTitle("Create Bookmark");
+            bookmarkDialogStage.initOwner(ProgrammingLife.getStage());
+            bookmarkDialogStage.showAndWait();
+        } catch (IOException e) {
+            Alerts.error("This bookmark cannot be created.").show();
         }
     }
 
@@ -432,12 +443,11 @@ public class GuiController implements Observer {
      */
     private ConsoleView initConsole() {
         final ConsoleView console = new ConsoleView(Charset.forName("UTF-8"));
-        AnchorPane root = new AnchorPane();
+        AnchorPane root = new AnchorPane(console);
         Stage st = new Stage();
         st.setScene(new Scene(root, 500, 500, Color.GRAY));
         st.setMinWidth(500);
         st.setMinHeight(250);
-        root.getChildren().add(console);
 
         AnchorPane.setBottomAnchor(console, 0.d);
         AnchorPane.setTopAnchor(console, 0.d);
