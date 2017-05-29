@@ -3,7 +3,6 @@ package programminglife.model;
 import org.junit.*;
 
 import java.io.File;
-import java.util.NoSuchElementException;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertEquals;

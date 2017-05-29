@@ -17,8 +17,11 @@ import static org.junit.Assert.*;
  * Created by toinehartman on 16/05/2017.
  */
 public class GraphParserTest implements Observer {
-    private static final String TEST_DB = "test.db";
-    private static final String TEST_FAULTY_DB = "test-faulty.db";
+
+    private static final String TEST_DB = "test.gfa.db";
+    private static final String TEST_FAULTY_DB = "test-faulty.gfa.db";
+    private static final String TEST_DB2 = "test.db";
+    private static final String TEST_FAULTY_DB2 = "test-faulty.db";
 
     private static String TEST_PATH, TEST_FAULTY_PATH;
 
@@ -57,6 +60,8 @@ public class GraphParserTest implements Observer {
     public static void tearDownClass() throws Exception {
         DataManager.removeDB(TEST_DB);
         DataManager.removeDB(TEST_FAULTY_DB);
+        DataManager.removeDB(TEST_DB2);
+        DataManager.removeDB(TEST_FAULTY_DB2);
     }
 
     @Test(expected = UnknownTypeException.class)

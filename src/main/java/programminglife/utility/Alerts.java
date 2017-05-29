@@ -96,4 +96,17 @@ public final class Alerts {
             Alerts.error("Can't open the instructions file").show();
         }
     }
+
+    /**
+     * Alert to show the information of a bookmark.
+     * @param s String given in the alert.
+     */
+    public static void infoBookmarkAlert(String s) {
+        Alert alert = new Alert(Alert.AlertType.NONE);
+        alert.getButtonTypes().add(ButtonType.CLOSE);
+        alert.setTitle("Bookmark information");
+        alert.setResizable(false);
+        alert.setContentText(s);
+        alert.show();
+    }
 }

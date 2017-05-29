@@ -9,6 +9,7 @@ import javafx.beans.property.StringProperty;
  */
 public class Bookmark {
     private String file;
+    private String path;
     private int radius;
     private int nodeID;
     private String bookmarkName;
@@ -17,13 +18,15 @@ public class Bookmark {
     /**
      * Initialize a bookmark.
      * @param file The graph file where this bookmark belongs to
+     * @param path The path where the graph file is located.
      * @param bookmarkName this is the bookmarkName of the file in which this genome and location is present
      * @param nodeID is the ID of the node where the bookmark is present.
      * @param radius is the depth to which surrounding nodes will be visualized.
      * @param description The text describing this bookmark.
      */
-    public Bookmark(String file, int nodeID, int radius, String bookmarkName, String description) {
+    public Bookmark(String file, String path, int nodeID, int radius, String bookmarkName, String description) {
         this.file = file;
+        this.path = path;
         this.radius = radius;
         this.nodeID = nodeID;
         this.bookmarkName = bookmarkName;
@@ -56,6 +59,14 @@ public class Bookmark {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 
     public int getRadius() {
