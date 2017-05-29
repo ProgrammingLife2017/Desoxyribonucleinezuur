@@ -5,6 +5,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import jp.uphy.javafx.console.ConsoleView;
+import org.jetbrains.annotations.NotNull;
 import programminglife.model.GenomeGraph;
 import programminglife.model.Segment;
 import programminglife.model.XYCoordinate;
@@ -45,7 +46,7 @@ public class GraphController {
      * @param maxDepth The max depth of child {@link Segment}s to draw
      */
     public void draw(int centerNode, int maxDepth) {
-        this.drawDFS(null, new Segment(centerNode), INITIAL_OFFSET, maxDepth);
+        this.drawDFS(null, new Segment(this.graph, centerNode), INITIAL_OFFSET, maxDepth);
     }
 
     /**
@@ -127,7 +128,7 @@ public class GraphController {
      * @return The size of the node
      */
     private XYCoordinate drawNode(int nodeID) {
-        return this.drawNode(new Segment(nodeID));
+        return this.drawNode(new Segment(this.graph, nodeID));
     }
 
     /**
@@ -165,6 +166,7 @@ public class GraphController {
      * Setter for the graph.
      * @param graph The graph
      */
+    @NotNull
     void setGraph(GenomeGraph graph) {
         this.graph = graph;
     }

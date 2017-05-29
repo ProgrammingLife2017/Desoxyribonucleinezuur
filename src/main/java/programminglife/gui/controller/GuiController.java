@@ -1,5 +1,6 @@
 package programminglife.gui.controller;
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -17,6 +18,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import jp.uphy.javafx.console.ConsoleView;
+import org.jetbrains.annotations.NotNull;
 import programminglife.ProgrammingLife;
 import programminglife.model.GenomeGraph;
 import programminglife.model.exception.UnknownTypeException;
@@ -101,7 +103,12 @@ public class GuiController implements Observer {
      */
     public void openFile(File file) throws IOException, UnknownTypeException {
         if (file != null) {
+            if (this.graphController != null && this.graphController.getGraph() != null) {
+                this.graphController.getGraph().close();
+            }
+
             disableGraphUIElements(true);
+
             GraphParser graphParser = new GraphParser(file);
             graphParser.addObserver(this);
             graphParser.getProgressCounter().addObserver(this);
@@ -125,8 +132,7 @@ public class GuiController implements Observer {
                 this.setGraph(graph);
             } else if (arg instanceof Exception) {
                 Exception e = (Exception) arg;
-                // TODO find out a smart way to catch Exceptions across threads
-                throw new RuntimeException(e);
+                Platform.runLater(() -> Alerts.error(e.getMessage()).show());
             }
         } else if (o instanceof FileProgressCounter) {
             progressBar.setVisible(true);
@@ -142,16 +148,13 @@ public class GuiController implements Observer {
      * Set the graph for this GUIController.
      * @param graph Graph to use.
      */
+    @NotNull
     public void setGraph(GenomeGraph graph) {
         this.graphController.setGraph(graph);
         disableGraphUIElements(graph == null);
 
-        if (graph != null) {
-            System.out.printf("[%s] Graph was set to %s.%n", Thread.currentThread().getName(), graph.getID());
-            System.out.printf("[%s] The graph has %d nodes%n", Thread.currentThread().getName(), graph.size());
-        } else {
-            System.out.printf("[%s] graph was set to null.%n", Thread.currentThread().getName());
-        }
+        System.out.printf("[%s] Graph was set to %s.%n", Thread.currentThread().getName(), graph.getID());
+        System.out.printf("[%s] The graph has %d nodes%n", Thread.currentThread().getName(), graph.size());
     }
 
     /**

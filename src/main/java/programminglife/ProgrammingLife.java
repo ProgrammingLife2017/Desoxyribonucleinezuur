@@ -13,7 +13,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import programminglife.gui.controller.GuiController;
-import programminglife.model.DataManager;
+import programminglife.parser.Cache;
 import programminglife.model.exception.UnknownTypeException;
 import programminglife.utility.Alerts;
 
@@ -82,8 +82,8 @@ public final class ProgrammingLife extends Application {
             String fileName = params.getNamed().get("file");
             File file = new File(fileName);
             if (params.getUnnamed().contains("--clean")) {
-                boolean removed = DataManager.removeDB(file.getName());
-                System.out.printf("[%s] Removed: %b\n", Thread.currentThread().getName(), removed);
+                boolean removed = Cache.removeDB(file.getName());
+                System.out.printf("[%s] Removed: %b%n", Thread.currentThread().getName(), removed);
             }
             guiCtrl.openFile(file);
         }

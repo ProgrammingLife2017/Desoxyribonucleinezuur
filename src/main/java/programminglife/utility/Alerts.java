@@ -42,6 +42,17 @@ public final class Alerts {
         return new Alert(Alert.AlertType.WARNING, message, ButtonType.CLOSE);
     }
 
+
+    /**
+     * Alert method used if the alert is informative.
+     * @param message String containing the message to be given to the user.
+     * @return Alert info.
+     */
+    @NotNull
+    public static Alert info(String message) {
+        return new Alert(Alert.AlertType.INFORMATION, message, ButtonType.CLOSE);
+    }
+
     /**
      * Alert method used if the user wants to quit.
      */

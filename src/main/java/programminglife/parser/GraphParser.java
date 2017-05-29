@@ -1,14 +1,14 @@
 package programminglife.parser;
 
 import com.diffplug.common.base.Errors;
-import programminglife.model.DataManager;
-import programminglife.model.GenomeGraph;
-import programminglife.model.Node;
-import programminglife.model.Segment;
+import javafx.application.Platform;
+import programminglife.model.*;
 import programminglife.model.exception.UnknownTypeException;
+import programminglife.utility.Alerts;
 import programminglife.utility.FileProgressCounter;
 
 import java.io.*;
+import java.util.NoSuchElementException;
 import java.util.Observable;
 
 /**
@@ -23,7 +23,6 @@ public class GraphParser extends Observable implements Runnable {
     private String name;
     private boolean verbose;
     private FileProgressCounter progressCounter;
-    private long startTime;
     private boolean isCached;
 
 
@@ -36,11 +35,9 @@ public class GraphParser extends Observable implements Runnable {
         this.graphFile = graphFile;
         this.name = graphFile.getName();
         this.verbose = PARSE_LINE_VERBOSE_DEFAULT;
-        this.graph = new GenomeGraph(name);
         this.progressCounter = new FileProgressCounter("Lines read");
-        this.startTime = System.nanoTime();
-        this.isCached = DataManager.hasCache(this.name);
-        DataManager.initialize(this.name);
+        this.isCached = Cache.hasCache(this.name);
+        this.graph = new GenomeGraph(name);
     }
 
     /**
@@ -50,15 +47,22 @@ public class GraphParser extends Observable implements Runnable {
     public void run() {
         try {
             System.out.printf("[%s] Parsing GenomeGraph on separate Thread%n", Thread.currentThread().getName());
+            long startTime = System.nanoTime();
             parse(this.verbose);
-            DataManager.commit();
 
-            int secondsElapsed = (int) ((System.nanoTime() - this.startTime) / 1000000000.d);
+            int secondsElapsed = (int) ((System.nanoTime() - startTime) / 1000000000.d);
             System.out.printf("[%s] Parsing took %d seconds%n", Thread.currentThread().getName(), secondsElapsed);
             this.setChanged();
             this.notifyObservers(this.graph);
         } catch (Exception e) {
-            DataManager.rollback();
+            try {
+                this.getGraph().rollback();
+            } catch (IOException eio) {
+                Platform.runLater(() ->
+                        Alerts.error(String.format("An error occured while removing the cache. " +
+                                "Please remove %s manually.", Cache.toDBFile(this.getGraph().getID()))).show()
+                );
+            }
             this.setChanged();
             this.notifyObservers(e);
         }
@@ -108,15 +112,17 @@ public class GraphParser extends Observable implements Runnable {
                         this.parseLink(line);
                         break;
                     case 'H':
-                        System.out.println(line);
+                        this.parseHeader(line);
                         break;
                     default:
                         throw new UnknownTypeException(String.format("Unknown symbol '%c'", type));
                 }
 
                 if (Thread.currentThread().isInterrupted()) {
-                    DataManager.close();
+                    this.getGraph().rollback();
                     System.out.printf("[%s] Stopping this thread gracefully...%n", Thread.currentThread().getName());
+                    this.progressCounter.finished();
+                    return;
                 }
             }));
         } catch (Errors.WrappedAsRuntimeException e) {
@@ -158,8 +164,9 @@ public class GraphParser extends Observable implements Runnable {
     /**
      * Parse a {@link String} representing a {@link Segment}.
      * @param propertyString the {@link String} from a GFA file.
+     * @throws UnknownTypeException when a {@link Segment} references a {@link Genome} that is not in the GFA header
      */
-    synchronized void parseSegment(String propertyString) {
+    synchronized void parseSegment(String propertyString) throws UnknownTypeException {
         String[] properties = propertyString.split("\\s");
         assert (properties[0].equals("S")); // properties[0] is 'S'
         int segmentID = Integer.parseInt(properties[1]);
@@ -167,9 +174,27 @@ public class GraphParser extends Observable implements Runnable {
         // properties[3] is +/-
         // rest of properties is unused
 
-        Node segment = new Segment(segmentID, sequence);
+        assert (properties[4].startsWith("ORI:Z:"));
+        String[] genomeNames = properties[4].split(";");
+        genomeNames[0] = genomeNames[0].substring(6);
+
+        Segment segment = new Segment(this.graph, segmentID, sequence);
         if (!this.getGraph().contains(segmentID)) {
             this.getGraph().addNode(segment);
+        }
+
+        for (String genomeName : genomeNames) {
+            if (this.getGraph().containsGenome(genomeName)) {
+                this.getGraph().getGenome(genomeName).addSegment(segment);
+            } else {
+                try {
+                    int genomeID = Integer.parseInt(genomeName);
+                    String name = this.getGraph().getGenomeName(genomeID);
+                    this.getGraph().getGenome(name).addSegment(segment);
+                } catch (NumberFormatException | NoSuchElementException e) {
+                    throw new UnknownTypeException(String.format("Genome %s does not exist in this graph", genomeName));
+                }
+            }
         }
     }
 
@@ -185,8 +210,8 @@ public class GraphParser extends Observable implements Runnable {
         int destinationId = Integer.parseInt(properties[3]);
         // properties[4] and further are unused
 
-        Node sourceNode = new Segment(sourceId);
-        Node destinationNode = new Segment(destinationId);
+        Node sourceNode = new Segment(this.graph, sourceId);
+        Node destinationNode = new Segment(this.graph, destinationId);
         if (!this.getGraph().contains(sourceId)) {
             this.getGraph().addNode(sourceNode);
         }
@@ -196,6 +221,27 @@ public class GraphParser extends Observable implements Runnable {
         }
 
         this.getGraph().addEdge(sourceNode, destinationNode);
+    }
+
+    /**
+     * Parse a {@link String} representing a header.
+     * @param propertyString the {@link String} from a GFA file
+     */
+    private void parseHeader(String propertyString) {
+        String[] properties = propertyString.split("\\s");
+        assert (properties[0].equals("H"));
+        if (properties[1].startsWith("ORI:Z:")) {
+            String[] names = properties[1].split(";");
+            names[0] = names[0].substring(6);
+            for (String name : names) {
+                this.getGraph().addGenome(new Genome(name));
+            }
+        } else if (properties[1].startsWith("VN:Z:")) {
+            // Version, ignored
+            System.out.printf("[%s] Version: %s%n", Thread.currentThread().getName(), properties[1].substring(5));
+        } else {
+            System.out.printf("[%s] Unrecognized header: %s%n", Thread.currentThread().getName(), properties[1]);
+        }
     }
 
     public GenomeGraph getGraph() {

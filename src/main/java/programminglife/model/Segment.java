@@ -7,26 +7,30 @@ import org.apache.commons.lang3.StringUtils;
  * Created by marti_000 on 25-4-2017.
  */
 public class Segment extends Rectangle implements Node<Segment> {
-    private int id;
+    private final GenomeGraph graph;
+    private final int id;
     private boolean drawDimensionsUpToDate = false;
 
     /**
      * Constructor for a node with an id.
+     * @param graph the {@link GenomeGraph} around this {@link Segment}
      * @param id int.
      */
-    public Segment(int id) {
-        this(id, null);
+    public Segment(GenomeGraph graph, int id) {
+        this(graph, id, null);
     }
 
     /**
      * Constructor for a node with and id and sequence.
+     * @param graph the {@link GenomeGraph} around this {@link Segment}
      * @param id int.
      * @param sequence String.
      */
-    public Segment(int id, String sequence) {
+    public Segment(GenomeGraph graph, int id, String sequence) {
+        this.graph = graph;
         this.id = id;
         if (sequence != null) {
-            DataManager.setSequence(id, sequence);
+            this.graph.setSequence(id, sequence);
         }
     }
 
@@ -35,7 +39,7 @@ public class Segment extends Rectangle implements Node<Segment> {
      * @return the sequence of base pairs
      */
     public String getSequence() {
-        return DataManager.getSequence(this.id);
+        return graph.getSequence(this.id);
     }
 
     /**
@@ -43,7 +47,7 @@ public class Segment extends Rectangle implements Node<Segment> {
      * @param sequence A {@link String} representing the base pairs
      */
     public void setSequence(String sequence) {
-        DataManager.setSequence(this.id, sequence);
+        graph.setSequence(this.id, sequence);
         this.drawDimensionsUpToDate = false;
     }
 
@@ -180,6 +184,6 @@ public class Segment extends Rectangle implements Node<Segment> {
      * @return the length of the sequence of this segment
      */
     public int getSequenceLength() {
-        return DataManager.getSequenceLength(this.getIdentifier());
+        return graph.getSequenceLength(this.getIdentifier());
     }
 }

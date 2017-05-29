@@ -9,16 +9,14 @@ import org.testfx.api.FxRobot;
 import org.testfx.api.FxToolkit;
 import org.testfx.util.WaitForAsyncUtils;
 import programminglife.ProgrammingLife;
-import programminglife.model.DataManager;
+import programminglife.parser.Cache;
 
 import java.io.File;
 import java.net.URISyntaxException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 /**
  * This test class is there to interactively test the GUI. It is capable of clicking on certain buttons and items
@@ -47,7 +45,6 @@ public class GuiControllerTest extends FxRobot {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        DataManager.initialize(TEST_DB);
         operatingSystem = System.getProperty("os.name").toLowerCase();
         primaryStage = FxToolkit.registerPrimaryStage();
     }
@@ -60,15 +57,17 @@ public class GuiControllerTest extends FxRobot {
 
     @After
     public void tearDown() throws Exception {
-        DataManager.clearDB(TEST_DB);
-        DataManager.removeDB(TEST_DB2);
+        Cache.removeDB(TEST_DB);
+        Cache.removeDB(TEST_DB2);
+        Cache.removeDB(TEST_File);
         FxToolkit.cleanupApplication(this.pl);
     }
 
     @AfterClass
     public static void tearDownClass() throws Exception {
-        DataManager.removeDB(TEST_DB);
-        DataManager.removeDB(TEST_File);
+        Cache.removeDB(TEST_DB);
+        Cache.removeDB(TEST_DB2);
+        Cache.removeDB(TEST_File);
         Platform.exit();
     }
 
