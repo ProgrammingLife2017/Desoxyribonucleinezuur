@@ -11,13 +11,12 @@ import java.util.List;
 /**
  * A layer of {@link DrawableNode DrawableNodes}. Multiple Layers are used to lay out the graph.
  *
- * @param <N> The type of DrawableNodes this Layer stores.
  * @see SubGraph#layout()
  * @see SubGraph#findLayers()
  */
-public class Layer<N extends Node<N>> implements Iterable<N> {
+public class Layer implements Iterable<DrawableNode> {
     private int width;
-    private List<N> nodes;
+    private List<DrawableNode> nodes;
 
     /**
      * Default empty constructor.
@@ -39,7 +38,7 @@ public class Layer<N extends Node<N>> implements Iterable<N> {
      * Add a {@link DrawableNode} to this Layer.
      * @param node the node to add.
      */
-    public void add(N node) {
+    public void add(DrawableNode node) {
         this.nodes.add(node);
     }
 
@@ -49,7 +48,7 @@ public class Layer<N extends Node<N>> implements Iterable<N> {
      */
     @NotNull
     @Override
-    public Iterator<N> iterator() {
+    public Iterator<DrawableNode> iterator() {
         return nodes.iterator();
     }
 
@@ -57,7 +56,7 @@ public class Layer<N extends Node<N>> implements Iterable<N> {
      * sort the {@link DrawableNode DrawableNodes} in this layer according to the order of the {@link Comparator} c.
      * @param c A {@link Comparator} which imposes a total ordering on the nodes.
      */
-    public void sort(Comparator<? super N> c) {
+    public void sort(Comparator<? super DrawableNode> c) {
         this.nodes.sort(c);
     }
 }

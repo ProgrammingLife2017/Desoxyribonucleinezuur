@@ -19,7 +19,7 @@ public class SubGraphTest {
     private static final String TEST_DB = "test.db";
 
     GenomeGraph graph;
-    Segment centerNode;
+    DrawableNode centerNode;
 
     private static String TEST_PATH, TEST_FAULTY_PATH;
 
@@ -36,7 +36,7 @@ public class SubGraphTest {
     @Before
     public void setUp() throws Exception {
         graph = new GenomeGraph("test graph");
-        centerNode = new Segment(4);
+        centerNode = new DrawableNode(new Segment(4));
     }
 
     @After
@@ -51,13 +51,13 @@ public class SubGraphTest {
 
     @Test
     public void topoSort() throws Exception {
-        SubGraph<Segment, DrawableSegment> sg = new SubGraph<>(centerNode, 5);
-        List<DrawableSegment> actual = sg.topoSort();
+        SubGraph sg = new SubGraph(centerNode, 5);
+        List<DrawableNode> actual = sg.topoSort();
 
         assertEquals(8, actual.size());
 
-        Set<DrawableSegment> found = new HashSet<>();
-        for (DrawableSegment n : actual) {
+        Set<DrawableNode> found = new HashSet<>();
+        for (DrawableNode n : actual) {
             // assert that all parents were already found.
             assertTrue(found.containsAll(n.getParents()));
             assertTrue(Collections.disjoint(found, n.getChildren()));

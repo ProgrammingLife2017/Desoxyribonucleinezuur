@@ -6,7 +6,7 @@ import java.util.Set;
 /**
  * Created by toinehartman on 17/05/2017.
  */
-public class Link implements Edge<Segment> {
+public class Link implements Edge {
     private Set<Genome> genomeSet;
     private Segment start;
     private Segment end;

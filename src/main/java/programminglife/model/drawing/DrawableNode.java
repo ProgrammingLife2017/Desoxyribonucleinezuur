@@ -1,83 +1,90 @@
 package programminglife.model.drawing;
 
+import javafx.scene.shape.Rectangle;
 import programminglife.model.Node;
+import programminglife.model.Segment;
 import programminglife.model.XYCoordinate;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
- * A {@link Node} that implements {@link Drawable}.
- * @param <N> The type of Nodes this DrawableNode represents.
- *           (answers the question: what type of Node can I draw with this DrawableNode?)
- * @param <D> The type of {@link DrawableNode DrawableNodes} this can have as children / parents.
- *
+ * A {@link Segment} that also Implements {@link Drawable}.
  */
-public interface DrawableNode<N extends Node<N>, D extends DrawableNode<N, D>> extends Node<D>, Drawable {
-    /**
-     * Get the {@link DrawableEdge DrawableEdges} connecting this DrawableNode to its children.
-     * @return the {@link DrawableEdge DrawableEdges} connecting this DrawableNode to its children.
-     */
-    Collection<? extends DrawableEdge<D>> getChildEdges();
+public class DrawableNode extends Rectangle {
+    private Set<Node> nodes;
 
     /**
-     * Get the {@link DrawableEdge DrawableEdges} connecting this DrawableNode to its parents.
-     * @return the {@link DrawableEdge DrawableEdges} connecting this DrawableNode to its parents.
+     * Create a DrawableSegment from a Segment.
+     * @param node The segment to create this DrawableSegment from.
      */
-    Collection<? extends DrawableEdge<D>> getParentEdges();
-
-    /**
-     * Set the location of this DrawableNode.
-     * @param newLoc The new location.
-     */
-    void setLocation(XYCoordinate newLoc);
-
-    /**
-     * Get the location of this DrawableNode.
-     * @return the location
-     */
-    XYCoordinate getLocation();
-
-    /**
-     * get the width of this DrawableNode.
-     * @return the width of this DrawableNode.
-     */
-    int getWidth();
-
-    /**
-     * get the height of this DrawableNode.
-     * @return the height of this DrawableNode.
-     */
-    int getHeight();
-
-    /**
-     * Get the dimensions of this DrawableNode. The dimensions are the width and the height.
-     * The width is the X of the {@link XYCoordinate}, and the height is the Y.
-     * @return An XYCoordinate representing the dimensions of this DrawableNode.
-     */
-    default XYCoordinate getDimensions() {
-        return new XYCoordinate(getWidth(), getHeight());
+    public DrawableNode(Node node) {
+        this.nodes = new HashSet<>();
+        nodes.add(node);
     }
 
     /**
-     * Set the dimensions of this DrawableNode. The dimensions are the width and the height.
-     * The width is the X of the {@link XYCoordinate}, and the height is the Y.
-     * @param dimensions An XYCoordinate representing the dimensions of this DrawableNode.
+     * The
+     * @param nodes The set of Segments this DrawableNode
      */
-    default void setDimension(XYCoordinate dimensions) {
-        setWidth(dimensions.getX());
-        setHeight(dimensions.getY());
+    public DrawableNode(Set<Node> nodes) {
+        this.nodes = nodes;
     }
 
-    /**
-     * Set the width of this DrawableNode.
-     * @param width The width of this DrawableNode.
-     */
-    void setWidth(int width);
+    // TODO: implement methods
 
-    /**
-     * Set the height of this DrawableNode.
-     * @param height The height of this DrawableNode.
-     */
-    void setHeight(int height);
+    public Collection<DrawableEdge> getChildEdges() {
+        // TODO: implement
+        throw new Error("Not implemented yet");
+    }
 
+    public Collection<DrawableEdge> getParentEdges() {
+        // TODO: implement
+        throw new Error("Not implemented yet");
+    }
+
+    public Collection<DrawableNode> getChildren() {
+        // TODO: implement
+        throw new Error("Not implemented yet");
+    }
+
+    public Collection<DrawableNode> getParents() {
+        // TODO: implement
+        throw new Error("Not implemented yet");
+    }
+
+    public void setLocation(XYCoordinate newLoc) {
+        this.setHeight(newLoc.getY());
+        this.setWidth(newLoc.getX());
+    }
+
+    public XYCoordinate getLocation() {
+        return new XYCoordinate(this.getIntWidth(), this.getIntHeight());
+    }
+
+    public XYCoordinate getDimensions() {
+        return new XYCoordinate(this.getIntX(), this.getIntY());
+    }
+
+    public void setDimension(XYCoordinate dimensions) {
+        this.setX(dimensions.getX());
+        this.setY(dimensions.getY());
+    }
+
+    public int getIntX() {
+        return (int) Math.ceil(this.getX());
+    }
+
+    public int getIntY() {
+        return (int) Math.ceil(this.getY());
+    }
+
+    public int getIntWidth() {
+        return (int) Math.ceil(this.getWidth());
+    }
+
+    public int getIntHeight() {
+        return (int) Math.ceil(this.getHeight());
+    }
 }

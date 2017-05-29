@@ -4,9 +4,8 @@ import java.util.Collection;
 
 /**
  * An interface for an Edge between Nodes of type N.
- * @param <N> the type of Nodes this Edge connects
  */
-public interface Edge<N extends Node<N>> {
+public interface Edge {
 
     /**
      * get all the Genomes that go through this Edge.
@@ -18,11 +17,11 @@ public interface Edge<N extends Node<N>> {
      * get the start of this edge.
      * @return The start of this edge.
      */
-    N getStart();
+    Node getStart();
 
     /**
      * get the end of this edge.
      * @return The end of this edge.
      */
-    N getEnd();
+    Node getEnd();
 }
