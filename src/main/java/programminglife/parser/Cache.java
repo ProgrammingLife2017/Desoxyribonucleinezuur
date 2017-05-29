@@ -5,7 +5,6 @@ import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.HTreeMap;
 import org.mapdb.Serializer;
-import programminglife.model.Genome;
 
 import java.io.File;
 import java.io.IOException;
@@ -120,7 +119,6 @@ public final class Cache {
                                            Serializer<K> keySerializer, Serializer<V> valueSerializer) {
         if (db.exists(name)) {
             HTreeMap<K, V> res = db.get(name);
-            assert (res != null);
             return res;
         } else {
             HTreeMap<K, V> res = db
@@ -129,7 +127,6 @@ public final class Cache {
                     .valueSerializer(valueSerializer)
                     .create();
 
-            assert (res != null);
             return res;
         }
     }
@@ -185,9 +182,9 @@ public final class Cache {
     }
 
     /**
-     * Get the name of a {@link Genome} based on its index.
-     * @param genomeID the index (0-based) of the {@link Genome} in the GFA header
-     * @return the name of the {@link Genome}
+     * Get the name of a {@link programminglife.model.Genome} based on its index.
+     * @param genomeID the index (0-based) of the {@link programminglife.model.Genome} in the GFA header
+     * @return the name of the {@link programminglife.model.Genome}
      */
     @NotNull
     public String getGenomeName(int genomeID) {
@@ -199,8 +196,8 @@ public final class Cache {
     }
 
     /**
-     * Add the name of a {@link Genome}, index is previous one + 1.
-     * @param genomeName the name of the {@link Genome} to add
+     * Add the name of a {@link programminglife.model.Genome}, index is previous one + 1.
+     * @param genomeName the name of the {@link programminglife.model.Genome} to add
      */
     @NotNull
     public void addGenomeName(String genomeName) {
