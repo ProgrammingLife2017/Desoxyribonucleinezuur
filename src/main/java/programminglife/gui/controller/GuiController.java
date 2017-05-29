@@ -1,5 +1,6 @@
 package programminglife.gui.controller;
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -131,8 +132,7 @@ public class GuiController implements Observer {
                 this.setGraph(graph);
             } else if (arg instanceof Exception) {
                 Exception e = (Exception) arg;
-                // TODO find out a smart way to catch Exceptions across threads
-                throw new RuntimeException(e);
+                Platform.runLater(() -> Alerts.error(e.getMessage()).show());
             }
         } else if (o instanceof FileProgressCounter) {
             progressBar.setVisible(true);

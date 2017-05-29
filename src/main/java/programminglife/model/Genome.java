@@ -27,8 +27,9 @@ public class Genome {
     }
 
     /**
-     * Constructor for a Genome. The coordinates are used as is, so modifying it will also modify this Genome!
-     * This is done for the sake of performance.
+     * Constructor for a Genome.
+     *
+     * It adds the given segments in order.
      * @param name The name of this Genome.
      * @param segments A list of segments, sorted in the order in which they appear in this Genome.
      */
@@ -84,16 +85,7 @@ public class Genome {
      * @param segment the specific {@link Segment}
      */
     public void addSegment(Segment segment) {
-        int coordinate;
-        try {
-            int lastCoordinate = this.segments.lastKey();
-            int lastLength = this.getSegment(lastCoordinate).getSequenceLength();
-            coordinate = lastCoordinate + lastLength;
-        } catch (NoSuchElementException e) {
-            coordinate = 1;
-        }
-
-        this.segments.put(coordinate, segment);
+        this.segments.put(this.length + 1, segment);
         this.length += segment.getSequenceLength();
     }
 

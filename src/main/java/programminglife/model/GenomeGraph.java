@@ -258,6 +258,9 @@ public class GenomeGraph implements Graph {
      * @throws IOException when strange things happen
      */
     public void close() throws IOException {
-        this.cache.close();
+        if (this.cache != null) {
+            this.cache.close();
+            this.cache = null;
+        }
     }
 }
