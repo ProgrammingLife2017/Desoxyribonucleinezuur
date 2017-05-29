@@ -17,13 +17,13 @@ public interface DrawableNode<N extends Node<N>, D extends DrawableNode<N, D>> e
      * Get the {@link DrawableEdge DrawableEdges} connecting this DrawableNode to its children.
      * @return the {@link DrawableEdge DrawableEdges} connecting this DrawableNode to its children.
      */
-    Collection<? extends DrawableEdge<D>> getChildren();
+    Collection<? extends DrawableEdge<D>> getChildEdges();
 
     /**
      * Get the {@link DrawableEdge DrawableEdges} connecting this DrawableNode to its parents.
      * @return the {@link DrawableEdge DrawableEdges} connecting this DrawableNode to its parents.
      */
-    Collection<? extends DrawableEdge<D>> getParents();
+    Collection<? extends DrawableEdge<D>> getParentEdges();
 
     /**
      * Set the location of this DrawableNode.

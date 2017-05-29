@@ -34,6 +34,10 @@ public class SubGraph<N extends Node<N>, D extends DrawableNode<N, D>> {
      */
     private int radius;
 
+    // TODO: cache topological sorting (inside topoSort(), only recalculate when adding / removing nodes)
+    // important: directly invalidate cache (set to null), because otherwise removed nodes
+    // can't be garbage collected until next call to topoSort()
+
     /**
      * Create a SubGraph using a centerNode and a radius around that centerNode.
      * This SubGraph will include all Nodes within radius steps to a parent,
@@ -51,6 +55,26 @@ public class SubGraph<N extends Node<N>, D extends DrawableNode<N, D>> {
         // TODO: also go from all parents to children within 2*radius + 1; and vice-versa from children.
         this.nodes = findParents(centerDrawableNode, radius);
         this.nodes.addAll(findChildren(centerDrawableNode, radius));
+        this.findEdges();
+    }
+
+    /**
+     * Find all the edges for this SubGraph. This does not generate dummy edges, only normal edges.
+     */
+    private void findEdges() {
+        this.edges = new HashSet<>();
+        for (D node : this.nodes) {
+            for (DrawableEdge<D> edge : node.getParentEdges()) {
+                if (this.nodes.contains(edge.getStart())) {
+                    this.edges.add(edge);
+                }
+            }
+            for (DrawableEdge<D> edge : node.getChildEdges()) {
+                if (this.nodes.contains(edge.getEnd())) {
+                    this.edges.add(edge);
+                }
+            }
+        }
     }
 
     // TODO: change findParents and findChildren to reliably only find nodes with a *longest* path of at most radius.
@@ -103,7 +127,7 @@ public class SubGraph<N extends Node<N>, D extends DrawableNode<N, D>> {
             return;
         }
         radius--; // decrease radius once instead of multiple times within the loop;
-        for (DrawableEdge<D> edge : node.getParents()) {
+        for (DrawableEdge<D> edge : node.getParentEdges()) {
             D parent = edge.getStart();
             if (!found.add(parent)) {
                 findParents(found, parent, radius);
@@ -157,7 +181,7 @@ public class SubGraph<N extends Node<N>, D extends DrawableNode<N, D>> {
             return;
         }
         radius--; // decrease radius once instead of multiple times within the loop;
-        for (DrawableEdge<D> edge : node.getChildren()) {
+        for (DrawableEdge<D> edge : node.getChildEdges()) {
             D child = edge.getEnd();
             if (!found.add(child)) {
                 findChildren(found, child, radius);
@@ -215,7 +239,7 @@ public class SubGraph<N extends Node<N>, D extends DrawableNode<N, D>> {
 
         for (D node : sorted) {
             int maxParentLevel = -1;
-            for (DrawableEdge<D> edge : node.getParents()) {
+            for (DrawableEdge<D> edge : node.getParentEdges()) {
                 Integer parentLevel = nodeLevel.get(edge.getStart());
                 if (parentLevel == null) {
                     continue;
@@ -274,7 +298,7 @@ public class SubGraph<N extends Node<N>, D extends DrawableNode<N, D>> {
 
             findAllParentsAdded:
             while (true) {
-                Collection<? extends DrawableEdge<D>> parents = n.getParents();
+                Collection<? extends DrawableEdge<D>> parents = n.getParentEdges();
                 for (DrawableEdge<D> e : parents) {
                     D p = e.getStart();
                     if (nodes.contains(p)) {

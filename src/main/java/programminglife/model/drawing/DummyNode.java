@@ -33,12 +33,12 @@ public class DummyNode implements DrawableNode<DummyNode.None, DummyNode> {
     }
 
     @Override
-    public Collection<DrawableEdge<DummyNode>> getChildren() {
+    public Collection<DrawableEdge<DummyNode>> getChildEdges() {
         throw new Error("This method has not yet been implemented");
     }
 
     @Override
-    public Collection<DrawableEdge<DummyNode>> getParents() {
+    public Collection<DrawableEdge<DummyNode>> getParentEdges() {
         throw new Error("This method has not yet been implemented");
     }
 

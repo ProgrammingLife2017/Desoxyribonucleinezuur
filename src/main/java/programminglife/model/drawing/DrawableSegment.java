@@ -22,12 +22,12 @@ public class DrawableSegment implements DrawableNode<Segment, DrawableSegment> {
     // TODO: implement methods
 
     @Override
-    public Collection<DrawableLink> getChildren() {
+    public Collection<DrawableLink> getChildEdges() {
         return null;
     }
 
     @Override
-    public Collection<DrawableLink> getParents() {
+    public Collection<DrawableLink> getParentEdges() {
         return null;
     }
 
