@@ -58,6 +58,7 @@ public class GuiControllerTest extends FxRobot {
     @After
     public void tearDown() throws Exception {
         Cache.removeDB(TEST_DB);
+        Cache.removeDB(TEST_DB2);
         Cache.removeDB(TEST_File);
         FxToolkit.cleanupApplication(this.pl);
     }
@@ -65,6 +66,7 @@ public class GuiControllerTest extends FxRobot {
     @AfterClass
     public static void tearDownClass() throws Exception {
         Cache.removeDB(TEST_DB);
+        Cache.removeDB(TEST_DB2);
         Cache.removeDB(TEST_File);
         Platform.exit();
     }

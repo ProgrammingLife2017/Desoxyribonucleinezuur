@@ -1,10 +1,12 @@
 package programminglife.parser;
 
 import com.diffplug.common.base.Errors;
+import javafx.application.Platform;
 import programminglife.model.*;
 import programminglife.model.exception.UnknownTypeException;
-import programminglife.utility.*;
 import programminglife.utility.Console;
+import programminglife.utility.Alerts;
+import programminglife.utility.FileProgressCounter;
 
 import java.io.*;
 import java.util.NoSuchElementException;
@@ -56,7 +58,12 @@ public class GraphParser extends Observable implements Runnable {
         } catch (Exception e) {
             try {
                 this.getGraph().rollback();
-            } catch (IOException eio) { }
+            } catch (IOException eio) {
+                Platform.runLater(() ->
+                        Alerts.error(String.format("An error occured while removing the cache. "
+                                + "Please remove %s manually.", Cache.toDBFile(this.getGraph().getID()))).show()
+                );
+            }
             this.setChanged();
             this.notifyObservers(e);
         }
@@ -115,6 +122,8 @@ public class GraphParser extends Observable implements Runnable {
                 if (Thread.currentThread().isInterrupted()) {
                     this.getGraph().rollback();
                     Console.println("[%s] Stopping this thread gracefully...", Thread.currentThread().getName());
+                    this.progressCounter.finished();
+                    return;
                 }
             }));
         } catch (Errors.WrappedAsRuntimeException e) {

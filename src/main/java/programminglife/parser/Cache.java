@@ -3,10 +3,9 @@ package programminglife.parser;
 import org.jetbrains.annotations.NotNull;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
-import org.mapdb.HTreeMap;
 import org.mapdb.Serializer;
+import programminglife.utility.Console;
 
-import programminglife.utility.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -61,7 +60,7 @@ public final class Cache {
      * @return The converted name.
      */
     @NotNull
-    private static String toDBFile(String name) {
+    public static String toDBFile(String name) {
         if (name.toLowerCase().endsWith(".gfa")) {
             name = name.substring(0, name.length() - 4);
         }
@@ -119,16 +118,13 @@ public final class Cache {
     private static <K, V> Map<K, V> getMap(DB db, String name,
                                            Serializer<K> keySerializer, Serializer<V> valueSerializer) {
         if (db.exists(name)) {
-            HTreeMap<K, V> res = db.get(name);
-            return res;
+            return db.get(name);
         } else {
-            HTreeMap<K, V> res = db
+            return db
                     .hashMap(name)
                     .keySerializer(keySerializer)
                     .valueSerializer(valueSerializer)
                     .create();
-
-            return res;
         }
     }
 

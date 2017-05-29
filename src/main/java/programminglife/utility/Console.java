@@ -1,19 +1,25 @@
 package programminglife.utility;
 
 import javafx.application.Platform;
-import jp.uphy.javafx.console.ConsoleView;
 
 import java.io.PrintStream;
 
 /**
- * Created by Yannick on 29/05/2017.
+ * Separate class that handles the consoles of the application.
  */
-public class Console {
+public final class Console {
+
+    /**
+     * Constructor for the console.
+     */
+    private Console() {
+
+    }
 
     private static PrintStream out = null;
 
     /**
-     * Prints the arguments given in the console
+     * Prints the arguments given in the console.
      * @param f String to be printed.
      * @param args Given with the string.
      */
@@ -22,7 +28,7 @@ public class Console {
     }
 
     /**
-     * Prints the arguments given in the console
+     * Prints the arguments given in the console.
      * @param f String to be printed.
      * @param args Given with the string.
      */

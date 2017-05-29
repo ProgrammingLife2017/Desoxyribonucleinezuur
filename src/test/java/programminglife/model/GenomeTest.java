@@ -47,9 +47,8 @@ public class GenomeTest {
 
     @Test(expected = NoSuchElementException.class)
     public void segmentOutOfBoundsTest() throws Exception {
-        // As this coordinate does not exist, an Exception should be thrown and the test should fail()
+        // As this coordinate does not exist, an Exception should be thrown
         longGenome.getSegment(13).getSequence();
-        fail();
     }
 
     @Test
