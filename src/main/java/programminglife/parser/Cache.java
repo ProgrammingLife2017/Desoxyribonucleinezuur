@@ -6,6 +6,7 @@ import org.mapdb.DBMaker;
 import org.mapdb.HTreeMap;
 import org.mapdb.Serializer;
 
+import programminglife.utility.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -34,7 +35,7 @@ public final class Cache {
      */
     public Cache(String name) {
         this.dbFileName = toDBFile(name);
-        System.out.printf("[%s] Setting up cache (%s)...%n", Thread.currentThread().getName(), this.dbFileName);
+        Console.println("[%s] Setting up cache (%s)...", Thread.currentThread().getName(), this.dbFileName);
         this.db = DBMaker.fileDB(new File(this.dbFileName))
                 .fileMmapEnableIfSupported()
                 .fileMmapPreclearDisable()
@@ -137,7 +138,7 @@ public final class Cache {
      */
     public void close() throws IOException {
         if (!this.db.isClosed()) {
-            System.out.printf("[%s] Closing MapDB...%n", Thread.currentThread().getName());
+            Console.println("[%s] Closing MapDB...", Thread.currentThread().getName());
             this.db.close();
         }
     }
@@ -211,7 +212,7 @@ public final class Cache {
      * @throws IOException when something strange happenes during deletion
      */
     public boolean removeDB() throws IOException {
-        System.out.printf("[%s] Removing database %s%n", Thread.currentThread().getName(), this.dbFileName);
+        Console.println("[%s] Removing database %s", Thread.currentThread().getName(), this.dbFileName);
         close();
         return Files.deleteIfExists(Paths.get(this.dbFileName));
     }

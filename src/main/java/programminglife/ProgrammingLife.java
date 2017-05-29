@@ -16,6 +16,7 @@ import programminglife.gui.controller.GuiController;
 import programminglife.parser.Cache;
 import programminglife.model.exception.UnknownTypeException;
 import programminglife.utility.Alerts;
+import programminglife.utility.Console;
 
 import java.awt.*;
 import java.io.File;
@@ -83,7 +84,7 @@ public final class ProgrammingLife extends Application {
             File file = new File(fileName);
             if (params.getUnnamed().contains("--clean")) {
                 boolean removed = Cache.removeDB(file.getName());
-                System.out.printf("[%s] Removed: %b%n", Thread.currentThread().getName(), removed);
+                Console.println("[%s] Removed: %b", Thread.currentThread().getName(), removed);
             }
             guiCtrl.openFile(file);
         }

@@ -23,6 +23,7 @@ import programminglife.model.GenomeGraph;
 import programminglife.model.exception.UnknownTypeException;
 import programminglife.parser.GraphParser;
 import programminglife.utility.Alerts;
+import programminglife.utility.Console;
 import programminglife.utility.FileProgressCounter;
 
 import java.io.*;
@@ -66,7 +67,6 @@ public class GuiController implements Observer {
     @FXML private Group grpDrawArea;
     @FXML private AnchorPane anchorLeftControlPanel;
 
-    private ConsoleView consoleView;
     private double orgSceneX, orgSceneY;
     private double orgTranslateX, orgTranslateY;
     private int translateX;
@@ -90,8 +90,7 @@ public class GuiController implements Observer {
         initLeftControlpanelScreenModifiers();
         initLeftControlpanelDraw();
         initMouse();
-        consoleView = initConsole();
-        this.graphController.setConsole(consoleView);
+        initConsole();
     }
 
     /**
@@ -126,7 +125,7 @@ public class GuiController implements Observer {
             if (arg instanceof GenomeGraph) {
                 GenomeGraph graph = (GenomeGraph) arg;
 
-                System.out.printf("[%s] File Parsed.%n", Thread.currentThread().getName());
+                Console.println("[%s] File Parsed.", Thread.currentThread().getName());
 
                 this.setGraph(graph);
             } else if (arg instanceof Exception) {
@@ -153,8 +152,8 @@ public class GuiController implements Observer {
         this.graphController.setGraph(graph);
         disableGraphUIElements(graph == null);
 
-        System.out.printf("[%s] Graph was set to %s.%n", Thread.currentThread().getName(), graph.getID());
-        System.out.printf("[%s] The graph has %d nodes%n", Thread.currentThread().getName(), graph.size());
+        Console.println("[%s] Graph was set to %s.", Thread.currentThread().getName(), graph.getID());
+        Console.println("[%s] The graph has %d nodes", Thread.currentThread().getName(), graph.size());
     }
 
     /**
@@ -336,10 +335,9 @@ public class GuiController implements Observer {
         disableGraphUIElements(true);
 
         btnDraw.setOnAction(event -> {
-            System.out.printf("[%s] Drawing graph...%n", Thread.currentThread().getName());
+            Console.println("[%s] Drawing graph...", Thread.currentThread().getName());
             int centerNode = 0;
             int maxDepth = 0;
-
             try {
                 centerNode = Integer.parseInt(txtCenterNode.getText());
                 maxDepth = Integer.parseInt(txtMaxDrawDepth.getText());
@@ -350,7 +348,7 @@ public class GuiController implements Observer {
             if (graphController.getGraph().contains(centerNode)) {
                 this.graphController.clear();
                 this.graphController.draw(centerNode, maxDepth);
-                System.out.printf("[%s] Graph drawn.%n", Thread.currentThread().getName());
+                Console.println("[%s] Graph drawn.", Thread.currentThread().getName());
             } else {
                 Alerts.warning("The centernode is not a existing node, "
                         + "try again with a number that exists as a node.").show();
@@ -442,9 +440,8 @@ public class GuiController implements Observer {
 
     /**
      * Initialises the Console.
-     * @return the ConsoleView to print to.
      */
-    private ConsoleView initConsole() {
+    private void initConsole() {
         final ConsoleView console = new ConsoleView(Charset.forName("UTF-8"));
         AnchorPane root = new AnchorPane(console);
         Stage st = new Stage();
@@ -469,8 +466,7 @@ public class GuiController implements Observer {
         btnToggle.setSelected(true);
         root.visibleProperty().bind(btnToggle.selectedProperty());
 
-        System.setOut(console.getOut());
-        return console;
+        Console.setOut(console.getOut());
     }
 
     private ProgressBar getProgressBar() {
