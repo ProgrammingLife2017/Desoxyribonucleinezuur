@@ -22,6 +22,8 @@ public class GuiCreateBookmarkController {
     @FXML private TextField txtId;
     @FXML private TextField txtRadius;
     @FXML private TextArea txtDescription;
+    private int inputRadius;
+    private int inputCenter;
 
     /**
      * Initialize method for BookmarkController.
@@ -39,8 +41,6 @@ public class GuiCreateBookmarkController {
     private void initButtons() {
         btnOk.setOnAction(event -> {
             String name = guiController.getGraphController().getGraph().getID();
-            int inputRadius;
-            int inputCenter;
             try {
                 inputCenter = Integer.parseInt(txtId.getText());
                 inputRadius = Integer.parseInt(txtRadius.getText());
@@ -56,18 +56,14 @@ public class GuiCreateBookmarkController {
                         txtBookmarkName.getText(), txtDescription.getText(), inputCenter, inputRadius)) {
                     Alerts.warning("Bookmarks must have unique names in files").show();
                 } else {
-                    Stage s = (Stage) btnOk.getScene().getWindow();
-                    s.close();
+                    ((Stage) btnOk.getScene().getWindow()).close();
                 }
             } catch (NumberFormatException e) {
                 Alerts.warning("Center node and radius input should be numeric values below 2 billion").show();
             }
 
         });
-        btnCancel.setOnAction(event -> {
-            Stage s = (Stage) btnCancel.getScene().getWindow();
-            s.close();
-        });
+        btnCancel.setOnAction(event -> ((Stage) btnCancel.getScene().getWindow()).close());
     }
 
     void setGuiController(GuiController guiController) {
