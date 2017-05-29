@@ -161,9 +161,8 @@ public class GuiController implements Observer {
         try {
             Files.createFile(new File("Recent.txt").toPath());
         } catch (FileAlreadyExistsException e) {
-            Alerts.warning("File already exists, this is a good thing!");
             //This will always happen if a user has used the program before.
-            //Therefore it is unnecessary to handle further and the user won't see the warning.
+            //Therefore it is unnecessary to handle further.
         } catch (IOException e) {
             Alerts.error("This file can't be opened").show();
             return;
