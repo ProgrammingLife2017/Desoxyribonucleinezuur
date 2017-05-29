@@ -29,7 +29,6 @@ public class GuiLoadBookmarkController {
     private GuiController guiController;
 
     @FXML private Button btnOpenBookmark;
-    @FXML private Button btnCancelBookmark;
     @FXML private Button btnDeleteBookmark;
     @FXML private Button btnCreateBookmark;
     @FXML private Button btnShowInfo;
@@ -107,12 +106,6 @@ public class GuiLoadBookmarkController {
                 }
             }
         });
-
-        btnCancelBookmark.setOnAction(event -> {
-            Stage s = (Stage) btnCancelBookmark.getScene().getWindow();
-            s.close();
-        });
-
         btnCreateBookmark.setOnAction(event -> createBookmark());
 
         btnShowInfo.setOnAction(event -> showInfo());
