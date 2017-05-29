@@ -24,8 +24,9 @@ import static org.junit.Assert.*;
  * This is only usable if you have a USA QWERTY layout on your keyboard!!!
  */
 public class GuiControllerTest extends FxRobot {
-    private static final String TEST_DB = "test.db";
-    private static final String TEST_File = "/test.gfa";
+    private static final String TEST_DB = "test-gui.gfa.db";
+    private static final String TEST_File = "/test-gui.gfa";
+    private static final String TEST_DB2 = "test-gui.db";
 
     private static Stage primaryStage;
     private static String operatingSystem;
@@ -63,9 +64,9 @@ public class GuiControllerTest extends FxRobot {
 
     @AfterClass
     public static void tearDownClass() throws Exception {
-        Platform.exit();
         Cache.removeDB(TEST_DB);
         Cache.removeDB(TEST_File);
+        Platform.exit();
     }
 
     @Test
@@ -82,12 +83,12 @@ public class GuiControllerTest extends FxRobot {
         openAndParseFile(testFileName);
 
         clickOn("#txtMaxDrawDepth").type(KeyCode.BACK_SPACE);
-        clickOn("#txtMaxDrawDepth").type(KeyCode.DIGIT9);
+        clickOn("#txtMaxDrawDepth").type(KeyCode.DIGIT4);
         clickOn("#txtCenterNode").type(KeyCode.BACK_SPACE);
         clickOn("#txtCenterNode").type(KeyCode.DIGIT2);
         clickOn("#btnDraw");
         assertEquals("2", ((TextField) lookup("#txtCenterNode").query()).getCharacters().toString());
-        assertEquals("9", ((TextField) lookup("#txtMaxDrawDepth").query()).getCharacters().toString());
+        assertEquals("4", ((TextField) lookup("#txtMaxDrawDepth").query()).getCharacters().toString());
         clickOn("#btnZoomIn");
         clickOn("#btnZoomOut");
         clickOn("#btnZoomReset");

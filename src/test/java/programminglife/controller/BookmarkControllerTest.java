@@ -21,7 +21,7 @@ public class BookmarkControllerTest {
 
     @Before
     public void setup() {
-        bookmark = new Bookmark("test",2, 6,"testbm", "testing");
+        bookmark = new Bookmark("test", "dummypath", 2, 6,"testbm", "testing");
         testPath = BookmarkControllerTest.class.getResource("/bookmarkTest.xml").getPath();
     }
 
@@ -41,24 +41,24 @@ public class BookmarkControllerTest {
 
     @Test
     public void readAllGraphTest() {
-        BookmarkController.storeBookmark(testPath, "test", "testbm2", "testing", 2, 4);
+        BookmarkController.storeBookmark(testPath, "dummypath", "test", "testbm2", "testing", 2, 4);
         List<Bookmark> actual = BookmarkController.loadAllGraphBookmarks(testPath, "test");
         List<Bookmark> expected = new ArrayList<>();
         expected.add(bookmark);
-        expected.add(new Bookmark("test",2, 4, "testbm2", "testing"));
+        expected.add(new Bookmark("test", "dummypath", 2, 4, "testbm2", "testing"));
         assertEquals(expected, actual);
     }
 
     @Test
     public void writeTest() {
-        BookmarkController.storeBookmark(testPath, "writeTestGraph", "writeTest", "writing", 2, 4);
-        BookmarkController.storeBookmark(testPath, "writeTestGraph", "writeTeest", "writing", 2, 4);
+        BookmarkController.storeBookmark(testPath, "dummypath", "writeTestGraph", "writeTest", "writing", 2, 4);
+        BookmarkController.storeBookmark(testPath, "dummypath", "writeTestGraph", "writeTeest", "writing", 2, 4);
         assertNotNull(BookmarkController.loadAllGraphBookmarks(testPath, "writeTestGraph"));
     }
 
     @Test
     public void deleteTest() {
-        BookmarkController.storeBookmark(testPath, "deleteTestGraph", "deleteTest", "deleting", 3, 5);
+        BookmarkController.storeBookmark(testPath, "dummypath", "deleteTestGraph", "deleteTest", "deleting", 3, 5);
         BookmarkController.deleteBookmark(testPath, "deleteTestGraph", "deleteTest");
         assertEquals(new ArrayList<>(), BookmarkController.loadAllGraphBookmarks(testPath, "deleteTestGraph"));
     }

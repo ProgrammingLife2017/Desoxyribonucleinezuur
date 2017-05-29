@@ -59,7 +59,6 @@ public class GuiController implements Observer {
     @FXML private Button btnDraw;
     @FXML private Button btnDrawRandom;
     @FXML private Button btnBookmark;
-    @FXML private Menu menuBookmark;
     @FXML private ProgressBar progressBar;
 
     @FXML private TextField txtMaxDrawDepth;
@@ -107,6 +106,8 @@ public class GuiController implements Observer {
             if (this.graphController != null && this.graphController.getGraph() != null) {
                 this.graphController.getGraph().close();
             }
+
+            disableGraphUIElements(true);
 
             GraphParser graphParser = new GraphParser(file);
             graphParser.addObserver(this);
@@ -177,7 +178,8 @@ public class GuiController implements Observer {
                     MenuItem mi = new MenuItem(next);
                     mi.setOnAction(event -> {
                         try {
-                            openFile(new File(mi.getText()));
+                            file = new File(mi.getText());
+                            openFile(file);
                         } catch (UnknownTypeException e) {
                             Alerts.error("This file is malformed and cannot be parsed").show();
                         } catch (IOException e) {
@@ -246,9 +248,11 @@ public class GuiController implements Observer {
                 FXMLLoader loader = new FXMLLoader(ProgrammingLife.class.getResource("/LoadBookmarkWindow.fxml"));
                 AnchorPane page = loader.load();
                 GuiLoadBookmarkController gc = loader.getController();
-                gc.setGraphController(graphController);
                 gc.setGuiController(this);
-                gc.initColumns();
+                gc.initBookmarks();
+                if (this.graphController.getGraph() != null) {
+                    gc.setBtnCreateBookmarkActive(true);
+                }
                 Scene scene = new Scene(page);
                 Stage bookmarkDialogStage = new Stage();
                 bookmarkDialogStage.setResizable(false);
@@ -268,7 +272,6 @@ public class GuiController implements Observer {
      */
     private void disableGraphUIElements(boolean isDisabled) {
         anchorLeftControlPanel.setDisable(isDisabled);
-        menuBookmark.setDisable(isDisabled);
     }
 
     /**
@@ -359,7 +362,7 @@ public class GuiController implements Observer {
                 FXMLLoader loader = new FXMLLoader(ProgrammingLife.class.getResource("/CreateBookmarkWindow.fxml"));
                 AnchorPane page = loader.load();
                 GuiCreateBookmarkController gc = loader.getController();
-                gc.setGraphController(graphController);
+                gc.setGuiController(this);
                 gc.setText(txtCenterNode.getText(), txtMaxDrawDepth.getText());
                 Scene scene = new Scene(page);
                 Stage bookmarkDialogStage = new Stage();
@@ -439,10 +442,10 @@ public class GuiController implements Observer {
         st.setMinHeight(250);
         root.getChildren().add(console);
 
-        root.setBottomAnchor(console, 0.d);
-        root.setTopAnchor(console, 0.d);
-        root.setRightAnchor(console, 0.d);
-        root.setLeftAnchor(console, 0.d);
+        AnchorPane.setBottomAnchor(console, 0.d);
+        AnchorPane.setTopAnchor(console, 0.d);
+        AnchorPane.setRightAnchor(console, 0.d);
+        AnchorPane.setLeftAnchor(console, 0.d);
 
         btnToggle.setOnAction(event -> {
             if (btnToggle.isSelected()) {
@@ -460,7 +463,7 @@ public class GuiController implements Observer {
         return console;
     }
 
-    public ProgressBar getProgressBar() {
+    private ProgressBar getProgressBar() {
         return this.progressBar;
     }
     /**
@@ -471,5 +474,17 @@ public class GuiController implements Observer {
     void setText(int center, int radius) {
         txtCenterNode.setText(String.valueOf(center));
         txtMaxDrawDepth.setText(String.valueOf(radius));
+    }
+
+    public File getFile() {
+        return this.file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
+    }
+
+    GraphController getGraphController() {
+        return this.graphController;
     }
 }

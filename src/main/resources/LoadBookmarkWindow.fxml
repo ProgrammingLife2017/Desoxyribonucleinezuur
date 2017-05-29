@@ -4,19 +4,19 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="programminglife.gui.controller.GuiLoadBookmarkController">
    <children>
-      <TableView fx:id="tblBookmark" prefHeight="354.0" prefWidth="600.0">
-        <columns>
-            <TableColumn fx:id="clmnFile" prefWidth="107.0" text="File" />
-          <TableColumn fx:id="clmnName" prefWidth="107.0" text="Name" />
-          <TableColumn fx:id="clmnDescription" prefWidth="460.0" text="Description" />
-        </columns>
-      </TableView>
-      <Button fx:id="btnOpenBookmark" layoutX="521.0" layoutY="354.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="65.0" text="Open" />
-      <Button fx:id="btnCancelBookmark" layoutX="14.0" layoutY="354.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="65.0" text="Cancel" />
-      <Button fx:id="btnDeleteBookmark" layoutX="186.0" layoutY="354.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="65.0" text="Delete" />
-      <Button fx:id="btnCreateBookmark" layoutX="344.0" layoutY="354.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="65.0" text="Create" />
+      <Pane layoutY="-1.0" prefHeight="25.0" prefWidth="800.0">
+         <children>
+            <Button fx:id="btnOpenBookmark" layoutX="50.0" layoutY="5.0" mnemonicParsing="false" prefWidth="100.0" text="Open" />
+            <Button fx:id="btnDeleteBookmark" layoutX="450.0" layoutY="5.0" mnemonicParsing="false" prefWidth="100.0" text="Delete" />
+            <Button fx:id="btnCreateBookmark" layoutX="325.0" layoutY="5.0" mnemonicParsing="false" prefWidth="100.0" text="Create" />
+            <Button fx:id="btnShowInfo" layoutX="175.0" layoutY="5.0" mnemonicParsing="false" prefWidth="100.0" text="Show Info" />
+         </children>
+      </Pane>
+      <Accordion fx:id="accordionBookmark" layoutY="35.0" prefHeight="375.0" prefWidth="600.0">
+      </Accordion>
    </children>
 </AnchorPane>
