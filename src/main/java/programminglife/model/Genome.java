@@ -1,5 +1,6 @@
 package programminglife.model;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.TreeMap;
@@ -15,16 +16,14 @@ public class Genome {
      * The Integer represents the coordinate of the first base pair of the Segment it maps to.
      */
     private TreeMap<Integer, Segment> segments;
-    private int size;
+    private int length;
 
     /**
      * Constructor for {@link Genome}, no segments added.
      * @param name the name of the {@link Genome}
      */
     public Genome(String name) {
-        this.name = name;
-        this.size = 0;
-        this.segments = new TreeMap<>();
+        this(name, new LinkedList<>());
     }
 
     /**
@@ -35,17 +34,12 @@ public class Genome {
      */
     public Genome(String name, List<Segment> segments) {
         this.name = name;
-        this.size = 0;
+        this.length = 0;
         this.segments = new TreeMap<>();
 
         // TODO: verify (assert) that the order of segments is correct.
 
-        int coordinate = 1; // coordinates are 1 based.
-        for (Segment s : segments) {
-            this.segments.put(coordinate, s);
-            coordinate += s.getSequenceLength();
-            this.size += 1;
-        }
+        segments.forEach(this::addSegment);
     }
 
     /**
@@ -54,6 +48,10 @@ public class Genome {
      * @return The Segment that contains the base pair.
      */
     public Segment getSegment(int coordinate) {
+        if (coordinate > this.length()) {
+            throw new NoSuchElementException(String.format("There is no segment at coordinate %d in genome %s",
+                    coordinate, this.getName()));
+        }
         return segments.floorEntry(coordinate).getValue();
     }
 
@@ -88,16 +86,24 @@ public class Genome {
     public void addSegment(Segment segment) {
         int coordinate;
         try {
-            coordinate = this.segments.lastKey() + segment.getSequenceLength();
+            int lastCoordinate = this.segments.lastKey();
+            int lastLength = this.getSegment(lastCoordinate).getSequenceLength();
+            coordinate = lastCoordinate + lastLength;
         } catch (NoSuchElementException e) {
             coordinate = 1;
         }
 
         this.segments.put(coordinate, segment);
-        this.size += 1;
+        this.length += segment.getSequenceLength();
     }
 
-    public int getSize() {
-        return this.size;
+    /**
+     * The number of base pairs in this {@link Genome}.
+     *
+     * In other words, the sum of lengths of sequences in this {@link Genome}.
+     * @return the number of base pairs
+     */
+    public int length() {
+        return this.length;
     }
 }
