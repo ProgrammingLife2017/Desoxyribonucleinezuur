@@ -199,6 +199,16 @@ public class SubGraph {
      * @return The {@link Drawable} that is on top at the given location.
      */
     public Drawable atLocation(XYCoordinate loc) {
+        return this.atLocation(loc.getX(), loc.getY());
+    }
+
+    /**
+     * Find out which {@link Drawable} is at the given location.
+     * @param x The x coordinate
+     * @param y The y coordinate
+     * @return The {@link Drawable} that is on top at the given location.
+     */
+    public Drawable atLocation(double x, double y) {
         // TODO: implement;
         throw new Error("Not implemented yet");
     }
