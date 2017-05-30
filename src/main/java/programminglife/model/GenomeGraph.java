@@ -3,10 +3,7 @@ package programminglife.model;
 import org.apache.commons.lang3.NotImplementedException;
 import programminglife.model.exception.NodeExistsException;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -104,8 +101,9 @@ public class GenomeGraph implements Graph {
     }
 
     @Override
-    public Set<Genome> getGenomes(Node node) {
-        throw new NotImplementedException("GenomeGraph#getGenomes(Node) is not yet implemented");
+    public Collection<Genome> getGenomes(Node node) {
+        return null;
+        //TODO
     }
 
     @Override

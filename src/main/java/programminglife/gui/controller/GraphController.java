@@ -9,6 +9,7 @@ import programminglife.model.GenomeGraph;
 import programminglife.model.Segment;
 import programminglife.model.XYCoordinate;
 import programminglife.model.drawing.Drawable;
+import programminglife.model.drawing.DrawableEdge;
 import programminglife.model.drawing.DrawableNode;
 import programminglife.model.drawing.SubGraph;
 
@@ -49,8 +50,29 @@ public class GraphController {
         SubGraph subGraph = new SubGraph(center, radius);
         subGraph.layout();
         for (DrawableNode drawableNode : subGraph.getNodes()) {
-            this.grpDrawArea.getChildren().add(drawableNode);
+            drawNode(drawableNode);
         }
+    }
+
+    public void drawNode(DrawableNode drawableNode) {
+//        drawableNode.setOnMouseClicked(event -> {
+//            System.out.println(drawableNode.getSequence());
+//            System.out.printf("%s (location %s, size %s)%n",
+//                    drawableNode.toString(),
+//                    drawableNode.getLocation(),
+//                    drawableNode.getSize());
+//        });
+
+        System.out.printf("%s (location %s, size %s)%n",
+                drawableNode.toString(),
+                drawableNode.getLocation(),
+                drawableNode.getSize());
+
+        drawableNode.setFill(Color.TRANSPARENT);
+        drawableNode.setStroke(Color.DARKRED);
+
+        this.grpDrawArea.getChildren().add(drawableNode);
+        this.grpDrawArea.getChildren().add(new Rectangle(1, 2, 3, 4));
     }
 
 //    /**

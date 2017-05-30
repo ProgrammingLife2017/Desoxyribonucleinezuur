@@ -127,7 +127,7 @@ public class SubGraph {
         }
         radius--; // decrease radius once instead of multiple times within the loop;
         for (DrawableNode parent : node.getParents()) {
-            if (!found.add(parent)) {
+            if (found.add(parent)) {
                 findParents(found, parent, radius);
             }
         }
@@ -180,7 +180,7 @@ public class SubGraph {
         }
         radius--; // decrease radius once instead of multiple times within the loop;
         for (DrawableNode child : node.getChildren()) {
-            if (!found.add(child)) {
+            if (found.add(child)) {
                 findChildren(found, child, radius);
             }
         }
@@ -301,7 +301,6 @@ public class SubGraph {
 
             findAllParentsAdded:
             while (true) {
-                Collection<? extends DrawableEdge> parents = n.getParentEdges();
                 for (DrawableNode p : n.getParents()) {
                     if (nodes.contains(p)) {
                         // there is a parent of n in nodes, so this parent should go before in res.

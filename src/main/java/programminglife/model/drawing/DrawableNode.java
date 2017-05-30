@@ -84,6 +84,7 @@ public class DrawableNode extends Rectangle {
     public Collection<DrawableNode> getParents() {
         Collection<DrawableNode> parents = new HashSet<>();
         for (Node n : this.nodes) {
+            System.out.println(n.getParents().size());
             for (Node parent : n.getParents()) {
                 parents.add(new DrawableNode(parent));
             }
@@ -193,6 +194,14 @@ public class DrawableNode extends Rectangle {
         return length;
     }
 
+    public String getSequence() {
+        StringBuilder result = new StringBuilder();
+        for (Node n : this.nodes) {
+            result.append(DataManager.getSequence(n.getIdentifier()));
+        }
+        return result.toString();
+    }
+
     /**
      * getter for the center of the left border.
      * @return XYCoordinate.
@@ -224,5 +233,21 @@ public class DrawableNode extends Rectangle {
             setDrawDimensions();
         }
         return this.getCenter().add(this.getSize().getX() >> 1, 0);
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other instanceof DrawableNode) {
+            DrawableNode that = (DrawableNode) other;
+            if (that.nodes.equals(this.nodes)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return 1;
     }
 }

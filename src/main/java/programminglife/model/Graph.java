@@ -1,5 +1,6 @@
 package programminglife.model;
 
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -79,7 +80,7 @@ public interface Graph {
      * @param node Node.
      * @return {@link Set}.
      */
-    Set<Genome> getGenomes(Node node);
+    Collection<Genome> getGenomes(Node node);
 
     /**
      * Checks to see if the graph contains a certain node.
