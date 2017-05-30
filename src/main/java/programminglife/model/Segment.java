@@ -3,28 +3,35 @@ package programminglife.model;
 import javafx.scene.shape.Rectangle;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Collection;
+import java.util.HashSet;
+
 /**
  * Created by marti_000 on 25-4-2017.
  */
 public class Segment extends Rectangle implements Node {
     private int id;
     private boolean drawDimensionsUpToDate = false;
+    private GenomeGraph graph;
 
     /**
      * Constructor for a node with an id.
      * @param id int.
+     * @param graph The {@link GenomeGraph}.
      */
-    public Segment(int id) {
-        this(id, null);
+    public Segment(int id, GenomeGraph graph) {
+        this(id, null, graph);
     }
 
     /**
      * Constructor for a node with and id and sequence.
      * @param id int.
      * @param sequence String.
+     * @param graph The {@link GenomeGraph}.
      */
-    public Segment(int id, String sequence) {
+    public Segment(int id, String sequence, GenomeGraph graph) {
         this.id = id;
+        this.graph = graph;
         if (sequence != null) {
             DataManager.setSequence(id, sequence);
         }
@@ -86,6 +93,39 @@ public class Segment extends Rectangle implements Node {
      */
     public int getIdentifier() {
         return this.id;
+    }
+
+    @Override
+    public Collection<? extends Edge> getChildEdges() {
+        Collection<Link> result = new HashSet<>();
+        for (Node node : graph.getChildren(this.id)) {
+            result.add(new Link(this, node, graph.getGenomes(node)));
+        }
+        return result;
+    }
+
+    @Override
+    public Collection<? extends Edge> getParentEdges() {
+        Collection<Link> result = new HashSet<>();
+        for (Node node : graph.getParents(this.id)) {
+            result.add(new Link(node, this, graph.getGenomes(this)));
+        }
+        return result;
+    }
+
+    @Override
+    public Collection<? extends Node> getChildren() {
+        return new HashSet<>(graph.getChildren(this.id));
+    }
+
+    @Override
+    public Collection<? extends Node> getParents() {
+        return new HashSet<>(graph.getParents(this.id));
+    }
+
+    @Override
+    public Collection<Genome> getGenomes() {
+        return this.graph.getGenomes(this);
     }
 
     /**

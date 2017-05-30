@@ -1,5 +1,6 @@
 package programminglife.model.drawing;
 
+import programminglife.model.Edge;
 import programminglife.model.Genome;
 import programminglife.model.Link;
 
@@ -9,11 +10,11 @@ import java.util.Collection;
  * A {@link programminglife.model.Edge} that also Implements {@link Drawable}.
  */
 public class DrawableEdge {
-    private Link link; // TODO: change to Edge?
+    private Edge link; // TODO: change to Edge?
     private DrawableNode parent;
     private DrawableNode child;
 
-    public DrawableEdge(Link link, DrawableNode parent, DrawableNode child) {
+    public DrawableEdge(Edge link, DrawableNode parent, DrawableNode child) {
         this.link = link;
         this.parent = parent;
         this.child = child;

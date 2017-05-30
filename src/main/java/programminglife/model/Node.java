@@ -29,4 +29,6 @@ public interface Node {
 
     public Collection<? extends Node> getChildren();
     public Collection<? extends Node> getParents();
+
+    public Collection<Genome> getGenomes();
 }

@@ -7,9 +7,9 @@ import java.util.Set;
  * Created by toinehartman on 17/05/2017.
  */
 public class Link implements Edge {
-    private Set<Genome> genomeSet;
-    private Segment start;
-    private Segment end;
+    private Collection<Genome> genomeSet;
+    private Node start;
+    private Node end;
 
     /**
      * Constructor for Link.
@@ -17,7 +17,7 @@ public class Link implements Edge {
      * @param end the end (child) of this Link
      * @param genomes Thegenomes that flow through this Link.
      */
-    public Link(Segment start, Segment end, Set<Genome> genomes) {
+    public Link(Node start, Node end, Collection<Genome> genomes) {
         this.start = start;
         this.end = end;
         this.genomeSet = genomes;
@@ -35,7 +35,7 @@ public class Link implements Edge {
      * {@inheritDoc}
      */
     @Override
-    public Segment getStart() {
+    public Node getStart() {
         return start;
     }
 
@@ -43,7 +43,7 @@ public class Link implements Edge {
      * {@inheritDoc}
      */
     @Override
-    public Segment getEnd() {
+    public Node getEnd() {
         return end;
     }
 }

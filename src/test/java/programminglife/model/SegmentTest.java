@@ -19,7 +19,7 @@ public class SegmentTest {
 
     @Before
     public void setUp() throws Exception {
-        node = new Segment(1, "ATCG");
+        node = new Segment(1, "ATCG", null);
     }
 
     @After
@@ -36,7 +36,7 @@ public class SegmentTest {
 
     @Test
     public void NodeId() {
-        node = new Segment(8);
+        node = new Segment(8, null);
 
         assertEquals(8, node.getIdentifier());
         assertEquals(null, node.getSequence());
@@ -44,7 +44,7 @@ public class SegmentTest {
 
     @Test
     public void NodeIdSequence() {
-        node = new Segment(8, "ATCG");
+        node = new Segment(8, "ATCG", null);
 
         assertEquals(8, node.getIdentifier());
         assertEquals("ATCG", node.getSequence());

@@ -34,7 +34,7 @@ public class SubGraphTest {
     @Before
     public void setUp() throws Exception {
         graph = new GenomeGraph("test graph");
-        centerNode = new DrawableNode(new Segment(4));
+        centerNode = new DrawableNode(new Segment(4, graph));
     }
 
     @After
