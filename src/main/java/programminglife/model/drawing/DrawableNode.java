@@ -13,6 +13,8 @@ import java.util.Set;
 public class DrawableNode extends Rectangle {
     private Set<Node> nodes;
     private boolean drawDimensionsUpToDate = false;
+    private Collection<DrawableNode> parents;
+    private Collection<DrawableNode> children;
 
 
     /**
@@ -69,10 +71,12 @@ public class DrawableNode extends Rectangle {
      * @return children {@link Collection<DrawableNode>} are the direct children of the node {@link DrawableNode}.
      */
     public Collection<DrawableNode> getChildren() {
-        Collection<DrawableNode> children = new HashSet<>();
-        for (Node n : this.nodes) {
-            for (Node child : n.getChildren()) {
-                children.add(new DrawableNode(child));
+        if (this.children == null) {
+            this.children = new HashSet<>();
+            for (Node n : this.nodes) {
+                for (Node child : n.getChildren()) {
+                    children.add(new DrawableNode(child));
+                }
             }
         }
         return children;
@@ -83,11 +87,12 @@ public class DrawableNode extends Rectangle {
      * @return parent {@link Collection<DrawableNode>} are the direct parents of the node {@link DrawableNode}.
      **/
     public Collection<DrawableNode> getParents() {
-        Collection<DrawableNode> parents = new HashSet<>();
-        for (Node n : this.nodes) {
-            System.out.println(n.getParents().size());
-            for (Node parent : n.getParents()) {
-                parents.add(new DrawableNode(parent));
+        if (this.parents == null) {
+            this.parents = new HashSet<>();
+            for (Node n : this.nodes) {
+                for (Node parent : n.getParents()) {
+                    this.parents.add(new DrawableNode(parent));
+                }
             }
         }
         return parents;
@@ -211,7 +216,7 @@ public class DrawableNode extends Rectangle {
         if (!drawDimensionsUpToDate) {
             setDrawDimensions();
         }
-        return this.getCenter().add(-(this.getSize().getX() >> 1), 0);
+        return this.getCenter().add(-(this.getSize().getX() / 2), 0);
     }
 
     /**
@@ -233,7 +238,7 @@ public class DrawableNode extends Rectangle {
         if (!drawDimensionsUpToDate) {
             setDrawDimensions();
         }
-        return this.getCenter().add(this.getSize().getX() >> 1, 0);
+        return this.getCenter().add(this.getSize().getX() / 2, 0);
     }
 
     @Override
