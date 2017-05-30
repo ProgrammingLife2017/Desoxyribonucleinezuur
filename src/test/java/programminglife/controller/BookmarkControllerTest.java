@@ -4,7 +4,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import programminglife.InitFXThread;
+import programminglife.utility.InitFXThread;
 import programminglife.model.Bookmark;
 
 import java.util.ArrayList;

@@ -1,7 +1,7 @@
 package programminglife.model;
 
 import org.junit.*;
-import programminglife.InitFXThread;
+import programminglife.utility.InitFXThread;
 import programminglife.parser.Cache;
 
 import java.util.NoSuchElementException;

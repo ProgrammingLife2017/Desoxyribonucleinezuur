@@ -4,7 +4,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import programminglife.InitFXThread;
+import programminglife.utility.InitFXThread;
 
 import java.util.Arrays;
 import java.util.List;

@@ -3,7 +3,7 @@ package programminglife.model;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import programminglife.InitFXThread;
+import programminglife.utility.InitFXThread;
 
 import static org.junit.Assert.assertEquals;
 
