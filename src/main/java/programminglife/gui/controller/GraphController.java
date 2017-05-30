@@ -2,19 +2,13 @@ package programminglife.gui.controller;
 
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import jp.uphy.javafx.console.ConsoleView;
 import programminglife.model.GenomeGraph;
 import programminglife.model.Segment;
 import programminglife.model.XYCoordinate;
-import programminglife.model.drawing.Drawable;
-import programminglife.model.drawing.DrawableEdge;
 import programminglife.model.drawing.DrawableNode;
 import programminglife.model.drawing.SubGraph;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Created by Martijn van Meerten on 8-5-2017.
@@ -55,18 +49,14 @@ public class GraphController {
     }
 
     public void drawNode(DrawableNode drawableNode) {
-//        drawableNode.setOnMouseClicked(event -> {
-//            System.out.println(drawableNode.getSequence());
-//            System.out.printf("%s (location %s, size %s)%n",
-//                    drawableNode.toString(),
-//                    drawableNode.getLocation(),
-//                    drawableNode.getSize());
-//        });
-
-        System.out.printf("%s (location %s, size %s)%n",
-                drawableNode.toString(),
-                drawableNode.getLocation(),
-                drawableNode.getSize());
+        drawableNode.setOnMouseClicked(event -> {
+            System.out.println(drawableNode.getSequence());
+            System.out.printf("%s (location %s, size %s) %s%n",
+                    drawableNode.toString(),
+                    drawableNode.getLocation(),
+                    drawableNode.getSize(),
+                    drawableNode.getId());
+        });
 
         drawableNode.setFill(Color.TRANSPARENT);
         drawableNode.setStroke(Color.DARKRED);

@@ -22,6 +22,7 @@ public class DrawableNode extends Rectangle {
     public DrawableNode(Node node) {
         this.nodes = new HashSet<>();
         nodes.add(node);
+        this.setDrawDimensions();
     }
 
     /**

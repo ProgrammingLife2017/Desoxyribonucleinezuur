@@ -54,6 +54,7 @@ public class SubGraph {
         // TODO: also go from all parents to children within 2*radius + 1; and vice-versa from children.
         this.nodes = findParents(centerNode, radius);
         this.nodes.addAll(findChildren(centerNode, radius));
+        this.nodes.add(centerNode);
         this.findEdges();
     }
 
@@ -213,8 +214,8 @@ public class SubGraph {
         List<Layer> layers = findLayers();
 
         int x = 0;
-        int y = 0;
         for (Layer layer : layers) {
+            int y = 0;
             for (DrawableNode d : layer) {
                 d.setLocation(new XYCoordinate(x, y));
                 y += LINE_PADDING;
