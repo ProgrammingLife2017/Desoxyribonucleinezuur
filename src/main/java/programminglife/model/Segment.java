@@ -127,4 +127,9 @@ public class Segment implements Node {
         return false;
     }
 
+    @Override
+    public int hashCode() {
+        return id;
+    }
+
 }
