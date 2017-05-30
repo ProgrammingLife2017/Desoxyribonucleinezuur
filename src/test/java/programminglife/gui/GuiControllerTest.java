@@ -1,6 +1,5 @@
 package programminglife.gui;
 
-import javafx.application.Platform;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;

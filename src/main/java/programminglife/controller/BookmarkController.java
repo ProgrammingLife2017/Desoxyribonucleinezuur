@@ -97,7 +97,7 @@ public final class BookmarkController {
                 }
             }
         } catch (ParserConfigurationException | SAXException | IOException e) {
-            Alerts.error("Bookmark file error").show();
+            Alerts.error("Bookmark file error");
         }
         return false;
     }

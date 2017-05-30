@@ -4,7 +4,6 @@ import com.google.common.base.Charsets;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.URL;
@@ -25,32 +24,26 @@ public final class Alerts {
     /**
      * Alert method used if the alert is an error.
      * @param message String containing the message to be given to the user.
-     * @return Alert error.
      */
-    @NotNull
-    public static Alert error(String message) {
-        return new Alert(Alert.AlertType.ERROR, message, ButtonType.CLOSE);
+    public static void error(String message) {
+        Platform.runLater(() -> new Alert(Alert.AlertType.ERROR, message, ButtonType.CLOSE).show());
     }
 
     /**
      * Alert method used if the alert is a warning.
      * @param message String containing the message to be given to the user.
-     * @return Alert warning.
      */
-    @NotNull
-    public static Alert warning(String message) {
-        return new Alert(Alert.AlertType.WARNING, message, ButtonType.CLOSE);
+    public static void warning(String message) {
+        Platform.runLater(() -> new Alert(Alert.AlertType.WARNING, message, ButtonType.CLOSE));
     }
 
 
     /**
      * Alert method used if the alert is informative.
      * @param message String containing the message to be given to the user.
-     * @return Alert info.
      */
-    @NotNull
-    public static Alert info(String message) {
-        return new Alert(Alert.AlertType.INFORMATION, message, ButtonType.CLOSE);
+    public static void info(String message) {
+        Platform.runLater(() -> new Alert(Alert.AlertType.INFORMATION, message, ButtonType.CLOSE));
     }
 
     /**
@@ -86,7 +79,7 @@ public final class Alerts {
             alert.setContentText(com.google.common.io.Resources.toString(url, Charsets.UTF_8));
             alert.show();
         } catch (IOException e) {
-            Alerts.error("Can't open the about file").show();
+            Alerts.error("Can't open the about file");
         }
     }
 
@@ -104,7 +97,7 @@ public final class Alerts {
             alert.setContentText(com.google.common.io.Resources.toString(url, Charsets.UTF_8));
             alert.show();
         } catch (IOException e) {
-            Alerts.error("Can't open the instructions file").show();
+            Alerts.error("Can't open the instructions file");
         }
     }
 
@@ -118,6 +111,6 @@ public final class Alerts {
         alert.setTitle("Bookmark information");
         alert.setResizable(false);
         alert.setContentText(s);
-        alert.show();
+        Platform.runLater(alert::show);
     }
 }

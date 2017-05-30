@@ -45,21 +45,21 @@ public class GuiCreateBookmarkController {
                 inputCenter = Integer.parseInt(txtId.getText());
                 inputRadius = Integer.parseInt(txtRadius.getText());
                 if (!guiController.getGraphController().getGraph().contains(inputCenter)) {
-                    Alerts.warning("Center node is not present in graph").show();
+                    Alerts.warning("Center node is not present in graph");
                 } else if (inputRadius < 0) {
-                    Alerts.warning("Radius can only contain positive integers").show();
+                    Alerts.warning("Radius can only contain positive integers");
                 } else if (txtBookmarkName.getText().length() == 0) {
-                    Alerts.warning("Bookmark must contain a name").show();
+                    Alerts.warning("Bookmark must contain a name");
                 } else if (!txtBookmarkName.getText().matches("\\S.*\\S")) {
-                    Alerts.warning("Bookmark name must begin and end with a non whitespace character").show();
+                    Alerts.warning("Bookmark name must begin and end with a non whitespace character");
                 } else if (!BookmarkController.storeBookmark(name, guiController.getFile().getAbsolutePath(),
                         txtBookmarkName.getText(), txtDescription.getText(), inputCenter, inputRadius)) {
-                    Alerts.warning("Bookmarks must have unique names in files").show();
+                    Alerts.warning("Bookmarks must have unique names in files");
                 } else {
                     ((Stage) btnOk.getScene().getWindow()).close();
                 }
             } catch (NumberFormatException e) {
-                Alerts.warning("Center node and radius input should be numeric values below 2 billion").show();
+                Alerts.warning("Center node and radius input should be numeric values below 2 billion");
             }
 
         });

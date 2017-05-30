@@ -65,9 +65,9 @@ public final class ProgrammingLife extends Application {
         try {
             arguments(ctrl);
         } catch (IOException e) {
-            Alerts.warning("An error occured opening the specified file!").show();
+            Alerts.warning("An error occurred opening the specified file!");
         } catch (UnknownTypeException e) {
-            Alerts.error("This file is malformed and cannot be opened").show();
+            Alerts.error("This file is malformed and cannot be opened");
         }
     }
 
