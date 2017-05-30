@@ -1,6 +1,7 @@
 package programminglife.parser;
 
 import org.junit.*;
+import programminglife.utility.InitFXThread;
 import programminglife.model.Genome;
 import programminglife.model.GenomeGraph;
 import programminglife.model.GenomeGraphTest;
@@ -30,6 +31,7 @@ public class GraphParserTest implements Observer {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
+        InitFXThread.setupClass();
         TEST_PATH = new File(GenomeGraphTest.class.getResource("/test.gfa").toURI()).getAbsolutePath();
         TEST_FAULTY_PATH = new File(
                 GenomeGraphTest.class.getClass().getResource("/test-faulty.gfa").toURI()

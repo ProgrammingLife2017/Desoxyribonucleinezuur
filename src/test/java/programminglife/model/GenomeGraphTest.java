@@ -1,6 +1,7 @@
 package programminglife.model;
 
 import org.junit.*;
+import programminglife.utility.InitFXThread;
 import programminglife.parser.Cache;
 
 import java.io.File;
@@ -11,8 +12,9 @@ import static org.junit.Assert.*;
  * Created by toinehartman on 03/05/2017.
  */
 public class GenomeGraphTest {
-    private static final String TEST_DB = "test.db";
 
+
+    private static final String TEST_DB = "test.db";
     GenomeGraph graph;
     Segment node;
     String link;
@@ -21,6 +23,7 @@ public class GenomeGraphTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
+        InitFXThread.setupClass();
         TEST_PATH = new File(GenomeGraphTest.class.getResource("/test.gfa").toURI()).getAbsolutePath();
         TEST_FAULTY_PATH = new File(
                 GenomeGraphTest.class.getClass().getResource("/test-faulty.gfa").toURI()

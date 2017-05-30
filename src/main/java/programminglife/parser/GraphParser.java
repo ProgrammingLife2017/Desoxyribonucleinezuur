@@ -4,6 +4,7 @@ import com.diffplug.common.base.Errors;
 import javafx.application.Platform;
 import programminglife.model.*;
 import programminglife.model.exception.UnknownTypeException;
+import programminglife.utility.Console;
 import programminglife.utility.Alerts;
 import programminglife.utility.FileProgressCounter;
 
@@ -46,12 +47,12 @@ public class GraphParser extends Observable implements Runnable {
     @Override
     public void run() {
         try {
-            System.out.printf("[%s] Parsing GenomeGraph on separate Thread%n", Thread.currentThread().getName());
+            Console.println("[%s] Parsing GenomeGraph on separate Thread", Thread.currentThread().getName());
             long startTime = System.nanoTime();
             parse(this.verbose);
 
             int secondsElapsed = (int) ((System.nanoTime() - startTime) / 1000000000.d);
-            System.out.printf("[%s] Parsing took %d seconds%n", Thread.currentThread().getName(), secondsElapsed);
+            Console.println("[%s] Parsing took %d seconds", Thread.currentThread().getName(), secondsElapsed);
             this.setChanged();
             this.notifyObservers(this.graph);
         } catch (Exception e) {
@@ -59,8 +60,8 @@ public class GraphParser extends Observable implements Runnable {
                 this.getGraph().rollback();
             } catch (IOException eio) {
                 Platform.runLater(() ->
-                        Alerts.error(String.format("An error occured while removing the cache. " +
-                                "Please remove %s manually.", Cache.toDBFile(this.getGraph().getID()))).show()
+                        Alerts.error(String.format("An error occured while removing the cache. "
+                                + "Please remove %s manually.", Cache.toDBFile(this.getGraph().getID()))).show()
                 );
             }
             this.setChanged();
@@ -85,15 +86,15 @@ public class GraphParser extends Observable implements Runnable {
      */
     protected synchronized void parse(boolean verbose) throws IOException, UnknownTypeException {
         if (verbose) {
-            System.out.printf(
-                    "[%s] Parsing file with name %s with path %s%n", Thread.currentThread().getName(),
+            Console.println(
+                    "[%s] Parsing file with name %s with path %s", Thread.currentThread().getName(),
                     this.name, this.graphFile.getAbsolutePath()
             );
         }
 
-        System.out.printf("[%s] Calculating number of lines in file... ", Thread.currentThread().getName());
+        Console.print("[%s] Calculating number of lines in file... ", Thread.currentThread().getName());
         int lineCount = countLines(this.graphFile.getPath());
-        System.out.printf("done (%d lines)%n", lineCount);
+        Console.println("done (%d lines)", lineCount);
         this.progressCounter.setTotalLineCount(lineCount);
 
         try (BufferedReader reader = new BufferedReader(new FileReader(this.graphFile))) {
@@ -120,7 +121,7 @@ public class GraphParser extends Observable implements Runnable {
 
                 if (Thread.currentThread().isInterrupted()) {
                     this.getGraph().rollback();
-                    System.out.printf("[%s] Stopping this thread gracefully...%n", Thread.currentThread().getName());
+                    Console.println("[%s] Stopping this thread gracefully...", Thread.currentThread().getName());
                     this.progressCounter.finished();
                     return;
                 }
@@ -238,9 +239,9 @@ public class GraphParser extends Observable implements Runnable {
             }
         } else if (properties[1].startsWith("VN:Z:")) {
             // Version, ignored
-            System.out.printf("[%s] Version: %s%n", Thread.currentThread().getName(), properties[1].substring(5));
+            Console.println("[%s] Version: %s", Thread.currentThread().getName(), properties[1].substring(5));
         } else {
-            System.out.printf("[%s] Unrecognized header: %s%n", Thread.currentThread().getName(), properties[1]);
+            Console.println("[%s] Unrecognized header: %s", Thread.currentThread().getName(), properties[1]);
         }
     }
 

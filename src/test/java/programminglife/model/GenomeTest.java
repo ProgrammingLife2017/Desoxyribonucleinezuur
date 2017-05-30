@@ -2,19 +2,26 @@ package programminglife.model;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import programminglife.utility.InitFXThread;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class GenomeTest {
     private Genome longGenome;
     private Genome emptyGenome;
     private GenomeGraph graph;
     private List<Segment> segments;
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        InitFXThread.setupClass();
+    }
 
     @Before
     public void setUp() throws Exception {

@@ -4,11 +4,11 @@ import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
-import jp.uphy.javafx.console.ConsoleView;
 import org.jetbrains.annotations.NotNull;
 import programminglife.model.GenomeGraph;
 import programminglife.model.Segment;
 import programminglife.model.XYCoordinate;
+import programminglife.utility.Console;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -24,7 +24,6 @@ public class GraphController {
 
     private GenomeGraph graph;
     private Group grpDrawArea;
-    private ConsoleView console;
 
     /**
      * Initialize controller object.
@@ -34,10 +33,6 @@ public class GraphController {
     public GraphController(GenomeGraph graph, Group grpDrawArea) {
         this.graph = graph;
         this.grpDrawArea = grpDrawArea;
-    }
-
-    public void setConsole(ConsoleView console) {
-        this.console = console;
     }
 
     /**
@@ -139,7 +134,7 @@ public class GraphController {
     private XYCoordinate drawNode(Segment node) {
         node.setOnMouseClicked(event -> {
             System.out.println(node.getSequence());
-            System.out.printf("%s (location %s, size %s)%n",
+            Console.println("%s (location %s, size %s)",
                     node.toString(),
                     node.getLocation(),
                     node.getSize());

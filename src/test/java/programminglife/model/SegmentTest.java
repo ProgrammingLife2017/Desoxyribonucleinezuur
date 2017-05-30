@@ -1,9 +1,7 @@
 package programminglife.model;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
+import programminglife.utility.InitFXThread;
 import programminglife.parser.Cache;
 
 import java.util.NoSuchElementException;
@@ -15,6 +13,11 @@ public class SegmentTest {
 
     Segment node;
     GenomeGraph g;
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        InitFXThread.setupClass();
+    }
 
     @Before
     public void setUp() throws Exception {

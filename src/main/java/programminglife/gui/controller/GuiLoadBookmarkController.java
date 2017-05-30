@@ -7,13 +7,13 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import programminglife.ProgrammingLife;
 import programminglife.controller.BookmarkController;
 import programminglife.model.Bookmark;
 import programminglife.model.exception.UnknownTypeException;
 import programminglife.utility.Alerts;
+import programminglife.utility.Console;
 
 import java.io.File;
 import java.io.IOException;
@@ -90,7 +90,7 @@ public class GuiLoadBookmarkController {
             guiController.getGraphController().clear();
             guiController.setText(bookmark.getNodeID(), bookmark.getRadius());
 
-            System.out.println("Loaded bookmark " + bookmark.getBookmarkName()
+            Console.println("Loaded bookmark " + bookmark.getBookmarkName()
                     + " Center Node: " + bookmark.getNodeID() + " Radius: " + bookmark.getRadius());
             ((Stage) btnOpenBookmark.getScene().getWindow()).close();
         }
@@ -109,7 +109,7 @@ public class GuiLoadBookmarkController {
             if (result.isPresent()) {
                 if (result.get() == ButtonType.OK) {
                     BookmarkController.deleteBookmark(bookmark.getFile(), bookmark.getBookmarkName());
-                    System.out.println("Deleted bookmark " + bookmark.getBookmarkName()
+                    Console.println("Deleted bookmark " + bookmark.getBookmarkName()
                             + " Center Node: " + bookmark.getNodeID() + " Radius: " + bookmark.getRadius());
                     initBookmarks();
                 } else {
