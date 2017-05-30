@@ -14,7 +14,7 @@ import java.util.List;
  * @see SubGraph#findLayers()
  */
 public class Layer implements Iterable<DrawableNode> {
-    private int width;
+    private double width;
     private List<DrawableNode> nodes;
 
     /**
@@ -25,11 +25,11 @@ public class Layer implements Iterable<DrawableNode> {
         this.nodes = new ArrayList<>();
     }
 
-    public int getWidth() {
+    public double getWidth() {
         return width;
     }
 
-    public void setWidth(int width) {
+    public void setWidth(double width) {
         this.width = width;
     }
 
@@ -38,6 +38,9 @@ public class Layer implements Iterable<DrawableNode> {
      * @param node the node to add.
      */
     public void add(DrawableNode node) {
+        if (node.getWidth() > width) {
+            this.width = node.getWidth();
+        }
         this.nodes.add(node);
     }
 

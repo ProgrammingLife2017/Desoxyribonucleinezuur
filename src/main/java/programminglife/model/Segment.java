@@ -116,4 +116,20 @@ public class Segment implements Node {
                 StringUtils.abbreviate(sequence, 11));
     }
 
+    @Override
+    public boolean equals(Object that) {
+        if (that instanceof Segment) {
+            Segment other = (Segment) that;
+            if (this.id == other.getIdentifier()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
+    }
+
 }
