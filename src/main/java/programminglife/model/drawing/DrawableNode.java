@@ -248,6 +248,7 @@ public class DrawableNode extends Rectangle {
 
     @Override
     public int hashCode() {
+        // TODO: improve
         return 1;
     }
 }
