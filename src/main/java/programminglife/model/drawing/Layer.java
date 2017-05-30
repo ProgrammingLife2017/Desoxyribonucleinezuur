@@ -1,7 +1,6 @@
 package programminglife.model.drawing;
 
 import org.jetbrains.annotations.NotNull;
-import programminglife.model.Node;
 
 import java.util.ArrayList;
 import java.util.Comparator;

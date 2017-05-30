@@ -24,6 +24,7 @@ public class SubGraph {
     private Set<DrawableNode> nodes;
     private Set<DrawableEdge> edges;
     private DrawableNode centerNode;
+    private boolean layout;
     /**
      * The radius around the center node. Eventually,
      * this SubGraph should only include nodes with a *longest* path of at most radius.
@@ -48,6 +49,7 @@ public class SubGraph {
         // tactic: first go to all parents at exactly radius, then find all children of those parents
         this.centerNode = centerNode;
         this.radius = radius;
+        this.layout = false;
 
         // TODO: also go from all parents to children within 2*radius + 1; and vice-versa from children.
         this.nodes = findParents(centerNode, radius);
@@ -188,9 +190,7 @@ public class SubGraph {
      * Draw this SubGraph on the screen.
      */
     public void draw() {
-        // TODO: implement;
-        throw new Error("Not implemented yet");
-        // use layout if not done already
+
     }
 
     /**
@@ -217,6 +217,9 @@ public class SubGraph {
      * Lay out the {@link Drawable Drawables} in this SubGraph.
      */
     public void layout() {
+        if (layout) {
+            return;
+        }
         List<Layer> layers = findLayers();
 
         int x = 0;
@@ -228,7 +231,7 @@ public class SubGraph {
             }
             x += layer.getWidth() + LAYER_PADDING;
         }
-
+        layout = true;
         // TODO: translate so that the centerNode is at 0,0;
     }
 
@@ -372,5 +375,9 @@ public class SubGraph {
         // TODO
         // when getting bigger: include new nodes
         // when getting smaller: drop nodes outside new radius.
+    }
+
+    public Set<DrawableNode> getNodes() {
+        return this.nodes;
     }
 }
