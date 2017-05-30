@@ -490,6 +490,10 @@ public class GuiController implements Observer {
         this.file = file;
     }
 
+    public Button getBtnDraw() {
+        return btnDraw;
+    }
+
     GraphController getGraphController() {
         return this.graphController;
     }

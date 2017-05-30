@@ -1,5 +1,6 @@
 package programminglife.gui.controller;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -93,6 +94,7 @@ public class GuiLoadBookmarkController {
             Console.println("Loaded bookmark " + bookmark.getBookmarkName()
                     + " Center Node: " + bookmark.getNodeID() + " Radius: " + bookmark.getRadius());
             ((Stage) btnOpenBookmark.getScene().getWindow()).close();
+            Platform.runLater(() -> guiController.getBtnDraw().fire());
         }
     }
 
@@ -138,7 +140,7 @@ public class GuiLoadBookmarkController {
             bookmarkDialogStage.showAndWait();
             initBookmarks();
         } catch (IOException e) {
-            (new Alert(Alert.AlertType.ERROR, "This bookmark cannot be created.", ButtonType.CLOSE)).show();
+            Alerts.error("This bookmark cannot be created.").show();
         }
     }
 
