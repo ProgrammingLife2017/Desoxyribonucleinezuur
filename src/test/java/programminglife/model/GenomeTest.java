@@ -2,7 +2,9 @@ package programminglife.model;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import programminglife.InitFXThread;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,6 +17,11 @@ public class GenomeTest {
     private Genome emptyGenome;
     private GenomeGraph graph;
     private List<Segment> segments;
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        InitFXThread.setupClass();
+    }
 
     @Before
     public void setUp() throws Exception {

@@ -1,6 +1,7 @@
 package programminglife.model;
 
 import org.junit.*;
+import programminglife.InitFXThread;
 import programminglife.parser.Cache;
 
 import java.io.File;
@@ -22,6 +23,7 @@ public class GenomeGraphTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
+        InitFXThread.setupClass();
         TEST_PATH = new File(GenomeGraphTest.class.getResource("/test.gfa").toURI()).getAbsolutePath();
         TEST_FAULTY_PATH = new File(
                 GenomeGraphTest.class.getClass().getResource("/test-faulty.gfa").toURI()

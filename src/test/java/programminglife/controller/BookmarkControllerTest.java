@@ -2,7 +2,9 @@ package programminglife.controller;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import programminglife.InitFXThread;
 import programminglife.model.Bookmark;
 
 import java.util.ArrayList;
@@ -17,6 +19,11 @@ import static org.junit.Assert.assertNotNull;
 public class BookmarkControllerTest {
     private Bookmark bookmark;
     private String testPath;
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        InitFXThread.setupClass();
+    }
 
     @Before
     public void setup() {
