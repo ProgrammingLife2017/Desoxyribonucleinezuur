@@ -2,7 +2,6 @@ package programminglife.model.drawing;
 
 import programminglife.model.Edge;
 import programminglife.model.Genome;
-import programminglife.model.Link;
 
 import java.util.Collection;
 
@@ -14,6 +13,12 @@ public class DrawableEdge {
     private DrawableNode parent;
     private DrawableNode child;
 
+    /**
+     * Create a Drawable edge.
+     * @param link The {@link Edge} to draw
+     * @param parent The {@link DrawableNode} parent of this edge
+     * @param child The {@link DrawableNode} child of this edge
+     */
     public DrawableEdge(Edge link, DrawableNode parent, DrawableNode child) {
         this.link = link;
         this.parent = parent;

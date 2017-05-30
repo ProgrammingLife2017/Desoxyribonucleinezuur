@@ -1,7 +1,6 @@
 package programminglife.model;
 
 import java.util.Collection;
-import java.util.Set;
 
 /**
  * Created by toinehartman on 17/05/2017.

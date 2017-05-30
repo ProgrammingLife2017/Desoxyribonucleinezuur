@@ -12,6 +12,12 @@ public class Dummy implements Node {
     private Node parent;
     private Node child;
 
+    /**
+     * Create a dummy node.
+     * @param parent {@link Node} is the parent node.
+     * @param child {@link Node} is the child node.
+     * @param link {@link Link} the link between two segments in which this dummy node gets drawn.
+     */
     public Dummy(Node parent, Node child, Link link) {
         id = -1;
         this.parent = parent;
@@ -55,5 +61,10 @@ public class Dummy implements Node {
     @Override
     public Collection<Genome> getGenomes() {
         return this.link.getGenomes();
+    }
+
+    @Override
+    public int getSequenceLength() {
+        return this.getSequenceLength();
     }
 }

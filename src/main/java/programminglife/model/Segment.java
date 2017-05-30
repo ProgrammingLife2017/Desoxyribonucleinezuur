@@ -1,6 +1,5 @@
 package programminglife.model;
 
-import javafx.scene.shape.Rectangle;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collection;
@@ -9,10 +8,10 @@ import java.util.HashSet;
 /**
  * Created by marti_000 on 25-4-2017.
  */
-public class Segment extends Rectangle implements Node {
+public class Segment implements Node {
     private int id;
-    private boolean drawDimensionsUpToDate = false;
     private GenomeGraph graph;
+    private int sequenceLength;
 
     /**
      * Constructor for a node with an id.
@@ -34,6 +33,7 @@ public class Segment extends Rectangle implements Node {
         this.graph = graph;
         if (sequence != null) {
             DataManager.setSequence(id, sequence);
+            sequenceLength = sequence.length();
         }
     }
 
@@ -51,40 +51,15 @@ public class Segment extends Rectangle implements Node {
      */
     public void setSequence(String sequence) {
         DataManager.setSequence(this.id, sequence);
-        this.drawDimensionsUpToDate = false;
+
     }
 
-    /**
-     * getter for the center of the right border.
-     * @return XYCoordinate.
-     */
-    public XYCoordinate getRightBorderCenter() {
-        if (!drawDimensionsUpToDate) {
-            setDrawDimensions();
+    @Override
+    public int getSequenceLength() {
+        if (sequenceLength == 0) {
+            this.sequenceLength = DataManager.getSequenceLength(this.id);
         }
-        return this.getCenter().add(this.getSize().getX() >> 1, 0);
-    }
-
-    /**
-     * getter for the center of the left border.
-     * @return XYCoordinate.
-     */
-    public XYCoordinate getLeftBorderCenter() {
-        if (!drawDimensionsUpToDate) {
-            setDrawDimensions();
-        }
-        return this.getCenter().add(-(this.getSize().getX() >> 1), 0);
-    }
-
-    /**
-     * getter for the center.
-     * @return XYCoordinate.
-     */
-    public XYCoordinate getCenter() {
-        if (!drawDimensionsUpToDate) {
-            setDrawDimensions();
-        }
-        return this.getLocation().add(this.getSize().multiply(0.5));
+        return sequenceLength;
     }
 
     /**
@@ -141,85 +116,4 @@ public class Segment extends Rectangle implements Node {
                 StringUtils.abbreviate(sequence, 11));
     }
 
-    /**
-     * Get a {@link XYCoordinate} representing the size of the {@link Segment}.
-     * @return The size of the {@link Segment}
-     */
-    public XYCoordinate getSize() {
-        if (!drawDimensionsUpToDate) {
-            setDrawDimensions();
-        }
-        return new XYCoordinate((int) this.getWidth(), (int) this.getHeight());
-    }
-
-    /**
-     * Set the size {@link XYCoordinate} of the {@link Segment}.
-     * @param size The {@link XYCoordinate} representing the size
-     */
-    void setSize(XYCoordinate size) {
-        this.setWidth(size.getX());
-        this.setHeight(size.getY());
-        this.drawDimensionsUpToDate = true;
-    }
-
-    /**
-     * Getter for top left corner of a {@link Segment}.
-     * @return {@link XYCoordinate} with the values of the top left corner.
-     */
-    public XYCoordinate getLocation() {
-        return new XYCoordinate((int) this.getX(), (int) this.getY());
-    }
-
-    /**
-     * Set an {@link XYCoordinate} representing the location of the {@link Segment}.
-     * @param location The {@link XYCoordinate}
-     */
-    public void setLocation(XYCoordinate location) {
-        this.setX(location.getX());
-        this.setY(location.getY());
-    }
-
-    /**
-     * getter for the width coordinate.
-     * @return XYCoordinate.
-     */
-    public XYCoordinate getWidthCoordinate() {
-        if (!drawDimensionsUpToDate) {
-            setDrawDimensions();
-        }
-        return new XYCoordinate((int) this.getWidth(), 0);
-    }
-
-    /**
-     * getter for the height coordinate.
-     * @return XYCoordinate.
-     */
-    public XYCoordinate getHeightCoordinate() {
-        if (!drawDimensionsUpToDate) {
-            setDrawDimensions();
-        }
-        return new XYCoordinate(0, (int) this.getHeight());
-    }
-
-    /**
-     * Setter for the dimension of the node.
-     */
-    private void setDrawDimensions() {
-        int segmentLength = this.getSequenceLength();
-        int width, height;
-
-        width = 10 + (int) Math.pow(segmentLength, 1.0 / 2);
-        height = 10;
-
-        this.setSize(new XYCoordinate(width, height));
-        this.drawDimensionsUpToDate = true;
-    }
-
-    /**
-     * get the length of the sequence of this segment.
-     * @return the length of the sequence of this segment
-     */
-    public int getSequenceLength() {
-        return DataManager.getSequenceLength(this.getIdentifier());
-    }
 }
