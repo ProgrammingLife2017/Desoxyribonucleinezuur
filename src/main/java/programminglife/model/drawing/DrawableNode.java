@@ -1,9 +1,7 @@
 package programminglife.model.drawing;
 
 import javafx.scene.shape.Rectangle;
-import programminglife.model.Node;
-import programminglife.model.Segment;
-import programminglife.model.XYCoordinate;
+import programminglife.model.*;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -35,23 +33,43 @@ public class DrawableNode extends Rectangle {
     // TODO: implement methods
 
     public Collection<DrawableEdge> getChildEdges() {
-        // TODO: implement
-        throw new Error("Not implemented yet");
+        HashSet<DrawableEdge> childEdges = new HashSet<DrawableEdge>();
+        for (Node n : nodes) {
+            for (Edge e: n.getChildEdges()){
+                childEdges.add(new DrawableEdge(e, this, new DrawableNode(e.getEnd())));
+            }
+        }
+        return childEdges;
     }
 
     public Collection<DrawableEdge> getParentEdges() {
-        // TODO: implement
-        throw new Error("Not implemented yet");
+        HashSet<DrawableEdge> parentEdges = new HashSet<DrawableEdge>();
+        for (Node n : nodes) {
+            for (Edge e : n.getParentEdges()) {
+                parentEdges.add(new DrawableEdge(e, new DrawableNode(e.getStart()), this));
+            }
+        }
+        return parentEdges;
     }
 
     public Collection<DrawableNode> getChildren() {
-        // TODO: implement
-        throw new Error("Not implemented yet");
+        Collection<DrawableNode> children = new HashSet<>();
+        for (Node n : this.nodes) {
+            for (Node child : n.getChildren()) {
+                children.add(new DrawableNode(child));
+            }
+        }
+        return children;
     }
 
     public Collection<DrawableNode> getParents() {
-        // TODO: implement
-        throw new Error("Not implemented yet");
+        Collection<DrawableNode> parents = new HashSet<>();
+        for (Node n : this.nodes) {
+            for (Node parent : n.getParents()) {
+                parents.add(new DrawableNode(parent));
+            }
+        }
+        return parents;
     }
 
     public void setLocation(XYCoordinate newLoc) {

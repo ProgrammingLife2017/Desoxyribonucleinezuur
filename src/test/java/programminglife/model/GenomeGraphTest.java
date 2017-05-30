@@ -34,7 +34,7 @@ public class GenomeGraphTest {
     @Before
     public void setUp() throws Exception {
         graph = new GenomeGraph("test graph");
-        node = new Segment(3, "ATCG");
+        node = new Segment(3, "ATCG", graph);
 
         graph.addNode(node);
     }
@@ -51,7 +51,7 @@ public class GenomeGraphTest {
 
     @Test
     public void addNodeTest() throws Exception {
-        Segment secondNode = new Segment(8);
+        Segment secondNode = new Segment(8, graph);
         graph.addNode(secondNode);
 
         assertEquals(2, graph.size());
@@ -72,16 +72,16 @@ public class GenomeGraphTest {
     @Test
     public void sizeTest() {
         assertEquals(1,graph.size());
-        graph.addNode(new Segment(2,"AAAAT"));
+        graph.addNode(new Segment(2,"AAAAT", graph));
         assertEquals(2,graph.size());
     }
 
     @Test
     public void containsTest() {
-        Node node2 = new Segment( 2, "ATTCTT");
+        Node node2 = new Segment( 2, "ATTCTT", graph);
         graph.addNode(node2);
         assertTrue(graph.contains(node2));
-        Node node3 = new Segment(37,"AAAAAAAA");
+        Node node3 = new Segment(37,"AAAAAAAA", graph);
         assertFalse(graph.contains(node3));
     }
 }

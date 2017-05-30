@@ -45,7 +45,7 @@ public class GraphController {
      * @param maxDepth The max depth of child {@link Segment}s to draw
      */
     public void draw(int centerNode, int maxDepth) {
-        this.drawDFS(null, new Segment(centerNode), INITIAL_OFFSET, maxDepth);
+        this.drawDFS(null, new Segment(centerNode, this.graph), INITIAL_OFFSET, maxDepth);
     }
 
     /**
@@ -127,7 +127,7 @@ public class GraphController {
      * @return The size of the node
      */
     private XYCoordinate drawNode(int nodeID) {
-        return this.drawNode(new Segment(nodeID));
+        return this.drawNode(new Segment(nodeID, this.graph));
     }
 
     /**
