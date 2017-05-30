@@ -11,8 +11,9 @@ import static org.junit.Assert.*;
  * Created by toinehartman on 03/05/2017.
  */
 public class GenomeGraphTest {
-    private static final String TEST_DB = "test.db";
 
+
+    private static final String TEST_DB = "test.db";
     GenomeGraph graph;
     Segment node;
     String link;

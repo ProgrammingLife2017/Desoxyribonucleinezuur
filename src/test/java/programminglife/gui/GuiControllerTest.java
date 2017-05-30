@@ -10,8 +10,10 @@ import org.testfx.api.FxToolkit;
 import org.testfx.util.WaitForAsyncUtils;
 import programminglife.ProgrammingLife;
 import programminglife.parser.Cache;
+import programminglife.utility.Console;
 
 import java.io.File;
+import java.io.PrintStream;
 import java.net.URISyntaxException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -58,17 +60,16 @@ public class GuiControllerTest extends FxRobot {
     @After
     public void tearDown() throws Exception {
         Cache.removeDB(TEST_DB);
-        Cache.removeDB(TEST_DB2);
         Cache.removeDB(TEST_File);
         FxToolkit.cleanupApplication(this.pl);
     }
 
     @AfterClass
     public static void tearDownClass() throws Exception {
-        Cache.removeDB(TEST_DB);
-        Cache.removeDB(TEST_DB2);
-        Cache.removeDB(TEST_File);
         Platform.exit();
+        Console.setOut(new PrintStream(System.out));
+        Cache.removeDB(TEST_DB);
+        Cache.removeDB(TEST_File);
     }
 
     @Test
