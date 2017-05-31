@@ -87,12 +87,17 @@ public class SubGraphTest {
         SubGraph sg = new SubGraph(centerNode, 5);
         List<DrawableNode> actual = sg.topoSort();
 
-        assertEquals(8, actual.size());
+        Set<DrawableNode> graphNodes = sg.getNodes();
+
+        assertEquals(graphNodes.size(), actual.size());
 
         Set<DrawableNode> found = new HashSet<>();
         for (DrawableNode n : actual) {
-            // assert that all parents were already found.
-            assertTrue(found.containsAll(n.getParents())); // All parents of this node were already found
+            Collection<DrawableNode> parents = n.getParents();
+            parents.retainAll(graphNodes);
+
+            // assert that all parents that are also in the SubGraph were already found.
+            assertTrue(found.containsAll(parents)); // All parents of this node were already found
             assertTrue(Collections.disjoint(found, n.getChildren())); // none of the children of this node were found
             found.add(n);
         }
