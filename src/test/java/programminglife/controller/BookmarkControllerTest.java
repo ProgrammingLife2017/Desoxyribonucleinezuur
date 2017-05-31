@@ -7,6 +7,7 @@ import org.junit.Test;
 import programminglife.utility.InitFXThread;
 import programminglife.model.Bookmark;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,9 +27,9 @@ public class BookmarkControllerTest {
     }
 
     @Before
-    public void setup() {
+    public void setup() throws Exception {
         bookmark = new Bookmark("test", "dummypath", 2, 6,"testbm", "testing");
-        testPath = BookmarkControllerTest.class.getResource("/bookmarkTest.xml").getPath();
+        testPath = new File(BookmarkControllerTest.class.getResource("/bookmarkTest.xml").toURI()).getAbsolutePath();
     }
 
     @After
