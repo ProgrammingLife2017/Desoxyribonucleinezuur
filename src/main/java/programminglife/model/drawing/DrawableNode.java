@@ -183,11 +183,7 @@ public class DrawableNode extends Rectangle {
      * @return the length of the sequence of this segment
      */
     public int getSequenceLength() {
-        int length = 0;
-
-            length += node.getSequenceLength();
-
-        return length;
+        return node.getSequenceLength();
     }
 
     /**
@@ -195,11 +191,7 @@ public class DrawableNode extends Rectangle {
      * @return A string containing all the sequences appended.
      */
     public String getSequence() {
-        StringBuilder result = new StringBuilder();
-
-            result.append(DataManager.getSequence(node.getIdentifier()));
-
-        return result.toString();
+        return DataManager.getSequence(node.getIdentifier());
     }
 
     /**
@@ -269,7 +261,6 @@ public class DrawableNode extends Rectangle {
 
     @Override
     public int hashCode() {
-        // TODO: improve
-        return 1;
+        return node.getIdentifier();
     }
 }
