@@ -42,13 +42,25 @@ public class GraphController {
      * @param radius the amount of layers to be drawn.
      */
     public void draw(int centerNode, int radius) {
+        long startTimeProgram = System.nanoTime();
         Segment centerSegment = new Segment(centerNode, graph);
         DrawableNode center = new DrawableNode(centerSegment);
         SubGraph subGraph = new SubGraph(center, radius);
         subGraph.layout();
+
+
+        long startTimeDrawing = System.nanoTime();
         for (DrawableNode drawableNode : subGraph.getNodes()) {
             drawNode(drawableNode);
         }
+        long finishTimeDrawing = System.nanoTime();
+        long differenceTimeDrawing = finishTimeDrawing - startTimeDrawing;
+        long differenceTimeProgram = finishTimeDrawing - startTimeProgram;
+        long msdifferenceTimeProgram = differenceTimeProgram / 1000000;
+        long milisecondTimeDrawing = differenceTimeDrawing /   1000000;
+        System.out.println("Time of Drawing:  " + milisecondTimeDrawing);
+        System.out.println("Time of Total Program:  " + msdifferenceTimeProgram);
+
     }
 
     /**
@@ -63,7 +75,7 @@ public class GraphController {
 
         drawableNode.setFill(Color.TRANSPARENT);
         drawableNode.setStroke(Color.BLUE);
-        System.out.println(drawableNode.toString());
+       // System.out.println(drawableNode.toString());
         this.grpDrawArea.getChildren().add(drawableNode);
 
     }

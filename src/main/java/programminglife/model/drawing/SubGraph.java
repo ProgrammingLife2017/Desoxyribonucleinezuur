@@ -235,7 +235,13 @@ public class SubGraph {
      * @return A {@link List} of Layers with all the nodes (all nodes are divided over the Layers).
      */
     private List<Layer> findLayers() {
+        long startTime = System.nanoTime();
         List<DrawableNode> sorted = topoSort();
+        long finishTime = System.nanoTime();
+        long differenceTime = finishTime - startTime;
+        long milisecondTime = differenceTime / 1000000;
+        System.out.println("TIMERINO OF TOPOSORTERINO:  " + milisecondTime);
+        System.out.println("Amount of nodes: " + sorted.size());
         Map<DrawableNode, Integer> nodeLevel = new HashMap<>();
         List<Layer> layerList = new ArrayList<>();
 
