@@ -168,7 +168,7 @@ public final class BookmarkController {
                     + " Radius: " + radius);
             return true;
         } catch (ParserConfigurationException | SAXException | IOException | TransformerException pce) {
-            (new Alert(Alert.AlertType.ERROR, "This bookmark cannot be stored.", ButtonType.CLOSE)).show();
+            Alerts.error("The bookmarks cannot be stored");
         }
         return false;
     }
@@ -201,7 +201,7 @@ public final class BookmarkController {
             }
 
         } catch (ParserConfigurationException | SAXException | IOException | TransformerException e) {
-            (new Alert(Alert.AlertType.ERROR, "This bookmark cannot be deleted.", ButtonType.CLOSE)).show();
+            Alerts.error("The bookmarks cannot be deleted");
         }
     }
 
@@ -227,7 +227,7 @@ public final class BookmarkController {
                 result.addAll(parseBookmarks(graphName, nodeList));
             }
         } catch (ParserConfigurationException | SAXException | IOException e) {
-            (new Alert(Alert.AlertType.ERROR, "The bookmarks cannot be loaded.", ButtonType.CLOSE)).show();
+            Alerts.error("The bookmarks cannot be loaded");
         }
         return result;
     }
@@ -259,7 +259,7 @@ public final class BookmarkController {
                 }
             }
         } catch (ParserConfigurationException | SAXException | IOException e) {
-            (new Alert(Alert.AlertType.ERROR, "The bookmarks cannot be loaded.", ButtonType.CLOSE)).show();
+            Alerts.error("The bookmarks cannot be loaded");
         }
         return result;
     }
