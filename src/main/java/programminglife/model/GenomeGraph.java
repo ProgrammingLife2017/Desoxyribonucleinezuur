@@ -101,9 +101,9 @@ public class GenomeGraph implements Graph {
     }
 
     @Override
-    public Collection<Genome> getGenomes(Node node) {
+    public Set<Genome> getGenomes(Node node) {
+        // TODO: implement
         return null;
-        //TODO
     }
 
     @Override
