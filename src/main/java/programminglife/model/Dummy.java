@@ -65,6 +65,16 @@ public class Dummy implements Node {
 
     @Override
     public int getSequenceLength() {
-        return this.getSequenceLength();
+        return 0;
     }
+
+    @Override
+    public void setSequence(String sequence) {}
+
+    @Override
+    public String getSequence() {
+        return "";
+    }
+
+
 }

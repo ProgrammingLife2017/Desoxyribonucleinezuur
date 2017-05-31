@@ -203,7 +203,7 @@ public class DrawableNode extends Rectangle {
     public String getSequence() {
         StringBuilder result = new StringBuilder();
         for (Node n : this.nodes) {
-            result.append(DataManager.getSequence(n.getIdentifier()));
+            result.append(n.getSequence());
         }
         return result.toString();
     }

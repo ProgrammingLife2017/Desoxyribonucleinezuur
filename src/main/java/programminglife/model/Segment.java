@@ -57,7 +57,7 @@ public class Segment implements Node {
     @Override
     public int getSequenceLength() {
         if (sequenceLength == -1) {
-            this.sequenceLength = DataManager.getSequenceLength(this.id);
+            this.sequenceLength = this.graph.getSequenceLength(this.id);
         }
         return sequenceLength;
     }

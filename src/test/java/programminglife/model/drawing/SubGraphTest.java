@@ -2,7 +2,9 @@ package programminglife.model.drawing;
 
 import org.junit.*;
 import programminglife.model.*;
+import programminglife.parser.Cache;
 import programminglife.parser.GraphParser;
+import programminglife.utility.InitFXThread;
 
 import java.io.File;
 import java.util.*;
@@ -14,8 +16,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeThat;
 
 public class SubGraphTest {
-    private static final String TEST_DB = "test.db";
-
     GenomeGraph graph;
     DrawableNode centerNode;
 
@@ -23,7 +23,7 @@ public class SubGraphTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        DataManager.initialize(TEST_DB);
+        InitFXThread.setupClass();
 
         TEST_PATH = new File(GenomeGraphTest.class.getResource("/test.gfa").toURI()).getAbsolutePath();
     }
@@ -40,12 +40,12 @@ public class SubGraphTest {
 
     @After
     public void tearDown() throws Exception {
-        DataManager.clearDB(TEST_DB);
+        graph.removeCache();
     }
 
     @AfterClass
     public static void tearDownClass() throws Exception {
-        DataManager.removeDB(TEST_DB);
+        Cache.removeDB(TEST_PATH);
     }
 
     @Test

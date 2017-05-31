@@ -49,4 +49,6 @@ public interface Node {
     public Collection<Genome> getGenomes();
     public int getSequenceLength();
     void setSequence(String sequence);
+
+    String getSequence();
 }

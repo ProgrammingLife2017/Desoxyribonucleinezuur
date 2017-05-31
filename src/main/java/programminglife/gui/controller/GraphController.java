@@ -3,18 +3,12 @@ package programminglife.gui.controller;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import jp.uphy.javafx.console.ConsoleView;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
 import org.jetbrains.annotations.NotNull;
 import programminglife.model.GenomeGraph;
 import programminglife.model.Segment;
 import programminglife.model.XYCoordinate;
 import programminglife.model.drawing.DrawableNode;
 import programminglife.model.drawing.SubGraph;
-import programminglife.utility.Console;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Created by Martijn van Meerten on 8-5-2017.
@@ -37,11 +31,6 @@ public class GraphController {
         this.graph = graph;
         this.grpDrawArea = grpDrawArea;
     }
-
-    public void setConsole(ConsoleView console) {
-        this.console = console;
-    }
-
 
     public void draw(int centerNode, int radius) {
         Segment centerSegment = new Segment(graph, centerNode);
