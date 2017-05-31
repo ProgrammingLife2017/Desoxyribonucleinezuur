@@ -1,6 +1,6 @@
 package programminglife.gui.controller;
 
-import javafx.application.Platform;
+import javafx.animation.PauseTransition;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -17,8 +17,8 @@ import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import jp.uphy.javafx.console.ConsoleView;
-import org.jetbrains.annotations.NotNull;
 import programminglife.ProgrammingLife;
 import programminglife.model.GenomeGraph;
 import programminglife.model.exception.UnknownTypeException;
@@ -131,7 +131,7 @@ public class GuiController implements Observer {
                 this.setGraph(graph);
             } else if (arg instanceof Exception) {
                 Exception e = (Exception) arg;
-                Platform.runLater(() -> Alerts.error(e.getMessage()).show());
+                Alerts.error(e.getMessage());
             }
         } else if (o instanceof FileProgressCounter) {
             progressBar.setVisible(true);
@@ -139,6 +139,10 @@ public class GuiController implements Observer {
             this.getProgressBar().setProgress(progress.percentage());
             if (progressBar.getProgress() == 1.0d) {
                 progressBar.setVisible(false);
+                //Safety check of 2 seconds before drawing the bookmark. Give the cpu some time to catch up.
+                PauseTransition p = new PauseTransition(Duration.seconds(0.3));
+                p.setOnFinished(e -> btnDraw.fire());
+                p.play();
             }
         }
     }
@@ -147,13 +151,14 @@ public class GuiController implements Observer {
      * Set the graph for this GUIController.
      * @param graph Graph to use.
      */
-    @NotNull
     public void setGraph(GenomeGraph graph) {
         this.graphController.setGraph(graph);
         disableGraphUIElements(graph == null);
 
-        Console.println("[%s] Graph was set to %s.", Thread.currentThread().getName(), graph.getID());
-        Console.println("[%s] The graph has %d nodes", Thread.currentThread().getName(), graph.size());
+        if (graph != null) {
+            Console.println("[%s] Graph was set to %s.", Thread.currentThread().getName(), graph.getID());
+            Console.println("[%s] The graph has %d nodes", Thread.currentThread().getName(), graph.size());
+        }
     }
 
     /**
@@ -166,7 +171,7 @@ public class GuiController implements Observer {
             //This will always happen if a user has used the program before.
             //Therefore it is unnecessary to handle further.
         } catch (IOException e) {
-            Alerts.error("This file can't be opened").show();
+            Alerts.error("This file can't be opened");
             return;
         }
         if (recentFile != null) {
@@ -179,16 +184,16 @@ public class GuiController implements Observer {
                             file = new File(mi.getText());
                             openFile(file);
                         } catch (UnknownTypeException e) {
-                            Alerts.error("This file is malformed and cannot be parsed").show();
+                            Alerts.error("This file is malformed and cannot be parsed");
                         } catch (IOException e) {
-                            Alerts.error("This file can't be opened").show();
+                            Alerts.error("This file can't be opened");
                         }
                     });
                     menuRecent.getItems().add(mi);
                     recentItems = recentItems.concat(next + System.getProperty("line.separator"));
                 }
             } catch (FileNotFoundException e) {
-                Alerts.error("This file can't be found").show();
+                Alerts.error("This file can't be found");
             }
         }
     }
@@ -214,11 +219,11 @@ public class GuiController implements Observer {
                     updateRecent();
                 }
             } catch (FileNotFoundException e) {
-                Alerts.error("This file can't be found").show();
+                Alerts.error("This file can't be found");
             } catch (IOException e) {
-                Alerts.error("This file can't be opened").show();
+                Alerts.error("This file can't be opened");
             } catch (UnknownTypeException e) {
-                Alerts.error("This file is malformed and cannot be parsed").show();
+                Alerts.error("This file is malformed and cannot be parsed");
             }
         });
 
@@ -239,7 +244,7 @@ public class GuiController implements Observer {
                 initRecent();
             }
         } catch (IOException e) {
-            Alerts.error("This file can't be updated").show();
+            Alerts.error("This file can't be updated");
         }
     }
 
@@ -266,7 +271,7 @@ public class GuiController implements Observer {
                 bookmarkDialogStage.initOwner(ProgrammingLife.getStage());
                 bookmarkDialogStage.showAndWait();
             } catch (IOException e) {
-                Alerts.error("The bookmarks file can't be opened").show();
+                Alerts.error("The bookmarks file can't be opened");
             }
         });
     }
@@ -342,7 +347,7 @@ public class GuiController implements Observer {
                 centerNode = Integer.parseInt(txtCenterNode.getText());
                 maxDepth = Integer.parseInt(txtMaxDrawDepth.getText());
             } catch (NumberFormatException e) {
-                Alerts.warning("Input is not a number, try again with a number as input.").show();
+                Alerts.warning("Input is not a number, try again with a number as input.");
             }
 
             if (graphController.getGraph().contains(centerNode)) {
@@ -351,7 +356,7 @@ public class GuiController implements Observer {
                 Console.println("[%s] Graph drawn.", Thread.currentThread().getName());
             } else {
                 Alerts.warning("The centernode is not a existing node, "
-                        + "try again with a number that exists as a node.").show();
+                        + "try again with a number that exists as a node.");
             }
         });
 
@@ -410,7 +415,7 @@ public class GuiController implements Observer {
             bookmarkDialogStage.initOwner(ProgrammingLife.getStage());
             bookmarkDialogStage.showAndWait();
         } catch (IOException e) {
-            Alerts.error("This bookmark cannot be created.").show();
+            Alerts.error("This bookmark cannot be created.");
         }
     }
 

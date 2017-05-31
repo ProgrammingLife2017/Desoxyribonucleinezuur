@@ -61,8 +61,7 @@ public class GraphParser extends Observable implements Runnable {
             } catch (IOException eio) {
                 Platform.runLater(() ->
                         Alerts.error(String.format("An error occured while removing the cache. "
-                                + "Please remove %s manually.", Cache.toDBFile(this.getGraph().getID()))).show()
-                );
+                                + "Please remove %s manually.", Cache.toDBFile(this.getGraph().getID()))));
             }
             this.setChanged();
             this.notifyObservers(e);

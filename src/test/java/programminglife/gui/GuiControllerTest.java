@@ -1,6 +1,5 @@
 package programminglife.gui;
 
-import javafx.application.Platform;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
@@ -66,7 +65,6 @@ public class GuiControllerTest extends FxRobot {
 
     @AfterClass
     public static void tearDownClass() throws Exception {
-        Platform.exit();
         Console.setOut(new PrintStream(System.out));
         Cache.removeDB(TEST_DB);
         Cache.removeDB(TEST_File);
