@@ -213,10 +213,13 @@ public class SubGraph {
         }
         List<Layer> layers = findLayers();
 
-        int x = 0;
+        int x = 50;
         for (Layer layer : layers) {
-            int y = 0;
+            int y = 50;
             for (DrawableNode d : layer) {
+                //You can not access elements in a set, this is a workaround.
+                this.nodes.remove(d);
+                this.nodes.add(d);
                 d.setLocation(new XYCoordinate(x, y));
                 y += LINE_PADDING;
             }
@@ -234,7 +237,7 @@ public class SubGraph {
     private List<Layer> findLayers() {
         List<DrawableNode> sorted = topoSort();
         Map<DrawableNode, Integer> nodeLevel = new HashMap<>();
-        List<Layer> res = new ArrayList<>();
+        List<Layer> layerList = new ArrayList<>();
 
         for (DrawableNode node : sorted) {
             int maxParentLevel = -1;
@@ -248,14 +251,14 @@ public class SubGraph {
             }
             maxParentLevel++; // we want this node one level higher than the highest parent.
             nodeLevel.put(node, maxParentLevel);
-            if (res.size() <= maxParentLevel) {
-                res.add(new Layer());
+            if (layerList.size() <= maxParentLevel) {
+                layerList.add(new Layer());
             }
-            res.get(maxParentLevel).add(node);
+            layerList.get(maxParentLevel).add(node);
         }
 
         // TODO: create dummy nodes for edges
-        return res;
+        return layerList;
     }
 
     /**

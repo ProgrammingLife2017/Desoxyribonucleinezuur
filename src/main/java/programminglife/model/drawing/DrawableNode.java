@@ -256,6 +256,10 @@ public class DrawableNode extends Rectangle {
         for (Node n: this.nodes) {
             stringBuilder.append(n.getIdentifier());
             stringBuilder.append(" ");
+            stringBuilder.append("Location: ");
+            stringBuilder.append(this.getLocation().getX());
+            stringBuilder.append(",");
+            stringBuilder.append(this.getLocation().getY());
 
         }
         return stringBuilder.toString();

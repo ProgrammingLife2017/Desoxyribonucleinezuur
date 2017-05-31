@@ -63,7 +63,7 @@ public class GraphController {
 
         drawableNode.setFill(Color.TRANSPARENT);
         drawableNode.setStroke(Color.BLUE);
-
+        System.out.println(drawableNode.toString());
         this.grpDrawArea.getChildren().add(drawableNode);
 
     }
