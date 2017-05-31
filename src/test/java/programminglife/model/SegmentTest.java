@@ -2,8 +2,6 @@ package programminglife.model;
 
 import org.junit.*;
 
-import java.util.HashSet;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -19,7 +17,7 @@ public class SegmentTest {
 
     @Before
     public void setUp() throws Exception {
-        node = new Segment(1, "ATCG", null);
+        node = new Segment(null, 1, "ATCG");
     }
 
     @After
@@ -36,7 +34,7 @@ public class SegmentTest {
 
     @Test
     public void NodeId() {
-        node = new Segment(8, null);
+        node = new Segment(null, 8);
 
         assertEquals(8, node.getIdentifier());
         assertEquals(null, node.getSequence());
@@ -44,7 +42,7 @@ public class SegmentTest {
 
     @Test
     public void NodeIdSequence() {
-        node = new Segment(8, "ATCG", null);
+        node = new Segment(null, 8, "ATCG");
 
         assertEquals(8, node.getIdentifier());
         assertEquals("ATCG", node.getSequence());

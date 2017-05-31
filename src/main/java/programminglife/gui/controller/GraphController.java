@@ -2,7 +2,6 @@ package programminglife.gui.controller;
 
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import jp.uphy.javafx.console.ConsoleView;
 import programminglife.model.GenomeGraph;
 import programminglife.model.Segment;
@@ -39,7 +38,7 @@ public class GraphController {
 
 
     public void draw(int centerNode, int radius) {
-        Segment centerSegment = new Segment(centerNode, graph);
+        Segment centerSegment = new Segment(graph, centerNode);
         DrawableNode center = new DrawableNode(centerSegment);
         SubGraph subGraph = new SubGraph(center, radius);
         subGraph.layout();

@@ -15,20 +15,20 @@ public class Segment implements Node {
 
     /**
      * Constructor for a node with an id.
-     * @param id int.
      * @param graph The {@link GenomeGraph}.
+     * @param id int.
      */
-    public Segment(int id, GenomeGraph graph) {
-        this(id, null, graph);
+    public Segment(GenomeGraph graph, int id) {
+        this(graph, id, null);
     }
 
     /**
      * Constructor for a node with and id and sequence.
+     * @param graph The {@link GenomeGraph}.
      * @param id int.
      * @param sequence String.
-     * @param graph The {@link GenomeGraph}.
      */
-    public Segment(int id, String sequence, GenomeGraph graph) {
+    public Segment(GenomeGraph graph, int id, String sequence) {
         this.id = id;
         this.graph = graph;
         if (sequence != null) {

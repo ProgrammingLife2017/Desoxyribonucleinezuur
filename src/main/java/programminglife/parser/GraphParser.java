@@ -167,7 +167,7 @@ public class GraphParser extends Observable implements Runnable {
         // properties[3] is +/-
         // rest of properties is unused
 
-        Node segment = new Segment(segmentID, sequence, this.graph);
+        Node segment = new Segment(this.graph, segmentID, sequence);
         if (!this.getGraph().contains(segmentID)) {
             this.getGraph().addNode(segment);
         }
@@ -185,8 +185,8 @@ public class GraphParser extends Observable implements Runnable {
         int destinationId = Integer.parseInt(properties[3]);
         // properties[4] and further are unused
 
-        Node sourceNode = new Segment(sourceId, this.graph);
-        Node destinationNode = new Segment(destinationId, this.graph);
+        Node sourceNode = new Segment(this.graph, sourceId);
+        Node destinationNode = new Segment(this.graph, destinationId);
         if (!this.getGraph().contains(sourceId)) {
             this.getGraph().addNode(sourceNode);
         }

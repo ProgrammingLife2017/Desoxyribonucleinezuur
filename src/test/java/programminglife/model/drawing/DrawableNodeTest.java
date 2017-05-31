@@ -22,7 +22,7 @@ public class DrawableNodeTest {
 
     @Before
     public void setUp() throws Exception {
-        node = new DrawableNode(new Segment(1, "ATCG", null));
+        node = new DrawableNode(new Segment(null, 1, "ATCG"));
     }
 
     @After

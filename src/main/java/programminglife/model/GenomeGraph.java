@@ -1,6 +1,5 @@
 package programminglife.model;
 
-import org.apache.commons.lang3.NotImplementedException;
 import programminglife.model.exception.NodeExistsException;
 
 import java.util.*;
@@ -87,7 +86,7 @@ public class GenomeGraph implements Graph {
 
     @Override
     public Set<Segment> getChildren(int nodeID) {
-        return this.children.get(nodeID).stream().map(id -> new Segment(id, this)).collect(Collectors.toSet());
+        return this.children.get(nodeID).stream().map(id -> new Segment(this, id)).collect(Collectors.toSet());
     }
 
     @Override
@@ -97,7 +96,7 @@ public class GenomeGraph implements Graph {
 
     @Override
     public Set<Segment> getParents(int nodeID) {
-        return this.parents.get(nodeID).stream().map(id -> new Segment(id, this)).collect(Collectors.toSet());
+        return this.parents.get(nodeID).stream().map(id -> new Segment(this, id)).collect(Collectors.toSet());
     }
 
     @Override

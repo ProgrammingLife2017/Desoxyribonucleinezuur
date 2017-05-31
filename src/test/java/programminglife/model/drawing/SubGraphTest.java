@@ -35,7 +35,7 @@ public class SubGraphTest {
         graphParser.parse();
         graph = graphParser.getGraph();
 
-        centerNode = new DrawableNode(new Segment(4, graph));
+        centerNode = new DrawableNode(new Segment(graph, 4));
     }
 
     @After
@@ -72,7 +72,7 @@ public class SubGraphTest {
 
         Set<DrawableNode> expected = new HashSet<>();
         for (Integer id : new int[] {1, 2, 4, 5, 6, 7, 8}) {
-            expected.add(new DrawableNode(new Segment(id, graph)));
+            expected.add(new DrawableNode(new Segment(graph, id)));
         }
 
         Set<DrawableNode> actual = sg.getNodes();
