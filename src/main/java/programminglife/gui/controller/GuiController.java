@@ -139,10 +139,6 @@ public class GuiController implements Observer {
             this.getProgressBar().setProgress(progress.percentage());
             if (progressBar.getProgress() == 1.0d) {
                 progressBar.setVisible(false);
-                //Safety check of 2 seconds before drawing the bookmark. Give the cpu some time to catch up.
-                PauseTransition p = new PauseTransition(Duration.seconds(0.3));
-                p.setOnFinished(e -> btnDraw.fire());
-                p.play();
             }
         }
     }
@@ -493,6 +489,16 @@ public class GuiController implements Observer {
 
     public void setFile(File file) {
         this.file = file;
+    }
+
+    /**
+     * Is called when a bookmark is loaded to draw the bookmark.
+     */
+    void bookmarkLoaded() {
+        //Safety check of 0.1 seconds before drawing the bookmark. Give the cpu some time to catch up.
+        PauseTransition p = new PauseTransition(Duration.seconds(0.1));
+        p.setOnFinished(e -> btnDraw.fire());
+        p.play();
     }
 
     GraphController getGraphController() {

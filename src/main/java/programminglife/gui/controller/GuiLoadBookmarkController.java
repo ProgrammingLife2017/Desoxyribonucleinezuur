@@ -1,17 +1,13 @@
 package programminglife.gui.controller;
 
-import javafx.animation.PauseTransition;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 import programminglife.ProgrammingLife;
 import programminglife.controller.BookmarkController;
 import programminglife.model.Bookmark;
@@ -89,12 +85,12 @@ public class GuiLoadBookmarkController {
                     guiController.openFile(file);
                 } catch (IOException | UnknownTypeException e) {
                     Alerts.error("File location has changed");
-                } finally {
-                    guiController.getGraphController().clear();
-                    guiController.setText(bookmark.getNodeID(), bookmark.getRadius());
-                    ((Stage) btnOpenBookmark.getScene().getWindow()).close();
                 }
             }
+            guiController.getGraphController().clear();
+            guiController.setText(bookmark.getNodeID(), bookmark.getRadius());
+            ((Stage) btnOpenBookmark.getScene().getWindow()).close();
+            guiController.bookmarkLoaded();
             Console.println("Loaded bookmark " + bookmark.getBookmarkName()
                     + " Center Node: " + bookmark.getNodeID() + " Radius: " + bookmark.getRadius());
         }
