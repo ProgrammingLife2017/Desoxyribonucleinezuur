@@ -5,13 +5,12 @@ import programminglife.model.*;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
 
 /**
  * A {@link Segment} that also Implements {@link Drawable}.
  */
 public class DrawableNode extends Rectangle {
-    private Set<Node> nodes;
+    private Node node;
     private boolean drawDimensionsUpToDate = false;
     private Collection<DrawableNode> parents;
     private Collection<DrawableNode> children;
@@ -22,17 +21,8 @@ public class DrawableNode extends Rectangle {
      * @param node The segment to create this DrawableSegment from.
      */
     public DrawableNode(Node node) {
-        this.nodes = new HashSet<>();
-        nodes.add(node);
+        this.node = node;
         this.setDrawDimensions();
-    }
-
-    /**
-     * Create a glyph.
-     * @param nodes The set of Segments this DrawableNode
-     */
-    public DrawableNode(Set<Node> nodes) {
-        this.nodes = nodes;
     }
 
 
@@ -43,11 +33,11 @@ public class DrawableNode extends Rectangle {
      */
     public Collection<DrawableEdge> getChildEdges() {
         HashSet<DrawableEdge> childEdges = new HashSet<DrawableEdge>();
-        for (Node n : nodes) {
-            for (Edge e: n.getChildEdges()) {
+
+            for (Edge e: node.getChildEdges()) {
                 childEdges.add(new DrawableEdge(e, this, new DrawableNode(e.getEnd())));
             }
-        }
+
         return childEdges;
     }
 
@@ -58,11 +48,11 @@ public class DrawableNode extends Rectangle {
      */
     public Collection<DrawableEdge> getParentEdges() {
         HashSet<DrawableEdge> parentEdges = new HashSet<DrawableEdge>();
-        for (Node n : nodes) {
-            for (Edge e : n.getParentEdges()) {
+
+            for (Edge e : node.getParentEdges()) {
                 parentEdges.add(new DrawableEdge(e, new DrawableNode(e.getStart()), this));
             }
-        }
+
         return parentEdges;
     }
 
@@ -73,11 +63,11 @@ public class DrawableNode extends Rectangle {
     public Collection<DrawableNode> getChildren() {
         if (this.children == null) {
             this.children = new HashSet<>();
-            for (Node n : this.nodes) {
-                for (Node child : n.getChildren()) {
+
+                for (Node child : node.getChildren()) {
                     children.add(new DrawableNode(child));
                 }
-            }
+
         }
         return children;
     }
@@ -89,11 +79,11 @@ public class DrawableNode extends Rectangle {
     public Collection<DrawableNode> getParents() {
         if (this.parents == null) {
             this.parents = new HashSet<>();
-            for (Node n : this.nodes) {
-                for (Node parent : n.getParents()) {
+
+                for (Node parent : node.getParents()) {
                     this.parents.add(new DrawableNode(parent));
                 }
-            }
+
         }
         return parents;
     }
@@ -194,9 +184,9 @@ public class DrawableNode extends Rectangle {
      */
     public int getSequenceLength() {
         int length = 0;
-        for (Node n : this.nodes) {
-            length += n.getSequenceLength();
-        }
+
+            length += node.getSequenceLength();
+
         return length;
     }
 
@@ -206,9 +196,9 @@ public class DrawableNode extends Rectangle {
      */
     public String getSequence() {
         StringBuilder result = new StringBuilder();
-        for (Node n : this.nodes) {
-            result.append(DataManager.getSequence(n.getIdentifier()));
-        }
+
+            result.append(DataManager.getSequence(node.getIdentifier()));
+
         return result.toString();
     }
 
@@ -251,17 +241,17 @@ public class DrawableNode extends Rectangle {
      */
     @Override
     public String toString() {
-        StringBuilder stringBuilder = new StringBuilder("");
-        stringBuilder.append("Segments: ");
-        for (Node n: this.nodes) {
-            stringBuilder.append(n.getIdentifier());
-            stringBuilder.append(" ");
-            stringBuilder.append("Location: ");
-            stringBuilder.append(this.getLocation().getX());
-            stringBuilder.append(",");
-            stringBuilder.append(this.getLocation().getY());
+        StringBuilder stringBuilder = new StringBuilder();
 
-        }
+        stringBuilder.append("Segments: ");
+        stringBuilder.append(node.getIdentifier());
+        stringBuilder.append(" ");
+        stringBuilder.append("Location: ");
+        stringBuilder.append(this.getLocation().getX());
+        stringBuilder.append(",");
+        stringBuilder.append(this.getLocation().getY());
+
+
         return stringBuilder.toString();
     }
 
@@ -270,7 +260,7 @@ public class DrawableNode extends Rectangle {
     public boolean equals(Object other) {
         if (other instanceof DrawableNode) {
             DrawableNode that = (DrawableNode) other;
-            if (that.nodes.equals(this.nodes)) {
+            if (that.node.equals(this.node)) {
                 return true;
             }
         }
