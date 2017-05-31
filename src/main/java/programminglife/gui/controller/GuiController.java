@@ -140,7 +140,7 @@ public class GuiController implements Observer {
             if (progressBar.getProgress() == 1.0d) {
                 progressBar.setVisible(false);
                 //Safety check of 2 seconds before drawing the bookmark. Give the cpu some time to catch up.
-                PauseTransition p = new PauseTransition(Duration.seconds(2));
+                PauseTransition p = new PauseTransition(Duration.seconds(0.3));
                 p.setOnFinished(e -> btnDraw.fire());
                 p.play();
             }
