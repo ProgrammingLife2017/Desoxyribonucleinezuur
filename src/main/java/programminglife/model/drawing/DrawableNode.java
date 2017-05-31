@@ -252,4 +252,16 @@ public class DrawableNode extends Rectangle {
         // TODO: improve
         return 1;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder res = new StringBuilder("DrawableNode[Nodes: ");
+        for (Node n : nodes) {
+            res.append(n.getIdentifier()).append(", ");
+        }
+        if (!nodes.isEmpty()) {
+            res.delete(res.length() - 2, res.length());
+        }
+        return res.append("]").toString();
+    }
 }
