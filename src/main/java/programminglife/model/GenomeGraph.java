@@ -1,6 +1,5 @@
 package programminglife.model;
 
-import org.apache.commons.lang3.NotImplementedException;
 import programminglife.model.exception.NodeExistsException;
 
 import java.util.*;
@@ -25,7 +24,7 @@ public class GenomeGraph implements Graph {
 
     /**
      * The constructor for a GenomeGraph.
-     * @param id String.
+     * @param id String.úú
      * @param children {@link Set} which contains the children.
      * @param parents {@link Set} which contains the parents.
      */

@@ -200,6 +200,10 @@ public class DrawableNode extends Rectangle {
         return length;
     }
 
+    /**
+     * Returns the sequence of all the segments that are part of the DrawableNode.
+     * @return A string containing all the sequences appended.
+     */
     public String getSequence() {
         StringBuilder result = new StringBuilder();
         for (Node n : this.nodes) {
@@ -240,6 +244,23 @@ public class DrawableNode extends Rectangle {
         }
         return this.getCenter().add(this.getSize().getX() / 2, 0);
     }
+
+    /**
+     * Method to return a string with information about the {@link DrawableNode}.
+     * @return a {@link String} representation of a {@link DrawableNode}.
+     */
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder("");
+        stringBuilder.append("Segments: ");
+        for (Node n: this.nodes) {
+            stringBuilder.append(n.getIdentifier());
+            stringBuilder.append(" ");
+
+        }
+        return stringBuilder.toString();
+    }
+
 
     @Override
     public boolean equals(Object other) {

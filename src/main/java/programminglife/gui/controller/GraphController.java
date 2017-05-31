@@ -2,7 +2,6 @@ package programminglife.gui.controller;
 
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import jp.uphy.javafx.console.ConsoleView;
 import programminglife.model.GenomeGraph;
 import programminglife.model.Segment;
@@ -37,7 +36,11 @@ public class GraphController {
         this.console = console;
     }
 
-
+    /**
+     * Method to draw the subgraph decided by a center node and radius.
+     * @param centerNode the node of which the radius starts.
+     * @param radius the amount of layers to be drawn.
+     */
     public void draw(int centerNode, int radius) {
         Segment centerSegment = new Segment(centerNode, graph);
         DrawableNode center = new DrawableNode(centerSegment);
@@ -48,17 +51,18 @@ public class GraphController {
         }
     }
 
+    /**
+     * Draws a node on the location it has.
+     * @param drawableNode {@link DrawableNode} is the node to be drawn.
+     */
     public void drawNode(DrawableNode drawableNode) {
         drawableNode.setOnMouseClicked(event -> {
             System.out.println(drawableNode.getSequence());
-            System.out.printf("%s (location %s, size %s) %s%n",
-                    drawableNode.toString(),
-                    drawableNode.getLocation(),
-                    drawableNode.getSize());
+            System.out.println(drawableNode.toString());
         });
 
         drawableNode.setFill(Color.TRANSPARENT);
-        drawableNode.setStroke(Color.DARKRED);
+        drawableNode.setStroke(Color.BLUE);
 
         this.grpDrawArea.getChildren().add(drawableNode);
 
