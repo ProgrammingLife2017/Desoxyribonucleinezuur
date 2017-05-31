@@ -1,19 +1,20 @@
 package programminglife.model;
 
 import org.junit.*;
+import programminglife.utility.InitFXThread;
+import programminglife.parser.Cache;
 
 import java.io.File;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Created by toinehartman on 03/05/2017.
  */
 public class GenomeGraphTest {
-    private static final String TEST_DB = "test.db";
 
+
+    private static final String TEST_DB = "test.db";
     GenomeGraph graph;
     Segment node;
     String link;
@@ -22,8 +23,7 @@ public class GenomeGraphTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        DataManager.initialize(TEST_DB);
-
+        InitFXThread.setupClass();
         TEST_PATH = new File(GenomeGraphTest.class.getResource("/test.gfa").toURI()).getAbsolutePath();
         TEST_FAULTY_PATH = new File(
                 GenomeGraphTest.class.getClass().getResource("/test-faulty.gfa").toURI()
@@ -40,12 +40,12 @@ public class GenomeGraphTest {
 
     @After
     public void tearDown() throws Exception {
-        DataManager.clearDB(TEST_DB);
+        graph.removeCache();
     }
 
     @AfterClass
     public static void tearDownClass() throws Exception {
-        DataManager.removeDB(TEST_DB);
+        Cache.removeDB(TEST_DB);
     }
 
     @Test

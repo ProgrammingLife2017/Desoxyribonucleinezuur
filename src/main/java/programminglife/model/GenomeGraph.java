@@ -1,7 +1,10 @@
 package programminglife.model;
 
+import org.jetbrains.annotations.NotNull;
 import programminglife.model.exception.NodeExistsException;
+import programminglife.parser.Cache;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -10,16 +13,21 @@ import java.util.stream.Collectors;
  */
 public class GenomeGraph implements Graph {
     private String id;
+    private Cache cache;
 
+    // TODO cache graph structure
     private Map<Integer, Set<Integer>> children;
     private Map<Integer, Set<Integer>> parents;
 
+    // TODO cache genomes
+    private Map<String, Genome> genomes;
+
     /**
-     * Create a genomeGraph with name.
-     * @param name name of the graph
+     * Create a genomeGraph with id.
+     * @param id id of the graph
      */
-    public GenomeGraph(String name) {
-        this(name, new HashMap<>(), new HashMap<>());
+    public GenomeGraph(String id) {
+        this(id, new HashMap<>(), new HashMap<>());
     }
 
     /**
@@ -29,9 +37,11 @@ public class GenomeGraph implements Graph {
      * @param parents {@link Set} which contains the parents.
      */
     public GenomeGraph(String id, Map<Integer, Set<Integer>> children, Map<Integer, Set<Integer>> parents) {
+        this.id = id;
         this.children = children;
         this.parents = parents;
-        this.id = id;
+        this.genomes = new HashMap<>();
+        this.cache = new Cache(id);
     }
 
     /**
@@ -137,5 +147,120 @@ public class GenomeGraph implements Graph {
      */
     private void addParent(Node node, Node parent) {
         this.parents.get(node.getIdentifier()).add(parent.getIdentifier());
+    }
+
+    /**
+     * Add a {@link Genome} to this {@link GenomeGraph}.
+     * @param genome the {@link Genome} to add
+     */
+    public void addGenome(Genome genome) {
+        this.cache.addGenomeName(genome.getName());
+        this.genomes.put(genome.getName(), genome);
+    }
+
+    /**
+     * Get the name of a {@link Genome}.
+     * @param id the id of the {@link Genome} as it occurs in the GFA header
+     * @return its name as described in the GFA header
+     */
+    public String getGenomeName(int id) {
+        return this.cache.getGenomeName(id);
+    }
+
+    /**
+     * Get the {@link Genome} by name.
+     * @param name the name as in the GFA header
+     * @return the {@link Genome} with this name
+     */
+    public Genome getGenome(String name) {
+        Genome res = this.genomes.get(name);
+        if (res != null) {
+            return res;
+        } else {
+            throw new NoSuchElementException(
+                    String.format("The Graph %s does not contain a genome with name %s",
+                            this.getID(), name));
+        }
+    }
+
+    /**
+     * Get the {@link Genome}s of this {@link GenomeGraph}.
+     * @return a {@link Collection} of {@link Genome}s
+     */
+    public Collection<Genome> getGenomes() {
+        return this.genomes.values();
+    }
+
+    /**
+     * Check if this {@link GenomeGraph} contains a {@link Genome}.
+     * @param genomeName the name to look up
+     * @return if this {@link Genome} is in there
+     */
+    public boolean containsGenome(String genomeName) {
+        return this.genomes.containsKey(genomeName);
+    }
+
+    /**
+     * Set the sequence for a {@link Segment}.
+     * @param nodeID the ID of the {@link Segment}
+     * @param sequence the sequence {@link String}
+     */
+    @NotNull
+    public void setSequence(int nodeID, String sequence) {
+        this.cache.setSequence(nodeID, sequence);
+    }
+
+    /**
+     * Get the sequence of a {@link Segment}.
+     * @param nodeID the ID of the {@link Segment}
+     * @return the sequence {@link String}
+     */
+    @NotNull
+    public String getSequence(int nodeID) {
+        return this.cache.getSequence(nodeID);
+    }
+
+    /**
+     * Get the sequence length of a {@link Segment}.
+     * @param nodeID the ID of the {@link Segment}
+     * @return the sequence length {@link String}
+     */
+    @NotNull
+    public int getSequenceLength(int nodeID) {
+        return this.cache.getSequenceLength(nodeID);
+    }
+
+    /**
+     * Roll back the latest changes to the cache.
+     * @throws IOException when something strange happens during deletion
+     */
+    public void rollback() throws IOException {
+        this.cache.rollback();
+    }
+
+    /**
+     * Commit all changes to the cache.
+     */
+    public void commit() {
+        this.cache.commit();
+    }
+
+    /**
+     * Remove the cache file for this {@link GenomeGraph}.
+     * @throws IOException if something strange happens
+     */
+    public void removeCache() throws IOException {
+        this.cache.removeDB();
+    }
+
+    /**
+     * Closes the cache of the {@link GenomeGraph}.
+     * @throws IOException when strange things happen
+     */
+    public void close() throws IOException {
+        if (this.cache != null) {
+            this.cache.close();
+            this.cache = null;
+        }
     }
 }

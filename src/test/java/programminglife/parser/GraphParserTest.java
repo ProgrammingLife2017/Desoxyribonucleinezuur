@@ -1,10 +1,11 @@
 package programminglife.parser;
 
 import org.junit.*;
-import programminglife.model.DataManager;
+import programminglife.utility.InitFXThread;
+import programminglife.model.Genome;
 import programminglife.model.GenomeGraph;
 import programminglife.model.GenomeGraphTest;
-import programminglife.model.Graph;
+import programminglife.model.Segment;
 import programminglife.model.exception.UnknownTypeException;
 
 import java.io.File;
@@ -17,8 +18,11 @@ import static org.junit.Assert.*;
  * Created by toinehartman on 16/05/2017.
  */
 public class GraphParserTest implements Observer {
-    private static final String TEST_DB = "test.db";
-    private static final String TEST_FAULTY_DB = "test-faulty.db";
+
+    private static final String TEST_DB = "test.gfa.db";
+    private static final String TEST_FAULTY_DB = "test-faulty.gfa.db";
+    private static final String TEST_DB2 = "test.db";
+    private static final String TEST_FAULTY_DB2 = "test-faulty.db";
 
     private static String TEST_PATH, TEST_FAULTY_PATH;
 
@@ -27,8 +31,7 @@ public class GraphParserTest implements Observer {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        DataManager.initialize(TEST_DB);
-
+        InitFXThread.setupClass();
         TEST_PATH = new File(GenomeGraphTest.class.getResource("/test.gfa").toURI()).getAbsolutePath();
         TEST_FAULTY_PATH = new File(
                 GenomeGraphTest.class.getClass().getResource("/test-faulty.gfa").toURI()
@@ -39,6 +42,7 @@ public class GraphParserTest implements Observer {
     public void setUp() throws Exception {
         File testFile = new File(TEST_PATH);
         graphParser = new GraphParser(testFile);
+        graphParser.getGraph().addGenome(new Genome("TKK_04_0031.fasta"));
 
         File faultyTestFile = new File(TEST_FAULTY_PATH);
         faultyGraphParser = new GraphParser(faultyTestFile);
@@ -49,14 +53,16 @@ public class GraphParserTest implements Observer {
 
     @After
     public void tearDown() throws Exception {
-        DataManager.clearDB(TEST_DB);
-        DataManager.clearDB(TEST_FAULTY_DB);
+        graphParser.getGraph().removeCache();
+        faultyGraphParser.getGraph().removeCache();
     }
 
     @AfterClass
     public static void tearDownClass() throws Exception {
-        DataManager.removeDB(TEST_DB);
-        DataManager.removeDB(TEST_FAULTY_DB);
+        Cache.removeDB(TEST_DB);
+        Cache.removeDB(TEST_FAULTY_DB);
+        Cache.removeDB(TEST_DB2);
+        Cache.removeDB(TEST_FAULTY_DB2);
     }
 
     @Test(expected = UnknownTypeException.class)
@@ -78,12 +84,12 @@ public class GraphParserTest implements Observer {
     }
 
     @Test
-    public void parseSegmentTest() {
+    public void parseSegmentTest() throws UnknownTypeException {
         graphParser.parseSegment(nodeLine);
-        Graph g = graphParser.getGraph();
+        GenomeGraph g = graphParser.getGraph();
 
         assertTrue(g.contains(6));
-        assertEquals("C", DataManager.getSequence(6));
+        assertEquals("C", (new Segment(g, 6)).getSequence());
         assertEquals(0, g.getParents(6).size());
         assertEquals(0, g.getChildren(6).size());
     }
@@ -112,8 +118,7 @@ public class GraphParserTest implements Observer {
                 GenomeGraph graph = (GenomeGraph) arg;
 
                 assertEquals(new File(TEST_PATH).getName(), graph.getID());
-                // TODO fix this test
-//                assertEquals("GTC", DataManager.getSequence(8));
+                assertEquals("GTC", graph.getSequence(8));
             } else if (arg instanceof Exception) {
                 throw new RuntimeException((Exception) arg);
             }

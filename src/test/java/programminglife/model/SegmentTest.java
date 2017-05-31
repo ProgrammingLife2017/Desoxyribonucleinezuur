@@ -1,48 +1,53 @@
 package programminglife.model;
 
 import org.junit.*;
+import programminglife.utility.InitFXThread;
+import programminglife.parser.Cache;
+
+import java.util.NoSuchElementException;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class SegmentTest {
     private static final String TEST_DB = "test.db";
 
     Segment node;
+    GenomeGraph g;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        DataManager.initialize(TEST_DB);
+        InitFXThread.setupClass();
     }
 
     @Before
     public void setUp() throws Exception {
-        node = new Segment(null, 1, "ATCG");
+        g = new GenomeGraph("segment test graph");
+        node = new Segment(g, 1, "ATCG");
     }
 
     @After
     public void tearDown() throws Exception {
-        DataManager.clearDB(TEST_DB);
+        g.removeCache();
     }
 
     @AfterClass
     public static void tearDownClass() throws Exception {
-        DataManager.removeDB(TEST_DB);
+        Cache.removeDB(TEST_DB);
     }
 
 
 
-    @Test
+    @Test(expected = NoSuchElementException.class)
     public void NodeId() {
-        node = new Segment(null, 8);
+        node = new Segment(g, 8);
 
         assertEquals(8, node.getIdentifier());
-        assertEquals(null, node.getSequence());
+        node.getSequence();
     }
 
     @Test
     public void NodeIdSequence() {
-        node = new Segment(null, 8, "ATCG");
+        node = new Segment(g, 8, "ATCG");
 
         assertEquals(8, node.getIdentifier());
         assertEquals("ATCG", node.getSequence());
