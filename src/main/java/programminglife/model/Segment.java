@@ -11,7 +11,7 @@ import java.util.HashSet;
 public class Segment implements Node {
     private int id;
     private GenomeGraph graph;
-    private int sequenceLength;
+    private int sequenceLength = -1;
 
     /**
      * Constructor for a node with an id.
@@ -51,12 +51,12 @@ public class Segment implements Node {
      */
     public void setSequence(String sequence) {
         DataManager.setSequence(this.id, sequence);
-
+        sequenceLength = sequence.length();
     }
 
     @Override
     public int getSequenceLength() {
-        if (sequenceLength == 0) {
+        if (sequenceLength == -1) {
             this.sequenceLength = DataManager.getSequenceLength(this.id);
         }
         return sequenceLength;
