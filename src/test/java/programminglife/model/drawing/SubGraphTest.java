@@ -2,16 +2,16 @@ package programminglife.model.drawing;
 
 import org.junit.*;
 import programminglife.model.*;
+import programminglife.parser.GraphParser;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeThat;
 
 public class SubGraphTest {
     private static final String TEST_DB = "test.db";
@@ -19,21 +19,22 @@ public class SubGraphTest {
     GenomeGraph graph;
     DrawableNode centerNode;
 
-    private static String TEST_PATH, TEST_FAULTY_PATH;
+    private static String TEST_PATH;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
         DataManager.initialize(TEST_DB);
 
         TEST_PATH = new File(GenomeGraphTest.class.getResource("/test.gfa").toURI()).getAbsolutePath();
-        TEST_FAULTY_PATH = new File(
-                GenomeGraphTest.class.getClass().getResource("/test-faulty.gfa").toURI()
-        ).getAbsolutePath();
     }
 
     @Before
     public void setUp() throws Exception {
-        graph = new GenomeGraph("test graph");
+        File testFile = new File(TEST_PATH);
+        GraphParser graphParser = new GraphParser(testFile);
+        graphParser.parse();
+        graph = graphParser.getGraph();
+
         centerNode = new DrawableNode(new Segment(4, graph));
     }
 
@@ -46,6 +47,40 @@ public class SubGraphTest {
     public static void tearDownClass() throws Exception {
         DataManager.removeDB(TEST_DB);
     }
+
+    @Test
+    public void testConstructorOnlyCenterNode() throws Exception {
+        SubGraph sg = new SubGraph(centerNode, 0);
+        Set<DrawableNode> nodes = sg.getNodes();
+        assertEquals(1, nodes.size());
+        assertTrue(nodes.contains(centerNode));
+    }
+
+    @Test
+    public void testConstructorRadius1() throws Exception {
+        SubGraph sg = new SubGraph(centerNode, 1);
+        Set<DrawableNode> nodes = sg.getNodes();
+        assertEquals(3, nodes.size());
+        assertTrue(nodes.contains(centerNode));
+        assertTrue(nodes.containsAll(centerNode.getChildren()));
+        assertTrue(nodes.containsAll(centerNode.getParents()));
+    }
+
+    @Test
+    public void testConstructorRadius4() throws Exception {
+        SubGraph sg = new SubGraph(centerNode, 4);
+
+        Set<DrawableNode> expected = new HashSet<>();
+        for (Integer id : new int[] {1, 2, 4, 5, 6, 7, 8}) {
+            expected.add(new DrawableNode(new Segment(id, graph)));
+        }
+
+        Set<DrawableNode> actual = sg.getNodes();
+        assertEquals(7, actual.size());
+        assertEquals(expected, actual);
+    }
+
+
 
     @Test
     public void topoSortTest() throws Exception {
@@ -64,7 +99,7 @@ public class SubGraphTest {
     }
 
     @Test
-    public void atLocationTest() {
+    public void atLocationNodeTest() {
         SubGraph sg = new SubGraph(centerNode, 0); // only include centerNode
         sg.layout();
         double x = centerNode.getX();
@@ -88,5 +123,26 @@ public class SubGraphTest {
         assertNull(sg.atLocation(x + width + 1, y));
         assertNull(sg.atLocation(x, y + height + 1));
         assertNull(sg.atLocation(x + width + 1, y + height + 1));
+    }
+
+    @Test
+    public void atLocationEdgeTest() throws Exception {
+        SubGraph sg = new SubGraph(centerNode, 1); // only include node 2, 4 and 5
+        sg.layout();
+        Collection<DrawableEdge> parentsEdges = centerNode.getParentEdges();
+        assumeThat(parentsEdges.size(), is(1));
+        List<DrawableEdge> list = new ArrayList<>(parentsEdges);
+        DrawableEdge parentEdge = list.get(0);
+        DrawableNode parent = parentEdge.getStart();
+        XYCoordinate parentPoint = parent.getLeftBorderCenter();
+        XYCoordinate childPoint = centerNode.getRightBorderCenter();
+
+        // check that some points on the line between childPoint and ParentPoint are on the edge
+        assertTrue(parentEdge == sg.atLocation(childPoint));
+        assertTrue(parentEdge == sg.atLocation(parentPoint));
+        assertTrue(parentEdge == sg.atLocation(
+                (parentPoint.getX() + childPoint.getX()) / 2,
+                (parentPoint.getY() + childPoint.getY()) / 2
+        ));
     }
 }
