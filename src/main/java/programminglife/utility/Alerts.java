@@ -34,7 +34,7 @@ public final class Alerts {
      * @param message String containing the message to be given to the user.
      */
     public static void warning(String message) {
-        Platform.runLater(() -> new Alert(Alert.AlertType.WARNING, message, ButtonType.CLOSE));
+        Platform.runLater(() -> new Alert(Alert.AlertType.WARNING, message, ButtonType.CLOSE).show());
     }
 
 
@@ -43,7 +43,7 @@ public final class Alerts {
      * @param message String containing the message to be given to the user.
      */
     public static void info(String message) {
-        Platform.runLater(() -> new Alert(Alert.AlertType.INFORMATION, message, ButtonType.CLOSE));
+        Platform.runLater(() -> new Alert(Alert.AlertType.INFORMATION, message, ButtonType.CLOSE).show());
     }
 
     /**
