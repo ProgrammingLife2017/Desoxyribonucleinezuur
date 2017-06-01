@@ -83,6 +83,22 @@ public interface Graph {
     Collection<Genome> getGenomes(Node node);
 
     /**
+     * getter for the Genomes of a Link.
+     * @param parent The parent of the link.
+     * @param child The child of the link.
+     * @return {@link Set}.
+     */
+    Collection<Genome> getGenomes(Node parent, Node child);
+
+    /**
+     * getter for a Link (via parent and child)
+     * @param parent The parent of the link.
+     * @param child The child of the link.
+     * @return
+     */
+    Link getLink(Node parent, Node child);
+
+    /**
      * Checks to see if the graph contains a certain node.
      * @param node the {@link Node} to check.
      * @return if the {@link Node} is in the {@link Graph}

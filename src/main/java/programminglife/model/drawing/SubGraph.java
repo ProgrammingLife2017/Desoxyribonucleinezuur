@@ -1,5 +1,6 @@
 package programminglife.model.drawing;
 
+import programminglife.model.Dummy;
 import programminglife.model.Node;
 import programminglife.model.XYCoordinate;
 
@@ -216,10 +217,13 @@ public class SubGraph {
             return;
         }
         List<Layer> layers = findLayers();
+        createDummyNodes(layers);
+        sortWithinLayers(layers);
 
-        int x = 0;
+
+        int x = 50;
         for (Layer layer : layers) {
-            int y = 0;
+            int y = 50;
             for (DrawableNode d : layer) {
                 d.setLocation(new XYCoordinate(x, y));
                 y += LINE_PADDING;
@@ -228,6 +232,26 @@ public class SubGraph {
         }
         layout = true;
         // TODO: translate so that the centerNode is at 0,0;
+    }
+
+    private void createDummyNodes(List<Layer> layers) {
+        Layer current = new Layer();
+        for (Layer next : layers) {
+            for (DrawableNode node : current) {
+                for (DrawableEdge edge : node.getChildEdges()) {
+                    DrawableNode child = edge.getEnd();
+                    if (!next.contains(child)) {
+                        DrawableNode dummy = new DrawableNode(
+                                new Dummy(node.getNode(), child.getNode(), edge.getLink())
+                        );
+                        node.replaceChild(child, dummy);
+                        child.replaceParent(node, dummy);
+                        next.add(dummy);
+                    }
+                }
+            }
+            current = next;
+        }
     }
 
     /**
@@ -296,14 +320,19 @@ public class SubGraph {
         // TODO: improve to reduce edge crossings
         // note: in case of ambiguity in choosing what node to draw first, use node with lowest id
         // (to break ties and make layout deterministic)
-        for (Layer l : layers) {
-            l.sort(new Comparator<DrawableNode>() {
-                @Override
-                public int compare(DrawableNode o1, DrawableNode o2) {
-                    return 0;
-                }
-            });
-        }
+
+        // For each edge: place it on the row it came from or lower.
+        // Start from sorting in previous layer.
+        // note: this is here as a skeleton for sorting. It compiles, but doesn't
+        // do anything useful, so it is commented out.
+//        for (Layer l : layers) {
+//            l.sort(new Comparator<DrawableNode>() {
+//                @Override
+//                public int compare(DrawableNode o1, DrawableNode o2) {
+//                    return 0;
+//                }
+//            });
+//        }
     }
 
     /**
@@ -318,8 +347,7 @@ public class SubGraph {
         ArrayList<DrawableNode> res = new ArrayList<>(this.nodes.size());
 
         // nodes that have not yet been added to the list.
-        ArrayList<DrawableNode> nodes = new ArrayList<>();
-        this.nodes.forEach((a, b) -> nodes.add(b));
+        LinkedHashSet<DrawableNode> found = new LinkedHashSet<>();
 
         // tactic:
         // {
@@ -328,30 +356,11 @@ public class SubGraph {
         //   If not, we found a node that can be next in the ordering. Add it to the list.
         // }
         // Repeat until all nodes are added to the list.
-        while (!nodes.isEmpty()) {
-            DrawableNode n = nodes.get(nodes.size() - 1);
-
-            findAllParentsAdded:
-            while (true) {
-                for (DrawableNode p : this.getParents(n)) {
-                    if (nodes.contains(p)) {
-                        // there is a parent of n in nodes, so this parent should go before in res.
-                        assert (!res.contains(p));
-
-                        // use n = p to continue searching from p.
-                        n = p;
-                        continue findAllParentsAdded; // continue with the `while(true)`-loop
-                    }
-                }
-
-                // since we are here, none of the parents of n are in nodes. Thus n can be next in the order.
-                assert (nodes.contains(n)); // check that n is in the list of nodes not yet added.
-                assert (!res.contains(n)); // check that n was not added yet.
-
-                res.add(n);
-                nodes.remove(n);
-                break; // break the `while(true)`-loop, continue with the next node n.
+        for (DrawableNode n : this.nodes.values()) {
+            if (!found.add(n)) {
+                continue;
             }
+            topoSortFromNode(res, found, n);
         }
 
         // TODO: use better strategy
@@ -371,6 +380,17 @@ public class SubGraph {
 
         assert (res.size() == this.nodes.size());
         return res;
+    }
+
+    private void topoSortFromNode(ArrayList<DrawableNode> result,
+                                  LinkedHashSet<DrawableNode> found, DrawableNode node) {
+        for (Node parent : node.getParents()) {
+            DrawableNode drawableParent = this.nodes.get(parent);
+            if (drawableParent != null && found.add(drawableParent)) {
+                topoSortFromNode(result, found, drawableParent);
+            }
+        }
+        result.add(node);
     }
 
     /**
@@ -400,9 +420,5 @@ public class SubGraph {
 
     public LinkedHashMap<Node, DrawableNode> getNodes() {
         return this.nodes;
-    }
-
-    public Set<DrawableEdge> getEdges() {
-        return this.edges;
     }
 }

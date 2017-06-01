@@ -3,6 +3,7 @@ package programminglife.gui.controller;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import jp.uphy.javafx.console.ConsoleView;
+import programminglife.model.Dummy;
 import programminglife.model.GenomeGraph;
 import programminglife.model.Segment;
 import programminglife.model.XYCoordinate;
@@ -47,22 +48,28 @@ public class GraphController {
         Segment centerSegment = new Segment(centerNode, graph);
         DrawableNode center = new DrawableNode(centerSegment);
         SubGraph subGraph = new SubGraph(center, radius);
+
+        long startLayoutTime = System.nanoTime();
+
         subGraph.layout();
 
-
         long startTimeDrawing = System.nanoTime();
+
         for (DrawableNode drawableNode : subGraph.getNodes().values()) {
             drawNode(drawableNode);
             for (DrawableNode child : subGraph.getChildren(drawableNode)) {
                 drawEdge(drawableNode, child);
             }
         }
-        long finishTimeDrawing = System.nanoTime();
-        long differenceTimeDrawing = finishTimeDrawing - startTimeDrawing;
-        long differenceTimeProgram = finishTimeDrawing - startTimeProgram;
+        long finishTime = System.nanoTime();
+        long differenceTimeProgram = finishTime - startTimeProgram;
+        long differenceTimeDrawing = finishTime - startTimeDrawing;
+        long differenceTimeLayout = finishTime - startLayoutTime;
         long msdifferenceTimeProgram = differenceTimeProgram / 1000000;
         long milisecondTimeDrawing = differenceTimeDrawing /   1000000;
+        long msdifferenceTimeLayout = differenceTimeLayout / 1000000;
         System.out.println("Time of Drawing:  " + milisecondTimeDrawing);
+        System.out.println("Time of layout:  " + msdifferenceTimeLayout);
         System.out.println("Time of Total Program:  " + msdifferenceTimeProgram);
 
     }
@@ -100,6 +107,9 @@ public class GraphController {
 
         drawableNode.setFill(Color.TRANSPARENT);
         drawableNode.setStroke(Color.BLUE);
+        if (drawableNode.getNode() instanceof Dummy) {
+            drawableNode.setStroke(Color.RED);
+        }
        // System.out.println(drawableNode.toString());
         this.grpDrawArea.getChildren().add(drawableNode);
 

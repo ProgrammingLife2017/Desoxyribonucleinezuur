@@ -3,6 +3,7 @@ package programminglife.model.drawing;
 import javafx.scene.shape.Line;
 import programminglife.model.Edge;
 import programminglife.model.Genome;
+import programminglife.model.Link;
 import programminglife.model.XYCoordinate;
 
 import java.util.Collection;
@@ -11,20 +12,19 @@ import java.util.Collection;
  * A {@link programminglife.model.Edge} that also Implements {@link Drawable}.
  */
 public class DrawableEdge extends Line {
-   // private Edge link; // TODO: change to Edge?
+    private Link link; // TODO: change to Edge?
     private DrawableNode parent;
     private DrawableNode child;
 
     /**
      * Create a Drawable edge.
-     * @param link The {@link Edge} to draw
      * @param parent The {@link DrawableNode} parent of this edge
      * @param child The {@link DrawableNode} child of this edge
      */
     public DrawableEdge(DrawableNode parent, DrawableNode child) {
-        //this.link = link;
         this.parent = parent;
         this.child = child;
+        this.link = parent.getLink(child);
     }
 
 //    public Collection<Genome> getGenomes() {
@@ -49,4 +49,7 @@ public class DrawableEdge extends Line {
         this.setEndY(endLocation.getY());
     }
 
+    public Link getLink() {
+        return link;
+    }
 }

@@ -61,4 +61,8 @@ public class Layer implements Iterable<DrawableNode> {
     public void sort(Comparator<? super DrawableNode> c) {
         this.nodes.sort(c);
     }
+
+    public boolean contains(DrawableNode node) {
+        return nodes.contains(node);
+    }
 }

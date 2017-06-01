@@ -58,4 +58,6 @@ public interface Node {
      * @return int with length of the sequence.
      */
     int getSequenceLength();
+
+    Link getLink(Node node);
 }

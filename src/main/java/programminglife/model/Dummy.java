@@ -67,4 +67,9 @@ public class Dummy implements Node {
     public int getSequenceLength() {
         return this.getSequenceLength();
     }
+
+    @Override
+    public Link getLink(Node node) {
+        return link;
+    }
 }

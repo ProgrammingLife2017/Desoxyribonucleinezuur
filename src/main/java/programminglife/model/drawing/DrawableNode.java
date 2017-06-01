@@ -1,10 +1,7 @@
 package programminglife.model.drawing;
 
 import javafx.scene.shape.Rectangle;
-import programminglife.model.DataManager;
-import programminglife.model.Node;
-import programminglife.model.Segment;
-import programminglife.model.XYCoordinate;
+import programminglife.model.*;
 
 import java.util.*;
 
@@ -76,6 +73,20 @@ public class DrawableNode extends Rectangle {
      **/
     public Collection<Node> getParents() {
         return parents;
+    }
+
+    public void replaceChild(DrawableNode oldChild, DrawableNode newChild) {
+        if (!this.children.remove(oldChild.getNode())) {
+            throw new NoSuchElementException("The node to be replaced is not a child of this node.");
+        }
+        this.children.add(newChild.getNode());
+    }
+
+    public void replaceParent(DrawableNode oldParent, DrawableNode newParent) {
+        if (!this.parents.remove(oldParent.getNode())) {
+            throw new NoSuchElementException("The node to be replaced is not a parent of this node.");
+        }
+        this.parents.add(newParent.getNode());
     }
 
     public int getIntX() {
@@ -158,6 +169,10 @@ public class DrawableNode extends Rectangle {
      * Setter for the dimension of the node.
      */
     private void setDrawDimensions() {
+//        if (node instanceof  Dummy) {
+//            return;
+//        }
+
         int segmentLength = this.getSequenceLength();
         int width, height;
 
@@ -256,5 +271,9 @@ public class DrawableNode extends Rectangle {
     @Override
     public int hashCode() {
         return node.getIdentifier();
+    }
+
+    public Link getLink(DrawableNode child) {
+        return node.getLink(child.getNode());
     }
 }

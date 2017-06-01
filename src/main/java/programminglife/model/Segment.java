@@ -62,6 +62,11 @@ public class Segment implements Node {
         return sequenceLength;
     }
 
+    @Override
+    public Link getLink(Node child) {
+        return this.graph.getLink(this, child);
+    }
+
     /**
      * Getter for the id.
      * @return int.

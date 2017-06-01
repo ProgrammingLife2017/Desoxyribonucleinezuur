@@ -106,6 +106,17 @@ public class GenomeGraph implements Graph {
     }
 
     @Override
+    public Collection<Genome> getGenomes(Node parent, Node child) {
+        return null;
+        //TODO
+    }
+
+    @Override
+    public Link getLink(Node parent, Node child) {
+        return new Link(parent, child, getGenomes(parent, child));
+    }
+
+    @Override
     public boolean contains(Node node) {
         return this.contains(node.getIdentifier());
     }
