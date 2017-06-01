@@ -68,6 +68,6 @@ public class XYCoordinateTest {
 
     @Test
     public void toStringTest() {
-        assertEquals("(8, 54)", coord1.toString());
+        assertEquals("(8.0, 54.0)", coord1.toString());
     }
 }
