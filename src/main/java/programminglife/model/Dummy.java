@@ -69,6 +69,14 @@ public class Dummy implements Node {
     }
 
     @Override
+    public void setSequence(String sequence) { }
+
+    @Override
+    public String getSequence() {
+        return "";
+    }
+
+    @Override
     public Link getLink(Node node) {
         return link;
     }

@@ -1,7 +1,9 @@
 package programminglife.model;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import programminglife.utility.InitFXThread;
 
 import static org.junit.Assert.assertEquals;
 
@@ -12,6 +14,11 @@ public class XYCoordinateTest {
     private XYCoordinate coord1;
     private XYCoordinate coord2;
     private static double DELTA = 0.000001;
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        InitFXThread.setupClass();
+    }
 
     @Before
     public void setUp() {

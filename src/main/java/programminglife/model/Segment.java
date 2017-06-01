@@ -15,25 +15,26 @@ public class Segment implements Node {
 
     /**
      * Constructor for a node with an id.
+     * @param graph the {@link GenomeGraph} around this {@link Segment}
      * @param id int.
-     * @param graph The {@link GenomeGraph}.
      */
-    public Segment(int id, GenomeGraph graph) {
-        this(id, null, graph);
+    public Segment(GenomeGraph graph, int id) {
+        this(graph, id, null);
     }
 
     /**
      * Constructor for a node with and id and sequence.
+     * @param graph the {@link GenomeGraph} around this {@link Segment}
      * @param id int.
      * @param sequence String.
-     * @param graph The {@link GenomeGraph}.
      */
-    public Segment(int id, String sequence, GenomeGraph graph) {
+    public Segment(GenomeGraph graph, int id, String sequence) {
+        this.graph = graph;
         this.id = id;
         this.graph = graph;
         if (sequence != null) {
-            DataManager.setSequence(id, sequence);
             sequenceLength = sequence.length();
+            this.graph.setSequence(id, sequence);
         }
     }
 
@@ -42,7 +43,7 @@ public class Segment implements Node {
      * @return the sequence of base pairs
      */
     public String getSequence() {
-        return DataManager.getSequence(this.id);
+        return graph.getSequence(this.id);
     }
 
     /**
@@ -50,14 +51,17 @@ public class Segment implements Node {
      * @param sequence A {@link String} representing the base pairs
      */
     public void setSequence(String sequence) {
-        DataManager.setSequence(this.id, sequence);
-
+        graph.setSequence(this.id, sequence);
     }
 
+    /**
+     * get the length of the sequence of this segment.
+     * @return the length of the sequence of this segment
+     */
     @Override
     public int getSequenceLength() {
         if (sequenceLength == 0) {
-            this.sequenceLength = DataManager.getSequenceLength(this.id);
+            this.sequenceLength = graph.getSequenceLength(this.id);
         }
         return sequenceLength;
     }
@@ -136,5 +140,4 @@ public class Segment implements Node {
     public int hashCode() {
         return id;
     }
-
 }

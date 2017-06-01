@@ -1,19 +1,13 @@
 package programminglife.model.drawing;
 
-import org.junit.*;
-import programminglife.model.DataManager;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import programminglife.model.GenomeGraph;
 import programminglife.model.GenomeGraphTest;
 import programminglife.model.Segment;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class SubGraphTest {
     private static final String TEST_DB = "test.db";
@@ -25,8 +19,6 @@ public class SubGraphTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        DataManager.initialize(TEST_DB);
-
         TEST_PATH = new File(GenomeGraphTest.class.getResource("/test.gfa").toURI()).getAbsolutePath();
         TEST_FAULTY_PATH = new File(
                 GenomeGraphTest.class.getClass().getResource("/test-faulty.gfa").toURI()
@@ -36,17 +28,13 @@ public class SubGraphTest {
     @Before
     public void setUp() throws Exception {
         graph = new GenomeGraph("test graph");
-        centerNode = new DrawableNode(new Segment(4, graph));
+        centerNode = new DrawableNode(new Segment(graph, 4));
     }
 
     @After
     public void tearDown() throws Exception {
-        DataManager.clearDB(TEST_DB);
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-        DataManager.removeDB(TEST_DB);
+        graph.close();
+        graph.removeCache();
     }
 
 //    @Test

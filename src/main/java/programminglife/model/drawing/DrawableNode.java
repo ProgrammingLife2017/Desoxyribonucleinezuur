@@ -175,7 +175,7 @@ public class DrawableNode extends Rectangle {
      * @return A string containing all the sequences appended.
      */
     public String getSequence() {
-        return DataManager.getSequence(node.getIdentifier());
+        return this.node.getSequence();
     }
 
     public Node getNode() {
@@ -248,11 +248,11 @@ public class DrawableNode extends Rectangle {
     }
 
     /**
-     * Get the {@link Link} between this node and the child drawable node
+     * Get the {@link Link} between this node and the child drawable node.
      * @param child The {@link DrawableNode} that the link goes to.
      * @return {@link Link} between the two nodes.
      */
-    public Link getLink(DrawableNode child) {
+    Link getLink(DrawableNode child) {
         return node.getLink(child.getNode());
     }
 }

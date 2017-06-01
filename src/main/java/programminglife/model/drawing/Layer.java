@@ -62,14 +62,28 @@ public class Layer implements Iterable<DrawableNode> {
         this.nodes.sort(c);
     }
 
+    /**
+     * Checks whether a node is in this layer.
+     * @param node {@link DrawableNode} to check for its presence.
+     * @return {@link boolean} true if it is in the layer, false otherwise.
+     */
     public boolean contains(DrawableNode node) {
         return nodes.contains(node);
     }
 
+    /**
+     * Get the size of the layer.
+     * @return {@link int} the size of the layer.
+     */
     public int size() {
         return this.nodes.size();
     }
 
+    /**
+     * Get the index of the a {@link DrawableNode} node in the layer.
+     * @param node {@link DrawableNode} to get the index of.
+     * @return the index of the node.
+     */
     public int indexOf(DrawableNode node) {
         return nodes.indexOf(node);
     }

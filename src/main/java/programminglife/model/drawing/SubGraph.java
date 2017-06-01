@@ -3,6 +3,7 @@ package programminglife.model.drawing;
 import programminglife.model.Dummy;
 import programminglife.model.Node;
 import programminglife.model.XYCoordinate;
+import programminglife.utility.Console;
 
 import java.util.*;
 
@@ -250,8 +251,8 @@ public class SubGraph {
         long finishTime = System.nanoTime();
         long differenceTime = finishTime - startTime;
         long milisecondTime = differenceTime / 1000000;
-        System.out.println("TIMERINO OF TOPOSORTERINO:  " + milisecondTime);
-        System.out.println("Amount of nodes: " + sorted.size());
+        Console.println("TIMERINO OF TOPOSORTERINO:  " + milisecondTime);
+        Console.println("Amount of nodes: " + sorted.size());
         Map<DrawableNode, Integer> nodeLevel = new HashMap<>();
         List<Layer> layerList = new ArrayList<>();
 
@@ -277,6 +278,11 @@ public class SubGraph {
         return layerList;
     }
 
+    /**
+     * Get the parents of {@link DrawableNode} node.
+     * @param node The {@link DrawableNode} to get
+     * @return A {@link Collection<DrawableNode>} of {@link DrawableNode}
+     */
     public Collection<DrawableNode> getParents(DrawableNode node) {
         Collection<DrawableNode> parents = new LinkedHashSet<>();
         for (Node parentNode : node.getParents()) {
