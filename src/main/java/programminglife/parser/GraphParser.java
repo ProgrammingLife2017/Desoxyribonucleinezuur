@@ -50,10 +50,13 @@ public class GraphParser extends Observable implements Runnable {
     @Override
     public void run() {
         try {
-            Console.println("[%s] Parsing GenomeGraph on separate Thread", Thread.currentThread().getName());
             long startTime = System.nanoTime();
-            parse(this.verbose);
-
+            if (!this.isCached) {
+                Console.println("[%s] Parsing %s on separate Thread", Thread.currentThread().getName(), this.name);
+                parse(this.verbose);
+            } else {
+                Console.println("[%s] Loaded %s from cache", Thread.currentThread().getName(), this.name);
+            }
             int secondsElapsed = (int) ((System.nanoTime() - startTime) / 1000000000.d);
             Console.println("[%s] Parsing took %d seconds", Thread.currentThread().getName(), secondsElapsed);
             this.setChanged();
@@ -94,16 +97,10 @@ public class GraphParser extends Observable implements Runnable {
             );
         }
 
-        int lineCount;
-        if (!this.isCached) {
-            Console.print("[%s] Calculating number of lines in file... ", Thread.currentThread().getName());
-            lineCount = countLines(this.graphFile.getPath());
-            Console.println("done (%d lines)", lineCount);
-            this.graph.setNumberOfLines(lineCount);
-        } else {
-            lineCount = this.graph.getNumberOfLines();
-            Console.println("Cached number of lines: %d", lineCount);
-        }
+        Console.print("[%s] Calculating number of lines in file... ", Thread.currentThread().getName());
+        int lineCount = countLines(this.graphFile.getPath());
+        Console.println("done (%d lines)", lineCount);
+        this.graph.setNumberOfLines(lineCount);
         this.progressCounter.setTotalLineCount(lineCount);
 
         try (BufferedReader reader = new BufferedReader(new FileReader(this.graphFile))) {
@@ -114,14 +111,10 @@ public class GraphParser extends Observable implements Runnable {
 
                 switch (type) {
                     case 'S':
-                        if (!this.isCached) {
-                            this.parseSegment(line);
-                        }
+                        this.parseSegment(line);
                         break;
                     case 'L':
-                        if (!this.isCached) {
-                            this.parseLink(line);
-                        }
+                        this.parseLink(line);
                         break;
                     case 'H':
                         this.parseHeader(line);
@@ -145,9 +138,7 @@ public class GraphParser extends Observable implements Runnable {
             }
         }
 
-        if (!this.isCached) {
-            this.graph.cacheLastEdges();
-        }
+        this.graph.cacheLastEdges();
         this.progressCounter.finished();
     }
 
