@@ -23,7 +23,7 @@ public class SubGraph {
     private static final int LINE_PADDING = 20;
 
     private LinkedHashMap<Node, DrawableNode> nodes;
-    private Set<DrawableEdge> edges;
+//    private Set<DrawableEdge> edges;
     private DrawableNode centerNode;
     private boolean layout;
     /**
@@ -58,27 +58,27 @@ public class SubGraph {
         if (!this.nodes.containsKey(centerNode.getNode())) {
             this.nodes.put(centerNode.getNode(), centerNode);
         }
-        this.findEdges();
+        //this.findEdges();
     }
 
-    /**
-     * Find all the edges for this SubGraph. This does not generate dummy edges, only normal edges.
-     */
-    private void findEdges() {
-        this.edges = new HashSet<>();
-        for (DrawableNode node : this.nodes.values()) {
-            for (DrawableEdge edge : node.getParentEdges()) {
-                if (this.nodes.containsKey(edge.getStart())) {
-                    this.edges.add(edge);
-                }
-            }
-            for (DrawableEdge edge : node.getChildEdges()) {
-                if (this.nodes.containsKey(edge.getEnd())) {
-                    this.edges.add(edge);
-                }
-            }
-        }
-    }
+//    /**
+//     * Find all the edges for this SubGraph. This does not generate dummy edges, only normal edges.
+//     */
+//    private void findEdges() {
+//        this.edges = new HashSet<>();
+//        for (DrawableNode node : this.nodes.values()) {
+//            for (DrawableEdge edge : node.getParentEdges()) {
+//                if (this.nodes.containsKey(edge.getStart())) {
+//                    this.edges.add(edge);
+//                }
+//            }
+//            for (DrawableEdge edge : node.getChildEdges()) {
+//                if (this.nodes.containsKey(edge.getEnd())) {
+//                    this.edges.add(edge);
+//                }
+//            }
+//        }
+//    }
 
     // TODO: change findParents and findChildren to reliably only find nodes with a *longest* path of at most radius.
     // (maybe give that their own method, or possibly two methods with a
@@ -224,11 +224,12 @@ public class SubGraph {
         int x = 50;
         for (Layer layer : layers) {
             int y = 50;
+            x += LAYER_PADDING * 0.3 * layer.size();
             for (DrawableNode d : layer) {
                 d.setLocation(new XYCoordinate(x, y));
                 y += LINE_PADDING;
             }
-            x += layer.getWidth() + LAYER_PADDING;
+            x += layer.getWidth() + LAYER_PADDING * 0.3 * layer.size();
         }
         layout = true;
         // TODO: translate so that the centerNode is at 0,0;
@@ -238,14 +239,15 @@ public class SubGraph {
         Layer current = new Layer();
         for (Layer next : layers) {
             for (DrawableNode node : current) {
-                for (DrawableEdge edge : node.getChildEdges()) {
-                    DrawableNode child = edge.getEnd();
+                for (DrawableNode child : this.getChildren(node)) {
                     if (!next.contains(child)) {
                         DrawableNode dummy = new DrawableNode(
-                                new Dummy(node.getNode(), child.getNode(), edge.getLink())
+                                new Dummy(node.getNode(), child.getNode(), node.getLink(child))
                         );
                         node.replaceChild(child, dummy);
                         child.replaceParent(node, dummy);
+                        dummy.setWidth(next.getWidth());
+                        this.nodes.put(dummy.getNode(), dummy);
                         next.add(dummy);
                     }
                 }

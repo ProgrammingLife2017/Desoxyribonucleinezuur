@@ -65,4 +65,12 @@ public class Layer implements Iterable<DrawableNode> {
     public boolean contains(DrawableNode node) {
         return nodes.contains(node);
     }
+
+    public int size() {
+        return this.nodes.size();
+    }
+
+    public int indexOf(DrawableNode node) {
+        return nodes.indexOf(node);
+    }
 }

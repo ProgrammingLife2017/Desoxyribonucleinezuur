@@ -108,7 +108,8 @@ public class GraphController {
         drawableNode.setFill(Color.TRANSPARENT);
         drawableNode.setStroke(Color.BLUE);
         if (drawableNode.getNode() instanceof Dummy) {
-            drawableNode.setStroke(Color.RED);
+            drawableNode.setStroke(Color.DARKGRAY);
+            drawableNode.setStrokeWidth(3);
         }
        // System.out.println(drawableNode.toString());
         this.grpDrawArea.getChildren().add(drawableNode);

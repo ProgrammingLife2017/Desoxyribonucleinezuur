@@ -1,12 +1,8 @@
 package programminglife.model.drawing;
 
 import javafx.scene.shape.Line;
-import programminglife.model.Edge;
-import programminglife.model.Genome;
 import programminglife.model.Link;
 import programminglife.model.XYCoordinate;
-
-import java.util.Collection;
 
 /**
  * A {@link programminglife.model.Edge} that also Implements {@link Drawable}.
@@ -39,12 +35,12 @@ public class DrawableEdge extends Line {
         return child;
     }
 
-    public void setStartLocation(XYCoordinate startLocation){
+    public void setStartLocation(XYCoordinate startLocation) {
         this.setStartX(startLocation.getX());
         this.setStartY(startLocation.getY());
     }
 
-    public void setEndLocation(XYCoordinate endLocation){
+    public void setEndLocation(XYCoordinate endLocation) {
         this.setEndX(endLocation.getX());
         this.setEndY(endLocation.getY());
     }

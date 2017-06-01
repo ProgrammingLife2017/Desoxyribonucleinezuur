@@ -32,15 +32,15 @@ public class DrawableNode extends Rectangle {
      * @return childEdges {@link Collection<DrawableEdge>} are all the edges
      * to the children of the node {@link DrawableNode}.
      */
-    public Collection<DrawableEdge> getChildEdges() {
-        HashSet<DrawableEdge> childEdges = new HashSet<DrawableEdge>();
-
+//    public Collection<DrawableEdge> getChildEdges() {
+//        HashSet<DrawableEdge> childEdges = new HashSet<DrawableEdge>();
+//
 //            for (Edge e: node.getChildEdges()) {
 //                childEdges.add(new DrawableEdge(e, this, new DrawableNode(e.getEnd())));
 //            }
-
-        return childEdges;
-    }
+//
+//        return childEdges;
+//    }
 
     /**
      * Get all the edges to the parents.
@@ -169,9 +169,9 @@ public class DrawableNode extends Rectangle {
      * Setter for the dimension of the node.
      */
     private void setDrawDimensions() {
-//        if (node instanceof  Dummy) {
-//            return;
-//        }
+        if (node instanceof  Dummy) {
+            return;
+        }
 
         int segmentLength = this.getSequenceLength();
         int width, height;
