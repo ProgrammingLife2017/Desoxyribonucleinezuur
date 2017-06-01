@@ -97,6 +97,7 @@ public class GuiController implements Observer {
      * @param file The {@link File} to open.
      * @throws IOException if the {@link File} is not found.
      * @throws UnknownTypeException if the {@link File} is not compliant with the GFA standard.
+     * @return the parser to be notified when it is finished
      */
     public GraphParser openFile(File file) throws IOException, UnknownTypeException {
         if (file != null) {
@@ -354,6 +355,9 @@ public class GuiController implements Observer {
         txtCenterNode.setText(INITIAL_CENTER_NODE);
     }
 
+    /**
+     * Draw the current graph with current center node and depth settings.
+     */
     public void draw() {
         Console.println("[%s] Drawing graph...", Thread.currentThread().getName());
         int centerNode = 0;
