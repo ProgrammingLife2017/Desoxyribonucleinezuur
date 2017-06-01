@@ -20,12 +20,18 @@ public final class Cache {
     private static final String SEQUENCE_MAP_NAME = "sequenceMap";
     private static final String SEQUENCE_LENGTH_MAP_NAME = "sequenceLengthMap";
     private static final String GENOME_NAMES_MAP_NAME = "genomeNamesMap";
+    private static final String CHILDREN_ADJACENCY_MAP_NAME = "childrenNamesMap";
+    private static final String PARENTS_ADJACENCY_MAP_NAME = "parentsNamesMap";
+    private static final String LINE_NUMBER_INTEGER_NAME = "lineNumberInteger";
 
     private String dbFileName;
     private DB db;
+
     private Map<Integer, String> sequenceMap;
     private Map<Integer, Integer> sequenceLengthMap;
     private Map<Integer, String> genomeNamesMap;
+    private Map<Integer, int[]> childrenAdjacencyMap;
+    private Map<Integer, int[]> parentsAdjacencyMap;
 
     /**
      * Create the Cache and initialize the database.
@@ -52,6 +58,8 @@ public final class Cache {
         this.sequenceMap = getMap(db, SEQUENCE_MAP_NAME, Serializer.INTEGER, Serializer.STRING_ASCII);
         this.sequenceLengthMap = getMap(db, SEQUENCE_LENGTH_MAP_NAME, Serializer.INTEGER, Serializer.INTEGER);
         this.genomeNamesMap = getMap(db, GENOME_NAMES_MAP_NAME, Serializer.INTEGER, Serializer.STRING_ASCII);
+        this.childrenAdjacencyMap = getMap(db, CHILDREN_ADJACENCY_MAP_NAME, Serializer.INTEGER, Serializer.INT_ARRAY);
+        this.parentsAdjacencyMap = getMap(db, PARENTS_ADJACENCY_MAP_NAME, Serializer.INTEGER, Serializer.INT_ARRAY);
     }
 
     /**
@@ -102,6 +110,14 @@ public final class Cache {
      */
     private Map<Integer, String> getGenomeNamesMap() {
         return this.genomeNamesMap;
+    }
+
+    public Map<Integer, int[]> getChildrenAdjacencyMap() {
+        return this.childrenAdjacencyMap;
+    }
+
+    public Map<Integer, int[]> getParentsAdjacencyMap() {
+        return this.parentsAdjacencyMap;
     }
 
     /**

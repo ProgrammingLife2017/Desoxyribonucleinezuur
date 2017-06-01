@@ -109,7 +109,9 @@ public class GraphParser extends Observable implements Runnable {
                         }
                         break;
                     case 'L':
-                        this.parseLink(line);
+                        if (!this.isCached) {
+                            this.parseLink(line);
+                        }
                         break;
                     case 'H':
                         this.parseHeader(line);
