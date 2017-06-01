@@ -1,6 +1,7 @@
 package programminglife.parser;
 
 import org.jetbrains.annotations.NotNull;
+import org.mapdb.Atomic;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.Serializer;
@@ -33,6 +34,8 @@ public final class Cache {
     private Map<Integer, int[]> childrenAdjacencyMap;
     private Map<Integer, int[]> parentsAdjacencyMap;
 
+    private Atomic.Integer lineNumberInteger;
+
     /**
      * Create the Cache and initialize the database.
      * @param name The name of the {@link Cache}.
@@ -60,6 +63,8 @@ public final class Cache {
         this.genomeNamesMap = getMap(db, GENOME_NAMES_MAP_NAME, Serializer.INTEGER, Serializer.STRING_ASCII);
         this.childrenAdjacencyMap = getMap(db, CHILDREN_ADJACENCY_MAP_NAME, Serializer.INTEGER, Serializer.INT_ARRAY);
         this.parentsAdjacencyMap = getMap(db, PARENTS_ADJACENCY_MAP_NAME, Serializer.INTEGER, Serializer.INT_ARRAY);
+
+        this.lineNumberInteger = db.atomicInteger(LINE_NUMBER_INTEGER_NAME).createOrOpen();
     }
 
     /**
@@ -216,6 +221,22 @@ public final class Cache {
     public void addGenomeName(String genomeName) {
         int index = getGenomeNamesMap().size();
         getGenomeNamesMap().put(index, genomeName);
+    }
+
+    /**
+     * Get the cached number of lines.
+     * @return # of lines
+     */
+    public int getNumberOfLines() {
+        return this.lineNumberInteger.get();
+    }
+
+    /**
+     * Set the number of lines of the file.
+     * @param numberOfLines # of lines
+     */
+    public void setNumberOfLines(int numberOfLines) {
+        this.lineNumberInteger.set(numberOfLines);
     }
 
     /**
