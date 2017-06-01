@@ -37,8 +37,8 @@ public final class Cache {
 
     private Atomic.Integer lineNumberInteger;
 
-    public LinkedList<Integer> currentParentChildren;
-    public int currentParentID;
+    private LinkedList<Integer> currentParentChildren;
+    private int currentParentID;
 
     /**
      * Create the Cache and initialize the database.
@@ -282,5 +282,21 @@ public final class Cache {
         // TODO find a way to handle a partially complete cache
         // Just removing the cache is the best solution for now
         this.removeDB();
+    }
+
+    public LinkedList<Integer> getCurrentParentChildren() {
+        return currentParentChildren;
+    }
+
+    public void setCurrentParentChildren(LinkedList<Integer> currentParentChildren) {
+        this.currentParentChildren = currentParentChildren;
+    }
+
+    public int getCurrentParentID() {
+        return currentParentID;
+    }
+
+    public void setCurrentParentID(int currentParentID) {
+        this.currentParentID = currentParentID;
     }
 }

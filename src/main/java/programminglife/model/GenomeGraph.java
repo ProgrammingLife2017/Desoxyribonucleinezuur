@@ -119,25 +119,25 @@ public class GenomeGraph implements Graph {
      * @param child Node of the child to be added.
      */
     private void addChild(Node node, Node child) {
-        if (this.cache.currentParentID == -1) {
-            this.cache.currentParentID = node.getIdentifier();
+        if (this.cache.getCurrentParentID() == -1) {
+            this.cache.setCurrentParentID(node.getIdentifier());
         }
 
-        if (node.getIdentifier() == this.cache.currentParentID) {
+        if (node.getIdentifier() == this.cache.getCurrentParentID()) {
             // if same parent as previous link || if first link of graph,
             // just add the child
-            this.cache.currentParentChildren.add(child.getIdentifier());
+            this.cache.getCurrentParentChildren().add(child.getIdentifier());
         } else {
             // write previous list to cache
-            int[] oldChildren = this.getChildren(this.cache.currentParentID);
-            int[] allChildren = this.append(oldChildren, this.cache.currentParentChildren);
-            this.cache.getChildrenAdjacencyMap().put(this.cache.currentParentID, allChildren);
+            int[] oldChildren = this.getChildren(this.cache.getCurrentParentID());
+            int[] allChildren = this.append(oldChildren, this.cache.getCurrentParentChildren());
+            this.cache.getChildrenAdjacencyMap().put(this.cache.getCurrentParentID(), allChildren);
 
             // reset node id
-            this.cache.currentParentID = node.getIdentifier();
+            this.cache.setCurrentParentID(node.getIdentifier());
             // reset children list
-            this.cache.currentParentChildren = new LinkedList<>();
-            this.cache.currentParentChildren.add(child.getIdentifier());
+            this.cache.setCurrentParentChildren(new LinkedList<>());
+            this.cache.getCurrentParentChildren().add(child.getIdentifier());
         }
     }
 
@@ -285,6 +285,12 @@ public class GenomeGraph implements Graph {
         }
     }
 
+    /**
+     * Append an {@link List<Integer>} to a int[].
+     * @param oldArray the int[] to go first
+     * @param newList the {@link List<Integer>} to be appended
+     * @return a int[] consisting of all elements
+     */
     private int[] append(int[] oldArray, List<Integer> newList) {
         int[] newArray;
         if (oldArray == null) {
@@ -296,9 +302,14 @@ public class GenomeGraph implements Graph {
         return newArray;
     }
 
-    public void finish() {
-        int[] oldChildren = this.getChildren(this.cache.currentParentID);
-        int[] allChildren = this.append(oldChildren, this.cache.currentParentChildren);
-        this.cache.getChildrenAdjacencyMap().put(this.cache.currentParentID, allChildren);
+    /**
+     * Cache the group of edges from the last parent.
+     *
+     * Necessary because these are skipped during parsing.
+     */
+    public void cacheLastEdges() {
+        int[] oldChildren = this.getChildren(this.cache.getCurrentParentID());
+        int[] allChildren = this.append(oldChildren, this.cache.getCurrentParentChildren());
+        this.cache.getChildrenAdjacencyMap().put(this.cache.getCurrentParentID(), allChildren);
     }
 }
