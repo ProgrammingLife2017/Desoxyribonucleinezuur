@@ -1,5 +1,6 @@
 package programminglife.model;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
 import programminglife.model.exception.NodeExistsException;
@@ -118,11 +119,26 @@ public class GenomeGraph implements Graph {
      * @param child Node of the child to be added.
      */
     private void addChild(Node node, Node child) {
-        int[] oldChildren = this.getChildren(node.getIdentifier());
-        //TODO find a way to do this more efficient
-        int[] newChildren = Arrays.copyOf(oldChildren, oldChildren.length + 1);
-        newChildren[newChildren.length - 1] = child.getIdentifier();
-        this.cache.getChildrenAdjacencyMap().put(node.getIdentifier(), newChildren);
+        if (this.cache.currentParentID == -1) {
+            this.cache.currentParentID = node.getIdentifier();
+        }
+
+        if (node.getIdentifier() == this.cache.currentParentID) {
+            // if same parent as previous link || if first link of graph,
+            // just add the child
+            this.cache.currentParentChildren.add(child.getIdentifier());
+        } else {
+            // write previous list to cache
+            int[] oldChildren = this.getChildren(this.cache.currentParentID);
+            int[] allChildren = this.append(oldChildren, this.cache.currentParentChildren);
+            this.cache.getChildrenAdjacencyMap().put(this.cache.currentParentID, allChildren);
+
+            // reset node id
+            this.cache.currentParentID = node.getIdentifier();
+            // reset children list
+            this.cache.currentParentChildren = new LinkedList<>();
+            this.cache.currentParentChildren.add(child.getIdentifier());
+        }
     }
 
     /**
@@ -267,5 +283,22 @@ public class GenomeGraph implements Graph {
             this.cache.close();
             this.cache = null;
         }
+    }
+
+    private int[] append(int[] oldArray, List<Integer> newList) {
+        int[] newArray;
+        if (oldArray == null) {
+            newArray = oldArray;
+        } else {
+            newArray = ArrayUtils.addAll(oldArray, newList.stream().mapToInt(i -> i).toArray());
+        }
+
+        return newArray;
+    }
+
+    public void finish() {
+        int[] oldChildren = this.getChildren(this.cache.currentParentID);
+        int[] allChildren = this.append(oldChildren, this.cache.currentParentChildren);
+        this.cache.getChildrenAdjacencyMap().put(this.cache.currentParentID, allChildren);
     }
 }

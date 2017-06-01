@@ -142,6 +142,9 @@ public class GraphParser extends Observable implements Runnable {
             }
         }
 
+        if (!this.isCached) {
+            this.graph.finish();
+        }
         this.progressCounter.finished();
     }
 

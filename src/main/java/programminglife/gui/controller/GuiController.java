@@ -132,6 +132,7 @@ public class GuiController implements Observer {
                 this.setGraph(graph);
             } else if (arg instanceof Exception) {
                 Exception e = (Exception) arg;
+                e.printStackTrace();
                 Alerts.error(e.getMessage());
             }
         } else if (o instanceof FileProgressCounter) {

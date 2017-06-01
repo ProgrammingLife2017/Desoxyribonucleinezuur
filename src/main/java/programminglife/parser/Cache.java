@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -35,6 +36,9 @@ public final class Cache {
     private Map<Integer, int[]> parentsAdjacencyMap;
 
     private Atomic.Integer lineNumberInteger;
+
+    public LinkedList<Integer> currentParentChildren;
+    public int currentParentID;
 
     /**
      * Create the Cache and initialize the database.
@@ -65,6 +69,9 @@ public final class Cache {
         this.parentsAdjacencyMap = getMap(db, PARENTS_ADJACENCY_MAP_NAME, Serializer.INTEGER, Serializer.INT_ARRAY);
 
         this.lineNumberInteger = db.atomicInteger(LINE_NUMBER_INTEGER_NAME).createOrOpen();
+
+        this.currentParentID = -1;
+        this.currentParentChildren = new LinkedList<>();
     }
 
     /**
