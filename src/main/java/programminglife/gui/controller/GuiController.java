@@ -1,6 +1,5 @@
 package programminglife.gui.controller;
 
-import javafx.animation.PauseTransition;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -17,7 +16,6 @@ import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 import jp.uphy.javafx.console.ConsoleView;
 import programminglife.ProgrammingLife;
 import programminglife.model.GenomeGraph;
@@ -100,7 +98,7 @@ public class GuiController implements Observer {
      * @throws IOException if the {@link File} is not found.
      * @throws UnknownTypeException if the {@link File} is not compliant with the GFA standard.
      */
-    public void openFile(File file) throws IOException, UnknownTypeException {
+    public GraphParser openFile(File file) throws IOException, UnknownTypeException {
         if (file != null) {
             if (this.graphController != null && this.graphController.getGraph() != null) {
                 this.graphController.getGraph().close();
@@ -117,7 +115,11 @@ public class GuiController implements Observer {
             }
             this.parseThread = new Thread(graphParser);
             this.parseThread.start();
+
+            return graphParser;
         }
+
+        return null;
     }
 
     @Override
@@ -335,31 +337,12 @@ public class GuiController implements Observer {
     private void initLeftControlpanelDraw() {
         disableGraphUIElements(true);
 
-        btnDraw.setOnAction(event -> {
-            Console.println("[%s] Drawing graph...", Thread.currentThread().getName());
-            int centerNode = 0;
-            int maxDepth = 0;
-            try {
-                centerNode = Integer.parseInt(txtCenterNode.getText());
-                maxDepth = Integer.parseInt(txtMaxDrawDepth.getText());
-            } catch (NumberFormatException e) {
-                Alerts.warning("Input is not a number, try again with a number as input.");
-            }
-
-            if (graphController.getGraph().contains(centerNode)) {
-                this.graphController.clear();
-                this.graphController.draw(centerNode, maxDepth);
-                Console.println("[%s] Graph drawn.", Thread.currentThread().getName());
-            } else {
-                Alerts.warning("The centernode is not a existing node, "
-                        + "try again with a number that exists as a node.");
-            }
-        });
+        btnDraw.setOnAction(e -> this.draw());
 
         btnDrawRandom.setOnAction(event -> {
             int randomNodeID = (int) Math.ceil(Math.random() * this.graphController.getGraph().size());
             txtCenterNode.setText(Integer.toString(randomNodeID));
-            btnDraw.fire();
+            this.draw();
         });
 
         btnBookmark.setOnAction(event -> buttonBookmark());
@@ -369,6 +352,31 @@ public class GuiController implements Observer {
 
         txtCenterNode.textProperty().addListener(new NumbersOnlyListener(txtCenterNode));
         txtCenterNode.setText(INITIAL_CENTER_NODE);
+    }
+
+    public void draw() {
+        Console.println("[%s] Drawing graph...", Thread.currentThread().getName());
+        int centerNode = 0;
+        int maxDepth = 0;
+        try {
+            centerNode = Integer.parseInt(txtCenterNode.getText());
+            try {
+                maxDepth = Integer.parseInt(txtMaxDrawDepth.getText());
+            } catch (NumberFormatException e) {
+                Alerts.warning("Radius is not a number, try again with a number as input.");
+            }
+        } catch (NumberFormatException e) {
+            Alerts.warning("Center node ID is not a number, try again with a number as input.");
+        }
+
+        if (graphController.getGraph().contains(centerNode)) {
+            this.graphController.clear();
+            this.graphController.draw(centerNode, maxDepth);
+            Console.println("[%s] Graph drawn.", Thread.currentThread().getName());
+        } else {
+            Alerts.warning("The centernode is not a existing node, "
+                    + "try again with a number that exists as a node.");
+        }
     }
 
     /**
@@ -489,16 +497,6 @@ public class GuiController implements Observer {
 
     public void setFile(File file) {
         this.file = file;
-    }
-
-    /**
-     * Is called when a bookmark is loaded to draw the bookmark.
-     */
-    void bookmarkLoaded() {
-        //Safety check of 0.1 seconds before drawing the bookmark. Give the cpu some time to catch up.
-        PauseTransition p = new PauseTransition(Duration.seconds(0.1));
-        p.setOnFinished(e -> btnDraw.fire());
-        p.play();
     }
 
     GraphController getGraphController() {

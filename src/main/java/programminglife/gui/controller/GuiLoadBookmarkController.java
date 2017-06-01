@@ -1,5 +1,6 @@
 package programminglife.gui.controller;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -11,21 +12,20 @@ import javafx.stage.Stage;
 import programminglife.ProgrammingLife;
 import programminglife.controller.BookmarkController;
 import programminglife.model.Bookmark;
+import programminglife.model.Graph;
 import programminglife.model.exception.UnknownTypeException;
+import programminglife.parser.GraphParser;
 import programminglife.utility.Alerts;
 import programminglife.utility.Console;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Controller for loading bookmarks.
  */
-public class GuiLoadBookmarkController {
+public class GuiLoadBookmarkController implements Observer {
     private GuiController guiController;
 
     @FXML private Button btnOpenBookmark;
@@ -82,15 +82,13 @@ public class GuiLoadBookmarkController {
                 File file = new File(bookmark.getPath());
                 try {
                     guiController.setFile(file);
-                    guiController.openFile(file);
+                    guiController.openFile(file).addObserver(this);
                 } catch (IOException | UnknownTypeException e) {
                     Alerts.error("File location has changed");
                 }
             }
-            guiController.getGraphController().clear();
             guiController.setText(bookmark.getNodeID(), bookmark.getRadius());
             ((Stage) btnOpenBookmark.getScene().getWindow()).close();
-            guiController.bookmarkLoaded();
             Console.println("Loaded bookmark " + bookmark.getBookmarkName()
                     + " Center Node: " + bookmark.getNodeID() + " Radius: " + bookmark.getRadius());
         }
@@ -224,5 +222,23 @@ public class GuiLoadBookmarkController {
      */
     public void setBtnCreateBookmarkActive(Boolean active) {
         btnCreateBookmark.setDisable(!active);
+    }
+
+    /**
+     * This method is called whenever the observed object is changed. An
+     * application calls an <tt>Observable</tt> object's
+     * <code>notifyObservers</code> method to have all the object's
+     * observers notified of the change.
+     *
+     * @param o   the observable object.
+     * @param arg an argument passed to the <code>notifyObservers</code>
+     */
+    @Override
+    public void update(Observable o, Object arg) {
+        if (o instanceof GraphParser) {
+            if (arg instanceof Graph) {
+                Platform.runLater(() -> guiController.draw());
+            }
+        }
     }
 }
