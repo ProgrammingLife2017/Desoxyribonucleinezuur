@@ -2,10 +2,13 @@ package programminglife.parser;
 
 import com.diffplug.common.base.Errors;
 import javafx.application.Platform;
-import programminglife.model.*;
+import programminglife.model.Genome;
+import programminglife.model.GenomeGraph;
+import programminglife.model.Node;
+import programminglife.model.Segment;
 import programminglife.model.exception.UnknownTypeException;
-import programminglife.utility.Console;
 import programminglife.utility.Alerts;
+import programminglife.utility.Console;
 import programminglife.utility.FileProgressCounter;
 
 import java.io.*;
