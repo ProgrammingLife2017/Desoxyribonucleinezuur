@@ -1,7 +1,5 @@
 package programminglife.controller;
 
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
