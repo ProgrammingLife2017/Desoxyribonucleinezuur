@@ -213,9 +213,9 @@ public class SubGraph {
         }
         List<Layer> layers = findLayers();
 
-        int x = 50;
+        int x = 0;
         for (Layer layer : layers) {
-            int y = 50;
+            int y = 0;
             for (DrawableNode d : layer) {
                 //You can not access elements in a set, this is a workaround.
                 this.nodes.remove(d);
@@ -378,5 +378,9 @@ public class SubGraph {
 
     public Set<DrawableNode> getNodes() {
         return this.nodes;
+    }
+
+    public Set<DrawableEdge> getEdges() {
+        return this.edges;
     }
 }

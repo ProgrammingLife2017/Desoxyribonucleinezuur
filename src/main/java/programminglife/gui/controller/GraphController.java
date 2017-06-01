@@ -6,6 +6,7 @@ import jp.uphy.javafx.console.ConsoleView;
 import programminglife.model.GenomeGraph;
 import programminglife.model.Segment;
 import programminglife.model.XYCoordinate;
+import programminglife.model.drawing.DrawableEdge;
 import programminglife.model.drawing.DrawableNode;
 import programminglife.model.drawing.SubGraph;
 
@@ -52,6 +53,9 @@ public class GraphController {
         long startTimeDrawing = System.nanoTime();
         for (DrawableNode drawableNode : subGraph.getNodes()) {
             drawNode(drawableNode);
+            for (DrawableNode child : drawableNode.getChildren()){
+                drawEdge(drawableNode, child);
+            }
         }
         long finishTimeDrawing = System.nanoTime();
         long differenceTimeDrawing = finishTimeDrawing - startTimeDrawing;
@@ -60,6 +64,27 @@ public class GraphController {
         long milisecondTimeDrawing = differenceTimeDrawing /   1000000;
         System.out.println("Time of Drawing:  " + milisecondTimeDrawing);
         System.out.println("Time of Total Program:  " + msdifferenceTimeProgram);
+
+    }
+
+    /**
+     * Draws a edge on the location it has.
+     * @param drawableEdge {@link DrawableEdge} is the node to be drawn.
+     */
+    private void drawEdge(DrawableNode parent, DrawableNode child) {
+        DrawableEdge edge = new DrawableEdge(parent, child);
+
+        edge.setOnMouseClicked(event -> {
+            System.out.println(edge.toString());
+        });
+
+        edge.setStroke(Color.DARKGRAY);
+        edge.setStrokeWidth(3);
+        edge.setStartLocation(edge.getStart().getRightBorderCenter());
+        edge.setEndLocation(edge.getEnd().getLeftBorderCenter());
+        System.out.println(edge.toString());
+        this.grpDrawArea.getChildren().add(edge);
+
 
     }
 

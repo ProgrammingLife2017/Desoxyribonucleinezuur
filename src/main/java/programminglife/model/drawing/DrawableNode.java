@@ -34,9 +34,9 @@ public class DrawableNode extends Rectangle {
     public Collection<DrawableEdge> getChildEdges() {
         HashSet<DrawableEdge> childEdges = new HashSet<DrawableEdge>();
 
-            for (Edge e: node.getChildEdges()) {
-                childEdges.add(new DrawableEdge(e, this, new DrawableNode(e.getEnd())));
-            }
+//            for (Edge e: node.getChildEdges()) {
+//                childEdges.add(new DrawableEdge(e, this, new DrawableNode(e.getEnd())));
+//            }
 
         return childEdges;
     }
@@ -49,9 +49,9 @@ public class DrawableNode extends Rectangle {
     public Collection<DrawableEdge> getParentEdges() {
         HashSet<DrawableEdge> parentEdges = new HashSet<DrawableEdge>();
 
-            for (Edge e : node.getParentEdges()) {
-                parentEdges.add(new DrawableEdge(e, new DrawableNode(e.getStart()), this));
-            }
+//            for (Edge e : node.getParentEdges()) {
+//                parentEdges.add(new DrawableEdge(e, new DrawableNode(e.getStart()), this));
+//            }
 
         return parentEdges;
     }
