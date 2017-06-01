@@ -51,9 +51,9 @@ public class GraphController {
 
 
         long startTimeDrawing = System.nanoTime();
-        for (DrawableNode drawableNode : subGraph.getNodes()) {
+        for (DrawableNode drawableNode : subGraph.getNodes().values()) {
             drawNode(drawableNode);
-            for (DrawableNode child : drawableNode.getChildren()){
+            for (DrawableNode child : subGraph.getChildren(drawableNode)) {
                 drawEdge(drawableNode, child);
             }
         }

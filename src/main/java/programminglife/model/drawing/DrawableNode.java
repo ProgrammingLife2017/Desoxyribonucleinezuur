@@ -1,10 +1,12 @@
 package programminglife.model.drawing;
 
 import javafx.scene.shape.Rectangle;
-import programminglife.model.*;
+import programminglife.model.DataManager;
+import programminglife.model.Node;
+import programminglife.model.Segment;
+import programminglife.model.XYCoordinate;
 
-import java.util.Collection;
-import java.util.HashSet;
+import java.util.*;
 
 /**
  * A {@link Segment} that also Implements {@link Drawable}.
@@ -12,8 +14,8 @@ import java.util.HashSet;
 public class DrawableNode extends Rectangle {
     private Node node;
     private boolean drawDimensionsUpToDate = false;
-    private Collection<DrawableNode> parents;
-    private Collection<DrawableNode> children;
+    private Collection<Node> parents;
+    private Collection<Node> children;
 
 
     /**
@@ -22,6 +24,8 @@ public class DrawableNode extends Rectangle {
      */
     public DrawableNode(Node node) {
         this.node = node;
+        parents = new LinkedHashSet<>(node.getParents());
+        children = new LinkedHashSet<>(node.getChildren());
         this.setDrawDimensions();
     }
 
@@ -58,33 +62,19 @@ public class DrawableNode extends Rectangle {
 
     /**
      * Get all the children of the node {@link DrawableNode}.
+     * @param foundNodes {@link List<DrawableNode>} is a list with nodes that are already found.
      * @return children {@link Collection<DrawableNode>} are the direct children of the node {@link DrawableNode}.
      */
-    public Collection<DrawableNode> getChildren() {
-        if (this.children == null) {
-            this.children = new HashSet<>();
-
-                for (Node child : node.getChildren()) {
-                    children.add(new DrawableNode(child));
-                }
-
-        }
+    public Collection<Node> getChildren() {
         return children;
     }
 
     /**
      * Get all the parents of the node {@link DrawableNode}.
+     * @param foundNodes {@link List<DrawableNode>} is a list with nodes that are already found.
      * @return parent {@link Collection<DrawableNode>} are the direct parents of the node {@link DrawableNode}.
      **/
-    public Collection<DrawableNode> getParents() {
-        if (this.parents == null) {
-            this.parents = new HashSet<>();
-
-                for (Node parent : node.getParents()) {
-                    this.parents.add(new DrawableNode(parent));
-                }
-
-        }
+    public Collection<Node> getParents() {
         return parents;
     }
 
@@ -192,6 +182,10 @@ public class DrawableNode extends Rectangle {
      */
     public String getSequence() {
         return DataManager.getSequence(node.getIdentifier());
+    }
+
+    public Node getNode() {
+        return this.node;
     }
 
     /**
