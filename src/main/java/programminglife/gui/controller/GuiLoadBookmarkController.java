@@ -77,6 +77,7 @@ public class GuiLoadBookmarkController implements Observer {
     private void buttonOpen() {
         Bookmark bookmark = checkBookmarkSelection();
         if (bookmark != null) {
+            guiController.setText(bookmark.getNodeID(), bookmark.getRadius());
             if (guiController.getFile() == null
                     || !bookmark.getPath().equals(guiController.getFile().getAbsolutePath())) {
                 File file = new File(bookmark.getPath());
@@ -86,8 +87,9 @@ public class GuiLoadBookmarkController implements Observer {
                 } catch (IOException | UnknownTypeException e) {
                     Alerts.error("File location has changed");
                 }
+            } else {
+                guiController.draw();
             }
-            guiController.setText(bookmark.getNodeID(), bookmark.getRadius());
             ((Stage) btnOpenBookmark.getScene().getWindow()).close();
             Console.println("Loaded bookmark " + bookmark.getBookmarkName()
                     + " Center Node: " + bookmark.getNodeID() + " Radius: " + bookmark.getRadius());
