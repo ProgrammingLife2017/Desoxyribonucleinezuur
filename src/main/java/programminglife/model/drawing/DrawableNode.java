@@ -3,7 +3,9 @@ package programminglife.model.drawing;
 import javafx.scene.shape.Rectangle;
 import programminglife.model.*;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.NoSuchElementException;
 
 /**
  * A {@link Segment} that also Implements {@link Drawable}.
@@ -26,40 +28,8 @@ public class DrawableNode extends Rectangle {
         this.setDrawDimensions();
     }
 
-
-    /**
-     * Get all the edges to the children.
-     * @return childEdges {@link Collection<DrawableEdge>} are all the edges
-     * to the children of the node {@link DrawableNode}.
-     */
-//    public Collection<DrawableEdge> getChildEdges() {
-//        HashSet<DrawableEdge> childEdges = new HashSet<DrawableEdge>();
-//
-//            for (Edge e: node.getChildEdges()) {
-//                childEdges.add(new DrawableEdge(e, this, new DrawableNode(e.getEnd())));
-//            }
-//
-//        return childEdges;
-//    }
-
-    /**
-     * Get all the edges to the parents.
-     * @return parentEdges {@link Collection<DrawableEdge>} are all the edges
-     * to the parents of the node {@link DrawableNode}.
-     */
-    public Collection<DrawableEdge> getParentEdges() {
-        HashSet<DrawableEdge> parentEdges = new HashSet<DrawableEdge>();
-
-//            for (Edge e : node.getParentEdges()) {
-//                parentEdges.add(new DrawableEdge(e, new DrawableNode(e.getStart()), this));
-//            }
-
-        return parentEdges;
-    }
-
     /**
      * Get all the children of the node {@link DrawableNode}.
-     * @param foundNodes {@link List<DrawableNode>} is a list with nodes that are already found.
      * @return children {@link Collection<DrawableNode>} are the direct children of the node {@link DrawableNode}.
      */
     public Collection<Node> getChildren() {
@@ -68,21 +38,30 @@ public class DrawableNode extends Rectangle {
 
     /**
      * Get all the parents of the node {@link DrawableNode}.
-     * @param foundNodes {@link List<DrawableNode>} is a list with nodes that are already found.
      * @return parent {@link Collection<DrawableNode>} are the direct parents of the node {@link DrawableNode}.
      **/
-    public Collection<Node> getParents() {
+    Collection<Node> getParents() {
         return parents;
     }
 
-    public void replaceChild(DrawableNode oldChild, DrawableNode newChild) {
+    /**
+     * Replace a child node with a dummy node.
+     * @param oldChild The {@link DrawableNode} to replace.
+     * @param newChild The {@link DrawableNode} to replace with.
+     */
+    void replaceChild(DrawableNode oldChild, DrawableNode newChild) {
         if (!this.children.remove(oldChild.getNode())) {
             throw new NoSuchElementException("The node to be replaced is not a child of this node.");
         }
         this.children.add(newChild.getNode());
     }
 
-    public void replaceParent(DrawableNode oldParent, DrawableNode newParent) {
+    /**
+     * Replace a parent node with a dummy node.
+     * @param oldParent The {@link DrawableNode} to replace.
+     * @param newParent The {@link DrawableNode} to replace with.
+     */
+    void replaceParent(DrawableNode oldParent, DrawableNode newParent) {
         if (!this.parents.remove(oldParent.getNode())) {
             throw new NoSuchElementException("The node to be replaced is not a parent of this node.");
         }
@@ -130,7 +109,7 @@ public class DrawableNode extends Rectangle {
      * Getter for top left corner of a {@link Segment}.
      * @return {@link XYCoordinate} with the values of the top left corner.
      */
-    public XYCoordinate getLocation() {
+    private XYCoordinate getLocation() {
         return new XYCoordinate((int) this.getX(), (int) this.getY());
     }
 
@@ -138,7 +117,7 @@ public class DrawableNode extends Rectangle {
      * Set an {@link XYCoordinate} representing the location of the {@link Segment}.
      * @param location The {@link XYCoordinate}
      */
-    public void setLocation(XYCoordinate location) {
+    void setLocation(XYCoordinate location) {
         this.setX(location.getX());
         this.setY(location.getY());
     }
@@ -187,7 +166,7 @@ public class DrawableNode extends Rectangle {
      * get the length of the sequence of this segment.
      * @return the length of the sequence of this segment
      */
-    public int getSequenceLength() {
+    private int getSequenceLength() {
         return node.getSequenceLength();
     }
 
@@ -218,7 +197,7 @@ public class DrawableNode extends Rectangle {
      * getter for the center.
      * @return XYCoordinate.
      */
-    public XYCoordinate getCenter() {
+    private XYCoordinate getCenter() {
         if (!drawDimensionsUpToDate) {
             setDrawDimensions();
         }
@@ -242,18 +221,13 @@ public class DrawableNode extends Rectangle {
      */
     @Override
     public String toString() {
-        StringBuilder stringBuilder = new StringBuilder();
-
-        stringBuilder.append("Segments: ");
-        stringBuilder.append(node.getIdentifier());
-        stringBuilder.append(" ");
-        stringBuilder.append("Location: ");
-        stringBuilder.append(this.getLocation().getX());
-        stringBuilder.append(",");
-        stringBuilder.append(this.getLocation().getY());
-
-
-        return stringBuilder.toString();
+        return "Segments: "
+                + node.getIdentifier()
+                + " "
+                + "Location: "
+                + this.getLocation().getX()
+                + ","
+                + this.getLocation().getY();
     }
 
 
@@ -273,6 +247,11 @@ public class DrawableNode extends Rectangle {
         return node.getIdentifier();
     }
 
+    /**
+     * Get the {@link Link} between this node and the child drawable node
+     * @param child The {@link DrawableNode} that the link goes to.
+     * @return {@link Link} between the two nodes.
+     */
     public Link getLink(DrawableNode child) {
         return node.getLink(child.getNode());
     }

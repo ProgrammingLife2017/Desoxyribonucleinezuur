@@ -76,7 +76,8 @@ public class GraphController {
 
     /**
      * Draws a edge on the location it has.
-     * @param drawableEdge {@link DrawableEdge} is the node to be drawn.
+     * @param parent {@link DrawableNode} is the node to be draw from.
+     * @param child {@link DrawableNode} is the node to draw to.
      */
     private void drawEdge(DrawableNode parent, DrawableNode child) {
         DrawableEdge edge = new DrawableEdge(parent, child);

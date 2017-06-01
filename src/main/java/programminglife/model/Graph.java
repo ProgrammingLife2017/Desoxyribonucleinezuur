@@ -91,10 +91,10 @@ public interface Graph {
     Collection<Genome> getGenomes(Node parent, Node child);
 
     /**
-     * getter for a Link (via parent and child)
+     * getter for a Link (via parent and child).
      * @param parent The parent of the link.
      * @param child The child of the link.
-     * @return
+     * @return The link between parent and child.
      */
     Link getLink(Node parent, Node child);
 

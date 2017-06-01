@@ -23,7 +23,6 @@ public class SubGraph {
     private static final int LINE_PADDING = 20;
 
     private LinkedHashMap<Node, DrawableNode> nodes;
-//    private Set<DrawableEdge> edges;
     private DrawableNode centerNode;
     private boolean layout;
     /**
@@ -58,27 +57,7 @@ public class SubGraph {
         if (!this.nodes.containsKey(centerNode.getNode())) {
             this.nodes.put(centerNode.getNode(), centerNode);
         }
-        //this.findEdges();
     }
-
-//    /**
-//     * Find all the edges for this SubGraph. This does not generate dummy edges, only normal edges.
-//     */
-//    private void findEdges() {
-//        this.edges = new HashSet<>();
-//        for (DrawableNode node : this.nodes.values()) {
-//            for (DrawableEdge edge : node.getParentEdges()) {
-//                if (this.nodes.containsKey(edge.getStart())) {
-//                    this.edges.add(edge);
-//                }
-//            }
-//            for (DrawableEdge edge : node.getChildEdges()) {
-//                if (this.nodes.containsKey(edge.getEnd())) {
-//                    this.edges.add(edge);
-//                }
-//            }
-//        }
-//    }
 
     // TODO: change findParents and findChildren to reliably only find nodes with a *longest* path of at most radius.
     // (maybe give that their own method, or possibly two methods with a
@@ -235,6 +214,10 @@ public class SubGraph {
         // TODO: translate so that the centerNode is at 0,0;
     }
 
+    /**
+     * Create Dummy nodes for layers to avoid more crossing edges.
+     * @param layers {@link List<Layer>} representing all layers to be drawn.
+     */
     private void createDummyNodes(List<Layer> layers) {
         Layer current = new Layer();
         for (Layer next : layers) {

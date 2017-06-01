@@ -35,11 +35,19 @@ public class DrawableEdge extends Line {
         return child;
     }
 
+    /**
+     * Set the starting location of this edge.
+     * @param startLocation The {@link XYCoordinate} to start drawing from.
+     */
     public void setStartLocation(XYCoordinate startLocation) {
         this.setStartX(startLocation.getX());
         this.setStartY(startLocation.getY());
     }
 
+    /**
+     * Set the end location of this edge.
+     * @param endLocation The {@link XYCoordinate} to end the drawing at.
+     */
     public void setEndLocation(XYCoordinate endLocation) {
         this.setEndX(endLocation.getX());
         this.setEndY(endLocation.getY());
