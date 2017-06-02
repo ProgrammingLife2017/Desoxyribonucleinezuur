@@ -86,7 +86,6 @@ public class GraphController {
         edge.setStrokeWidth(3);
         edge.setStartLocation(edge.getStart().getRightBorderCenter());
         edge.setEndLocation(edge.getEnd().getLeftBorderCenter());
-        Console.println(edge.toString());
         this.grpDrawArea.getChildren().add(edge);
     }
 
