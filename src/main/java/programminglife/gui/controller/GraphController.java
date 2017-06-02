@@ -102,11 +102,11 @@ public class GraphController {
             drawnNodes.add(node);
 
             int childCount = 0;
-            for (Segment child : this.getGraph().getChildren(node)) {
+            for (int child : this.getGraph().getChildren(node)) {
                 XYCoordinate newOffset = offset.add(HORIZONTAL_OFFSET)
                         .add(node.getWidthCoordinate())
                         .setY(INITIAL_OFFSET.getY() + (int) (CHILD_OFFSET * childCount * node.getHeight()));
-                this.drawDFS(node, child, newOffset, maxDepth - 1, drawnNodes);
+                this.drawDFS(node, new Segment(this.graph, child), newOffset, maxDepth - 1, drawnNodes);
                 childCount++;
             }
         }
