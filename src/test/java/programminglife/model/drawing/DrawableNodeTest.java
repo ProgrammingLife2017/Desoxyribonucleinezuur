@@ -27,7 +27,9 @@ public class DrawableNodeTest {
     public void setUp() throws Exception {
         Cache.removeDB(GRAPH_NAME);
         g = new GenomeGraph(GRAPH_NAME);
-        node = new DrawableNode(new Segment(g, 1, "ATCG"));
+        Segment segment = new Segment(g, 1, "ATCG");
+        g.addNode(segment);
+        node = new DrawableNode(segment);
     }
 
     @After
@@ -44,28 +46,11 @@ public class DrawableNodeTest {
     // TODO: implement other tests
 
     @Test
-    public void locationTest() {
-        node.setLocation(new XYCoordinate(1, 2));
-
-        assertEquals(1, node.getLocation().getX(), 0.0);
-        assertEquals(2, node.getLocation().getY(), 0.0);
-    }
-
-    @Test
     public void sizeTest() {
         node.setSize(new XYCoordinate(3, 4));
 
         assertEquals(3, node.getSize().getX(), 0.0);
         assertEquals(4, node.getSize().getY(), 0.0);
-    }
-
-    @Test
-    public void centerTest() {
-        node.setLocation(new XYCoordinate(2, 2));
-        node.setSize(new XYCoordinate(4, 2));
-
-        assertEquals(4, node.getCenter().getX(), 0.0);
-        assertEquals(3, node.getCenter().getY(), 0.0);
     }
 
     @Test
