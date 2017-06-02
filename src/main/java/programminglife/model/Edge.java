@@ -1,7 +1,5 @@
 package programminglife.model;
 
-import java.util.Collection;
-
 /**
  * An interface for an Edge between Nodes of type N.
  */
@@ -11,7 +9,7 @@ public interface Edge {
      * get all the Genomes that go through this Edge.
      * @return The genomes that go through this edge.
      */
-    Collection<Genome> getGenomes();
+    int[] getGenomes();
 
     /**
      * get the start of this edge.
