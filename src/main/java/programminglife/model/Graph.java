@@ -69,11 +69,16 @@ public interface Graph {
 
     /**
      * getter for the Parents of a node.
-     * @param nodeID int.
+     * @param node The node of which the parents are returned.
      * @return int[] of the parents.
      */
     Collection<Node> getParents(Node node);
 
+    /**
+     * getter for the Parents of a node.
+     * @param node The node of which the children are returned.
+     * @return int[] of the parents.
+     */
     Collection<Node> getChildren(Node node);
 
     /**
@@ -84,6 +89,11 @@ public interface Graph {
      */
     Link getLink(Node parent, Node child);
 
+    /**
+     * getter for the genomes of a node.
+     * @param node Node.
+     * @return int[] of the genomes.
+     */
     int[] getGenomes(Node node);
 
     /**

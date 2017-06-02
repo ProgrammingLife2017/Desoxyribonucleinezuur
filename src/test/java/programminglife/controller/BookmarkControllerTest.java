@@ -15,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**
- * Created by marti_000 on 16-5-2017.
+ * Tests for the bookmark controller.
  */
 public class BookmarkControllerTest {
     private Bookmark bookmark;

@@ -227,7 +227,7 @@ public class SubGraph {
 
     /**
      * Create Dummy nodes for layers to avoid more crossing edges.
-     * @param layers {@link List<Layer>} representing all layers to be drawn.
+     * @param layers {@link List} representing all layers to be drawn.
      */
     private void createDummyNodes(List<Layer> layers) {
         Layer current = new Layer();
@@ -284,14 +284,13 @@ public class SubGraph {
             layerList.get(maxParentLevel).add(node);
         }
 
-        // TODO: create dummy nodes for edges
         return layerList;
     }
 
     /**
      * Get the parents of {@link DrawableNode} node.
      * @param node The {@link DrawableNode} to get
-     * @return A {@link Collection<DrawableNode>} of {@link DrawableNode}
+     * @return A {@link Collection} of {@link DrawableNode}
      */
     public Collection<DrawableNode> getParents(DrawableNode node) {
         Collection<DrawableNode> parents = new LinkedHashSet<>();
@@ -303,6 +302,11 @@ public class SubGraph {
         return parents;
     }
 
+    /**
+     * Get the children of {@link DrawableNode} node.
+     * @param node The {@link DrawableNode} to get
+     * @return A {@link Collection} of {@link DrawableNode}
+     */
     public Collection<DrawableNode> getChildren(DrawableNode node) {
         Collection<DrawableNode> children = new LinkedHashSet<>();
         for (Node childNode : node.getChildren()) {
@@ -338,12 +342,11 @@ public class SubGraph {
 
     /**
      * Topologically sort the nodes from this graph.
+     *
+     * Assumption: graph is a DAG.
      * @return a topologically sorted list of nodes
      */
     public List<DrawableNode> topoSort() {
-        // TODO: check that graph is not circular. Easiest way is by having a
-        // parent-step counter and making sure it doesn't go higher than the number of nodes.
-
         // topo sorted list
         ArrayList<DrawableNode> res = new ArrayList<>(this.nodes.size());
 
@@ -383,6 +386,12 @@ public class SubGraph {
         return res;
     }
 
+    /**
+     * Toposort all ancestors of a node.
+     * @param result The reult list to which these nodes will be added,
+     * @param found The nodes that have already been found,
+     * @param node The node to start seaching from.
+     */
     private void topoSortFromNode(ArrayList<DrawableNode> result,
                                   LinkedHashSet<DrawableNode> found, DrawableNode node) {
         for (Node parent : node.getParents()) {
