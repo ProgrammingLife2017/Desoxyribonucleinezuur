@@ -176,7 +176,7 @@ public class GenomeGraph implements Graph {
      */
     private void addParent(Node node, Node parent) {
         int[] oldParents = this.getParentIDs(node.getIdentifier());
-        //TODO find a way to do this more efficient
+        //TODO find a way to do this more efficiently
         int[] newParents = Arrays.copyOf(oldParents, oldParents.length + 1);
         newParents[newParents.length - 1] = parent.getIdentifier();
         this.cache.getParentsAdjacencyMap().put(node.getIdentifier(), newParents);
