@@ -49,7 +49,7 @@ public final class Cache {
         this.dbFileName = toDBFile(name);
         Console.println("[%s] Setting up cache (%s)...", Thread.currentThread().getName(), this.dbFileName);
         this.db = DBMaker.fileDB(new File(this.dbFileName))
-                .fileMmapEnableIfSupported()
+                .fileMmapEnable()
                 .fileMmapPreclearDisable()
                 .cleanerHackEnable()
                 .closeOnJvmShutdown()
