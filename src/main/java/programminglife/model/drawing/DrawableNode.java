@@ -30,7 +30,7 @@ public class DrawableNode extends Rectangle {
 
     /**
      * Get all the children of the node {@link DrawableNode}.
-     * @return children {@link Collection<DrawableNode>} are the direct children of the node {@link DrawableNode}.
+     * @return children {@link Collection} are the direct children of the node {@link DrawableNode}.
      */
     public Collection<Node> getChildren() {
         return children;
@@ -38,7 +38,7 @@ public class DrawableNode extends Rectangle {
 
     /**
      * Get all the parents of the node {@link DrawableNode}.
-     * @return parent {@link Collection<DrawableNode>} are the direct parents of the node {@link DrawableNode}.
+     * @return parent {@link Collection} are the direct parents of the node {@link DrawableNode}.
      **/
     Collection<Node> getParents() {
         return parents;
