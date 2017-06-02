@@ -59,7 +59,7 @@ public class Dummy implements Node {
     }
 
     @Override
-    public Collection<Genome> getGenomes() {
+    public int[] getGenomes() {
         return this.link.getGenomes();
     }
 

@@ -51,7 +51,7 @@ public interface Node {
      * getter for genomes.
      * @return genomes {@link Collection<Genome>}.
      */
-    Collection<Genome> getGenomes();
+    int[] getGenomes();
 
     /**
      * Getter for the sequence of this node.

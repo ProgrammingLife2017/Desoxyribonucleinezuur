@@ -1,10 +1,11 @@
 package programminglife.model;
 
 import org.junit.*;
-import programminglife.utility.InitFXThread;
+import programminglife.model.exception.NodeExistsException;
 import programminglife.parser.Cache;
+import programminglife.utility.InitFXThread;
 
-import java.io.File;
+import java.util.NoSuchElementException;
 
 import static org.junit.Assert.*;
 
@@ -17,17 +18,10 @@ public class GenomeGraphTest {
     private static final String TEST_DB = "test.db";
     GenomeGraph graph;
     Segment node;
-    String link;
-
-    private static String TEST_PATH, TEST_FAULTY_PATH;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
         InitFXThread.setupClass();
-        TEST_PATH = new File(GenomeGraphTest.class.getResource("/test.gfa").toURI()).getAbsolutePath();
-        TEST_FAULTY_PATH = new File(
-                GenomeGraphTest.class.getClass().getResource("/test-faulty.gfa").toURI()
-        ).getAbsolutePath();
     }
 
     @Before
@@ -63,9 +57,14 @@ public class GenomeGraphTest {
         assertTrue(graph.contains(3));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void getNodeTest1() {
-        graph.getChildren(121);
+        assertNull(graph.getChildIDs(121));
+    }
+
+    @Test(expected = NoSuchElementException.class)
+    public void getNonExistingGenomeTest() {
+        graph.getGenome("nonexistent!");
     }
 
     @Test
@@ -82,5 +81,18 @@ public class GenomeGraphTest {
         assertTrue(graph.contains(node2));
         Node node3 = new Segment(graph, 37,"AAAAAAAA");
         assertFalse(graph.contains(node3));
+    }
+
+    @Test(expected = NodeExistsException.class)
+    public void addExistingNodeTest() {
+        graph.addNode(node);
+    }
+
+    @Test
+    public void replaceExistingNodeTest() {
+        assertEquals("ATCG", graph.getSequence(3));
+        node.setSequence("AAAA");
+        graph.replaceNode(node);
+        assertEquals("AAAA", graph.getSequence(3));
     }
 }

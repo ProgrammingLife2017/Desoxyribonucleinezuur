@@ -1,12 +1,10 @@
 package programminglife.model;
 
-import java.util.Collection;
-
 /**
  * Created by toinehartman on 17/05/2017.
  */
 public class Link implements Edge {
-    private Collection<Genome> genomeSet;
+    private int[] genomeSet;
     private Node start;
     private Node end;
 
@@ -16,7 +14,7 @@ public class Link implements Edge {
      * @param end the end (child) of this Link
      * @param genomes Thegenomes that flow through this Link.
      */
-    public Link(Node start, Node end, Collection<Genome> genomes) {
+    public Link(Node start, Node end, int[] genomes) {
         this.start = start;
         this.end = end;
         this.genomeSet = genomes;
@@ -26,7 +24,7 @@ public class Link implements Edge {
      * {@inheritDoc}
      */
     @Override
-    public Collection<Genome> getGenomes() {
+    public int[] getGenomes() {
         return this.genomeSet;
     }
 

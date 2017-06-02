@@ -47,8 +47,8 @@ public class SubGraphTest {
 //        Set<DrawableNode> found = new HashSet<>();
 //        for (DrawableNode n : actual) {
 //            // assert that all parents were already found.
-//            assertTrue(found.containsAll(n.getParents()));
-//            assertTrue(Collections.disjoint(found, n.getChildren()));
+//            assertTrue(found.containsAll(n.getParentIDs()));
+//            assertTrue(Collections.disjoint(found, n.getChildIDs()));
 //            found.add(n);
 //        }
 //    }

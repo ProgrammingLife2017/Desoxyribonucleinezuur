@@ -1,6 +1,7 @@
 package programminglife.parser;
 
 import org.jetbrains.annotations.NotNull;
+import org.mapdb.Atomic;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.Serializer;
@@ -10,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -20,12 +22,23 @@ public final class Cache {
     private static final String SEQUENCE_MAP_NAME = "sequenceMap";
     private static final String SEQUENCE_LENGTH_MAP_NAME = "sequenceLengthMap";
     private static final String GENOME_NAMES_MAP_NAME = "genomeNamesMap";
+    private static final String CHILDREN_ADJACENCY_MAP_NAME = "childrenNamesMap";
+    private static final String PARENTS_ADJACENCY_MAP_NAME = "parentsNamesMap";
+    private static final String LINE_NUMBER_INTEGER_NAME = "lineNumberInteger";
 
     private String dbFileName;
     private DB db;
+
     private Map<Integer, String> sequenceMap;
     private Map<Integer, Integer> sequenceLengthMap;
     private Map<Integer, String> genomeNamesMap;
+    private Map<Integer, int[]> childrenAdjacencyMap;
+    private Map<Integer, int[]> parentsAdjacencyMap;
+
+    private Atomic.Integer lineNumberInteger;
+
+    private LinkedList<Integer> currentParentChildren;
+    private int currentParentID;
 
     /**
      * Create the Cache and initialize the database.
@@ -36,7 +49,7 @@ public final class Cache {
         this.dbFileName = toDBFile(name);
         Console.println("[%s] Setting up cache (%s)...", Thread.currentThread().getName(), this.dbFileName);
         this.db = DBMaker.fileDB(new File(this.dbFileName))
-                .fileMmapEnableIfSupported()
+                .fileMmapEnable()
                 .fileMmapPreclearDisable()
                 .cleanerHackEnable()
                 .closeOnJvmShutdown()
@@ -52,6 +65,13 @@ public final class Cache {
         this.sequenceMap = getMap(db, SEQUENCE_MAP_NAME, Serializer.INTEGER, Serializer.STRING_ASCII);
         this.sequenceLengthMap = getMap(db, SEQUENCE_LENGTH_MAP_NAME, Serializer.INTEGER, Serializer.INTEGER);
         this.genomeNamesMap = getMap(db, GENOME_NAMES_MAP_NAME, Serializer.INTEGER, Serializer.STRING_ASCII);
+        this.childrenAdjacencyMap = getMap(db, CHILDREN_ADJACENCY_MAP_NAME, Serializer.INTEGER, Serializer.INT_ARRAY);
+        this.parentsAdjacencyMap = getMap(db, PARENTS_ADJACENCY_MAP_NAME, Serializer.INTEGER, Serializer.INT_ARRAY);
+
+        this.lineNumberInteger = db.atomicInteger(LINE_NUMBER_INTEGER_NAME).createOrOpen();
+
+        this.currentParentID = -1;
+        this.currentParentChildren = new LinkedList<>();
     }
 
     /**
@@ -102,6 +122,14 @@ public final class Cache {
      */
     private Map<Integer, String> getGenomeNamesMap() {
         return this.genomeNamesMap;
+    }
+
+    public Map<Integer, int[]> getChildrenAdjacencyMap() {
+        return this.childrenAdjacencyMap;
+    }
+
+    public Map<Integer, int[]> getParentsAdjacencyMap() {
+        return this.parentsAdjacencyMap;
     }
 
     /**
@@ -203,6 +231,22 @@ public final class Cache {
     }
 
     /**
+     * Get the cached number of lines.
+     * @return # of lines
+     */
+    public int getNumberOfLines() {
+        return this.lineNumberInteger.get();
+    }
+
+    /**
+     * Set the number of lines of the file.
+     * @param numberOfLines # of lines
+     */
+    public void setNumberOfLines(int numberOfLines) {
+        this.lineNumberInteger.set(numberOfLines);
+    }
+
+    /**
      * Completely remove a database. This cannot be undone.
      * @return true if the file was removed, false if it did not exist
      * @throws IOException when something strange happenes during deletion
@@ -238,5 +282,21 @@ public final class Cache {
         // TODO find a way to handle a partially complete cache
         // Just removing the cache is the best solution for now
         this.removeDB();
+    }
+
+    public LinkedList<Integer> getCurrentParentChildren() {
+        return currentParentChildren;
+    }
+
+    public void setCurrentParentChildren(LinkedList<Integer> currentParentChildren) {
+        this.currentParentChildren = currentParentChildren;
+    }
+
+    public int getCurrentParentID() {
+        return currentParentID;
+    }
+
+    public void setCurrentParentID(int currentParentID) {
+        this.currentParentID = currentParentID;
     }
 }

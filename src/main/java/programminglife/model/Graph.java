@@ -1,7 +1,6 @@
 package programminglife.model;
 
 import java.util.Collection;
-import java.util.Set;
 
 /**
  * Interface for the graph.
@@ -22,10 +21,10 @@ public interface Graph {
     /**
      * Add a node to the graph.
      * @param node Node.
-     * @param children {@link Set} which contains the children.
-     * @param parents {@link Set} which contains the parents.
+     * @param children int[] which contains the children.
+     * @param parents int[] which contains the parents.
      */
-    void addNode(Node node, Set<Node> children, Set<Node> parents);
+    void addNode(Node node, int[] children, int[] parents);
 
     /**
      * Replaces a node.
@@ -36,10 +35,10 @@ public interface Graph {
     /**
      * Replaces a node.
      * @param node Node.
-     * @param children {@link Set} of the children.
-     * @param parents {@link Set} of the parents.
+     * @param children int[] of the children.
+     * @param parents int[] of the parents.
      */
-    void replaceNode(Node node, Set<Node> children, Set<Node> parents);
+    void replaceNode(Node node, int[] children, int[] parents);
 
     /**
      * Gives the size of a graph.
@@ -50,45 +49,32 @@ public interface Graph {
     /**
      * getter for the Children of a node.
      * @param node the {@link Node} to get the children from.
-     * @return {@link Set} of the children.
+     * @return int[] of the children.
      */
-    Set<Segment> getChildren(Node node);
+    int[] getChildIDs(Node node);
 
     /**
      * getter for the Children of a node.
      * @param nodeID the node ID to get children from
-     * @return {@link Set} of the children.
+     * @return int[] of the children.
      */
-    Set<Segment> getChildren(int nodeID);
+    int[] getChildIDs(int nodeID);
 
     /**
      * getter for the Parents of a node.
      * @param node Node.
-     * @return {@link Set} of the parents.
+     * @return int[] of the parents.
      */
-    Set<Segment> getParents(Node node);
+    int[] getParentIDs(Node node);
 
     /**
      * getter for the Parents of a node.
      * @param nodeID int.
-     * @return {@link Set} of the parents.
+     * @return int[] of the parents.
      */
-    Set<Segment> getParents(int nodeID);
+    Collection<Node> getParents(Node node);
 
-    /**
-     * getter for the Genomes of a node.
-     * @param node Node.
-     * @return {@link Set}.
-     */
-    Collection<Genome> getGenomes(Node node);
-
-    /**
-     * getter for the Genomes of a Link.
-     * @param parent The parent of the link.
-     * @param child The child of the link.
-     * @return {@link Set}.
-     */
-    Collection<Genome> getGenomes(Node parent, Node child);
+    Collection<Node> getChildren(Node node);
 
     /**
      * getter for a Link (via parent and child).
@@ -97,6 +83,8 @@ public interface Graph {
      * @return The link between parent and child.
      */
     Link getLink(Node parent, Node child);
+
+    int[] getGenomes(Node node);
 
     /**
      * Checks to see if the graph contains a certain node.
