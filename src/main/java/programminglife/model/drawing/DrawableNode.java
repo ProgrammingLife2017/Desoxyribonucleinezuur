@@ -221,7 +221,7 @@ public class DrawableNode extends Rectangle {
      */
     @Override
     public String toString() {
-        return "Segments: "
+        return "Segment: "
                 + node.getIdentifier()
                 + " "
                 + "Location: "
