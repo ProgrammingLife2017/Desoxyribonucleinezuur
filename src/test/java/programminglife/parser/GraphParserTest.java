@@ -15,7 +15,7 @@ import java.util.Observer;
 import static org.junit.Assert.*;
 
 /**
- * Created by toinehartman on 16/05/2017.
+ * The class that handles the tests for the parser.
  */
 public class GraphParserTest implements Observer {
 

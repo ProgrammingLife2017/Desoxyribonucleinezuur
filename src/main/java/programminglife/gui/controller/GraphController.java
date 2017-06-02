@@ -2,7 +2,6 @@ package programminglife.gui.controller;
 
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
-import org.jetbrains.annotations.NotNull;
 import programminglife.model.Dummy;
 import programminglife.model.GenomeGraph;
 import programminglife.model.Segment;
@@ -78,9 +77,7 @@ public class GraphController {
     private void drawEdge(DrawableNode parent, DrawableNode child) {
         DrawableEdge edge = new DrawableEdge(parent, child);
 
-        edge.setOnMouseClicked(event -> {
-            Console.println(edge.toString());
-        });
+        edge.setOnMouseClicked(event -> Console.println(edge.toString()));
 
         edge.setStroke(Color.DARKGRAY);
         edge.setStrokeWidth(3);
@@ -122,7 +119,6 @@ public class GraphController {
      * Setter for the graph.
      * @param graph The graph
      */
-    @NotNull
     void setGraph(GenomeGraph graph) {
         this.graph = graph;
     }

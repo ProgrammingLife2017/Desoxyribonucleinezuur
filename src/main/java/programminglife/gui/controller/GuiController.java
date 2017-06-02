@@ -1,6 +1,5 @@
 package programminglife.gui.controller;
 
-import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -156,7 +155,10 @@ public class GuiController implements Observer {
     public void setGraph(GenomeGraph graph) {
         this.graphController.setGraph(graph);
         disableGraphUIElements(graph == null);
-        Platform.runLater(() -> ProgrammingLife.getStage().setTitle(graph.getID()));
+        Platform.runLater(() -> {
+            assert graph != null;
+            ProgrammingLife.getStage().setTitle(graph.getID());
+        });
 
         if (graph != null) {
             Console.println("[%s] Graph was set to %s.", Thread.currentThread().getName(), graph.getID());

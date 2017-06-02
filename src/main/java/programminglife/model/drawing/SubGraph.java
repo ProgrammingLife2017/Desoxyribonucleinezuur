@@ -217,7 +217,7 @@ public class SubGraph {
 
     /**
      * Create Dummy nodes for layers to avoid more crossing edges.
-     * @param layers {@link List<Layer>} representing all layers to be drawn.
+     * @param layers {@link List} representing all layers to be drawn.
      */
     private void createDummyNodes(List<Layer> layers) {
         Layer current = new Layer();
@@ -281,7 +281,7 @@ public class SubGraph {
     /**
      * Get the parents of {@link DrawableNode} node.
      * @param node The {@link DrawableNode} to get
-     * @return A {@link Collection<DrawableNode>} of {@link DrawableNode}
+     * @return A {@link Collection} of {@link DrawableNode}
      */
     public Collection<DrawableNode> getParents(DrawableNode node) {
         Collection<DrawableNode> parents = new LinkedHashSet<>();
@@ -293,6 +293,11 @@ public class SubGraph {
         return parents;
     }
 
+    /**
+     * Get the children of {@link DrawableNode} node.
+     * @param node The {@link DrawableNode} to get
+     * @return A {@link Collection} of {@link DrawableNode}
+     */
     public Collection<DrawableNode> getChildren(DrawableNode node) {
         Collection<DrawableNode> children = new LinkedHashSet<>();
         for (Node childNode : node.getChildren()) {
@@ -373,6 +378,12 @@ public class SubGraph {
         return res;
     }
 
+    /**
+     * Toposort all ancestors of a node.
+     * @param result The reult list to which these nodes will be added,
+     * @param found The nodes that have already been found,
+     * @param node The node to start seaching from.
+     */
     private void topoSortFromNode(ArrayList<DrawableNode> result,
                                   LinkedHashSet<DrawableNode> found, DrawableNode node) {
         for (Node parent : node.getParents()) {

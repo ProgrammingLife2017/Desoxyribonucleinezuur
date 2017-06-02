@@ -54,15 +54,15 @@ public final class Alerts {
         a.setTitle("Confirm Exit");
         a.setHeaderText("Do you really want to exit?");
         Optional<ButtonType> result = a.showAndWait();
-        if (result.isPresent()) {
-            if (result.get() == ButtonType.OK) {
+        result.ifPresent(buttonType -> {
+            if (buttonType == ButtonType.OK) {
                 Platform.exit();
                 System.exit(0);
             }
-            if (result.get() == ButtonType.CANCEL) {
+            if (buttonType == ButtonType.CANCEL) {
                 a.close();
             }
-        }
+        });
     }
 
     /**
