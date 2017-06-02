@@ -274,7 +274,6 @@ public class SubGraph {
             layerList.get(maxParentLevel).add(node);
         }
 
-        // TODO: create dummy nodes for edges
         return layerList;
     }
 
@@ -333,12 +332,11 @@ public class SubGraph {
 
     /**
      * Topologically sort the nodes from this graph.
+     *
+     * Assumption: graph is a DAG.
      * @return a topologically sorted list of nodes
      */
     public List<DrawableNode> topoSort() {
-        // TODO: check that graph is not circular. Easiest way is by having a
-        // parent-step counter and making sure it doesn't go higher than the number of nodes.
-
         // topo sorted list
         ArrayList<DrawableNode> res = new ArrayList<>(this.nodes.size());
 
