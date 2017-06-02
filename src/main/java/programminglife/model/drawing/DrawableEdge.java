@@ -56,4 +56,9 @@ public class DrawableEdge extends Line {
     public Link getLink() {
         return link;
     }
+
+    @Override
+    public String toString() {
+        return this.link.toString();
+    }
 }

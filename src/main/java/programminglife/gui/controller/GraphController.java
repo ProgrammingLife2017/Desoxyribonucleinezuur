@@ -94,10 +94,12 @@ public class GraphController {
      * @param drawableNode {@link DrawableNode} is the node to be drawn.
      */
     public void drawNode(DrawableNode drawableNode) {
-        drawableNode.setOnMouseClicked(event -> {
-            Console.println(drawableNode.getSequence());
-            Console.println(drawableNode.toString());
-        });
+        if (!(drawableNode.getNode() instanceof Dummy)) {
+            drawableNode.setOnMouseClicked(event -> {
+                Console.println(drawableNode.getSequence());
+                Console.println(drawableNode.toString());
+            });
+        }
 
         drawableNode.setFill(Color.TRANSPARENT);
         drawableNode.setStroke(Color.BLUE);

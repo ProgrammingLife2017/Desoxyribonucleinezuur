@@ -43,4 +43,11 @@ public class Link implements Edge {
     public Node getEnd() {
         return end;
     }
+
+    @Override
+    public String toString() {
+        return String.format("Link from [node: %s] to [node: %s]",
+                this.start.toString(),
+                this.end.toString());
+    }
 }
