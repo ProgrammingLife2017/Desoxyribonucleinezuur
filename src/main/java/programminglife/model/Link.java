@@ -1,7 +1,7 @@
 package programminglife.model;
 
 /**
- * Created by toinehartman on 17/05/2017.
+ * The class that handles the links used for the nodes.
  */
 public class Link implements Edge {
     private int[] genomeSet;
