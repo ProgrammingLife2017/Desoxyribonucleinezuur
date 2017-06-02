@@ -1,7 +1,9 @@
 package programminglife.model.drawing;
 
+import programminglife.model.Dummy;
 import programminglife.model.Node;
 import programminglife.model.XYCoordinate;
+import programminglife.utility.Console;
 
 import java.util.*;
 
@@ -21,8 +23,7 @@ public class SubGraph {
      */
     private static final int LINE_PADDING = 20;
 
-    private Set<DrawableNode> nodes;
-    private Set<DrawableEdge> edges;
+    private LinkedHashMap<Node, DrawableNode> nodes;
     private DrawableNode centerNode;
     private boolean layout;
     /**
@@ -53,27 +54,9 @@ public class SubGraph {
 
         // TODO: also go from all parents to children within 2*radius + 1; and vice-versa from children.
         this.nodes = findParents(centerNode, radius);
-        this.nodes.addAll(findChildren(centerNode, radius));
-        this.nodes.add(centerNode);
-        this.findEdges();
-    }
-
-    /**
-     * Find all the edges for this SubGraph. This does not generate dummy edges, only normal edges.
-     */
-    private void findEdges() {
-        this.edges = new HashSet<>();
-        for (DrawableNode node : this.nodes) {
-            for (DrawableEdge edge : node.getParentEdges()) {
-                if (this.nodes.contains(edge.getStart())) {
-                    this.edges.add(edge);
-                }
-            }
-            for (DrawableEdge edge : node.getChildEdges()) {
-                if (this.nodes.contains(edge.getEnd())) {
-                    this.edges.add(edge);
-                }
-            }
+        this.nodes.putAll(findChildren(centerNode, radius));
+        if (!this.nodes.containsKey(centerNode.getNode())) {
+            this.nodes.put(centerNode.getNode(), centerNode);
         }
     }
 
@@ -88,7 +71,7 @@ public class SubGraph {
      * @param radius Number indicating the number of steps to take.
      * @return A set of all ancestors within radius steps.
      */
-    private Set<DrawableNode> findParents(DrawableNode node, int radius) {
+    private LinkedHashMap<Node, DrawableNode> findParents(DrawableNode node, int radius) {
         Set<DrawableNode> nodeSet = new HashSet<>();
         nodeSet.add(node);
         return findParents(nodeSet, radius);
@@ -102,8 +85,8 @@ public class SubGraph {
      * @param radius Number indicating the number of steps to take.
      * @return A set of all ancestors within radius steps.
      */
-    private Set<DrawableNode> findParents(Set<DrawableNode> nodes, int radius) {
-        Set<DrawableNode> found = new HashSet<>();
+    private LinkedHashMap<Node, DrawableNode> findParents(Set<DrawableNode> nodes, int radius) {
+        LinkedHashMap<Node, DrawableNode> found = new LinkedHashMap<>();
         for (DrawableNode node : nodes) {
             findParents(found, node, radius);
         }
@@ -117,7 +100,7 @@ public class SubGraph {
      * @param node The node to start from.
      * @param radius Number indicating the number of steps to take.
      */
-    private void findParents(Set<DrawableNode> found, DrawableNode node, int radius) {
+    private void findParents(LinkedHashMap<Node, DrawableNode> found, DrawableNode node, int radius) {
         // TODO: improve datastructure so that parents can be safely skipped if already found
         // it can currently not safely be skipped: 0-1-2-3-4
         //                                            \_/
@@ -127,9 +110,10 @@ public class SubGraph {
             return;
         }
         radius--; // decrease radius once instead of multiple times within the loop;
-        for (DrawableNode parent : node.getParents()) {
-            if (found.add(parent)) {
-                findParents(found, parent, radius);
+        for (Node parent : node.getParents()) {
+            if (!found.containsKey(parent)) {
+                found.put(parent, new DrawableNode(parent));
+                findParents(found, found.get(parent), radius);
             }
         }
     }
@@ -141,7 +125,7 @@ public class SubGraph {
      * @param radius Number indicating the number of steps to take.
      * @return A set of all ancestors within radius steps.
      */
-    private Set<DrawableNode> findChildren(DrawableNode node, int radius) {
+    private LinkedHashMap<Node, DrawableNode> findChildren(DrawableNode node, int radius) {
         Set<DrawableNode> nodeSet = new HashSet<>();
         nodeSet.add(node);
         return findChildren(nodeSet, radius);
@@ -155,8 +139,8 @@ public class SubGraph {
      * @param radius Number indicating the number of steps to take.
      * @return A set of all ancestors within radius steps.
      */
-    private Set<DrawableNode> findChildren(Set<DrawableNode> nodes, int radius) {
-        Set<DrawableNode> found = new HashSet<>();
+    private LinkedHashMap<Node, DrawableNode> findChildren(Set<DrawableNode> nodes, int radius) {
+        LinkedHashMap<Node, DrawableNode> found = new LinkedHashMap<>();
         for (DrawableNode node : nodes) {
             findChildren(found, node, radius);
         }
@@ -170,7 +154,7 @@ public class SubGraph {
      * @param node The node to start from.
      * @param radius Number indicating the number of steps to take.
      */
-    private void findChildren(Set<DrawableNode> found, DrawableNode node, int radius) {
+    private void findChildren(LinkedHashMap<Node, DrawableNode> found, DrawableNode node, int radius) {
         // TODO: improve datastructure so that parents can be safely skipped if already found
         // it can currently not safely be skipped: 0-1-2-3-4
         //                                            \_/
@@ -180,9 +164,10 @@ public class SubGraph {
             return;
         }
         radius--; // decrease radius once instead of multiple times within the loop;
-        for (DrawableNode child : node.getChildren()) {
-            if (found.add(child)) {
-                findChildren(found, child, radius);
+        for (Node child : node.getChildren()) {
+            if (!found.containsKey(child)) {
+                found.put(child, new DrawableNode(child));
+                findChildren(found, found.get(child), radius);
             }
         }
     }
@@ -222,18 +207,47 @@ public class SubGraph {
             return;
         }
         List<Layer> layers = findLayers();
+        createDummyNodes(layers);
+        sortWithinLayers(layers);
 
-        int x = 0;
+
+        int x = 50;
         for (Layer layer : layers) {
-            int y = 0;
+            int y = 50;
+            x += LAYER_PADDING * 0.3 * layer.size();
             for (DrawableNode d : layer) {
                 d.setLocation(new XYCoordinate(x, y));
                 y += LINE_PADDING;
             }
-            x += layer.getWidth() + LAYER_PADDING;
+            x += layer.getWidth() + LAYER_PADDING * 0.3 * layer.size();
         }
         layout = true;
         // TODO: translate so that the centerNode is at 0,0;
+    }
+
+    /**
+     * Create Dummy nodes for layers to avoid more crossing edges.
+     * @param layers {@link List<Layer>} representing all layers to be drawn.
+     */
+    private void createDummyNodes(List<Layer> layers) {
+        Layer current = new Layer();
+        for (Layer next : layers) {
+            for (DrawableNode node : current) {
+                for (DrawableNode child : this.getChildren(node)) {
+                    if (!next.contains(child)) {
+                        DrawableNode dummy = new DrawableNode(
+                                new Dummy(node.getNode(), child.getNode(), node.getLink(child))
+                        );
+                        node.replaceChild(child, dummy);
+                        child.replaceParent(node, dummy);
+                        dummy.setWidth(next.getWidth());
+                        this.nodes.put(dummy.getNode(), dummy);
+                        next.add(dummy);
+                    }
+                }
+            }
+            current = next;
+        }
     }
 
     /**
@@ -242,13 +256,19 @@ public class SubGraph {
      * @return A {@link List} of Layers with all the nodes (all nodes are divided over the Layers).
      */
     private List<Layer> findLayers() {
+        long startTime = System.nanoTime();
         List<DrawableNode> sorted = topoSort();
+        long finishTime = System.nanoTime();
+        long differenceTime = finishTime - startTime;
+        long milisecondTime = differenceTime / 1000000;
+        Console.println("TIMERINO OF TOPOSORTERINO:  " + milisecondTime);
+        Console.println("Amount of nodes: " + sorted.size());
         Map<DrawableNode, Integer> nodeLevel = new HashMap<>();
-        List<Layer> res = new ArrayList<>();
+        List<Layer> layerList = new ArrayList<>();
 
         for (DrawableNode node : sorted) {
             int maxParentLevel = -1;
-            for (DrawableNode parent : node.getParents()) {
+            for (DrawableNode parent : this.getParents(node)) {
                 Integer parentLevel = nodeLevel.get(parent);
                 if (parentLevel == null) {
                     continue;
@@ -258,14 +278,39 @@ public class SubGraph {
             }
             maxParentLevel++; // we want this node one level higher than the highest parent.
             nodeLevel.put(node, maxParentLevel);
-            if (res.size() <= maxParentLevel) {
-                res.add(new Layer());
+            if (layerList.size() <= maxParentLevel) {
+                layerList.add(new Layer());
             }
-            res.get(maxParentLevel).add(node);
+            layerList.get(maxParentLevel).add(node);
         }
 
         // TODO: create dummy nodes for edges
-        return res;
+        return layerList;
+    }
+
+    /**
+     * Get the parents of {@link DrawableNode} node.
+     * @param node The {@link DrawableNode} to get
+     * @return A {@link Collection<DrawableNode>} of {@link DrawableNode}
+     */
+    public Collection<DrawableNode> getParents(DrawableNode node) {
+        Collection<DrawableNode> parents = new LinkedHashSet<>();
+        for (Node parentNode : node.getParents()) {
+            if (this.nodes.containsKey(parentNode)) {
+                parents.add(this.nodes.get(parentNode));
+            }
+        }
+        return parents;
+    }
+
+    public Collection<DrawableNode> getChildren(DrawableNode node) {
+        Collection<DrawableNode> children = new LinkedHashSet<>();
+        for (Node childNode : node.getChildren()) {
+            if (this.nodes.containsKey(childNode)) {
+                children.add(this.nodes.get(childNode));
+            }
+        }
+        return children;
     }
 
     /**
@@ -276,14 +321,19 @@ public class SubGraph {
         // TODO: improve to reduce edge crossings
         // note: in case of ambiguity in choosing what node to draw first, use node with lowest id
         // (to break ties and make layout deterministic)
-        for (Layer l : layers) {
-            l.sort(new Comparator<DrawableNode>() {
-                @Override
-                public int compare(DrawableNode o1, DrawableNode o2) {
-                    return 0;
-                }
-            });
-        }
+
+        // For each edge: place it on the row it came from or lower.
+        // Start from sorting in previous layer.
+        // note: this is here as a skeleton for sorting. It compiles, but doesn't
+        // do anything useful, so it is commented out.
+//        for (Layer l : layers) {
+//            l.sort(new Comparator<DrawableNode>() {
+//                @Override
+//                public int compare(DrawableNode o1, DrawableNode o2) {
+//                    return 0;
+//                }
+//            });
+//        }
     }
 
     /**
@@ -298,7 +348,7 @@ public class SubGraph {
         ArrayList<DrawableNode> res = new ArrayList<>(this.nodes.size());
 
         // nodes that have not yet been added to the list.
-        ArrayList<DrawableNode> nodes = new ArrayList<>(this.nodes);
+        LinkedHashSet<DrawableNode> found = new LinkedHashSet<>();
 
         // tactic:
         // {
@@ -307,30 +357,11 @@ public class SubGraph {
         //   If not, we found a node that can be next in the ordering. Add it to the list.
         // }
         // Repeat until all nodes are added to the list.
-        while (!nodes.isEmpty()) {
-            DrawableNode n = nodes.get(nodes.size() - 1);
-
-            findAllParentsAdded:
-            while (true) {
-                for (DrawableNode p : n.getParents()) {
-                    if (nodes.contains(p)) {
-                        // there is a parent of n in nodes, so this parent should go before in res.
-                        assert (!res.contains(p));
-
-                        // use n = p to continue searching from p.
-                        n = p;
-                        continue findAllParentsAdded; // continue with the `while(true)`-loop
-                    }
-                }
-
-                // since we are here, none of the parents of n are in nodes. Thus n can be next in the order.
-                assert (nodes.contains(n)); // check that n is in the list of nodes not yet added.
-                assert (!res.contains(n)); // check that n was not added yet.
-
-                res.add(n);
-                nodes.remove(n);
-                break; // break the `while(true)`-loop, continue with the next node n.
+        for (DrawableNode n : this.nodes.values()) {
+            if (!found.add(n)) {
+                continue;
             }
+            topoSortFromNode(res, found, n);
         }
 
         // TODO: use better strategy
@@ -350,6 +381,17 @@ public class SubGraph {
 
         assert (res.size() == this.nodes.size());
         return res;
+    }
+
+    private void topoSortFromNode(ArrayList<DrawableNode> result,
+                                  LinkedHashSet<DrawableNode> found, DrawableNode node) {
+        for (Node parent : node.getParents()) {
+            DrawableNode drawableParent = this.nodes.get(parent);
+            if (drawableParent != null && found.add(drawableParent)) {
+                topoSortFromNode(result, found, drawableParent);
+            }
+        }
+        result.add(node);
     }
 
     /**
@@ -377,7 +419,7 @@ public class SubGraph {
         // when getting smaller: drop nodes outside new radius.
     }
 
-    public Set<DrawableNode> getNodes() {
+    public LinkedHashMap<Node, DrawableNode> getNodes() {
         return this.nodes;
     }
 }

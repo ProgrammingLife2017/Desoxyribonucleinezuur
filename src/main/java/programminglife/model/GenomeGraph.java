@@ -1,12 +1,13 @@
 package programminglife.model;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
 import programminglife.model.exception.NodeExistsException;
 import programminglife.parser.Cache;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Created by marti_000 on 25-4-2017.
@@ -14,10 +15,6 @@ import java.util.stream.Collectors;
 public class GenomeGraph implements Graph {
     private String id;
     private Cache cache;
-
-    // TODO cache graph structure
-    private Map<Integer, Set<Integer>> children;
-    private Map<Integer, Set<Integer>> parents;
 
     // TODO cache genomes
     private Map<String, Genome> genomes;
@@ -27,19 +24,7 @@ public class GenomeGraph implements Graph {
      * @param id id of the graph
      */
     public GenomeGraph(String id) {
-        this(id, new HashMap<>(), new HashMap<>());
-    }
-
-    /**
-     * The constructor for a GenomeGraph.
-     * @param id String.
-     * @param children {@link Set} which contains the children.
-     * @param parents {@link Set} which contains the parents.
-     */
-    public GenomeGraph(String id, Map<Integer, Set<Integer>> children, Map<Integer, Set<Integer>> parents) {
         this.id = id;
-        this.children = children;
-        this.parents = parents;
         this.genomes = new HashMap<>();
         this.cache = new Cache(id);
     }
@@ -54,11 +39,11 @@ public class GenomeGraph implements Graph {
 
     @Override
     public void addNode(Node node) {
-        this.addNode(node, new HashSet<>(), new HashSet<>());
+        this.addNode(node, new int[0], new int[0]);
     }
 
     @Override
-    public void addNode(Node node, Set<Node> children, Set<Node> parents) {
+    public void addNode(Node node, int[] children, int[] parents) {
         if (this.contains(node)) {
             throw new NodeExistsException(String.format("%s already exists in graph %s",
                     node.toString(), this.getID()));
@@ -69,15 +54,13 @@ public class GenomeGraph implements Graph {
 
     @Override
     public void replaceNode(Node node) {
-        this.replaceNode(node, new HashSet<>(), new HashSet<>());
+        this.replaceNode(node, new int[0], new int[0]);
     }
 
     @Override
-    public void replaceNode(Node node, Set<Node> children, Set<Node> parents) {
-        this.children.put(node.getIdentifier(), children.stream().map(c ->
-                c.getIdentifier()).collect(Collectors.toSet()));
-        this.parents.put(node.getIdentifier(), parents.stream().map(p ->
-                p.getIdentifier()).collect(Collectors.toSet()));
+    public void replaceNode(Node node, int[] children, int[] parents) {
+        this.cache.getChildrenAdjacencyMap().put(node.getIdentifier(), children);
+        this.cache.getParentsAdjacencyMap().put(node.getIdentifier(), parents);
     }
 
     /**
@@ -85,33 +68,60 @@ public class GenomeGraph implements Graph {
      * @return the number of nodes
      */
     public int size() {
-        assert (children.size() == parents.size());
-        return this.children.size();
+        assert (this.cache.getChildrenAdjacencyMap().size() == this.cache.getParentsAdjacencyMap().size());
+        return this.cache.getChildrenAdjacencyMap().size();
     }
 
     @Override
-    public Set<Segment> getChildren(Node node) {
-        return this.getChildren(node.getIdentifier());
+    public int[] getChildIDs(Node node) {
+        return this.getChildIDs(node.getIdentifier());
     }
 
     @Override
-    public Set<Segment> getChildren(int nodeID) {
-        return this.children.get(nodeID).stream().map(id -> new Segment(this, id)).collect(Collectors.toSet());
+    public int[] getChildIDs(int nodeID) {
+        return this.cache.getChildrenAdjacencyMap().get(nodeID);
     }
 
     @Override
-    public Set<Segment> getParents(Node node) {
-        return this.getParents(node.getIdentifier());
+    public int[] getParentIDs(Node node) {
+        return this.getParentIDs(node.getIdentifier());
     }
 
     @Override
-    public Set<Segment> getParents(int nodeID) {
-        return this.parents.get(nodeID).stream().map(id -> new Segment(this, id)).collect(Collectors.toSet());
+    public Link getLink(Node parent, Node child) {
+        return new Link(parent, child, getGenomes(parent, child));
     }
 
     @Override
-    public Set<Genome> getGenomes(Node node) {
-        // TODO: implement
+    public Collection<Node> getParents(Node node) {
+        int[] parents = this.getParentIDs(node.getIdentifier());
+        Collection<Node> parentNodes = new LinkedHashSet<>();
+        for (int i = 0; i < parents.length; i++) {
+            parentNodes.add(new Segment(this, parents[i]));
+        }
+        return parentNodes;
+    }
+
+    @Override
+    public Collection<Node> getChildren(Node node) {
+        int[] children = this.getChildIDs(node.getIdentifier());
+        Collection<Node> childNodes = new LinkedHashSet<>();
+        for (int i = 0; i < children.length; i++) {
+            childNodes.add(new Segment(this, children[i]));
+        }
+        return childNodes;
+    }
+
+    public int[] getParentIDs(int nodeID) {
+        return this.cache.getParentsAdjacencyMap().get(nodeID);
+    }
+
+    @Override
+    public int[] getGenomes(Node node) {
+        throw new NotImplementedException("GenomeGraph#getGenomes(Node) is not yet implemented");
+    }
+
+    public int[] getGenomes(Node parent, Node child) {
         return null;
     }
 
@@ -122,7 +132,7 @@ public class GenomeGraph implements Graph {
 
     @Override
     public boolean contains(int nodeID) {
-        return this.children.containsKey(nodeID);
+        return this.cache.getChildrenAdjacencyMap().containsKey(nodeID);
     }
 
     @Override
@@ -137,7 +147,26 @@ public class GenomeGraph implements Graph {
      * @param child Node of the child to be added.
      */
     private void addChild(Node node, Node child) {
-        this.children.get(node.getIdentifier()).add(child.getIdentifier());
+        if (this.cache.getCurrentParentID() == -1) {
+            this.cache.setCurrentParentID(node.getIdentifier());
+        }
+
+        if (node.getIdentifier() == this.cache.getCurrentParentID()) {
+            // if same parent as previous link || if first link of graph,
+            // just add the child
+            this.cache.getCurrentParentChildren().add(child.getIdentifier());
+        } else {
+            // write previous list to cache
+            int[] oldChildren = this.getChildIDs(this.cache.getCurrentParentID());
+            int[] allChildren = this.append(oldChildren, this.cache.getCurrentParentChildren());
+            this.cache.getChildrenAdjacencyMap().put(this.cache.getCurrentParentID(), allChildren);
+
+            // reset node id
+            this.cache.setCurrentParentID(node.getIdentifier());
+            // reset children list
+            this.cache.setCurrentParentChildren(new LinkedList<>());
+            this.cache.getCurrentParentChildren().add(child.getIdentifier());
+        }
     }
 
     /**
@@ -146,7 +175,11 @@ public class GenomeGraph implements Graph {
      * @param parent Node of the parent to be added.
      */
     private void addParent(Node node, Node parent) {
-        this.parents.get(node.getIdentifier()).add(parent.getIdentifier());
+        int[] oldParents = this.getParentIDs(node.getIdentifier());
+        //TODO find a way to do this more efficient
+        int[] newParents = Arrays.copyOf(oldParents, oldParents.length + 1);
+        newParents[newParents.length - 1] = parent.getIdentifier();
+        this.cache.getParentsAdjacencyMap().put(node.getIdentifier(), newParents);
     }
 
     /**
@@ -231,6 +264,22 @@ public class GenomeGraph implements Graph {
     }
 
     /**
+     * Get the number of lines in the GFA file.
+     * @return # of lines
+     */
+    public int getNumberOfLines() {
+        return this.cache.getNumberOfLines();
+    }
+
+    /**
+     * Set the number of lines in the GFA file.
+     * @param numberOfLines # of lines
+     */
+    public void setNumberOfLines(int numberOfLines) {
+        this.cache.setNumberOfLines(numberOfLines);
+    }
+
+    /**
      * Roll back the latest changes to the cache.
      * @throws IOException when something strange happens during deletion
      */
@@ -262,5 +311,33 @@ public class GenomeGraph implements Graph {
             this.cache.close();
             this.cache = null;
         }
+    }
+
+    /**
+     * Append an {@link List<Integer>} to a int[].
+     * @param oldArray the int[] to go first
+     * @param newList the {@link List<Integer>} to be appended
+     * @return a int[] consisting of all elements
+     */
+    private int[] append(int[] oldArray, List<Integer> newList) {
+        int[] newArray;
+        if (oldArray == null) {
+            newArray = oldArray;
+        } else {
+            newArray = ArrayUtils.addAll(oldArray, newList.stream().mapToInt(i -> i).toArray());
+        }
+
+        return newArray;
+    }
+
+    /**
+     * Cache the group of edges from the last parent.
+     *
+     * Necessary because these are skipped during parsing.
+     */
+    public void cacheLastEdges() {
+        int[] oldChildren = this.getChildIDs(this.cache.getCurrentParentID());
+        int[] allChildren = this.append(oldChildren, this.cache.getCurrentParentChildren());
+        this.cache.getChildrenAdjacencyMap().put(this.cache.getCurrentParentID(), allChildren);
     }
 }

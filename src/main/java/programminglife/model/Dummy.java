@@ -2,6 +2,7 @@ package programminglife.model;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 
 /**
  * Created by iwanh on 30/05/2017.
@@ -46,20 +47,20 @@ public class Dummy implements Node {
 
     @Override
     public Collection<? extends Node> getChildren() {
-        Collection result = new HashSet();
+        Collection result = new LinkedHashSet();
         result.add(child);
         return result;
     }
 
     @Override
     public Collection<? extends Node> getParents() {
-        Collection result = new HashSet();
+        Collection result = new LinkedHashSet();
         result.add(child);
         return result;
     }
 
     @Override
-    public Collection<Genome> getGenomes() {
+    public int[] getGenomes() {
         return this.link.getGenomes();
     }
 
@@ -69,12 +70,15 @@ public class Dummy implements Node {
     }
 
     @Override
-    public void setSequence(String sequence) {}
+    public void setSequence(String sequence) { }
 
     @Override
     public String getSequence() {
         return "";
     }
 
-
+    @Override
+    public Link getLink(Node node) {
+        return link;
+    }
 }

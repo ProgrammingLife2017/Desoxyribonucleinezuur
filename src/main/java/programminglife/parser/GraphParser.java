@@ -2,10 +2,13 @@ package programminglife.parser;
 
 import com.diffplug.common.base.Errors;
 import javafx.application.Platform;
-import programminglife.model.*;
+import programminglife.model.Genome;
+import programminglife.model.GenomeGraph;
+import programminglife.model.Node;
+import programminglife.model.Segment;
 import programminglife.model.exception.UnknownTypeException;
-import programminglife.utility.Console;
 import programminglife.utility.Alerts;
+import programminglife.utility.Console;
 import programminglife.utility.FileProgressCounter;
 
 import java.io.*;
@@ -47,10 +50,13 @@ public class GraphParser extends Observable implements Runnable {
     @Override
     public void run() {
         try {
-            Console.println("[%s] Parsing GenomeGraph on separate Thread", Thread.currentThread().getName());
             long startTime = System.nanoTime();
-            parse(this.verbose);
-
+            if (!this.isCached) {
+                Console.println("[%s] Parsing %s on separate Thread", Thread.currentThread().getName(), this.name);
+                parse(this.verbose);
+            } else {
+                Console.println("[%s] Loaded %s from cache", Thread.currentThread().getName(), this.name);
+            }
             int secondsElapsed = (int) ((System.nanoTime() - startTime) / 1000000000.d);
             Console.println("[%s] Parsing took %d seconds", Thread.currentThread().getName(), secondsElapsed);
             this.setChanged();
@@ -94,6 +100,7 @@ public class GraphParser extends Observable implements Runnable {
         Console.print("[%s] Calculating number of lines in file... ", Thread.currentThread().getName());
         int lineCount = countLines(this.graphFile.getPath());
         Console.println("done (%d lines)", lineCount);
+        this.graph.setNumberOfLines(lineCount);
         this.progressCounter.setTotalLineCount(lineCount);
 
         try (BufferedReader reader = new BufferedReader(new FileReader(this.graphFile))) {
@@ -104,9 +111,7 @@ public class GraphParser extends Observable implements Runnable {
 
                 switch (type) {
                     case 'S':
-                        if (!this.isCached) {
-                            this.parseSegment(line);
-                        }
+                        this.parseSegment(line);
                         break;
                     case 'L':
                         this.parseLink(line);
@@ -133,6 +138,7 @@ public class GraphParser extends Observable implements Runnable {
             }
         }
 
+        this.graph.cacheLastEdges();
         this.progressCounter.finished();
     }
 
@@ -173,7 +179,6 @@ public class GraphParser extends Observable implements Runnable {
         String sequence = properties[2];
         // properties[3] is +/-
         // rest of properties is unused
-
         assert (properties[4].startsWith("ORI:Z:"));
         String[] genomeNames = properties[4].split(";");
         genomeNames[0] = genomeNames[0].substring(6);
@@ -209,7 +214,6 @@ public class GraphParser extends Observable implements Runnable {
         // properties[2] is unused
         int destinationId = Integer.parseInt(properties[3]);
         // properties[4] and further are unused
-
         Node sourceNode = new Segment(this.graph, sourceId);
         Node destinationNode = new Segment(this.graph, destinationId);
         if (!this.getGraph().contains(sourceId)) {

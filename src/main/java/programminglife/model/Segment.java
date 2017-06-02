@@ -11,7 +11,7 @@ import java.util.HashSet;
 public class Segment implements Node {
     private int id;
     private GenomeGraph graph;
-    private int sequenceLength = -1;
+    private int sequenceLength;
 
     /**
      * Constructor for a node with an id.
@@ -31,9 +31,10 @@ public class Segment implements Node {
     public Segment(GenomeGraph graph, int id, String sequence) {
         this.graph = graph;
         this.id = id;
+        this.graph = graph;
         if (sequence != null) {
-            this.graph.setSequence(id, sequence);
             sequenceLength = sequence.length();
+            this.graph.setSequence(id, sequence);
         }
     }
 
@@ -51,15 +52,23 @@ public class Segment implements Node {
      */
     public void setSequence(String sequence) {
         graph.setSequence(this.id, sequence);
-        sequenceLength = sequence.length();
+    }
+
+    /**
+     * get the length of the sequence of this segment.
+     * @return the length of the sequence of this segment
+     */
+    @Override
+    public int getSequenceLength() {
+        if (sequenceLength == 0) {
+            this.sequenceLength = graph.getSequenceLength(this.id);
+        }
+        return sequenceLength;
     }
 
     @Override
-    public int getSequenceLength() {
-        if (sequenceLength == -1) {
-            this.sequenceLength = this.graph.getSequenceLength(this.id);
-        }
-        return sequenceLength;
+    public Link getLink(Node child) {
+        return this.graph.getLink(this, child);
     }
 
     /**
@@ -73,7 +82,7 @@ public class Segment implements Node {
     @Override
     public Collection<? extends Edge> getChildEdges() {
         Collection<Link> result = new HashSet<>();
-        for (Node node : graph.getChildren(this.id)) {
+        for (Node node : graph.getChildren(this)) {
             result.add(new Link(this, node, graph.getGenomes(node)));
         }
         return result;
@@ -82,7 +91,7 @@ public class Segment implements Node {
     @Override
     public Collection<? extends Edge> getParentEdges() {
         Collection<Link> result = new HashSet<>();
-        for (Node node : graph.getParents(this.id)) {
+        for (Node node : graph.getParents(this)) {
             result.add(new Link(node, this, graph.getGenomes(this)));
         }
         return result;
@@ -90,16 +99,16 @@ public class Segment implements Node {
 
     @Override
     public Collection<? extends Node> getChildren() {
-        return new HashSet<>(graph.getChildren(this.id));
+        return new HashSet<>(graph.getChildren(this));
     }
 
     @Override
     public Collection<? extends Node> getParents() {
-        return new HashSet<>(graph.getParents(this.id));
+        return new HashSet<>(graph.getParents(this));
     }
 
     @Override
-    public Collection<Genome> getGenomes() {
+    public int[] getGenomes() {
         return this.graph.getGenomes(this);
     }
 
@@ -131,5 +140,4 @@ public class Segment implements Node {
     public int hashCode() {
         return id;
     }
-
 }
