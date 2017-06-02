@@ -106,7 +106,6 @@ public class GraphController {
             drawableNode.setStroke(Color.DARKGRAY);
             drawableNode.setStrokeWidth(3);
         }
-       // System.out.println(drawableNode.toString());
         this.grpDrawArea.getChildren().add(drawableNode);
     }
 
