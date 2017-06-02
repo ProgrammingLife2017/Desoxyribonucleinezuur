@@ -220,14 +220,16 @@ public class SubGraph {
      * @param layers {@link List<Layer>} representing all layers to be drawn.
      */
     private void createDummyNodes(List<Layer> layers) {
+        int dummyId = -1;
         Layer current = new Layer();
         for (Layer next : layers) {
             for (DrawableNode node : current) {
                 for (DrawableNode child : this.getChildren(node)) {
                     if (!next.contains(child)) {
                         DrawableNode dummy = new DrawableNode(
-                                new Dummy(node.getNode(), child.getNode(), node.getLink(child))
+                                new Dummy(dummyId, child.getNode(), node.getLink(child), node.getNode())
                         );
+                        dummyId--;
                         node.replaceChild(child, dummy);
                         child.replaceParent(node, dummy);
                         dummy.setWidth(next.getWidth());
@@ -316,14 +318,14 @@ public class SubGraph {
         // Start from sorting in previous layer.
         // note: this is here as a skeleton for sorting. It compiles, but doesn't
         // do anything useful, so it is commented out.
-//        for (Layer l : layers) {
-//            l.sort(new Comparator<DrawableNode>() {
-//                @Override
-//                public int compare(DrawableNode o1, DrawableNode o2) {
-//                    return 0;
-//                }
-//            });
-//        }
+        for (Layer l : layers) {
+            l.sort(new Comparator<DrawableNode>() {
+                @Override
+                public int compare(DrawableNode o1, DrawableNode o2) {
+                    return o1.getIdentifier() - o2.getIdentifier();
+                }
+            });
+        }
     }
 
     /**

@@ -15,12 +15,14 @@ public class Dummy implements Node {
 
     /**
      * Create a dummy node.
-     * @param parent {@link Node} is the parent node.
+     * @param id The id of this dummynode (must be negative)
      * @param child {@link Node} is the child node.
      * @param link {@link Link} the link between two segments in which this dummy node gets drawn.
+     * @param parent {@link Node} is the parent node.
      */
-    public Dummy(Node parent, Node child, Link link) {
-        id = -1;
+    public Dummy(int id, Node child, Link link, Node parent) {
+        assert (id < 0);
+        this.id = -1;
         this.parent = parent;
         this.child = child;
         this.link = link;

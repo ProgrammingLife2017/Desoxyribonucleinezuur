@@ -255,4 +255,8 @@ public class DrawableNode extends Rectangle {
     Link getLink(DrawableNode child) {
         return node.getLink(child.getNode());
     }
+
+    public int getIdentifier() {
+        return node.getIdentifier();
+    }
 }
