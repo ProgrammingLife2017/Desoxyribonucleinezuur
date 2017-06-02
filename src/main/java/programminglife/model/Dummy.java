@@ -2,6 +2,7 @@ package programminglife.model;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 
 /**
  * Created by iwanh on 30/05/2017.
@@ -46,14 +47,14 @@ public class Dummy implements Node {
 
     @Override
     public Collection<? extends Node> getChildren() {
-        Collection result = new HashSet();
+        Collection result = new LinkedHashSet();
         result.add(child);
         return result;
     }
 
     @Override
     public Collection<? extends Node> getParents() {
-        Collection result = new HashSet();
+        Collection result = new LinkedHashSet();
         result.add(child);
         return result;
     }
