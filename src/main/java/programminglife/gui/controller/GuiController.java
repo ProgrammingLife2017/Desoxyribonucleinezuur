@@ -169,7 +169,7 @@ public class GuiController implements Observer {
      */
     private void initRecent() {
         try {
-            Files.createFile(new File("Recent.txt").toPath());
+            Files.createFile(recentFile.toPath());
         } catch (FileAlreadyExistsException e) {
             //This will always happen if a user has used the program before.
             //Therefore it is unnecessary to handle further.
@@ -179,6 +179,7 @@ public class GuiController implements Observer {
         }
         if (recentFile != null) {
             try (Scanner sc = new Scanner(recentFile)) {
+                menuRecent.getItems().clear();
                 while (sc.hasNextLine()) {
                     String next = sc.nextLine();
                     MenuItem mi = new MenuItem(next);
