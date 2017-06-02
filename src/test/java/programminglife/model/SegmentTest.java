@@ -65,46 +65,46 @@ public class SegmentTest {
         assertEquals("GCTA", node.getSequence());
     }
 
-    @Test
-    public void locationTest() {
-        node.setLocation(new XYCoordinate(1, 2));
-
-        assertEquals(1, node.getLocation().getX());
-        assertEquals(2, node.getLocation().getY());
-    }
-
-    @Test
-    public void sizeTest() {
-        node.setSize(new XYCoordinate(3, 4));
-
-        assertEquals(3, node.getSize().getX());
-        assertEquals(4, node.getSize().getY());
-    }
-
-    @Test
-    public void centerTest() {
-        node.setLocation(new XYCoordinate(2, 2));
-        node.setSize(new XYCoordinate(4, 2));
-
-        assertEquals(4, node.getCenter().getX());
-        assertEquals(3, node.getCenter().getY());
-    }
-
-    @Test
-    public void rightBorderCenterTest() {
-        node.setLocation(new XYCoordinate(2, 2));
-        node.setSize(new XYCoordinate(4, 2));
-
-        assertEquals(6, node.getRightBorderCenter().getX());
-        assertEquals(3, node.getRightBorderCenter().getY());
-    }
-
-    @Test
-    public void leftBorderCenterTest() {
-        node.setLocation(new XYCoordinate(2, 2));
-        node.setSize(new XYCoordinate(4, 2));
-
-        assertEquals(2, node.getLeftBorderCenter().getX());
-        assertEquals(3, node.getLeftBorderCenter().getY());
-    }
+//    @Test
+//    public void locationTest() {
+//        node.setLocation(new XYCoordinate(1, 2));
+//
+//        assertEquals(1, node.getLocation().getX());
+//        assertEquals(2, node.getLocation().getY());
+//    }
+//
+//    @Test
+//    public void sizeTest() {
+//        node.setSize(new XYCoordinate(3, 4));
+//
+//        assertEquals(3, node.getSize().getX());
+//        assertEquals(4, node.getSize().getY());
+//    }
+//
+//    @Test
+//    public void centerTest() {
+//        node.setLocation(new XYCoordinate(2, 2));
+//        node.setSize(new XYCoordinate(4, 2));
+//
+//        assertEquals(4, node.getCenter().getX());
+//        assertEquals(3, node.getCenter().getY());
+//    }
+//
+//    @Test
+//    public void rightBorderCenterTest() {
+//        node.setLocation(new XYCoordinate(2, 2));
+//        node.setSize(new XYCoordinate(4, 2));
+//
+//        assertEquals(6, node.getRightBorderCenter().getX());
+//        assertEquals(3, node.getRightBorderCenter().getY());
+//    }
+//
+//    @Test
+//    public void leftBorderCenterTest() {
+//        node.setLocation(new XYCoordinate(2, 2));
+//        node.setSize(new XYCoordinate(4, 2));
+//
+//        assertEquals(2, node.getLeftBorderCenter().getX());
+//        assertEquals(3, node.getLeftBorderCenter().getY());
+//    }
 }

@@ -73,28 +73,56 @@ public class GenomeGraph implements Graph {
     }
 
     @Override
-    public int[] getChildren(Node node) {
-        return this.getChildren(node.getIdentifier());
+    public int[] getChildIDs(Node node) {
+        return this.getChildIDs(node.getIdentifier());
     }
 
     @Override
-    public int[] getChildren(int nodeID) {
+    public int[] getChildIDs(int nodeID) {
         return this.cache.getChildrenAdjacencyMap().get(nodeID);
     }
 
     @Override
-    public int[] getParents(Node node) {
-        return this.getParents(node.getIdentifier());
+    public int[] getParentIDs(Node node) {
+        return this.getParentIDs(node.getIdentifier());
     }
 
     @Override
-    public int[] getParents(int nodeID) {
+    public Link getLink(Node parent, Node child) {
+        return new Link(parent, child, getGenomes(parent, child));
+    }
+
+    @Override
+    public Collection<Node> getParents(Node node) {
+        int[] parents = this.getParentIDs(node.getIdentifier());
+        Collection<Node> parentNodes = new LinkedHashSet<>();
+        for (int i = 0; i < parents.length; i++) {
+            parentNodes.add(new Segment(this, parents[i]));
+        }
+        return parentNodes;
+    }
+
+    @Override
+    public Collection<Node> getChildren(Node node) {
+        int[] children = this.getChildIDs(node.getIdentifier());
+        Collection<Node> childNodes = new LinkedHashSet<>();
+        for (int i = 0; i < children.length; i++) {
+            childNodes.add(new Segment(this, children[i]));
+        }
+        return childNodes;
+    }
+
+    public int[] getParentIDs(int nodeID) {
         return this.cache.getParentsAdjacencyMap().get(nodeID);
     }
 
     @Override
     public int[] getGenomes(Node node) {
         throw new NotImplementedException("GenomeGraph#getGenomes(Node) is not yet implemented");
+    }
+
+    public int[] getGenomes(Node parent, Node child) {
+        return null;
     }
 
     @Override
@@ -129,7 +157,7 @@ public class GenomeGraph implements Graph {
             this.cache.getCurrentParentChildren().add(child.getIdentifier());
         } else {
             // write previous list to cache
-            int[] oldChildren = this.getChildren(this.cache.getCurrentParentID());
+            int[] oldChildren = this.getChildIDs(this.cache.getCurrentParentID());
             int[] allChildren = this.append(oldChildren, this.cache.getCurrentParentChildren());
             this.cache.getChildrenAdjacencyMap().put(this.cache.getCurrentParentID(), allChildren);
 
@@ -147,7 +175,7 @@ public class GenomeGraph implements Graph {
      * @param parent Node of the parent to be added.
      */
     private void addParent(Node node, Node parent) {
-        int[] oldParents = this.getParents(node.getIdentifier());
+        int[] oldParents = this.getParentIDs(node.getIdentifier());
         //TODO find a way to do this more efficient
         int[] newParents = Arrays.copyOf(oldParents, oldParents.length + 1);
         newParents[newParents.length - 1] = parent.getIdentifier();
@@ -308,7 +336,7 @@ public class GenomeGraph implements Graph {
      * Necessary because these are skipped during parsing.
      */
     public void cacheLastEdges() {
-        int[] oldChildren = this.getChildren(this.cache.getCurrentParentID());
+        int[] oldChildren = this.getChildIDs(this.cache.getCurrentParentID());
         int[] allChildren = this.append(oldChildren, this.cache.getCurrentParentChildren());
         this.cache.getChildrenAdjacencyMap().put(this.cache.getCurrentParentID(), allChildren);
     }

@@ -179,7 +179,6 @@ public class GraphParser extends Observable implements Runnable {
         String sequence = properties[2];
         // properties[3] is +/-
         // rest of properties is unused
-
         assert (properties[4].startsWith("ORI:Z:"));
         String[] genomeNames = properties[4].split(";");
         genomeNames[0] = genomeNames[0].substring(6);
@@ -215,7 +214,6 @@ public class GraphParser extends Observable implements Runnable {
         // properties[2] is unused
         int destinationId = Integer.parseInt(properties[3]);
         // properties[4] and further are unused
-
         Node sourceNode = new Segment(this.graph, sourceId);
         Node destinationNode = new Segment(this.graph, destinationId);
         if (!this.getGraph().contains(sourceId)) {

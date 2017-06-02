@@ -90,8 +90,8 @@ public class GraphParserTest implements Observer {
 
         assertTrue(g.contains(6));
         assertEquals("C", (new Segment(g, 6)).getSequence());
-        assertEquals(0, g.getParents(6).length);
-        assertEquals(0, g.getChildren(6).length);
+        assertEquals(0, g.getParentIDs(6).length);
+        assertEquals(0, g.getChildIDs(6).length);
     }
 
     @Test

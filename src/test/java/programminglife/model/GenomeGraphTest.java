@@ -59,7 +59,7 @@ public class GenomeGraphTest {
 
     @Test
     public void getNodeTest1() {
-        assertNull(graph.getChildren(121));
+        assertNull(graph.getChildIDs(121));
     }
 
     @Test(expected = NoSuchElementException.class)

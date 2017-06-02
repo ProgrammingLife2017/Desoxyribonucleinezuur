@@ -1,5 +1,7 @@
 package programminglife.model;
 
+import java.util.Collection;
+
 /**
  * Interface for the graph.
  */
@@ -49,34 +51,39 @@ public interface Graph {
      * @param node the {@link Node} to get the children from.
      * @return int[] of the children.
      */
-    int[] getChildren(Node node);
+    int[] getChildIDs(Node node);
 
     /**
      * getter for the Children of a node.
      * @param nodeID the node ID to get children from
      * @return int[] of the children.
      */
-    int[] getChildren(int nodeID);
+    int[] getChildIDs(int nodeID);
 
     /**
      * getter for the Parents of a node.
      * @param node Node.
      * @return int[] of the parents.
      */
-    int[] getParents(Node node);
+    int[] getParentIDs(Node node);
 
     /**
      * getter for the Parents of a node.
      * @param nodeID int.
      * @return int[] of the parents.
      */
-    int[] getParents(int nodeID);
+    Collection<Node> getParents(Node node);
+
+    Collection<Node> getChildren(Node node);
 
     /**
-     * getter for the Genomes of a node.
-     * @param node Node.
-     * @return int[].
+     * getter for a Link (via parent and child).
+     * @param parent The parent of the link.
+     * @param child The child of the link.
+     * @return The link between parent and child.
      */
+    Link getLink(Node parent, Node child);
+
     int[] getGenomes(Node node);
 
     /**
