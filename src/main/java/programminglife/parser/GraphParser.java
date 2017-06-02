@@ -16,7 +16,7 @@ import java.util.NoSuchElementException;
 import java.util.Observable;
 
 /**
- * Created by toinehartman on 15/05/2017.
+ * The class that handles the parsing of the graphs.
  */
 public class GraphParser extends Observable implements Runnable {
 
@@ -103,7 +103,7 @@ public class GraphParser extends Observable implements Runnable {
         this.graph.setNumberOfLines(lineCount);
         this.progressCounter.setTotalLineCount(lineCount);
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(this.graphFile))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(this.graphFile)))) {
             reader.lines().forEach(Errors.rethrow().wrap(line -> {
                 char type = line.charAt(0);
 

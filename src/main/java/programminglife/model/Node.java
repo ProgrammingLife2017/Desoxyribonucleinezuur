@@ -24,32 +24,32 @@ public interface Node {
     }
 
     /**
-     * Returns the childEdges {@link Collection<Edge>} of the node {@link Node}.
-     * @return childEdges {@link Collection<Edge>} are the edges to the children of the {@link Node}.
+     * Returns the childEdges {@link Collection} of the node {@link Node}.
+     * @return childEdges {@link Collection} are the edges to the children of the {@link Node}.
      */
     Collection<? extends Edge> getChildEdges();
 
     /**
-     * Returns the parentEdges {@link Collection<Edge>} of the node {@link Node}.
-     * @return childEdges {@link Collection<Edge>} are the edges to the children of the {@link Node}.
+     * Returns the parentEdges {@link Collection} of the node {@link Node}.
+     * @return childEdges {@link Collection} are the edges to the children of the {@link Node}.
      */
     Collection<? extends Edge> getParentEdges();
 
     /**
-     * Returns the children {@link Collection<Node>} of the node {@link Node}.
-     * @return children {@link Collection<Node>} are the children of the node {@link Node}.
+     * Returns the children {@link Collection} of the node {@link Node}.
+     * @return children {@link Collection} are the children of the node {@link Node}.
      */
     Collection<? extends Node> getChildren();
 
     /**
-     * Returns the parents {@link Collection<Node>} of the node {@link Node}.
-     * @return parents {@link Collection<Node>} are the parents of the node {@link Node}.
+     * Returns the parents {@link Collection} of the node {@link Node}.
+     * @return parents {@link Collection} are the parents of the node {@link Node}.
      */
     Collection<? extends Node> getParents();
 
     /**
      * getter for genomes.
-     * @return genomes {@link Collection<Genome>}.
+     * @return genomes {@link Collection}.
      */
     int[] getGenomes();
 

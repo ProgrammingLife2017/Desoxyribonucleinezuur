@@ -95,7 +95,6 @@ public final class Cache {
      * @param name collection to check for
      * @return true iff a cache exists for the file, false iff otherwise.
      */
-    @NotNull
     public static boolean hasCache(String name) {
         return Files.exists(Paths.get(toDBFile(name)));
     }
@@ -186,7 +185,6 @@ public final class Cache {
      * @param nodeID ID of the node to set the sequence for.
      * @param sequence new sequence.
      */
-    @NotNull
     public void setSequence(int nodeID, String sequence) {
         getSequenceMap().put(nodeID, sequence);
         getSequenceLengthMap().put(nodeID, sequence.length());
@@ -197,7 +195,6 @@ public final class Cache {
      * @param nodeID ID of the node to get the sequence length for.
      * @return the length of the sequence.
      */
-    @NotNull
     public int getSequenceLength(int nodeID) {
         if (getSequenceLengthMap().containsKey(nodeID)) {
             return getSequenceLengthMap().get(nodeID);
@@ -224,7 +221,6 @@ public final class Cache {
      * Add the name of a {@link programminglife.model.Genome}, index is previous one + 1.
      * @param genomeName the name of the {@link programminglife.model.Genome} to add
      */
-    @NotNull
     public void addGenomeName(String genomeName) {
         int index = getGenomeNamesMap().size();
         getGenomeNamesMap().put(index, genomeName);

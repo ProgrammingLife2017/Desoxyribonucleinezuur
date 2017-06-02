@@ -6,7 +6,7 @@ import java.util.NoSuchElementException;
 import java.util.TreeMap;
 
 /**
- * Created by Ivo on 2017-05-17.
+ * The class that handles the genomes.
  */
 public class Genome {
     private String name;

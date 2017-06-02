@@ -10,7 +10,7 @@ import java.util.NoSuchElementException;
 import static org.junit.Assert.*;
 
 /**
- * Created by toinehartman on 03/05/2017.
+ * The class that handles the tests for the genome graph.
  */
 public class GenomeGraphTest {
 

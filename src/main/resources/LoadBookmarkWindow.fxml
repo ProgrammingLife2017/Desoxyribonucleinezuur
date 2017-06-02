@@ -1,22 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="programminglife.gui.controller.GuiLoadBookmarkController">
-   <children>
-      <Pane layoutY="-1.0" prefHeight="25.0" prefWidth="800.0">
-         <children>
-            <Button fx:id="btnOpenBookmark" layoutX="50.0" layoutY="5.0" mnemonicParsing="false" prefWidth="100.0" text="Open" />
-            <Button fx:id="btnDeleteBookmark" layoutX="450.0" layoutY="5.0" mnemonicParsing="false" prefWidth="100.0" text="Delete" />
-            <Button fx:id="btnCreateBookmark" layoutX="325.0" layoutY="5.0" mnemonicParsing="false" prefWidth="100.0" text="Create" />
-            <Button fx:id="btnShowInfo" layoutX="175.0" layoutY="5.0" mnemonicParsing="false" prefWidth="100.0" text="Show Info" />
-         </children>
-      </Pane>
-      <Accordion fx:id="accordionBookmark" layoutY="35.0" prefHeight="375.0" prefWidth="600.0">
-      </Accordion>
-   </children>
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
+            prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="programminglife.gui.controller.GuiLoadBookmarkController">
+   <Pane layoutY="-1.0" prefHeight="25.0" prefWidth="800.0">
+      <Button fx:id="btnOpenBookmark" layoutX="50.0" layoutY="5.0" mnemonicParsing="false" prefWidth="100.0"
+              text="Open"/>
+      <Button fx:id="btnDeleteBookmark" layoutX="450.0" layoutY="5.0" mnemonicParsing="false" prefWidth="100.0"
+              text="Delete"/>
+      <Button fx:id="btnCreateBookmark" layoutX="325.0" layoutY="5.0" mnemonicParsing="false" prefWidth="100.0"
+              text="Create"/>
+      <Button fx:id="btnShowInfo" layoutX="175.0" layoutY="5.0" mnemonicParsing="false" prefWidth="100.0"
+              text="Show Info"/>
+   </Pane>
+   <Accordion fx:id="accordionBookmark" layoutY="35.0" prefHeight="375.0" prefWidth="600.0">
+   </Accordion>
 </AnchorPane>
