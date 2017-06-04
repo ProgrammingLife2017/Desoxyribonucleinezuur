@@ -31,7 +31,6 @@ public class Segment implements Node {
     public Segment(GenomeGraph graph, int id, String sequence) {
         this.graph = graph;
         this.id = id;
-        this.graph = graph;
         if (sequence != null) {
             sequenceLength = sequence.length();
             this.graph.setSequence(id, sequence);

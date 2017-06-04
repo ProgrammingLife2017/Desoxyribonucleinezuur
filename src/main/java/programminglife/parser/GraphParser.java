@@ -4,7 +4,6 @@ import com.diffplug.common.base.Errors;
 import javafx.application.Platform;
 import programminglife.model.Genome;
 import programminglife.model.GenomeGraph;
-import programminglife.model.Node;
 import programminglife.model.Segment;
 import programminglife.model.exception.UnknownTypeException;
 import programminglife.utility.Alerts;
@@ -12,7 +11,6 @@ import programminglife.utility.Console;
 import programminglife.utility.FileProgressCounter;
 
 import java.io.*;
-import java.util.NoSuchElementException;
 import java.util.Observable;
 
 /**
@@ -183,24 +181,25 @@ public class GraphParser extends Observable implements Runnable {
         String[] genomeNames = properties[4].split(";");
         genomeNames[0] = genomeNames[0].substring(6);
 
-        Segment segment = new Segment(this.graph, segmentID, sequence);
-        if (!this.getGraph().contains(segmentID)) {
-            this.getGraph().addNode(segment);
+        if (!this.graph.contains(segmentID)) {
+            this.graph.replaceNode(segmentID);
         }
+        this.graph.setSequence(segmentID, sequence);
 
-        for (String genomeName : genomeNames) {
-            if (this.getGraph().containsGenome(genomeName)) {
-                this.getGraph().getGenome(genomeName).addSegment(segment);
-            } else {
-                try {
-                    int genomeID = Integer.parseInt(genomeName);
-                    String name = this.getGraph().getGenomeName(genomeID);
-                    this.getGraph().getGenome(name).addSegment(segment);
-                } catch (NumberFormatException | NoSuchElementException e) {
-                    throw new UnknownTypeException(String.format("Genome %s does not exist in this graph", genomeName));
-                }
-            }
-        }
+        // TODO make genome parsing faster
+//        for (String genomeName : genomeNames) {
+//            if (this.getGraph().containsGenome(genomeName)) {
+//                this.getGraph().getGenome(genomeName).addSegment(segment);
+//            } else {
+//                try {
+//                    int genomeID = Integer.parseInt(genomeName);
+//                    String name = this.getGraph().getGenomeName(genomeID);
+//                    this.getGraph().getGenome(name).addSegment(segment);
+//                } catch (NumberFormatException | NoSuchElementException e) {
+//                    throw new UnknownTypeException(String.format("Genome %s does not exist in this graph", genomeName));
+//                }
+//            }
+//        }
     }
 
     /**
@@ -210,21 +209,19 @@ public class GraphParser extends Observable implements Runnable {
     synchronized void parseLink(String propertyString) {
         String[] properties = propertyString.split("\\s");
         assert (properties[0].equals("L")); // properties[0] is 'L'
-        int sourceId = Integer.parseInt(properties[1]);
+        int sourceID = Integer.parseInt(properties[1]);
         // properties[2] is unused
-        int destinationId = Integer.parseInt(properties[3]);
+        int destinationID = Integer.parseInt(properties[3]);
         // properties[4] and further are unused
-        Node sourceNode = new Segment(this.graph, sourceId);
-        Node destinationNode = new Segment(this.graph, destinationId);
-        if (!this.getGraph().contains(sourceId)) {
-            this.getGraph().addNode(sourceNode);
+        if (!this.graph.contains(sourceID)) {
+            this.graph.replaceNode(sourceID);
         }
 
-        if (!this.getGraph().contains(destinationId)) {
-            this.getGraph().addNode(destinationNode);
+        if (!this.graph.contains(destinationID)) {
+            this.graph.replaceNode(destinationID);
         }
 
-        this.getGraph().addEdge(sourceNode, destinationNode);
+        this.graph.addEdge(sourceID, destinationID);
     }
 
     /**

@@ -38,29 +38,29 @@ public class GenomeGraph implements Graph {
     }
 
     @Override
-    public void addNode(Node node) {
-        this.addNode(node, new int[0], new int[0]);
+    public void addNode(int nodeID) {
+        this.addNode(nodeID, new int[0], new int[0]);
     }
 
     @Override
-    public void addNode(Node node, int[] children, int[] parents) {
-        if (this.contains(node)) {
-            throw new NodeExistsException(String.format("%s already exists in graph %s",
-                    node.toString(), this.getID()));
+    public void addNode(int nodeID, int[] children, int[] parents) {
+        if (this.contains(nodeID)) {
+            throw new NodeExistsException(String.format("Node<%d> already exists in graph %s",
+                    nodeID, this.getID()));
         }
 
-        this.replaceNode(node, children, parents);
+        this.replaceNode(nodeID, children, parents);
     }
 
     @Override
-    public void replaceNode(Node node) {
-        this.replaceNode(node, new int[0], new int[0]);
+    public void replaceNode(int nodeID) {
+        this.replaceNode(nodeID, new int[0], new int[0]);
     }
 
     @Override
-    public void replaceNode(Node node, int[] children, int[] parents) {
-        this.cache.getChildrenAdjacencyMap().put(node.getIdentifier(), children);
-        this.cache.getParentsAdjacencyMap().put(node.getIdentifier(), parents);
+    public void replaceNode(int nodeID, int[] children, int[] parents) {
+        this.cache.getChildrenAdjacencyMap().put(nodeID, children);
+        this.cache.getParentsAdjacencyMap().put(nodeID, parents);
     }
 
     /**
@@ -147,25 +147,25 @@ public class GenomeGraph implements Graph {
     }
 
     @Override
-    public void addEdge(Node source, Node destination) {
-        this.addChild(source, destination);
-        this.addParent(destination, source);
+    public void addEdge(int sourceID, int destinationID) {
+        this.addChild(sourceID, destinationID);
+        this.addParent(destinationID, sourceID);
     }
 
     /**
      * Add a child to a node.
-     * @param node Node to which the child will be added.
-     * @param child Node of the child to be added.
+     * @param nodeID Node ID to which the child will be added.
+     * @param childID Node ID of the child to be added.
      */
-    private void addChild(Node node, Node child) {
+    private void addChild(int nodeID, int childID) {
         if (this.cache.getCurrentParentID() == -1) {
-            this.cache.setCurrentParentID(node.getIdentifier());
+            this.cache.setCurrentParentID(nodeID);
         }
 
-        if (node.getIdentifier() == this.cache.getCurrentParentID()) {
+        if (nodeID == this.cache.getCurrentParentID()) {
             // if same parent as previous link || if first link of graph,
             // just add the child
-            this.cache.getCurrentParentChildren().add(child.getIdentifier());
+            this.cache.getCurrentParentChildren().add(childID);
         } else {
             // write previous list to cache
             int[] oldChildren = this.getChildIDs(this.cache.getCurrentParentID());
@@ -173,24 +173,24 @@ public class GenomeGraph implements Graph {
             this.cache.getChildrenAdjacencyMap().put(this.cache.getCurrentParentID(), allChildren);
 
             // reset node id
-            this.cache.setCurrentParentID(node.getIdentifier());
+            this.cache.setCurrentParentID(nodeID);
             // reset children list
             this.cache.setCurrentParentChildren(new LinkedList<>());
-            this.cache.getCurrentParentChildren().add(child.getIdentifier());
+            this.cache.getCurrentParentChildren().add(childID);
         }
     }
 
     /**
      * Add a parent to a node.
-     * @param node Node to which the parent will be added.
-     * @param parent Node of the parent to be added.
+     * @param nodeID Node ID to which the parent will be added.
+     * @param parentID Node ID of the parent to be added.
      */
-    private void addParent(Node node, Node parent) {
-        int[] oldParents = this.getParentIDs(node.getIdentifier());
+    private void addParent(int nodeID, int parentID) {
+        int[] oldParents = this.getParentIDs(nodeID);
         //TODO find a way to do this more efficiently
         int[] newParents = Arrays.copyOf(oldParents, oldParents.length + 1);
-        newParents[newParents.length - 1] = parent.getIdentifier();
-        this.cache.getParentsAdjacencyMap().put(node.getIdentifier(), newParents);
+        newParents[newParents.length - 1] = parentID;
+        this.cache.getParentsAdjacencyMap().put(nodeID, newParents);
     }
 
     /**

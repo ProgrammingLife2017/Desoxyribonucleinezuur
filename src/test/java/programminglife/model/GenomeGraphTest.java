@@ -29,7 +29,7 @@ public class GenomeGraphTest {
         graph = new GenomeGraph("test graph");
         node = new Segment(graph, 3, "ATCG");
 
-        graph.addNode(node);
+        graph.addNode(node.getIdentifier());
     }
 
     @After
@@ -45,7 +45,7 @@ public class GenomeGraphTest {
     @Test
     public void addNodeTest() throws Exception {
         Segment secondNode = new Segment(graph, 8);
-        graph.addNode(secondNode);
+        graph.addNode(secondNode.getIdentifier());
 
         assertEquals(2, graph.size());
         assertTrue(graph.contains(3));
@@ -70,14 +70,15 @@ public class GenomeGraphTest {
     @Test
     public void sizeTest() {
         assertEquals(1,graph.size());
-        graph.addNode(new Segment(graph, 2,"AAAAT"));
+        graph.addNode(2);
+        graph.setSequence(2, "A");
         assertEquals(2,graph.size());
     }
 
     @Test
     public void containsTest() {
         Node node2 = new Segment(graph, 2, "ATTCTT");
-        graph.addNode(node2);
+        graph.addNode(node2.getIdentifier());
         assertTrue(graph.contains(node2));
         Node node3 = new Segment(graph, 37,"AAAAAAAA");
         assertFalse(graph.contains(node3));
@@ -85,14 +86,14 @@ public class GenomeGraphTest {
 
     @Test(expected = NodeExistsException.class)
     public void addExistingNodeTest() {
-        graph.addNode(node);
+        graph.addNode(node.getIdentifier());
     }
 
     @Test
     public void replaceExistingNodeTest() {
         assertEquals("ATCG", graph.getSequence(3));
         node.setSequence("AAAA");
-        graph.replaceNode(node);
+        graph.replaceNode(node.getIdentifier());
         assertEquals("AAAA", graph.getSequence(3));
     }
 }
