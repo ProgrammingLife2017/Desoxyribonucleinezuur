@@ -24,7 +24,7 @@ public final class Cache {
     private static final String GENOME_NAMES_MAP_NAME = "genomeNamesMap";
     private static final String CHILDREN_ADJACENCY_MAP_NAME = "childrenNamesMap";
     private static final String PARENTS_ADJACENCY_MAP_NAME = "parentsNamesMap";
-    private static final String LINE_NUMBER_INTEGER_NAME = "lineNumberInteger";
+    private static final String LINE_NUMBER_INTEGER_NAME = "numberOfEdges";
 
     private String dbFileName;
     private DB db;
@@ -35,7 +35,7 @@ public final class Cache {
     private Map<Integer, int[]> childrenAdjacencyMap;
     private Map<Integer, int[]> parentsAdjacencyMap;
 
-    private Atomic.Integer lineNumberInteger;
+    private Atomic.Integer numberOfEdges;
 
     private LinkedList<Integer> currentParentChildren;
     private int currentParentID;
@@ -68,7 +68,7 @@ public final class Cache {
         this.childrenAdjacencyMap = getMap(db, CHILDREN_ADJACENCY_MAP_NAME, Serializer.INTEGER, Serializer.INT_ARRAY);
         this.parentsAdjacencyMap = getMap(db, PARENTS_ADJACENCY_MAP_NAME, Serializer.INTEGER, Serializer.INT_ARRAY);
 
-        this.lineNumberInteger = db.atomicInteger(LINE_NUMBER_INTEGER_NAME).createOrOpen();
+        this.numberOfEdges = db.atomicInteger(LINE_NUMBER_INTEGER_NAME).createOrOpen();
 
         this.currentParentID = -1;
         this.currentParentChildren = new LinkedList<>();
@@ -224,22 +224,6 @@ public final class Cache {
     public void addGenomeName(String genomeName) {
         int index = getGenomeNamesMap().size();
         getGenomeNamesMap().put(index, genomeName);
-    }
-
-    /**
-     * Get the cached number of lines.
-     * @return # of lines
-     */
-    public int getNumberOfLines() {
-        return this.lineNumberInteger.get();
-    }
-
-    /**
-     * Set the number of lines of the file.
-     * @param numberOfLines # of lines
-     */
-    public void setNumberOfLines(int numberOfLines) {
-        this.lineNumberInteger.set(numberOfLines);
     }
 
     /**

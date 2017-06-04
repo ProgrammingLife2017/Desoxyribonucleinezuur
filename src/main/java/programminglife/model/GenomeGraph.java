@@ -273,22 +273,6 @@ public class GenomeGraph implements Graph {
     }
 
     /**
-     * Get the number of lines in the GFA file.
-     * @return # of lines
-     */
-    public int getNumberOfLines() {
-        return this.cache.getNumberOfLines();
-    }
-
-    /**
-     * Set the number of lines in the GFA file.
-     * @param numberOfLines # of lines
-     */
-    public void setNumberOfLines(int numberOfLines) {
-        this.cache.setNumberOfLines(numberOfLines);
-    }
-
-    /**
      * Roll back the latest changes to the cache.
      * @throws IOException when something strange happens during deletion
      */

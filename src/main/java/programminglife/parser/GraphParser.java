@@ -56,6 +56,7 @@ public class GraphParser extends Observable implements Runnable {
                 parse(this.verbose);
             } else {
                 Console.println("[%s] Loaded %s from cache", Thread.currentThread().getName(), this.name);
+                this.progressCounter.finished();
             }
             int secondsElapsed = (int) ((System.nanoTime() - startTime) / 1000000000.d);
             Console.println("[%s] Parsing took %d seconds", Thread.currentThread().getName(), secondsElapsed);
@@ -100,7 +101,6 @@ public class GraphParser extends Observable implements Runnable {
         Console.print("[%s] Calculating number of lines in file... ", Thread.currentThread().getName());
         int lineCount = countLines(this.graphFile.getPath());
         Console.println("done (%d lines)", lineCount);
-        this.graph.setNumberOfLines(lineCount);
         this.progressCounter.setTotalLineCount(lineCount);
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(this.graphFile)))) {
