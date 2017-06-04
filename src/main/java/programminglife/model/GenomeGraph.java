@@ -89,7 +89,6 @@ public class GenomeGraph implements Graph {
 
     @Override
     public Link getLink(Node parent, Node child) {
-
         return new Link(parent, child, getGenomes(parent, child));
     }
 
