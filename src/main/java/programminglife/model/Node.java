@@ -67,7 +67,7 @@ public interface Node {
 
     /**
      * Getter for Link.
-     * @param node {@link Node} to get the link from
+     * @param node {@link Node} the child node of this node for this Link.
      * @return The {@link Link} of the {@link Node}
      */
     Link getLink(Node node);

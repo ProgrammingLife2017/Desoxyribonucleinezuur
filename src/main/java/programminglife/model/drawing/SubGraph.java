@@ -318,13 +318,10 @@ public class SubGraph {
         // Start from sorting in previous layer.
         // note: this is here as a skeleton for sorting. It compiles, but doesn't
         // do anything useful, so it is commented out.
+        Layer prev = new Layer();
         for (Layer l : layers) {
-            l.sort(new Comparator<DrawableNode>() {
-                @Override
-                public int compare(DrawableNode o1, DrawableNode o2) {
-                    return o1.getIdentifier() - o2.getIdentifier();
-                }
-            });
+            l.sort(this, prev, true);
+            prev = l;
         }
     }
 
