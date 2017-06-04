@@ -76,8 +76,18 @@ public class GraphController {
      */
     private void drawEdge(DrawableNode parent, DrawableNode child) {
         DrawableEdge edge = new DrawableEdge(parent, child);
-
-        edge.setOnMouseClicked(event -> Console.println(edge.toString()));
+        // If either parent or child are dummy nodes make on click use the link in that dummy.
+        if (parent.getNode() instanceof Dummy) {
+            edge.setOnMouseClicked(event -> {
+                Console.println(parent.getNode().getLink(null).toString());
+            });
+        } else if (child.getNode() instanceof  Dummy) {
+            edge.setOnMouseClicked(event -> {
+                Console.println(child.getNode().getLink(null).toString());
+            });
+        } else {
+            edge.setOnMouseClicked(event -> Console.println(edge.toString()));
+        }
 
         edge.setStroke(Color.DARKGRAY);
         edge.setStrokeWidth(3);
@@ -95,6 +105,11 @@ public class GraphController {
             drawableNode.setOnMouseClicked(event -> {
                 Console.println(drawableNode.getSequence());
                 Console.println(drawableNode.toString());
+            });
+        } else {
+            Dummy node = (Dummy) drawableNode.getNode();
+            drawableNode.setOnMouseClicked(event -> {
+                Console.println(node.getLink(null).toString());
             });
         }
 
