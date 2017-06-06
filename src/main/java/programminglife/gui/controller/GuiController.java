@@ -33,6 +33,7 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Random;
 import java.util.Scanner;
 
 /**
@@ -63,8 +64,8 @@ public class GuiController implements Observer {
     @FXML private TextField txtCenterNode;
 
     @FXML private Group grpDrawArea;
-    @FXML private AnchorPane anchorGraphPanel;
     @FXML private AnchorPane anchorLeftControlPanel;
+    @FXML private AnchorPane anchorGraphPanel;
 
     private double orgSceneX, orgSceneY;
     private double orgTranslateX, orgTranslateY;
@@ -76,6 +77,8 @@ public class GuiController implements Observer {
     private static final double MAX_SCALE = 10.0d;
     private static final double MIN_SCALE = .1d;
     private static final double ZOOM_FACTOR = 1.05d;
+    private double boundsWidth;
+    private double boundsHeight;
 
     /**
      * The initialize will call the other methods that are run in the .
@@ -283,6 +286,7 @@ public class GuiController implements Observer {
                 Alerts.error("The bookmarks file can't be opened");
             }
         });
+        btnBookmarks.setAccelerator(new KeyCodeCombination(KeyCode.B, KeyCodeCombination.CONTROL_DOWN));
     }
 
     /**
@@ -300,8 +304,8 @@ public class GuiController implements Observer {
         disableGraphUIElements(true);
 
         btnTranslateReset.setOnAction(event -> {
-            grpDrawArea.setTranslateX(0);
-            grpDrawArea.setTranslateY(0);
+            grpDrawArea.setTranslateX(graphController.getLocationCenterX());
+            grpDrawArea.setTranslateY(graphController.getLocationCenterY());
         });
 
         btnZoomReset.setOnAction(event -> {
@@ -319,7 +323,7 @@ public class GuiController implements Observer {
         btnDraw.setOnAction(e -> this.draw());
 
         btnDrawRandom.setOnAction(event -> {
-            int randomNodeID = (int) Math.ceil(Math.random() * this.graphController.getGraph().size());
+            int randomNodeID = (new Random()).nextInt(this.graphController.getGraph().size());
             txtCenterNode.setText(Integer.toString(randomNodeID));
             this.draw();
         });

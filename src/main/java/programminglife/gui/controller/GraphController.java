@@ -1,27 +1,29 @@
 package programminglife.gui.controller;
 
+import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import programminglife.model.Dummy;
 import programminglife.model.GenomeGraph;
 import programminglife.model.Segment;
-import programminglife.model.XYCoordinate;
 import programminglife.model.drawing.DrawableEdge;
 import programminglife.model.drawing.DrawableNode;
 import programminglife.model.drawing.SubGraph;
 import programminglife.utility.Console;
+
+import java.util.Collection;
 
 /**
  * Created by Martijn van Meerten on 8-5-2017.
  * Controller for drawing the graph.
  */
 public class GraphController {
-    private static final XYCoordinate INITIAL_OFFSET = new XYCoordinate(50, 50);
-    private static final XYCoordinate HORIZONTAL_OFFSET = new XYCoordinate(50, 0);
-    private static final double CHILD_OFFSET = 1.7;
 
     private GenomeGraph graph;
     private Group grpDrawArea;
+    private double locationCenterY;
+    private double locationCenterX;
+    private SubGraph subGraph;
 
     /**
      * Initialize controller object.
@@ -35,14 +37,14 @@ public class GraphController {
 
     /**
      * Method to draw the subgraph decided by a center node and radius.
-     * @param centerNode the node of which the radius starts.
+     * @param center the node of which the radius starts.
      * @param radius the amount of layers to be drawn.
      */
-    public void draw(int centerNode, int radius) {
+    public void draw(int center, int radius) {
         long startTimeProgram = System.nanoTime();
-        Segment centerSegment = new Segment(graph, centerNode);
-        DrawableNode center = new DrawableNode(centerSegment);
-        SubGraph subGraph = new SubGraph(center, radius);
+        Segment centerSegment = new Segment(graph, center);
+        DrawableNode centerNode = new DrawableNode(centerSegment);
+        subGraph = new SubGraph(centerNode, radius);
 
         long startLayoutTime = System.nanoTime();
 
@@ -56,17 +58,42 @@ public class GraphController {
                 drawEdge(drawableNode, child);
             }
         }
+
+        centerOnNodeId(center);
+        highlightNode(centerNode, Color.ORANGE);
+
+
         long finishTime = System.nanoTime();
         long differenceTimeProgram = finishTime - startTimeProgram;
         long differenceTimeDrawing = finishTime - startTimeDrawing;
         long differenceTimeLayout = finishTime - startLayoutTime;
         long msdifferenceTimeProgram = differenceTimeProgram / 1000000;
-        long milisecondTimeDrawing = differenceTimeDrawing /   1000000;
-        long msdifferenceTimeLayout = differenceTimeLayout / 1000000;
+        long milisecondTimeDrawing = differenceTimeDrawing   / 1000000;
+        long msdifferenceTimeLayout = differenceTimeLayout   / 1000000;
         Console.println("Time of Drawing:  " + milisecondTimeDrawing);
         Console.println("Time of layout:  " + msdifferenceTimeLayout);
         Console.println("Time of Total Program:  " + msdifferenceTimeProgram);
 
+    }
+
+    /**
+     * Fill the rectangles with the color.
+     * @param nodes the Collection of {@link DrawableNode} to highlight.
+     * @param color the {@link Color} to highlight with.
+     */
+    private void highlightNodes(Collection<DrawableNode> nodes, Color color) {
+        for (DrawableNode dwnode : nodes) {
+            highlightNode(dwnode, color);
+        }
+    }
+
+    /**
+     * Fill the rectangle with the color.
+     * @param centerNode the {@link DrawableNode} to highlight.
+     * @param color the {@link Color} to highlight with.
+     */
+    private void highlightNode(DrawableNode centerNode, Color color) {
+        centerNode.setFill(color);
     }
 
     /**
@@ -102,22 +129,19 @@ public class GraphController {
      */
     public void drawNode(DrawableNode drawableNode) {
         if (!(drawableNode.getNode() instanceof Dummy)) {
+            drawableNode.setFill(Color.TRANSPARENT);
+            drawableNode.setStroke(Color.BLUE);
             drawableNode.setOnMouseClicked(event -> {
                 Console.println(drawableNode.getSequence());
                 Console.println(drawableNode.toString());
             });
         } else {
+            drawableNode.setStroke(Color.DARKGRAY);
+            drawableNode.setStrokeWidth(3);
             Dummy node = (Dummy) drawableNode.getNode();
             drawableNode.setOnMouseClicked(event -> {
                 Console.println(node.getLink(null).toString());
             });
-        }
-
-        drawableNode.setFill(Color.TRANSPARENT);
-        drawableNode.setStroke(Color.BLUE);
-        if (drawableNode.getNode() instanceof Dummy) {
-            drawableNode.setStroke(Color.DARKGRAY);
-            drawableNode.setStrokeWidth(3);
         }
         this.grpDrawArea.getChildren().add(drawableNode);
     }
@@ -143,5 +167,34 @@ public class GraphController {
      */
     public void clear() {
         this.grpDrawArea.getChildren().clear();
+    }
+
+    public double getLocationCenterX() {
+        return locationCenterX;
+    }
+
+
+    public double getLocationCenterY() {
+        return locationCenterY;
+    }
+
+    /**
+     * Centers on the given node.
+     * @param nodeId is the node to center on.
+     */
+    public void centerOnNodeId(int nodeId) {
+        DrawableNode drawableCenterNode = subGraph.getNodes().get(new Segment(graph, nodeId));
+        double xCoord = drawableCenterNode.getX();
+
+        Bounds bounds = grpDrawArea.getParent().getLayoutBounds();
+        double boundsHeight = bounds.getHeight();
+        double boundsWidth = bounds.getWidth();
+
+        locationCenterY = boundsHeight / 4;
+        locationCenterX = boundsWidth / 2 - xCoord;
+
+        grpDrawArea.setTranslateX(locationCenterX);
+        grpDrawArea.setTranslateY(locationCenterY);
+
     }
 }
