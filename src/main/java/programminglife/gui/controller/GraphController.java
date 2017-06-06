@@ -19,6 +19,9 @@ public class GraphController {
 
     private GenomeGraph graph;
     private Group grpDrawArea;
+    private double locationCenterY;
+    private double locationCenterX;
+    private SubGraph subGraph;
 
     /**
      * Initialize controller object.
@@ -39,7 +42,7 @@ public class GraphController {
         long startTimeProgram = System.nanoTime();
         Segment centerSegment = new Segment(graph, centerNode);
         DrawableNode center = new DrawableNode(centerSegment);
-        SubGraph subGraph = new SubGraph(center, radius);
+        subGraph = new SubGraph(center, radius);
 
         long startLayoutTime = System.nanoTime();
 
@@ -54,15 +57,8 @@ public class GraphController {
             }
         }
 
-        DrawableNode drawableCenterNode = subGraph.getNodes().get(centerSegment);
-        drawableCenterNode.setFill(Color.ORANGE);
-        double xCoord = drawableCenterNode.getX();
-        Bounds bounds = grpDrawArea.getParent().getLayoutBounds();
-        double boundsHeight = bounds.getHeight();
-        double boundsWidth = bounds.getWidth();
+        centerOnNodeId(centerNode);
 
-        grpDrawArea.setTranslateX(boundsWidth / 2 - xCoord);
-        grpDrawArea.setTranslateY(boundsHeight / 3);
 
 
         long finishTime = System.nanoTime();
@@ -152,5 +148,34 @@ public class GraphController {
      */
     public void clear() {
         this.grpDrawArea.getChildren().clear();
+    }
+
+    public double getLocationCenterX(){
+        return locationCenterX;
+    }
+
+
+    public double getLocationCenterY(){
+        return locationCenterY;
+    }
+
+    /**
+     * Centers on the given node.
+     * @param nodeId is the node to center on.
+     */
+    public void centerOnNodeId(int nodeId){
+        DrawableNode drawableCenterNode = subGraph.getNodes().get(new Segment(graph, nodeId));
+        double xCoord = drawableCenterNode.getX();
+
+        Bounds bounds = grpDrawArea.getParent().getLayoutBounds();
+        double boundsHeight = bounds.getHeight();
+        double boundsWidth = bounds.getWidth();
+
+        locationCenterY = boundsHeight / 3;
+        locationCenterX = boundsWidth / 2 - xCoord;
+
+        grpDrawArea.setTranslateX(locationCenterX);
+        grpDrawArea.setTranslateY(locationCenterY);
+
     }
 }

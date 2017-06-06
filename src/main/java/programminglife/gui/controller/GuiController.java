@@ -6,6 +6,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -77,6 +78,9 @@ public class GuiController implements Observer {
     private File recentFile = new File("Recent.txt");
     private String recentItems = "";
     private Thread parseThread;
+    private double boundsWidth;
+    private double boundsHeight;
+
 
     /**
      * The initialize will call the other methods that are run in the .
@@ -320,8 +324,8 @@ public class GuiController implements Observer {
         });
 
         btnTranslateReset.setOnAction(event -> {
-            grpDrawArea.setTranslateX(0);
-            grpDrawArea.setTranslateY(0);
+            grpDrawArea.setTranslateX(graphController.getLocationCenterX());
+            grpDrawArea.setTranslateY(graphController.getLocationCenterY());
         });
 
         btnZoomIn.setOnAction(event -> {
