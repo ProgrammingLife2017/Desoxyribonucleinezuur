@@ -352,8 +352,7 @@ public class GuiController implements Observer {
         btnDraw.setOnAction(e -> this.draw());
 
         btnDrawRandom.setOnAction(event -> {
-            Random rand = new Random();
-            int randomNodeID = (int) Math.ceil(rand.nextDouble() * this.graphController.getGraph().size());
+            int randomNodeID = (new Random()).nextInt(this.graphController.getGraph().size());
             txtCenterNode.setText(Integer.toString(randomNodeID));
             this.draw();
         });
