@@ -44,8 +44,8 @@ public class GenomeGraphTest {
 
     @Test
     public void addNodeTest() throws Exception {
-        Segment secondNode = new Segment(graph, 8);
-        graph.addNode(secondNode.getIdentifier());
+        graph.setSequence(8, "A");
+        graph.addNode(8);
 
         assertEquals(2, graph.size());
         assertTrue(graph.contains(3));
