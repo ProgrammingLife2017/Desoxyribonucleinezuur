@@ -1,12 +1,11 @@
 package programminglife.gui.controller;
 
+import javafx.geometry.Bounds;
 import javafx.scene.Group;
-import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import programminglife.model.Dummy;
 import programminglife.model.GenomeGraph;
 import programminglife.model.Segment;
-import programminglife.model.XYCoordinate;
 import programminglife.model.drawing.DrawableEdge;
 import programminglife.model.drawing.DrawableNode;
 import programminglife.model.drawing.SubGraph;
@@ -17,13 +16,9 @@ import programminglife.utility.Console;
  * Controller for drawing the graph.
  */
 public class GraphController {
-    private static final XYCoordinate INITIAL_OFFSET = new XYCoordinate(50, 50);
-    private static final XYCoordinate HORIZONTAL_OFFSET = new XYCoordinate(50, 0);
-    private static final double CHILD_OFFSET = 1.7;
 
     private GenomeGraph graph;
     private Group grpDrawArea;
-    private int centerNodeID;
 
     /**
      * Initialize controller object.
@@ -42,7 +37,6 @@ public class GraphController {
      */
     public void draw(int centerNode, int radius) {
         long startTimeProgram = System.nanoTime();
-        centerNodeID = centerNode;
         Segment centerSegment = new Segment(graph, centerNode);
         DrawableNode center = new DrawableNode(centerSegment);
         SubGraph subGraph = new SubGraph(center, radius);
@@ -63,9 +57,12 @@ public class GraphController {
         DrawableNode drawableCenterNode = subGraph.getNodes().get(centerSegment);
         drawableCenterNode.setFill(Color.ORANGE);
         double xCoord = drawableCenterNode.getX();
-        double yCoord = drawableCenterNode.getY();
-        grpDrawArea.setTranslateX(650 - xCoord);
-        grpDrawArea.setTranslateY(350);
+        Bounds bounds = grpDrawArea.getParent().getLayoutBounds();
+        double boundsHeight = bounds.getHeight();
+        double boundsWidth = bounds.getWidth();
+
+        grpDrawArea.setTranslateX(boundsWidth / 2 - xCoord);
+        grpDrawArea.setTranslateY(boundsHeight / 3);
 
 
         long finishTime = System.nanoTime();
