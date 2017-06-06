@@ -22,7 +22,7 @@ public class Dummy implements Node {
      */
     public Dummy(int id, Node child, Link link, Node parent) {
         assert (id < 0);
-        this.id = -1;
+        this.id = id;
         this.parent = parent;
         this.child = child;
         this.link = link;
