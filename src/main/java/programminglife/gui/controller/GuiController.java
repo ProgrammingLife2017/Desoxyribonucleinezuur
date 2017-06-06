@@ -32,6 +32,7 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Random;
 import java.util.Scanner;
 
 /**
@@ -348,7 +349,8 @@ public class GuiController implements Observer {
         btnDraw.setOnAction(e -> this.draw());
 
         btnDrawRandom.setOnAction(event -> {
-            int randomNodeID = (int) Math.ceil(Math.random() * this.graphController.getGraph().size());
+            Random rand = new Random();
+            int randomNodeID = (int) Math.ceil(rand.nextDouble() * this.graphController.getGraph().size());
             txtCenterNode.setText(Integer.toString(randomNodeID));
             this.draw();
         });
