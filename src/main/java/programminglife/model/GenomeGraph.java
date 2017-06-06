@@ -68,8 +68,7 @@ public class GenomeGraph implements Graph {
      * @return the number of nodes
      */
     public int size() {
-        assert (this.cache.getChildrenAdjacencyMap().size() == this.cache.getParentsAdjacencyMap().size());
-        return this.cache.getChildrenAdjacencyMap().size();
+        return this.cache.getNumberOfNodes();
     }
 
     @Override

@@ -24,7 +24,7 @@ public final class Cache {
     private static final String GENOME_NAMES_MAP_NAME = "genomeNamesMap";
     private static final String CHILDREN_ADJACENCY_MAP_NAME = "childrenNamesMap";
     private static final String PARENTS_ADJACENCY_MAP_NAME = "parentsNamesMap";
-    private static final String LINE_NUMBER_INTEGER_NAME = "numberOfEdges";
+    private static final String NUMBER_OF_NODES_INT_NAME = "numberOfNodes";
 
     private String dbFileName;
     private DB db;
@@ -35,7 +35,7 @@ public final class Cache {
     private Map<Integer, int[]> childrenAdjacencyMap;
     private Map<Integer, int[]> parentsAdjacencyMap;
 
-    private Atomic.Integer numberOfEdges;
+    private Atomic.Integer numberOfNodes;
 
     private LinkedList<Integer> currentParentChildren;
     private int currentParentID;
@@ -68,7 +68,7 @@ public final class Cache {
         this.childrenAdjacencyMap = getMap(db, CHILDREN_ADJACENCY_MAP_NAME, Serializer.INTEGER, Serializer.INT_ARRAY);
         this.parentsAdjacencyMap = getMap(db, PARENTS_ADJACENCY_MAP_NAME, Serializer.INTEGER, Serializer.INT_ARRAY);
 
-        this.numberOfEdges = db.atomicInteger(LINE_NUMBER_INTEGER_NAME).createOrOpen();
+        this.numberOfNodes = db.atomicInteger(NUMBER_OF_NODES_INT_NAME).createOrOpen();
 
         this.currentParentID = -1;
         this.currentParentChildren = new LinkedList<>();
@@ -131,6 +131,10 @@ public final class Cache {
         return this.parentsAdjacencyMap;
     }
 
+    public int getNumberOfNodes() {
+        return this.numberOfNodes.get();
+    }
+
     /**
      * Get a disk-backed hashmap named name. If it doesn't exist, it is created using the provided serializers.
      * @param db the db to get the map from.
@@ -186,7 +190,9 @@ public final class Cache {
      * @param sequence new sequence.
      */
     public void setSequence(int nodeID, String sequence) {
-        getSequenceMap().put(nodeID, sequence);
+        if (getSequenceMap().put(nodeID, sequence) == null) {
+            this.numberOfNodes.incrementAndGet();
+        }
         getSequenceLengthMap().put(nodeID, sequence.length());
     }
 

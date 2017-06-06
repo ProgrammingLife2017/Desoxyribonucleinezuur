@@ -4,7 +4,6 @@ import com.diffplug.common.base.Errors;
 import javafx.application.Platform;
 import programminglife.model.Genome;
 import programminglife.model.GenomeGraph;
-import programminglife.model.Segment;
 import programminglife.model.exception.UnknownTypeException;
 import programminglife.utility.Alerts;
 import programminglife.utility.Console;
@@ -166,9 +165,9 @@ public class GraphParser extends Observable implements Runnable {
     }
 
     /**
-     * Parse a {@link String} representing a {@link Segment}.
+     * Parse a {@link String} representing a Segment.
      * @param propertyString the {@link String} from a GFA file.
-     * @throws UnknownTypeException when a {@link Segment} references a {@link Genome} that is not in the GFA header
+     * @throws UnknownTypeException when a Segment references a {@link Genome} that is not in the GFA header
      */
     synchronized void parseSegment(String propertyString) throws UnknownTypeException {
         String[] properties = propertyString.split("\\s");
