@@ -21,7 +21,7 @@ public class SubGraph {
     /**
      * The amount of padding between nodes within a Layer (vertical padding).
      */
-    private static final int LINE_PADDING = 20;
+    private static final int LINE_PADDING = 30;
 
     private LinkedHashMap<Node, DrawableNode> nodes;
     private DrawableNode centerNode;
@@ -202,14 +202,23 @@ public class SubGraph {
 
 
         int x = 50;
+        int size = 1;
         for (Layer layer : layers) {
+            int newSize = layer.size();
+            int diff = Math.abs(newSize - size);
             int y = 50;
-            x += LAYER_PADDING * 0.3 * layer.size();
+            x += LAYER_PADDING * 0.1 * newSize;
+            x += LAYER_PADDING * 0.6 * diff;
             for (DrawableNode d : layer) {
-                d.setLocation(new XYCoordinate(x, y));
+                if (d.getNode() instanceof Dummy) {
+                    d.setLocation(new XYCoordinate(x, y + 5));
+                } else {
+                    d.setLocation(new XYCoordinate(x, y));
+                }
                 y += LINE_PADDING;
             }
-            x += layer.getWidth() + LAYER_PADDING * 0.3 * layer.size();
+            x += layer.getWidth() + LAYER_PADDING * 0.1 * newSize;
+            size = newSize;
         }
         layout = true;
         // TODO: translate so that the centerNode is at 0,0;
