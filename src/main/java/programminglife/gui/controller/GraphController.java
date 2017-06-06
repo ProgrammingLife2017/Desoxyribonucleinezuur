@@ -11,6 +11,8 @@ import programminglife.model.drawing.DrawableNode;
 import programminglife.model.drawing.SubGraph;
 import programminglife.utility.Console;
 
+import java.util.Collection;
+
 /**
  * Created by Martijn van Meerten on 8-5-2017.
  * Controller for drawing the graph.
@@ -35,14 +37,14 @@ public class GraphController {
 
     /**
      * Method to draw the subgraph decided by a center node and radius.
-     * @param centerNode the node of which the radius starts.
+     * @param center the node of which the radius starts.
      * @param radius the amount of layers to be drawn.
      */
-    public void draw(int centerNode, int radius) {
+    public void draw(int center, int radius) {
         long startTimeProgram = System.nanoTime();
-        Segment centerSegment = new Segment(graph, centerNode);
-        DrawableNode center = new DrawableNode(centerSegment);
-        subGraph = new SubGraph(center, radius);
+        Segment centerSegment = new Segment(graph, center);
+        DrawableNode centerNode = new DrawableNode(centerSegment);
+        subGraph = new SubGraph(centerNode, radius);
 
         long startLayoutTime = System.nanoTime();
 
@@ -57,8 +59,8 @@ public class GraphController {
             }
         }
 
-        centerOnNodeId(centerNode);
-
+        centerOnNodeId(center);
+        highlightNode(centerNode, Color.ORANGE);
 
 
         long finishTime = System.nanoTime();
@@ -72,6 +74,26 @@ public class GraphController {
         Console.println("Time of layout:  " + msdifferenceTimeLayout);
         Console.println("Time of Total Program:  " + msdifferenceTimeProgram);
 
+    }
+
+    /**
+     * Fill the rectangles with the color.
+     * @param nodes the Collection of {@link DrawableNode} to highlight.
+     * @param color the {@link Color} to highlight with.
+     */
+    private void highlightNodes(Collection<DrawableNode> nodes, Color color) {
+        for (DrawableNode dwnode : nodes) {
+            highlightNode(dwnode, color);
+        }
+    }
+
+    /**
+     * Fill the rectangle with the color.
+     * @param centerNode the {@link DrawableNode} to highlight.
+     * @param color the {@link Color} to highlight with.
+     */
+    private void highlightNode(DrawableNode centerNode, Color color) {
+        centerNode.setFill(color);
     }
 
     /**
