@@ -9,6 +9,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
@@ -65,6 +67,7 @@ public class GuiController implements Observer {
     @FXML private TextField txtCenterNode;
 
     @FXML private Group grpDrawArea;
+    @FXML private AnchorPane anchorGraphPanel;
     @FXML private AnchorPane anchorLeftControlPanel;
 
     private double orgSceneX, orgSceneY;
@@ -76,6 +79,8 @@ public class GuiController implements Observer {
     private File recentFile = new File("Recent.txt");
     private String recentItems = "";
     private Thread parseThread;
+    private static final double MAX_SCALE = 10.0d;
+    private static final double MIN_SCALE = .1d;
 
     /**
      * The initialize will call the other methods that are run in the .
@@ -104,6 +109,7 @@ public class GuiController implements Observer {
         if (file != null) {
             if (this.graphController != null && this.graphController.getGraph() != null) {
                 this.graphController.getGraph().close();
+                this.grpDrawArea.getChildren().clear();
             }
 
             disableGraphUIElements(true);
@@ -233,7 +239,9 @@ public class GuiController implements Observer {
             }
         });
 
+        btnOpen.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCodeCombination.CONTROL_DOWN));
         btnQuit.setOnAction(event -> Alerts.quitAlert());
+        btnQuit.setAccelerator(new KeyCodeCombination(KeyCode.E, KeyCodeCombination.CONTROL_DOWN));
         btnAbout.setOnAction(event -> Alerts.infoAboutAlert());
         btnInstructions.setOnAction(event -> Alerts.infoInstructionAlert());
     }
@@ -438,24 +446,56 @@ public class GuiController implements Observer {
      * Initialises the mouse events.
      */
     private void initMouse() {
-        grpDrawArea.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
+        anchorGraphPanel.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
             orgSceneX = event.getSceneX();
             orgSceneY = event.getSceneY();
-            orgTranslateX = ((Group) (event.getSource())).getTranslateX();
-            orgTranslateY = ((Group) (event.getSource())).getTranslateY();
+            orgTranslateX = grpDrawArea.getTranslateX();
+            orgTranslateY = grpDrawArea.getTranslateY();
+            event.consume();
         });
-        grpDrawArea.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> {
-            if (event.isAltDown()) {
-                ((Group) (event.getSource())).setTranslateX(orgTranslateX + event.getSceneX() - orgSceneX);
-                ((Group) (event.getSource())).setTranslateY(orgTranslateY + event.getSceneY() - orgSceneY);
+        anchorGraphPanel.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> {
+            grpDrawArea.setTranslateX(orgTranslateX + event.getSceneX() - orgSceneX);
+            grpDrawArea.setTranslateY(orgTranslateY + event.getSceneY() - orgSceneY);
+            event.consume();
+        });
+        anchorGraphPanel.addEventHandler(ScrollEvent.SCROLL, event -> {
+            double delta = 1.05;
+            double scaleX = grpDrawArea.getScaleX();
+            double scaleY = grpDrawArea.getScaleY();
+
+            if (event.getDeltaX() < 0 || event.getDeltaY() < 0) {
+                scaleX /= delta;
+                scaleY /= delta;
+            } else {
+                scaleX *= delta;
+                scaleY *= delta;
             }
+            scaleX = clamp(scaleX, MIN_SCALE, MAX_SCALE);
+            scaleY = clamp(scaleY, MIN_SCALE, MAX_SCALE);
+
+            grpDrawArea.setScaleX(scaleX);
+            grpDrawArea.setScaleY(scaleY);
+
+            event.consume();
         });
-        grpDrawArea.addEventHandler(ScrollEvent.SCROLL, event -> {
-            if (event.isAltDown()) {
-                grpDrawArea.setScaleX(grpDrawArea.getScaleX() + event.getDeltaY() / 250);
-                grpDrawArea.setScaleY(grpDrawArea.getScaleY() + event.getDeltaY() / 250);
-            }
-        });
+    }
+
+    /**
+     * Clamp function used for zooming in and out.
+     * @param value double current scale.
+     * @param min double min scale value.
+     * @param max double max scale value.
+     * @return double scale value.
+     */
+    public static double clamp(double value, double min, double max) {
+
+        if (Double.compare(value, min) < 0) {
+            return min;
+        }
+        if (Double.compare(value, max) > 0) {
+            return max;
+        }
+        return value;
     }
 
     /**
