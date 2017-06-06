@@ -67,6 +67,7 @@ public class GuiController implements Observer {
 
     @FXML private Group grpDrawArea;
     @FXML private AnchorPane anchorLeftControlPanel;
+    @FXML private AnchorPane anchorGraphPanel;
 
     private double orgSceneX, orgSceneY;
     private double orgTranslateX, orgTranslateY;
@@ -442,19 +443,17 @@ public class GuiController implements Observer {
      * Initialises the mouse events.
      */
     private void initMouse() {
-        grpDrawArea.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
+        anchorGraphPanel.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
             orgSceneX = event.getSceneX();
             orgSceneY = event.getSceneY();
-            orgTranslateX = ((Group) (event.getSource())).getTranslateX();
-            orgTranslateY = ((Group) (event.getSource())).getTranslateY();
+            orgTranslateX = grpDrawArea.getTranslateX();
+            orgTranslateY = grpDrawArea.getTranslateY();
         });
-        grpDrawArea.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> {
-            if (event.isAltDown()) {
-                ((Group) (event.getSource())).setTranslateX(orgTranslateX + event.getSceneX() - orgSceneX);
-                ((Group) (event.getSource())).setTranslateY(orgTranslateY + event.getSceneY() - orgSceneY);
-            }
+        anchorGraphPanel.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> {
+            grpDrawArea.setTranslateX(orgTranslateX + event.getSceneX() - orgSceneX);
+            grpDrawArea.setTranslateY(orgTranslateY + event.getSceneY() - orgSceneY);
         });
-        grpDrawArea.addEventHandler(ScrollEvent.SCROLL, event -> {
+        anchorGraphPanel.addEventHandler(ScrollEvent.SCROLL, event -> {
             if (event.isAltDown()) {
                 grpDrawArea.setScaleX(grpDrawArea.getScaleX() + event.getDeltaY() / 250);
                 grpDrawArea.setScaleY(grpDrawArea.getScaleY() + event.getDeltaY() / 250);

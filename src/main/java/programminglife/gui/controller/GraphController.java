@@ -107,22 +107,19 @@ public class GraphController {
      */
     public void drawNode(DrawableNode drawableNode) {
         if (!(drawableNode.getNode() instanceof Dummy)) {
+            drawableNode.setFill(Color.TRANSPARENT);
+            drawableNode.setStroke(Color.BLUE);
             drawableNode.setOnMouseClicked(event -> {
                 Console.println(drawableNode.getSequence());
                 Console.println(drawableNode.toString());
             });
         } else {
+            drawableNode.setStroke(Color.DARKGRAY);
+            drawableNode.setStrokeWidth(3);
             Dummy node = (Dummy) drawableNode.getNode();
             drawableNode.setOnMouseClicked(event -> {
                 Console.println(node.getLink(null).toString());
             });
-        }
-
-        drawableNode.setFill(Color.TRANSPARENT);
-        drawableNode.setStroke(Color.BLUE);
-        if (drawableNode.getNode() instanceof Dummy) {
-            drawableNode.setStroke(Color.DARKGRAY);
-            drawableNode.setStrokeWidth(3);
         }
         this.grpDrawArea.getChildren().add(drawableNode);
     }
