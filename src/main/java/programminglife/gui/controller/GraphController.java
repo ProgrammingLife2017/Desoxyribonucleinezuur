@@ -150,12 +150,12 @@ public class GraphController {
         this.grpDrawArea.getChildren().clear();
     }
 
-    public double getLocationCenterX(){
+    public double getLocationCenterX() {
         return locationCenterX;
     }
 
 
-    public double getLocationCenterY(){
+    public double getLocationCenterY() {
         return locationCenterY;
     }
 
@@ -163,7 +163,7 @@ public class GraphController {
      * Centers on the given node.
      * @param nodeId is the node to center on.
      */
-    public void centerOnNodeId(int nodeId){
+    public void centerOnNodeId(int nodeId) {
         DrawableNode drawableCenterNode = subGraph.getNodes().get(new Segment(graph, nodeId));
         double xCoord = drawableCenterNode.getX();
 
