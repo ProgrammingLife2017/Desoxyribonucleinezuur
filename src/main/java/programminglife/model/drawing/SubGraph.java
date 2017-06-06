@@ -54,6 +54,7 @@ public class SubGraph {
 
         // TODO: also go from all parents to children within 2*radius + 1; and vice-versa from children.
         this.nodes = findParents(centerNode, radius);
+
         this.nodes.putAll(findChildren(centerNode, radius));
         if (!this.nodes.containsKey(centerNode.getNode())) {
             this.nodes.put(centerNode.getNode(), centerNode);
@@ -115,6 +116,14 @@ public class SubGraph {
                 found.put(parent, new DrawableNode(parent));
                 findParents(found, found.get(parent), radius);
             }
+
+        }
+        //Also check the childeren if one of the nodes has not been added yet.
+        for (Node child : node.getChildren()) {
+            if (!found.containsKey(child)) {
+                found.put(child, new DrawableNode(child));
+                findChildren(found, found.get(child), radius);
+            }
         }
     }
 
@@ -141,6 +150,11 @@ public class SubGraph {
      */
     private LinkedHashMap<Node, DrawableNode> findChildren(Set<DrawableNode> nodes, int radius) {
         LinkedHashMap<Node, DrawableNode> found = new LinkedHashMap<>();
+
+        //Put all node that are already found by findparents into the find.
+        for (DrawableNode node: nodes) {
+           found.put(node.getNode(), node);
+        }
         for (DrawableNode node : nodes) {
             findChildren(found, node, radius);
         }
@@ -169,6 +183,14 @@ public class SubGraph {
                 found.put(child, new DrawableNode(child));
                 findChildren(found, found.get(child), radius);
             }
+        }
+
+        for (Node parent : node.getParents()) {
+            if (!found.containsKey(parent)) {
+                found.put(parent, new DrawableNode(parent));
+                findParents(found, found.get(parent), radius);
+            }
+
         }
     }
 
