@@ -1,6 +1,7 @@
 package programminglife.gui.controller;
 
 import javafx.scene.Group;
+import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import programminglife.model.Dummy;
 import programminglife.model.GenomeGraph;
@@ -22,6 +23,7 @@ public class GraphController {
 
     private GenomeGraph graph;
     private Group grpDrawArea;
+    private int centerNodeID;
 
     /**
      * Initialize controller object.
@@ -40,6 +42,7 @@ public class GraphController {
      */
     public void draw(int centerNode, int radius) {
         long startTimeProgram = System.nanoTime();
+        centerNodeID = centerNode;
         Segment centerSegment = new Segment(graph, centerNode);
         DrawableNode center = new DrawableNode(centerSegment);
         SubGraph subGraph = new SubGraph(center, radius);
@@ -56,13 +59,22 @@ public class GraphController {
                 drawEdge(drawableNode, child);
             }
         }
+
+        DrawableNode drawableCenterNode = subGraph.getNodes().get(centerSegment);
+        drawableCenterNode.setFill(Color.ORANGE);
+        double xCoord = drawableCenterNode.getX();
+        double yCoord = drawableCenterNode.getY();
+        grpDrawArea.setTranslateX(650 - xCoord);
+        grpDrawArea.setTranslateY(350);
+
+
         long finishTime = System.nanoTime();
         long differenceTimeProgram = finishTime - startTimeProgram;
         long differenceTimeDrawing = finishTime - startTimeDrawing;
         long differenceTimeLayout = finishTime - startLayoutTime;
         long msdifferenceTimeProgram = differenceTimeProgram / 1000000;
-        long milisecondTimeDrawing = differenceTimeDrawing /   1000000;
-        long msdifferenceTimeLayout = differenceTimeLayout / 1000000;
+        long milisecondTimeDrawing = differenceTimeDrawing   / 1000000;
+        long msdifferenceTimeLayout = differenceTimeLayout   / 1000000;
         Console.println("Time of Drawing:  " + milisecondTimeDrawing);
         Console.println("Time of layout:  " + msdifferenceTimeLayout);
         Console.println("Time of Total Program:  " + msdifferenceTimeProgram);
