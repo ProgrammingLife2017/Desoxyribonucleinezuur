@@ -14,7 +14,6 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -53,10 +52,7 @@ public class GuiController implements Observer {
     @FXML private MenuItem btnInstructions;
     @FXML private Menu menuRecent;
     @FXML private RadioMenuItem btnToggle;
-    @FXML private Button btnZoomIn;
-    @FXML private Button btnZoomOut;
     @FXML private Button btnZoomReset;
-    @FXML private Button btnTranslate;
     @FXML private Button btnTranslateReset;
     @FXML private Button btnDraw;
     @FXML private Button btnDrawRandom;
@@ -72,8 +68,6 @@ public class GuiController implements Observer {
 
     private double orgSceneX, orgSceneY;
     private double orgTranslateX, orgTranslateY;
-    private int translateX;
-    private int translateY;
     private GraphController graphController;
     private File file;
     private File recentFile = new File("Recent.txt");
@@ -81,6 +75,7 @@ public class GuiController implements Observer {
     private Thread parseThread;
     private static final double MAX_SCALE = 10.0d;
     private static final double MIN_SCALE = .1d;
+    private static final double ZOOM_FACTOR = 1.05d;
 
     /**
      * The initialize will call the other methods that are run in the .
@@ -304,41 +299,9 @@ public class GuiController implements Observer {
     private void initLeftControlpanelScreenModifiers() {
         disableGraphUIElements(true);
 
-        btnTranslate.setOnAction(event -> {
-            GridPane root = new GridPane();
-            TextField f1 = new TextField();
-            TextField f2 = new TextField();
-            Button translate = new Button("Translate");
-            root.add(new Label("X value"), 0, 0);
-            root.add(f1, 1, 0);
-            root.add(new Label("Y value"), 0, 1);
-            root.add(f2, 1, 1);
-            root.add(translate, 1, 2);
-            Stage s = new Stage();
-            s.setScene(new Scene(root, 300, 200));
-            s.show();
-            translate.setOnAction(event2 -> {
-                this.translateX = Integer.valueOf(f1.getText());
-                this.translateY = Integer.valueOf(f2.getText());
-                grpDrawArea.setTranslateX(grpDrawArea.getTranslateX() + this.translateX);
-                grpDrawArea.setTranslateY(grpDrawArea.getTranslateY() + this.translateY);
-                s.close();
-            });
-        });
-
         btnTranslateReset.setOnAction(event -> {
             grpDrawArea.setTranslateX(0);
             grpDrawArea.setTranslateY(0);
-        });
-
-        btnZoomIn.setOnAction(event -> {
-            grpDrawArea.setScaleX(grpDrawArea.getScaleX() + 0.05);
-            grpDrawArea.setScaleY(grpDrawArea.getScaleY() + 0.05);
-        });
-
-        btnZoomOut.setOnAction(event -> {
-            grpDrawArea.setScaleX(grpDrawArea.getScaleX() - 0.05);
-            grpDrawArea.setScaleY(grpDrawArea.getScaleY() - 0.05);
         });
 
         btnZoomReset.setOnAction(event -> {
@@ -459,25 +422,32 @@ public class GuiController implements Observer {
             event.consume();
         });
         anchorGraphPanel.addEventHandler(ScrollEvent.SCROLL, event -> {
-            double delta = 1.05;
-            double scaleX = grpDrawArea.getScaleX();
-            double scaleY = grpDrawArea.getScaleY();
-
-            if (event.getDeltaX() < 0 || event.getDeltaY() < 0) {
-                scaleX /= delta;
-                scaleY /= delta;
-            } else {
-                scaleX *= delta;
-                scaleY *= delta;
-            }
-            scaleX = clamp(scaleX, MIN_SCALE, MAX_SCALE);
-            scaleY = clamp(scaleY, MIN_SCALE, MAX_SCALE);
-
-            grpDrawArea.setScaleX(scaleX);
-            grpDrawArea.setScaleY(scaleY);
-
-            event.consume();
+            zoom(event.getDeltaX(), event.getDeltaY(), ZOOM_FACTOR);
         });
+    }
+
+    /**
+     * Handles the zooming in and out of the group.
+     * @param deltaX double for the x scale.
+     * @param deltaY double for the y scale.
+     * @param delta double the factor by which is zoomed.
+     */
+    private void zoom(double deltaX, double deltaY, double delta) {
+        double scaleX = grpDrawArea.getScaleX();
+        double scaleY = grpDrawArea.getScaleY();
+
+        if (deltaX < 0 || deltaY < 0) {
+            scaleX /= delta;
+            scaleY /= delta;
+        } else {
+            scaleX *= delta;
+            scaleY *= delta;
+        }
+        scaleX = clamp(scaleX, MIN_SCALE, MAX_SCALE);
+        scaleY = clamp(scaleY, MIN_SCALE, MAX_SCALE);
+
+        grpDrawArea.setScaleX(scaleX);
+        grpDrawArea.setScaleY(scaleY);
     }
 
     /**
@@ -487,7 +457,7 @@ public class GuiController implements Observer {
      * @param max double max scale value.
      * @return double scale value.
      */
-    public static double clamp(double value, double min, double max) {
+    private static double clamp(double value, double min, double max) {
 
         if (Double.compare(value, min) < 0) {
             return min;
