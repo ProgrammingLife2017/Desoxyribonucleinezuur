@@ -15,6 +15,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
+import javafx.scene.transform.Scale;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
@@ -308,10 +309,7 @@ public class GuiController implements Observer {
             grpDrawArea.setTranslateY(graphController.getLocationCenterY());
         });
 
-        btnZoomReset.setOnAction(event -> {
-            grpDrawArea.setScaleX(1);
-            grpDrawArea.setScaleY(1);
-        });
+        btnZoomReset.setOnAction(event -> anchorGraphPanel.getTransforms().clear());
     }
 
     /**
@@ -426,17 +424,19 @@ public class GuiController implements Observer {
             event.consume();
         });
         anchorGraphPanel.addEventHandler(ScrollEvent.SCROLL, event -> {
-            zoom(event.getDeltaX(), event.getDeltaY(), ZOOM_FACTOR);
+            zoom(event.getSceneX(), event.getSceneY(), event.getDeltaX(), event.getDeltaY(), ZOOM_FACTOR);
         });
     }
 
     /**
      * Handles the zooming in and out of the group.
+     * @param sceneX double for the x location.
+     * @param sceneY double for the y location.
      * @param deltaX double for the x scale.
      * @param deltaY double for the y scale.
      * @param delta double the factor by which is zoomed.
      */
-    private void zoom(double deltaX, double deltaY, double delta) {
+    private void zoom(double sceneX, double sceneY, double deltaX, double deltaY, double delta) {
         double scaleX = grpDrawArea.getScaleX();
         double scaleY = grpDrawArea.getScaleY();
 
@@ -450,8 +450,13 @@ public class GuiController implements Observer {
         scaleX = clamp(scaleX, MIN_SCALE, MAX_SCALE);
         scaleY = clamp(scaleY, MIN_SCALE, MAX_SCALE);
 
-        grpDrawArea.setScaleX(scaleX);
-        grpDrawArea.setScaleY(scaleY);
+        Scale scaleTransform = new Scale(scaleX, scaleY);
+
+        scaleTransform.transform(deltaX, deltaY);
+        scaleTransform.setPivotX(sceneX);
+        scaleTransform.setPivotY(sceneY);
+
+        anchorGraphPanel.getTransforms().add(scaleTransform);
     }
 
     /**
