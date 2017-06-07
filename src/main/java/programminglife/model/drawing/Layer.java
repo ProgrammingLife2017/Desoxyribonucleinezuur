@@ -90,7 +90,18 @@ public class Layer implements Iterable<DrawableNode> {
             }
         }
 
-        nodes.sort(Comparator.comparingDouble(x -> averages.get(x)));
+        nodes.sort((o1, o2) -> {
+            double epsilon = 1e-10;
+            double difference = averages.get(o2) - averages.get(o1);
+            if (difference < -epsilon) {
+                return 1;
+            } else if (difference > epsilon) {
+                return -1;
+            } else {
+                return o2.getIdentifier() - o1.getIdentifier();
+
+            }
+        });
     }
 
     /**
