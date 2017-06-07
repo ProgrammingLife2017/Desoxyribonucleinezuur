@@ -108,6 +108,9 @@ public class SubGraph {
         // assuming radius 3, if you find the nodes in the order 0, 1, 2, 3,
         // you cannot skip 3 as that would then miss 4 (which is also within radius 3, via 0-1-3-4)
         //Also check the childeren if one of the nodes has not been added yet.
+        if (this.radius <= 0) {
+            return;
+        }
         for (Node child : node.getChildren()) {
             if (!found.containsKey(child)) {
                 found.put(child, new DrawableNode(child));
@@ -175,6 +178,9 @@ public class SubGraph {
         //                                            \_/
         // assuming radius 3, if you find the nodes in the order 0, 1, 2, 3,
         // you cannot skip 3 as that would then miss 4 (which is also within radius 3, via 0-1-3-4)
+        if (this.radius <= 0) {
+            return;
+        }
         for (Node parent : node.getParents()) {
             if (!found.containsKey(parent)) {
                 found.put(parent, new DrawableNode(parent));

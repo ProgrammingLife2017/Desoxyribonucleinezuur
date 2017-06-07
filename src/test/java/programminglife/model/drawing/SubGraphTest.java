@@ -60,7 +60,7 @@ public class SubGraphTest {
     public void testConstructorRadius1() throws Exception {
         SubGraph sg = new SubGraph(centerNode, 1);
         Set<DrawableNode> nodes = new LinkedHashSet<>(sg.getNodes().values());
-        assertEquals(3, nodes.size());
+        assertEquals(4, nodes.size());
         assertTrue(nodes.contains(centerNode));
         assertTrue(nodes.containsAll(sg.getChildren(centerNode)));
         assertTrue(nodes.containsAll(sg.getParents(centerNode)));
