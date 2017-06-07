@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 /**
- * Created by marti_000 on 25-4-2017.
+ * The class that handles the segments of the nodes.
  */
 public class Segment implements Node {
     private int id;

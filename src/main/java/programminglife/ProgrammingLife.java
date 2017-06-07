@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.util.Optional;
 
 /**
- * Created by Martijn van Meerten on 25-4-2017.
  * Main class for starting the application.
  */
 
@@ -103,11 +102,13 @@ public final class ProgrammingLife extends Application {
         closeConfirmation.initOwner(primaryStage);
 
         Optional<ButtonType> closeResponse = closeConfirmation.showAndWait();
-        if (!ButtonType.OK.equals(closeResponse.get())) {
-            event.consume();
-        } else {
-            Platform.exit();
-            System.exit(0);
+        if (closeResponse.isPresent()) {
+            if (!ButtonType.OK.equals(closeResponse.get())) {
+                event.consume();
+            } else {
+                Platform.exit();
+                System.exit(0);
+            }
         }
     };
 

@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * Created by marti_000 on 25-4-2017.
+ * The class that handles the genome graph.
  */
 public class GenomeGraph implements Graph {
     private String id;
@@ -96,8 +96,8 @@ public class GenomeGraph implements Graph {
     public Collection<Node> getParents(Node node) {
         int[] parents = this.getParentIDs(node.getIdentifier());
         Collection<Node> parentNodes = new LinkedHashSet<>();
-        for (int i = 0; i < parents.length; i++) {
-            parentNodes.add(new Segment(this, parents[i]));
+        for (int parent : parents) {
+            parentNodes.add(new Segment(this, parent));
         }
         return parentNodes;
     }
@@ -106,12 +106,17 @@ public class GenomeGraph implements Graph {
     public Collection<Node> getChildren(Node node) {
         int[] children = this.getChildIDs(node.getIdentifier());
         Collection<Node> childNodes = new LinkedHashSet<>();
-        for (int i = 0; i < children.length; i++) {
-            childNodes.add(new Segment(this, children[i]));
+        for (int aChildren : children) {
+            childNodes.add(new Segment(this, aChildren));
         }
         return childNodes;
     }
 
+    /**
+     * Getter for the ID's of the parents of a node.
+     * @param nodeID node for which the parents are to be found.
+     * @return int[] list of the parents.
+     */
     public int[] getParentIDs(int nodeID) {
         return this.cache.getParentsAdjacencyMap().get(nodeID);
     }
@@ -121,6 +126,12 @@ public class GenomeGraph implements Graph {
         throw new NotImplementedException("GenomeGraph#getGenomes(Node) is not yet implemented");
     }
 
+    /**
+     * Get for the genomes of a parent and child.
+     * @param parent Node of the parent.
+     * @param child Node of the child.
+     * @return int[] list the genomes.
+     */
     public int[] getGenomes(Node parent, Node child) {
         return null;
     }
@@ -176,7 +187,7 @@ public class GenomeGraph implements Graph {
      */
     private void addParent(Node node, Node parent) {
         int[] oldParents = this.getParentIDs(node.getIdentifier());
-        //TODO find a way to do this more efficient
+        //TODO find a way to do this more efficiently
         int[] newParents = Arrays.copyOf(oldParents, oldParents.length + 1);
         newParents[newParents.length - 1] = parent.getIdentifier();
         this.cache.getParentsAdjacencyMap().put(node.getIdentifier(), newParents);
@@ -238,7 +249,6 @@ public class GenomeGraph implements Graph {
      * @param nodeID the ID of the {@link Segment}
      * @param sequence the sequence {@link String}
      */
-    @NotNull
     public void setSequence(int nodeID, String sequence) {
         this.cache.setSequence(nodeID, sequence);
     }
@@ -258,7 +268,6 @@ public class GenomeGraph implements Graph {
      * @param nodeID the ID of the {@link Segment}
      * @return the sequence length {@link String}
      */
-    @NotNull
     public int getSequenceLength(int nodeID) {
         return this.cache.getSequenceLength(nodeID);
     }

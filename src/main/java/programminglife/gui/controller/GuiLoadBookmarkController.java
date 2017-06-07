@@ -106,8 +106,8 @@ public class GuiLoadBookmarkController implements Observer {
             alert.setTitle("Confirm Deletion");
             alert.setHeaderText("Do you really want to delete bookmark: \"" + bookmark.getBookmarkName() + "\"?");
             Optional<ButtonType> result = alert.showAndWait();
-            if (result.isPresent()) {
-                if (result.get() == ButtonType.OK) {
+            result.ifPresent(buttonType -> {
+                if (buttonType == ButtonType.OK) {
                     BookmarkController.deleteBookmark(bookmark.getFile(), bookmark.getBookmarkName());
                     Console.println("Deleted bookmark " + bookmark.getBookmarkName()
                             + " Center Node: " + bookmark.getNodeID() + " Radius: " + bookmark.getRadius());
@@ -115,7 +115,7 @@ public class GuiLoadBookmarkController implements Observer {
                 } else {
                     alert.close();
                 }
-            }
+            });
         }
     }
 

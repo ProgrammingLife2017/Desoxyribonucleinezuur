@@ -6,7 +6,7 @@
 
     <groupId>nl.tudelft.contextproject</groupId>
     <artifactId>ProgrammingLife</artifactId>
-    <version>sprint2</version>
+    <version>milestone3</version>
     <packaging>jar</packaging>
 
     <name>ProgrammingLife</name>
@@ -30,13 +30,6 @@
             <url>https://jitpack.io</url>
             <snapshots>
                 <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>maven-central-repo</id>
-            <url>http://repo1.maven.org/maven2</url>
-            <snapshots>
-                <enabled>false</enabled>
             </snapshots>
         </repository>
     </repositories>

@@ -1,6 +1,5 @@
 package programminglife.gui.controller;
 
-import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -33,6 +32,7 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Random;
 import java.util.Scanner;
 
 /**
@@ -67,6 +67,7 @@ public class GuiController implements Observer {
 
     @FXML private Group grpDrawArea;
     @FXML private AnchorPane anchorLeftControlPanel;
+    @FXML private AnchorPane anchorGraphPanel;
 
     private double orgSceneX, orgSceneY;
     private double orgTranslateX, orgTranslateY;
@@ -77,6 +78,9 @@ public class GuiController implements Observer {
     private File recentFile = new File("Recent.txt");
     private String recentItems = "";
     private Thread parseThread;
+    private double boundsWidth;
+    private double boundsHeight;
+
 
     /**
      * The initialize will call the other methods that are run in the .
@@ -156,7 +160,10 @@ public class GuiController implements Observer {
     public void setGraph(GenomeGraph graph) {
         this.graphController.setGraph(graph);
         disableGraphUIElements(graph == null);
-        Platform.runLater(() -> ProgrammingLife.getStage().setTitle(graph.getID()));
+        Platform.runLater(() -> {
+            assert graph != null;
+            ProgrammingLife.getStage().setTitle(graph.getID());
+        });
 
         if (graph != null) {
             Console.println("[%s] Graph was set to %s.", Thread.currentThread().getName(), graph.getID());
@@ -169,7 +176,7 @@ public class GuiController implements Observer {
      */
     private void initRecent() {
         try {
-            Files.createFile(new File("Recent.txt").toPath());
+            Files.createFile(recentFile.toPath());
         } catch (FileAlreadyExistsException e) {
             //This will always happen if a user has used the program before.
             //Therefore it is unnecessary to handle further.
@@ -179,6 +186,7 @@ public class GuiController implements Observer {
         }
         if (recentFile != null) {
             try (Scanner sc = new Scanner(recentFile)) {
+                menuRecent.getItems().clear();
                 while (sc.hasNextLine()) {
                     String next = sc.nextLine();
                     MenuItem mi = new MenuItem(next);
@@ -316,8 +324,8 @@ public class GuiController implements Observer {
         });
 
         btnTranslateReset.setOnAction(event -> {
-            grpDrawArea.setTranslateX(0);
-            grpDrawArea.setTranslateY(0);
+            grpDrawArea.setTranslateX(graphController.getLocationCenterX());
+            grpDrawArea.setTranslateY(graphController.getLocationCenterY());
         });
 
         btnZoomIn.setOnAction(event -> {
@@ -345,7 +353,7 @@ public class GuiController implements Observer {
         btnDraw.setOnAction(e -> this.draw());
 
         btnDrawRandom.setOnAction(event -> {
-            int randomNodeID = (int) Math.ceil(Math.random() * this.graphController.getGraph().size());
+            int randomNodeID = (new Random()).nextInt(this.graphController.getGraph().size() - 1) + 1;
             txtCenterNode.setText(Integer.toString(randomNodeID));
             this.draw();
         });
@@ -435,19 +443,17 @@ public class GuiController implements Observer {
      * Initialises the mouse events.
      */
     private void initMouse() {
-        grpDrawArea.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
+        anchorGraphPanel.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
             orgSceneX = event.getSceneX();
             orgSceneY = event.getSceneY();
-            orgTranslateX = ((Group) (event.getSource())).getTranslateX();
-            orgTranslateY = ((Group) (event.getSource())).getTranslateY();
+            orgTranslateX = grpDrawArea.getTranslateX();
+            orgTranslateY = grpDrawArea.getTranslateY();
         });
-        grpDrawArea.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> {
-            if (event.isAltDown()) {
-                ((Group) (event.getSource())).setTranslateX(orgTranslateX + event.getSceneX() - orgSceneX);
-                ((Group) (event.getSource())).setTranslateY(orgTranslateY + event.getSceneY() - orgSceneY);
-            }
+        anchorGraphPanel.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> {
+            grpDrawArea.setTranslateX(orgTranslateX + event.getSceneX() - orgSceneX);
+            grpDrawArea.setTranslateY(orgTranslateY + event.getSceneY() - orgSceneY);
         });
-        grpDrawArea.addEventHandler(ScrollEvent.SCROLL, event -> {
+        anchorGraphPanel.addEventHandler(ScrollEvent.SCROLL, event -> {
             if (event.isAltDown()) {
                 grpDrawArea.setScaleX(grpDrawArea.getScaleX() + event.getDeltaY() / 250);
                 grpDrawArea.setScaleY(grpDrawArea.getScaleY() + event.getDeltaY() / 250);

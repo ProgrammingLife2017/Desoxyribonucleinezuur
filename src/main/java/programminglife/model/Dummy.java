@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 
 /**
- * Created by iwanh on 30/05/2017.
+ * A class that handles the creation and usage of dummy nodes.
  */
 public class Dummy implements Node {
     private int id;
