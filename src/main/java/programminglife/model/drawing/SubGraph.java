@@ -367,10 +367,17 @@ public class SubGraph {
 
         // find a layer with a single node
         Layer prev = null;
+        int min = Integer.MAX_VALUE;
         while (nextIter.hasNext()) {
-            prev = nextIter.next();
-            if (prev.size() == 1) {
-                break;
+            Layer currentLayer = nextIter.next();
+            int currentSize = currentLayer.size();
+            if (currentSize < min) {
+                prev = currentLayer;
+                if (currentSize <= 1) {
+                    break;
+                } else {
+                    min = currentSize;
+                }
             }
         }
 
