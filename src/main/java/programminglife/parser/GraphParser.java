@@ -53,8 +53,9 @@ public class GraphParser extends Observable implements Runnable {
                 parse(this.verbose);
             } else {
                 Console.println("[%s] Loaded %s from cache", Thread.currentThread().getName(), this.name);
-                this.progressCounter.finished();
             }
+
+            this.progressCounter.finished();
             int secondsElapsed = (int) ((System.nanoTime() - startTime) / 1000000000.d);
             Console.println("[%s] Parsing took %d seconds", Thread.currentThread().getName(), secondsElapsed);
             this.setChanged();
@@ -136,7 +137,6 @@ public class GraphParser extends Observable implements Runnable {
         }
 
         this.graph.cacheLastEdges();
-        this.progressCounter.finished();
     }
 
     /**
