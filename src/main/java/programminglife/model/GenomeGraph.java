@@ -16,16 +16,12 @@ public class GenomeGraph implements Graph {
     private String id;
     private Cache cache;
 
-    // TODO cache genomes
-    private Map<String, Genome> genomes;
-
     /**
      * Create a genomeGraph with id.
      * @param id id of the graph
      */
     public GenomeGraph(String id) {
         this.id = id;
-        this.genomes = new HashMap<>();
         this.cache = new Cache(id);
     }
 
@@ -120,7 +116,11 @@ public class GenomeGraph implements Graph {
         return this.cache.getParentsAdjacencyMap().get(nodeID);
     }
 
-    @Override
+    /**
+     * Get the Genomes through a specific Node.
+     * @param node the Node to look up
+     * @return a {@link Collection} of Genome IDs
+     */
     public int[] getGenomes(Node node) {
         throw new NotImplementedException("GenomeGraph#getGenomes(Node) is not yet implemented");
     }
@@ -135,16 +135,41 @@ public class GenomeGraph implements Graph {
         return null;
     }
 
+    /**
+     * Get Nodes through a Genome.
+     * @param genomeID the Genome to look up
+     * @return a {@link Collection} of Node IDs in the Genome
+     */
+    public Collection<Integer> getNodeIDs(int genomeID) {
+        return this.cache.getGenomeNodeIDs(genomeID);
+    }
+
+    /**
+     * Get Nodes through several Genomes.
+     * @param genomeIDs the Genomes to look up
+     * @return a {@link Map} mapping Genome names to {@link Collection}s of Node IDs
+     */
+    public Map<Integer, Collection<Integer>> getNodeIDs(int... genomeIDs) {
+        return this.cache.getGenomeNodeIDs(genomeIDs);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean contains(Node node) {
         return this.contains(node.getIdentifier());
     }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean contains(int nodeID) {
         return this.cache.getChildrenAdjacencyMap().containsKey(nodeID);
     }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void addEdge(int sourceID, int destinationID) {
         this.addChild(sourceID, destinationID);
@@ -193,54 +218,38 @@ public class GenomeGraph implements Graph {
     }
 
     /**
-     * Add a {@link Genome} to this {@link GenomeGraph}.
-     * @param genome the {@link Genome} to add
+     * Set Genomes through a Node.
+     * @param nodeID the Node to address
+     * @param genomeIDs the Genomes through this Node
      */
-    public void addGenome(Genome genome) {
-        this.cache.addGenomeName(genome.getName());
-        this.genomes.put(genome.getName(), genome);
+    public void setGenomes(int nodeID, int[] genomeIDs) {
+        this.cache.setGenomes(nodeID, genomeIDs);
     }
 
     /**
-     * Get the name of a {@link Genome}.
-     * @param id the id of the {@link Genome} as it occurs in the GFA header
-     * @return its name as described in the GFA header
+     * Get the name of a Genome.
+     * @param genomeID the ID of the Genome
+     * @return its name
      */
-    public String getGenomeName(int id) {
-        return this.cache.getGenomeName(id);
+    public String getGenomeName(int genomeID) {
+        return this.cache.getGenomeName(genomeID);
     }
 
     /**
-     * Get the {@link Genome} by name.
-     * @param name the name as in the GFA header
-     * @return the {@link Genome} with this name
+     * Get the ID of a Genome.
+     * @param genomeName the name of the Genome
+     * @return its ID
      */
-    public Genome getGenome(String name) {
-        Genome res = this.genomes.get(name);
-        if (res != null) {
-            return res;
-        } else {
-            throw new NoSuchElementException(
-                    String.format("The Graph %s does not contain a genome with name %s",
-                            this.getID(), name));
-        }
+    public int getGenomeID(String genomeName) {
+        return this.cache.getGenomeID(genomeName);
     }
 
     /**
-     * Get the {@link Genome}s of this {@link GenomeGraph}.
-     * @return a {@link Collection} of {@link Genome}s
+     * Add a Genome to the {@link GenomeGraph}.
+     * @param name its name
      */
-    public Collection<Genome> getGenomes() {
-        return this.genomes.values();
-    }
-
-    /**
-     * Check if this {@link GenomeGraph} contains a {@link Genome}.
-     * @param genomeName the name to look up
-     * @return if this {@link Genome} is in there
-     */
-    public boolean containsGenome(String genomeName) {
-        return this.genomes.containsKey(genomeName);
+    public void addGenome(String name) {
+        this.cache.addGenomeName(name);
     }
 
     /**

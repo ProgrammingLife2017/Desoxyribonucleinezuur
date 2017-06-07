@@ -64,7 +64,7 @@ public class GenomeGraphTest {
 
     @Test(expected = NoSuchElementException.class)
     public void getNonExistingGenomeTest() {
-        graph.getGenome("nonexistent!");
+        graph.getNodeIDs(graph.getGenomeID("nonexistent"));
     }
 
     @Test

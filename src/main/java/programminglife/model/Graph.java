@@ -90,13 +90,6 @@ public interface Graph {
     Link getLink(Node parent, Node child);
 
     /**
-     * getter for the genomes of a node.
-     * @param node Node.
-     * @return int[] of the genomes.
-     */
-    int[] getGenomes(Node node);
-
-    /**
      * Checks to see if the graph contains a certain node.
      * @param node the {@link Node} to check.
      * @return if the {@link Node} is in the {@link Graph}

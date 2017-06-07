@@ -63,7 +63,9 @@ public class DrawableNode extends Rectangle {
      */
     void replaceParent(DrawableNode oldParent, DrawableNode newParent) {
         if (!this.parents.remove(oldParent.getNode())) {
-            throw new NoSuchElementException(String.format("The node to be replaced (%d) is not a parent of this node (%d).", oldParent.getNode().getIdentifier(), this.getNode().getIdentifier()));
+            throw new NoSuchElementException(
+                    String.format("The node to be replaced (%d) is not a parent of this node (%d).",
+                            oldParent.getNode().getIdentifier(), this.getNode().getIdentifier()));
         }
         this.parents.add(newParent.getNode());
     }
