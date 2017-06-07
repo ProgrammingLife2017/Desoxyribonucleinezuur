@@ -70,7 +70,7 @@ public class GuiController implements Observer {
 
     private double orgSceneX, orgSceneY;
     private double orgTranslateX, orgTranslateY;
-    private double scaleX = 1, scaleY = 1;
+    private double scaleX, scaleY;
     private double deltaX, deltaY;
     private GraphController graphController;
     private File file;
@@ -89,6 +89,8 @@ public class GuiController implements Observer {
     @FXML
     @SuppressWarnings("unused")
     private void initialize() {
+        scaleY = 1;
+        scaleX = 1;
         this.graphController = new GraphController(null, this.grpDrawArea);
         initRecent();
         initMenubar();
@@ -244,7 +246,9 @@ public class GuiController implements Observer {
         btnQuit.setOnAction(event -> Alerts.quitAlert());
         btnQuit.setAccelerator(new KeyCodeCombination(KeyCode.E, KeyCodeCombination.CONTROL_DOWN));
         btnAbout.setOnAction(event -> Alerts.infoAboutAlert());
+        btnAbout.setAccelerator(new KeyCodeCombination(KeyCode.I, KeyCodeCombination.CONTROL_DOWN));
         btnInstructions.setOnAction(event -> Alerts.infoInstructionAlert());
+        btnInstructions.setAccelerator(new KeyCodeCombination(KeyCode.H, KeyCodeCombination.CONTROL_DOWN));
     }
 
     /**
@@ -307,8 +311,8 @@ public class GuiController implements Observer {
         disableGraphUIElements(true);
 
         btnTranslateReset.setOnAction(event -> {
-            grpDrawArea.setTranslateX(graphController.getLocationCenterX());
-            grpDrawArea.setTranslateY(graphController.getLocationCenterY());
+            anchorGraphPanel.setTranslateX(graphController.getLocationCenterX() / 2);
+            anchorGraphPanel.setTranslateY(graphController.getLocationCenterY() / 4);
         });
 
         btnZoomReset.setOnAction(event -> anchorGraphPanel.getTransforms().clear());
@@ -444,7 +448,7 @@ public class GuiController implements Observer {
         scaleX = anchorGraphPanel.getScaleX();
         scaleY = anchorGraphPanel.getScaleY();
 
-        if (deltaY < 0) {
+        if (deltaX < 0 || deltaY < 0) {
             scaleX /= delta;
             scaleY /= delta;
         } else {
@@ -455,8 +459,8 @@ public class GuiController implements Observer {
         scaleY = clamp(scaleY, MIN_SCALE, MAX_SCALE);
 
         Scale scaleTransform = new Scale(scaleX, scaleY);
-        scaleTransform.setPivotX(sceneX / scaleY);
-        scaleTransform.setPivotY(sceneY / scaleY);
+        scaleTransform.setPivotX(sceneX);
+        scaleTransform.setPivotY(sceneY);
 
         anchorGraphPanel.getTransforms().add(scaleTransform);
     }
