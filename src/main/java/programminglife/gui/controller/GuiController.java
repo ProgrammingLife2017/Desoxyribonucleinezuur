@@ -70,6 +70,8 @@ public class GuiController implements Observer {
 
     private double orgSceneX, orgSceneY;
     private double orgTranslateX, orgTranslateY;
+    private double scaleX = 1, scaleY = 1;
+    private double deltaX, deltaY;
     private GraphController graphController;
     private File file;
     private File recentFile = new File("Recent.txt");
@@ -414,17 +416,21 @@ public class GuiController implements Observer {
         anchorGraphPanel.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
             orgSceneX = event.getSceneX();
             orgSceneY = event.getSceneY();
-            orgTranslateX = grpDrawArea.getTranslateX();
-            orgTranslateY = grpDrawArea.getTranslateY();
+            orgTranslateX = anchorGraphPanel.getTranslateX();
+            orgTranslateY = anchorGraphPanel.getTranslateY();
             event.consume();
         });
         anchorGraphPanel.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> {
-            grpDrawArea.setTranslateX(orgTranslateX + event.getSceneX() - orgSceneX);
-            grpDrawArea.setTranslateY(orgTranslateY + event.getSceneY() - orgSceneY);
+            scaleX = anchorGraphPanel.getScaleX();
+            scaleY = anchorGraphPanel.getScaleY();
+            anchorGraphPanel.setTranslateX((orgTranslateX + event.getSceneX() - orgSceneX) / scaleX);
+            anchorGraphPanel.setTranslateY((orgTranslateY + event.getSceneY() - orgSceneY) / scaleY);
             event.consume();
         });
         anchorGraphPanel.addEventHandler(ScrollEvent.SCROLL, event -> {
-            zoom(event.getSceneX(), event.getSceneY(), event.getDeltaX(), event.getDeltaY(), ZOOM_FACTOR);
+            deltaX = event.getDeltaX();
+            deltaY = event.getDeltaY();
+            zoom(event.getSceneX(), event.getSceneY(), ZOOM_FACTOR);
         });
     }
 
@@ -432,13 +438,11 @@ public class GuiController implements Observer {
      * Handles the zooming in and out of the group.
      * @param sceneX double for the x location.
      * @param sceneY double for the y location.
-     * @param deltaX double for the x scale.
-     * @param deltaY double for the y scale.
      * @param delta double the factor by which is zoomed.
      */
-    private void zoom(double sceneX, double sceneY, double deltaX, double deltaY, double delta) {
-        double scaleX = grpDrawArea.getScaleX();
-        double scaleY = grpDrawArea.getScaleY();
+    private void zoom(double sceneX, double sceneY, double delta) {
+        scaleX = anchorGraphPanel.getScaleX();
+        scaleY = anchorGraphPanel.getScaleY();
 
         if (deltaX < 0 || deltaY < 0) {
             scaleX /= delta;
@@ -451,10 +455,8 @@ public class GuiController implements Observer {
         scaleY = clamp(scaleY, MIN_SCALE, MAX_SCALE);
 
         Scale scaleTransform = new Scale(scaleX, scaleY);
-
-        scaleTransform.transform(deltaX, deltaY);
-        scaleTransform.setPivotX(sceneX);
-        scaleTransform.setPivotY(sceneY);
+        scaleTransform.setPivotX(sceneX / scaleX);
+        scaleTransform.setPivotY(sceneY / scaleY);
 
         anchorGraphPanel.getTransforms().add(scaleTransform);
     }
