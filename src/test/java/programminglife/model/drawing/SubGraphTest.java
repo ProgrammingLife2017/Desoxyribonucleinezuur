@@ -71,12 +71,12 @@ public class SubGraphTest {
         SubGraph sg = new SubGraph(centerNode, 4);
 
         Set<DrawableNode> expected = new HashSet<>();
-        for (Integer id : new int[] {1, 2, 4, 5, 6, 7, 8}) {
+        for (Integer id : new int[] {1, 2, 3, 4, 5, 6, 7, 8}) {
             expected.add(new DrawableNode(new Segment(graph, id)));
         }
 
         Set<DrawableNode> actual = new LinkedHashSet<>(sg.getNodes().values());
-        assertEquals(7, actual.size());
+        assertEquals(8, actual.size());
         assertEquals(expected, actual);
     }
 
