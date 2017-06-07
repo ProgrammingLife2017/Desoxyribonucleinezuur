@@ -1,7 +1,6 @@
 package programminglife.model;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
 import programminglife.model.exception.NodeExistsException;
 import programminglife.parser.Cache;
@@ -118,20 +117,20 @@ public class GenomeGraph implements Graph {
 
     /**
      * Get the Genomes through a specific Node.
-     * @param node the Node to look up
+     * @param nodeID the Node to look up
      * @return a {@link Collection} of Genome IDs
      */
-    public int[] getGenomes(Node node) {
-        throw new NotImplementedException("GenomeGraph#getGenomes(Node) is not yet implemented");
+    public int[] getGenomes(int nodeID) {
+        return this.cache.getGenomes(nodeID);
     }
 
     /**
      * Get for the genomes of a parent and child.
-     * @param parent Node of the parent.
-     * @param child Node of the child.
+     * @param parentID Node of the parent.
+     * @param childID Node of the child.
      * @return int[] list the genomes.
      */
-    public int[] getGenomes(Node parent, Node child) {
+    public int[] getGenomes(int parentID, int childID) {
         return null;
     }
 

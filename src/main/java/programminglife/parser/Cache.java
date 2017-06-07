@@ -232,6 +232,15 @@ public final class Cache {
     }
 
     /**
+     * Get the Genomes through a specific Node.
+     * @param nodeID the ID of the Node
+     * @return an Array of Genome IDs
+     */
+    public int[] getGenomes(int nodeID) {
+        return this.getNodeIdGenomesMap().get(nodeID);
+    }
+
+    /**
      * Get the name of a {@link programminglife.model.Genome} based on its index.
      * @param genomeID the index (0-based) of the {@link programminglife.model.Genome} in the GFA header
      * @return the name of the {@link programminglife.model.Genome}
