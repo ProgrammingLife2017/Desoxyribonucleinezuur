@@ -444,7 +444,7 @@ public class GuiController implements Observer {
         scaleX = anchorGraphPanel.getScaleX();
         scaleY = anchorGraphPanel.getScaleY();
 
-        if (deltaX < 0 || deltaY < 0) {
+        if (deltaY < 0) {
             scaleX /= delta;
             scaleY /= delta;
         } else {
@@ -455,7 +455,7 @@ public class GuiController implements Observer {
         scaleY = clamp(scaleY, MIN_SCALE, MAX_SCALE);
 
         Scale scaleTransform = new Scale(scaleX, scaleY);
-        scaleTransform.setPivotX(sceneX / scaleX);
+        scaleTransform.setPivotX(sceneX / scaleY);
         scaleTransform.setPivotY(sceneY / scaleY);
 
         anchorGraphPanel.getTransforms().add(scaleTransform);
