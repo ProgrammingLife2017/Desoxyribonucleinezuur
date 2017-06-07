@@ -311,11 +311,11 @@ public class GuiController implements Observer {
         disableGraphUIElements(true);
 
         btnTranslateReset.setOnAction(event -> {
-            anchorGraphPanel.setTranslateX(graphController.getLocationCenterX() / 2);
-            anchorGraphPanel.setTranslateY(graphController.getLocationCenterY() / 4);
+            grpDrawArea.setTranslateX(graphController.getLocationCenterX());
+            grpDrawArea.setTranslateY(graphController.getLocationCenterY());
         });
 
-        btnZoomReset.setOnAction(event -> anchorGraphPanel.getTransforms().clear());
+        btnZoomReset.setOnAction(event -> grpDrawArea.getTransforms().clear());
     }
 
     /**
@@ -420,16 +420,14 @@ public class GuiController implements Observer {
         anchorGraphPanel.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
             orgSceneX = event.getSceneX();
             orgSceneY = event.getSceneY();
-            orgTranslateX = anchorGraphPanel.getTranslateX();
-            orgTranslateY = anchorGraphPanel.getTranslateY();
-            event.consume();
+            orgTranslateX = grpDrawArea.getTranslateX();
+            orgTranslateY = grpDrawArea.getTranslateY();
         });
         anchorGraphPanel.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> {
             scaleX = anchorGraphPanel.getScaleX();
             scaleY = anchorGraphPanel.getScaleY();
-            anchorGraphPanel.setTranslateX((orgTranslateX + event.getSceneX() - orgSceneX) / scaleX);
-            anchorGraphPanel.setTranslateY((orgTranslateY + event.getSceneY() - orgSceneY) / scaleY);
-            event.consume();
+            grpDrawArea.setTranslateX((orgTranslateX + event.getSceneX() - orgSceneX) / scaleX);
+            grpDrawArea.setTranslateY((orgTranslateY + event.getSceneY() - orgSceneY) / scaleY);
         });
         anchorGraphPanel.addEventHandler(ScrollEvent.SCROLL, event -> {
             deltaX = event.getDeltaX();
@@ -445,8 +443,8 @@ public class GuiController implements Observer {
      * @param delta double the factor by which is zoomed.
      */
     private void zoom(double sceneX, double sceneY, double delta) {
-        scaleX = anchorGraphPanel.getScaleX();
-        scaleY = anchorGraphPanel.getScaleY();
+        scaleX = grpDrawArea.getScaleX();
+        scaleY = grpDrawArea.getScaleY();
 
         if (deltaX < 0 || deltaY < 0) {
             scaleX /= delta;
@@ -458,11 +456,8 @@ public class GuiController implements Observer {
         scaleX = clamp(scaleX, MIN_SCALE, MAX_SCALE);
         scaleY = clamp(scaleY, MIN_SCALE, MAX_SCALE);
 
-        Scale scaleTransform = new Scale(scaleX, scaleY);
-        scaleTransform.setPivotX(sceneX);
-        scaleTransform.setPivotY(sceneY);
-
-        anchorGraphPanel.getTransforms().add(scaleTransform);
+        Scale scaleTransform = new Scale(scaleX, scaleY, sceneX / scaleX, sceneY / scaleY);
+        grpDrawArea.getTransforms().add(scaleTransform);
     }
 
     /**

@@ -44,7 +44,7 @@
                      <Button fx:id="btnBookmark" layoutX="20.0" layoutY="240.0" minWidth="100.0" mnemonicParsing="false" text="Bookmark" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
                  </children>
               </AnchorPane>
-              <AnchorPane fx:id="anchorGraphPanel" minHeight="200" minWidth="600" prefHeight="400" prefWidth="600">
+              <AnchorPane fx:id="anchorGraphPanel" minHeight="200" minWidth="600" prefHeight="Infinity" prefWidth="Infinity">
                  <children>
                      <Group fx:id="grpDrawArea" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                  </children>
