@@ -122,7 +122,7 @@ public class SubGraph {
         for (Node child : node.getChildren()) {
             if (!found.containsKey(child)) {
                 found.put(child, new DrawableNode(child));
-                findChildren(found, found.get(child), radius);
+                findChildren(found, found.get(child), 2 * this.radius - radius);
             }
         }
     }
@@ -188,7 +188,7 @@ public class SubGraph {
         for (Node parent : node.getParents()) {
             if (!found.containsKey(parent)) {
                 found.put(parent, new DrawableNode(parent));
-                findParents(found, found.get(parent), radius);
+                findParents(found, found.get(parent), 2 * this.radius - radius);
             }
 
         }
