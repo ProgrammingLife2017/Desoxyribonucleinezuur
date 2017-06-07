@@ -171,13 +171,7 @@ public class SubGraph {
             }
         }
     }
-
-    /**
-     * Draw this SubGraph on the screen.
-     */
-    public void draw() {
-
-    }
+    
 
     /**
      * Find out which {@link Drawable} is at the given location.

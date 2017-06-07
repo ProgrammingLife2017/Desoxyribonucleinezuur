@@ -62,6 +62,15 @@ public class GraphController {
         centerOnNodeId(center);
         highlightNode(centerNode, Color.ORANGE);
 
+        for (Object o : grpDrawArea.getChildren()){
+            if (o instanceof DrawableEdge) {
+                DrawableEdge edge = (DrawableEdge) o;
+                if ((int) edge.getEnd().getNode().getIdentifier() % 2 == 0)
+                highlightEdge(edge, Color.GOLDENROD);
+            }
+        }
+
+
 
         long finishTime = System.nanoTime();
         long differenceTimeProgram = finishTime - startTimeProgram;
@@ -89,13 +98,15 @@ public class GraphController {
 
     /**
      * Fill the rectangle with the color.
-     * @param centerNode the {@link DrawableNode} to highlight.
+     * @param node the {@link DrawableNode} to highlight.
      * @param color the {@link Color} to highlight with.
      */
-    private void highlightNode(DrawableNode centerNode, Color color) {
-        centerNode.setFill(color);
+    private void highlightNode(DrawableNode node, Color color) {
+        node.setFill(color);
     }
 
+
+    private void highlightEdge(DrawableEdge edge, Color color) { edge.setStroke(color); }
     /**
      * Draws a edge on the location it has.
      * @param parent {@link DrawableNode} is the node to be draw from.
