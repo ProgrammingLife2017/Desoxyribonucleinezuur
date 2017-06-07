@@ -107,6 +107,13 @@ public class SubGraph {
         //                                            \_/
         // assuming radius 3, if you find the nodes in the order 0, 1, 2, 3,
         // you cannot skip 3 as that would then miss 4 (which is also within radius 3, via 0-1-3-4)
+        //Also check the childeren if one of the nodes has not been added yet.
+        for (Node child : node.getChildren()) {
+            if (!found.containsKey(child)) {
+                found.put(child, new DrawableNode(child));
+                findChildren(found, found.get(child), 2 * this.radius - radius - 1);
+            }
+        }
         if (radius <= 0) {
             return;
         }
@@ -118,13 +125,7 @@ public class SubGraph {
             }
 
         }
-        //Also check the childeren if one of the nodes has not been added yet.
-        for (Node child : node.getChildren()) {
-            if (!found.containsKey(child)) {
-                found.put(child, new DrawableNode(child));
-                findChildren(found, found.get(child), 2 * this.radius - radius);
-            }
-        }
+
     }
 
     /**
@@ -174,6 +175,13 @@ public class SubGraph {
         //                                            \_/
         // assuming radius 3, if you find the nodes in the order 0, 1, 2, 3,
         // you cannot skip 3 as that would then miss 4 (which is also within radius 3, via 0-1-3-4)
+        for (Node parent : node.getParents()) {
+            if (!found.containsKey(parent)) {
+                found.put(parent, new DrawableNode(parent));
+                findParents(found, found.get(parent), 2 * this.radius - radius - 1);
+            }
+
+        }
         if (radius <= 0) {
             return;
         }
@@ -185,13 +193,7 @@ public class SubGraph {
             }
         }
 
-        for (Node parent : node.getParents()) {
-            if (!found.containsKey(parent)) {
-                found.put(parent, new DrawableNode(parent));
-                findParents(found, found.get(parent), 2 * this.radius - radius);
-            }
 
-        }
     }
 
     /**
