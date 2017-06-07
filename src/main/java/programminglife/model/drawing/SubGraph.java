@@ -363,18 +363,30 @@ public class SubGraph {
      * @param layers The layers to sort.
      */
     private void sortWithinLayers(List<Layer> layers) {
-        // TODO: improve to reduce edge crossings
-        // note: in case of ambiguity in choosing what node to draw first, use node with lowest id
-        // (to break ties and make layout deterministic)
+        ListIterator<Layer> nextIter = layers.listIterator();
 
-        // For each edge: place it on the row it came from or lower.
-        // Start from sorting in previous layer.
-        // note: this is here as a skeleton for sorting. It compiles, but doesn't
-        // do anything useful, so it is commented out.
-        Layer prev = new Layer();
-        for (Layer l : layers) {
-            l.sort(this, prev, true);
-            prev = l;
+        // find a layer with a single node
+        Layer prev = null;
+        while (nextIter.hasNext()) {
+            prev = nextIter.next();
+            if (prev.size() == 1) {
+                break;
+            }
+        }
+
+        Layer next = prev;
+        ListIterator<Layer> prevIter = layers.listIterator(nextIter.previousIndex());
+
+        while (nextIter.hasNext()) {
+            Layer layer = nextIter.next();
+            layer.sort(this, prev, true);
+            prev = layer;
+        }
+
+        while (prevIter.hasPrevious()) {
+            Layer layer = prevIter.previous();
+            layer.sort(this, next, false);
+            next = layer;
         }
     }
 
