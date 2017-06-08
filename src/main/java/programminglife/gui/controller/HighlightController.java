@@ -3,6 +3,7 @@ package programminglife.gui.controller;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
@@ -93,7 +94,9 @@ public class HighlightController {
             maxGenome = Integer.valueOf(txtMax.getText());
         }
 
-        graphController.highlightMinMax(minGenome, maxGenome);
+        if (checkMax.isSelected() || checkMin.isSelected()) {
+            graphController.highlightMinMax(minGenome, maxGenome);
+        }
 
     }
 
