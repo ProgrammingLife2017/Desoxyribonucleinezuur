@@ -14,6 +14,7 @@ import programminglife.utility.NumbersOnlyListener;
  */
 public class HighlightController {
 
+    GraphController graphController;
 
     @FXML private Button btnClose;
     @FXML private Button btnHighlight;
@@ -56,6 +57,7 @@ public class HighlightController {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                 txtMax.setDisable(!checkMax.isSelected());
+
             }
         });
 
@@ -63,14 +65,18 @@ public class HighlightController {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                 txtMin.setDisable(!checkMin.isSelected());
+
             }
         });
 
         txtMax.setDisable(true);
         txtMax.textProperty().addListener(new NumbersOnlyListener(txtMax));
+        //TODO change to max genomes in graph
+        txtMax.setText("328");
 
         txtMin.setDisable(true);
         txtMin.textProperty().addListener(new NumbersOnlyListener(txtMin));
+        txtMin.setText("0");
 
     }
 
@@ -87,8 +93,16 @@ public class HighlightController {
             maxGenome = Integer.valueOf(txtMax.getText());
         }
 
-
+        graphController.highlightMinMax(minGenome, maxGenome);
 
     }
 
+    /**
+     * Sets the guicontroller for controlling the menu.
+     * Is used to call the graphController
+     * @param graphController The gui controller
+     */
+    void setGraphController(GraphController graphController) {
+        this.graphController = graphController;
+    }
 }

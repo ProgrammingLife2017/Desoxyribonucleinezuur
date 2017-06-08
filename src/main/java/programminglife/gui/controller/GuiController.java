@@ -353,7 +353,8 @@ public class GuiController implements Observer {
             try {
                 FXMLLoader loader = new FXMLLoader(ProgrammingLife.class.getResource("/HighlightWindow.fxml"));
                 AnchorPane page = loader.load();
-//                HighlightController gc = loader.getController();
+                HighlightController gc = loader.getController();
+                gc.setGraphController(this.getGraphController());
                 Scene scene = new Scene(page);
                 Stage highlightDialogStage = new Stage();
                 highlightDialogStage.setResizable(false);
