@@ -173,6 +173,8 @@ public class DrawableNode extends Rectangle {
         return this.node.getGenomes();
     }
 
+
+
     /**
      * get the length of the sequence of this segment.
      * @return the length of the sequence of this segment

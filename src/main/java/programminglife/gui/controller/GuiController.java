@@ -1,8 +1,6 @@
 package programminglife.gui.controller;
 
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -27,6 +25,7 @@ import programminglife.parser.GraphParser;
 import programminglife.utility.Alerts;
 import programminglife.utility.Console;
 import programminglife.utility.FileProgressCounter;
+import programminglife.utility.NumbersOnlyListener;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -354,8 +353,7 @@ public class GuiController implements Observer {
             try {
                 FXMLLoader loader = new FXMLLoader(ProgrammingLife.class.getResource("/HighlightWindow.fxml"));
                 AnchorPane page = loader.load();
-                HighlightController gc = loader.getController();
-                gc.setGuiController(this);
+//                HighlightController gc = loader.getController();
                 Scene scene = new Scene(page);
                 Stage highlightDialogStage = new Stage();
                 highlightDialogStage.setResizable(false);
@@ -394,28 +392,6 @@ public class GuiController implements Observer {
         } else {
             Alerts.warning("The centernode is not a existing node, "
                     + "try again with a number that exists as a node.");
-        }
-    }
-
-    /**
-     * {@link ChangeListener} to make a {@link TextField} only accept numbers.
-     */
-    private class NumbersOnlyListener implements ChangeListener<String> {
-        private final TextField tf;
-
-        /**
-         * Constructor for the Listener.
-         * @param tf {@link TextField} is the text field on which the listener listens
-         */
-        NumbersOnlyListener(TextField tf) {
-            this.tf = tf;
-        }
-
-        @Override
-        public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-            if (!newValue.matches("\\d")) {
-                tf.setText(newValue.replaceAll("[^\\d]", ""));
-            }
         }
     }
 

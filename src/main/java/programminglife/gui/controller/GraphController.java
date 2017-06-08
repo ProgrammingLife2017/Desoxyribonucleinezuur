@@ -3,17 +3,16 @@ package programminglife.gui.controller;
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.StrokeType;
 import programminglife.model.Dummy;
 import programminglife.model.GenomeGraph;
 import programminglife.model.Segment;
+import programminglife.model.drawing.Drawable;
 import programminglife.model.drawing.DrawableEdge;
 import programminglife.model.drawing.DrawableNode;
 import programminglife.model.drawing.SubGraph;
 import programminglife.utility.Console;
-
-import java.awt.*;
 import java.util.Collection;
+import java.util.LinkedList;
 
 import static javafx.scene.shape.StrokeType.OUTSIDE;
 
@@ -108,9 +107,15 @@ public class GraphController {
      * @param nodes the Collection of {@link DrawableNode} to highlight.
      * @param color the {@link Color} to highlight with.
      */
-    private void highlightNodes(Collection<Integer> nodes, Color color) {
+    private void highlightNodesByID(Collection<Integer> nodes, Color color) {
         for (int i : nodes) {
             highlightNode(i, color);
+        }
+    }
+
+    private void highlightNodes(Collection<DrawableNode> nodes, Color color) {
+        for (DrawableNode drawNode: nodes){
+            highlightNode(drawNode, color);
         }
     }
 
@@ -121,11 +126,14 @@ public class GraphController {
      */
     public void highlightNode(int nodeID, Color color) {
         DrawableNode node = subGraph.getNodes().get(new Segment(graph, nodeID));
+    }
+
+    public void highlightNode(DrawableNode node, Color color){
         node.setStroke(color);
         node.setStrokeWidth(3);
         node.setStrokeType(OUTSIDE);
-    }
 
+    }
 
     /**
      * Method to highlight a Edge. Changes the stroke color of the Edge.
@@ -245,5 +253,16 @@ public class GraphController {
         grpDrawArea.setTranslateX(locationCenterX);
         grpDrawArea.setTranslateY(locationCenterY);
 
+    }
+
+    public void highlightMinMax(int min, int max) {
+        LinkedList<DrawableNode> drawNodeList = new LinkedList<>();
+        for (DrawableNode drawNode: subGraph.getNodes().values()){
+            int genomeCount = drawNode.getNode().getGenomes().length;
+            if (genomeCount > min && genomeCount < max){
+                drawNodeList.add(drawNode);
+            }
+        }
+        highlightNodes(drawNodeList, Color.AZURE);
     }
 }
