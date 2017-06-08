@@ -71,7 +71,6 @@ public class GuiController implements Observer {
     private double orgSceneX, orgSceneY;
     private double orgTranslateX, orgTranslateY;
     private double scale;
-    private double deltaX, deltaY;
     private GraphController graphController;
     private File file;
     private File recentFile = new File("Recent.txt");
@@ -428,20 +427,19 @@ public class GuiController implements Observer {
             grpDrawArea.setTranslateY((orgTranslateY + event.getSceneY() - orgSceneY));
             event.consume();
         });
-        anchorGraphPanel.addEventHandler(ScrollEvent.SCROLL, event -> {
-            deltaX = event.getDeltaX();
-            deltaY = event.getDeltaY();
-            zoom(event.getSceneX(), event.getSceneY(), ZOOM_FACTOR);
-        });
+        anchorGraphPanel.addEventHandler(ScrollEvent.SCROLL, event -> zoom(event.getDeltaX(),
+                event.getDeltaY(), event.getSceneX(), event.getSceneY(), ZOOM_FACTOR));
     }
 
     /**
      * Handles the zooming in and out of the group.
+     * @param deltaX The scroll amount in the X direction. See {@link ScrollEvent#getDeltaX()}
+     * @param deltaY The scroll amount in the Y direction. See {@link ScrollEvent#getDeltaY()}
      * @param sceneX double for the x location.
      * @param sceneY double for the y location.
      * @param delta double the factor by which is zoomed.
      */
-    private void zoom(double sceneX, double sceneY, double delta) {
+    private void zoom(double deltaX, double deltaY, double sceneX, double sceneY, double delta) {
         double oldScale = grpDrawArea.getScaleX();
         scale = oldScale;
 
