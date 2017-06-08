@@ -82,7 +82,7 @@ public class Segment implements Node {
     public Collection<? extends Edge> getChildEdges() {
         Collection<Link> result = new HashSet<>();
         for (Node node : graph.getChildren(this)) {
-            result.add(new Link(this, node, graph.getGenomes(node)));
+            result.add(new Link(this, node, graph.getGenomes(node.getIdentifier())));
         }
         return result;
     }
@@ -91,7 +91,7 @@ public class Segment implements Node {
     public Collection<? extends Edge> getParentEdges() {
         Collection<Link> result = new HashSet<>();
         for (Node node : graph.getParents(this)) {
-            result.add(new Link(node, this, graph.getGenomes(this)));
+            result.add(new Link(node, this, graph.getGenomes(this.getIdentifier())));
         }
         return result;
     }
@@ -108,7 +108,7 @@ public class Segment implements Node {
 
     @Override
     public int[] getGenomes() {
-        return this.graph.getGenomes(this);
+        return this.graph.getGenomes(this.getIdentifier());
     }
 
     /**
