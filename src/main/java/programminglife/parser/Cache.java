@@ -20,7 +20,7 @@ import java.util.*;
 public final class Cache {
     private static final String SEQUENCE_MAP_NAME = "sequenceMap";
     private static final String SEQUENCE_LENGTH_MAP_NAME = "sequenceLengthMap";
-    private static final String GENOMES_ID_NODES_MAP_NAME = "nodeIdGenomesMap";
+    private static final String NODE_ID_GENOMES_MAP = "nodeIdGenomesMap";
     private static final String GENOME_ID_NAMES_MAP_NAME = "genomeIdNamesMap";
     private static final String GENOME_NAMES_ID_MAP_NAME = "genomeNamesIdMap";
     private static final String CHILDREN_ADJACENCY_MAP_NAME = "childrenNamesMap";
@@ -67,7 +67,7 @@ public final class Cache {
     private void initialize() {
         this.sequenceMap = getMap(db, SEQUENCE_MAP_NAME, Serializer.INTEGER, Serializer.STRING_ASCII);
         this.sequenceLengthMap = getMap(db, SEQUENCE_LENGTH_MAP_NAME, Serializer.INTEGER, Serializer.INTEGER);
-        this.nodeIdGenomesMap = getMap(db, GENOMES_ID_NODES_MAP_NAME, Serializer.INTEGER, Serializer.INT_ARRAY);
+        this.nodeIdGenomesMap = getMap(db, NODE_ID_GENOMES_MAP, Serializer.INTEGER, Serializer.INT_ARRAY);
         this.genomeIdNamesMap = getMap(db, GENOME_ID_NAMES_MAP_NAME, Serializer.INTEGER, Serializer.STRING_ASCII);
         this.genomeNamesIdMap = getMap(db, GENOME_NAMES_ID_MAP_NAME, Serializer.STRING_ASCII, Serializer.INTEGER);
         this.childrenAdjacencyMap = getMap(db, CHILDREN_ADJACENCY_MAP_NAME, Serializer.INTEGER, Serializer.INT_ARRAY);
