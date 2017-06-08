@@ -34,7 +34,7 @@
         <AnchorPane fx:id="anchorGraphPanel" minHeight="200" minWidth="600" prefHeight="Infinity" prefWidth="Infinity">
             <Group fx:id="grpDrawArea" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
         </AnchorPane>
-        <AnchorPane minWidth="140" prefHeight="800.0" prefWidth="Infinity">
+        <AnchorPane minWidth="140" prefHeight="800.0" prefWidth="Infinity" maxWidth="500">
             <TabPane prefHeight="875.0" prefWidth="500.0" tabClosingPolicy="UNAVAILABLE" maxWidth="500.0">
                 <Tab text="Graph Info">
                     <AnchorPane fx:id="anchorGraphInfo" minHeight="0.0" minWidth="500.0" prefHeight="180.0" prefWidth="500.0" maxWidth="500.0">

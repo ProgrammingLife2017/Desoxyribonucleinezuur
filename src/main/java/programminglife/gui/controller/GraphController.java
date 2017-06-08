@@ -3,9 +3,11 @@ package programminglife.gui.controller;
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import programminglife.ProgrammingLife;
 import programminglife.model.Dummy;
 import programminglife.model.GenomeGraph;
 import programminglife.model.Segment;
@@ -16,6 +18,7 @@ import programminglife.utility.Console;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * Created by Martijn van Meerten on 8-5-2017.
@@ -124,7 +127,7 @@ public class GraphController {
         }
         edge.setOnMouseClicked(event -> {
             if (event.isShiftDown()) {
-                showInfoEdge(edge, 140);
+                showInfoEdge(edge, 250);
             } else {
                 showInfoEdge(edge, 10);
             }
@@ -156,7 +159,7 @@ public class GraphController {
         }
         drawableNode.setOnMouseClicked(event -> {
             if (event.isShiftDown()) {
-                showInfoNode(drawableNode, 140);
+                showInfoNode(drawableNode, 250);
             } else {
                 showInfoNode(drawableNode, 10);
             }
@@ -216,37 +219,59 @@ public class GraphController {
     }
 
     private void showInfoEdge(DrawableEdge edge, int x) {
-        Text idText = new Text("Genomes"); idText.setLayoutX(x); idText.setLayoutY(50);
-        Text parentsText = new Text("Parent"); parentsText.setLayoutX(x); parentsText.setLayoutY(100);
-        Text childrenText = new Text("Child"); childrenText.setLayoutX(x); childrenText.setLayoutY(150);
+        Text idText = new Text("Genomes: "); idText.setLayoutX(x); idText.setLayoutY(65);
+        Text parentsText = new Text("Parent: "); parentsText.setLayoutX(x); parentsText.setLayoutY(115);
+        Text childrenText = new Text("Child: "); childrenText.setLayoutX(x); childrenText.setLayoutY(165);
 
         anchorGraphInfo.getChildren().removeIf(node1 -> node1.getLayoutX() == x);
 
-        TextField id = getTextField("Genomes: ", x, 60, Arrays.toString(edge.getLink().getGenomes()));
-        TextField parent = getTextField("Parent Node: ", x, 110, edge.getStart().toString());
-        TextField child = getTextField("Child Node: ", x, 160, edge.getEnd().toString());
+        TextField id = getTextField("Genomes: ", x, 70, Arrays.toString(edge.getLink().getGenomes()));
+        TextField parent = getTextField("Parent Node: ", x, 120, edge.getStart().toString());
+        TextField child = getTextField("Child Node: ", x, 170, edge.getEnd().toString());
+
         anchorGraphInfo.getChildren().addAll(idText, parentsText, childrenText, id, parent, child);
     }
 
     private void showInfoNode(DrawableNode node, int x) {
-        Text idText = new Text("ID"); idText.setLayoutX(x); idText.setLayoutY(50);
-        Text parentText = new Text("Parents"); parentText.setLayoutX(x); parentText.setLayoutY(100);
-        Text childText = new Text("Children"); childText.setLayoutX(x); childText.setLayoutY(150);
-        Text inEdgeText = new Text("Incoming Edges"); inEdgeText.setLayoutX(x); inEdgeText.setLayoutY(200);
-        Text outEdgeText = new Text("Outgoing Edges"); outEdgeText.setLayoutX(x); outEdgeText.setLayoutY(250);
-        Text genomeText = new Text("Genome"); genomeText.setLayoutX(x); genomeText.setLayoutY(300);
-        Text seqText = new Text("Sequence"); seqText.setLayoutX(x); seqText.setLayoutY(350);
+
+        Text idText = new Text("ID: "); idText.setLayoutX(x); idText.setLayoutY(65);
+        Text parentText = new Text("Parents: "); parentText.setLayoutX(x); parentText.setLayoutY(115);
+        Text childText = new Text("Children: "); childText.setLayoutX(x); childText.setLayoutY(165);
+        Text inEdgeText = new Text("Incoming Edges: "); inEdgeText.setLayoutX(x); inEdgeText.setLayoutY(215);
+        Text outEdgeText = new Text("Outgoing Edges: "); outEdgeText.setLayoutX(x); outEdgeText.setLayoutY(265);
+        Text genomeText = new Text("Genome: "); genomeText.setLayoutX(x); genomeText.setLayoutY(315);
+        Text seqText = new Text("Sequence: "); seqText.setLayoutX(x); seqText.setLayoutY(365);
 
         anchorGraphInfo.getChildren().removeIf(node1 -> node1.getLayoutX() == x);
 
+        TextField id = getTextField("ID: ", x, 70, node.getNode().getIdentifier() + "");
 
-        TextField id = getTextField("ID: ", x, 60, node.getNode().getIdentifier() + "");
-        TextField parents = getTextField("Parents: ", x, 110, node.getNode().getParents().toString());
-        TextField children = getTextField("Children: ", x, 160, node.getNode().getChildren().toString());
-        TextField inEdges = getTextField("Incoming Edges: ", x, 210, node.getNode().getParentEdges().size() + "");
-        TextField outEdges = getTextField("Outgoing Edges: ", x, 260, node.getNode().getChildEdges().size() + "");
-        TextField genome = getTextField("Genome: ", x, 310, Arrays.toString(node.getNode().getGenomes()));
-        TextField seq = getTextField("Sequence: ", x, 360, node.getNode().getSequence());
+        StringBuilder parentSB = new StringBuilder();
+        node.getNode().getParents().forEach(o -> parentSB.append(o.getIdentifier()).append(", "));
+        TextField parents;
+        if (parentSB.length() > 2) {
+            parentSB.setLength(parentSB.length() - 2);
+            parents = getTextField("Parents: ", x, 170, "Parent ID's: " + parentSB.toString());
+        } else {
+            parentSB.replace(0, parentSB.length(), "This node has no parent(s)");
+            parents = getTextField("Parents: ", x, 170, parentSB.toString());
+        }
+
+        StringBuilder childSB = new StringBuilder();
+        node.getNode().getChildren().forEach(o -> childSB.append(o.getIdentifier()).append(", "));
+        TextField children;
+        if (childSB.length() > 2) {
+            childSB.setLength(childSB.length() - 2);
+            children = getTextField("Children: ", x, 170, "Children ID's: " + childSB.toString());
+        } else {
+            childSB.replace(0, childSB.length(), "This node has no child(ren)");
+            children = getTextField("Children: ", x, 170, childSB.toString());
+        }
+        
+        TextField inEdges = getTextField("Incoming Edges: ", x, 220, node.getNode().getParentEdges().size() + "");
+        TextField outEdges = getTextField("Outgoing Edges: ", x, 270, node.getNode().getChildEdges().size() + "");
+        TextField genome = getTextField("Genome: ", x, 320, Arrays.toString(node.getNode().getGenomes()));
+        TextField seq = getTextField("Sequence: ", x, 370, node.getNode().getSequence());
 
         anchorGraphInfo.getChildren().addAll(idText, parentText, childText, inEdgeText, outEdgeText, genomeText, seqText);
         anchorGraphInfo.getChildren().addAll(id, parents, children, inEdges, outEdges, genome, seq);
@@ -256,10 +281,11 @@ public class GraphController {
         TextField textField = new TextField();
         textField.setId(id);
         textField.setText(text);
-        textField.setEditable(false);
         textField.setLayoutX(x);
         textField.setLayoutY(y);
-        textField.setPrefSize(120, 25);
+        textField.setStyle("-fx-text-box-border: transparent;-fx-background-color: -fx-control-inner-background;\n" +
+                "-fx-background-insets: 0; -fx-padding: 1 3 1 3; -fx-focus-color: transparent;");
+        textField.setPrefSize(220, 25);
 
         return textField;
     }

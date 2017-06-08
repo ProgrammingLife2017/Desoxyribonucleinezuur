@@ -11,6 +11,10 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.MouseEvent;
@@ -29,6 +33,9 @@ import programminglife.utility.Alerts;
 import programminglife.utility.Console;
 import programminglife.utility.FileProgressCounter;
 
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.FileAlreadyExistsException;
@@ -519,15 +526,20 @@ public class GuiController implements Observer {
     }
 
     private void initShowInfoTab() {
+
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         btnClipboard.setOnAction(event -> {
-            String clipboard = "";
+            String toClipboard = "";
             for (Node node : anchorGraphInfo.getChildren()) {
                 if (node instanceof TextField) {
-                    clipboard = clipboard.concat(node.getId());
-                    clipboard = clipboard.concat(((TextField) node).getText()) + System.getProperty("line.separator");
+                    toClipboard = toClipboard.concat(node.getId());
+                    toClipboard = toClipboard.concat(((TextField) node).getText()) + System.getProperty("line.separator");
+                    toClipboard = toClipboard.replaceAll("(.{200})", "$1" + System.getProperty("line.separator"));
                 }
             }
-            System.out.println(clipboard);
+            System.out.println(toClipboard);
+            StringSelection selection = new StringSelection(toClipboard);
+            clipboard.setContents(selection, selection);
         });
     }
 
