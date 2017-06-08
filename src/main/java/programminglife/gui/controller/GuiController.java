@@ -424,10 +424,11 @@ public class GuiController implements Observer {
             orgTranslateY = grpDrawArea.getTranslateY();
         });
         anchorGraphPanel.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> {
-            scaleX = anchorGraphPanel.getScaleX();
-            scaleY = anchorGraphPanel.getScaleY();
+            scaleX = grpDrawArea.getScaleX();
+            scaleY = grpDrawArea.getScaleY();
             grpDrawArea.setTranslateX((orgTranslateX + event.getSceneX() - orgSceneX) / scaleX);
             grpDrawArea.setTranslateY((orgTranslateY + event.getSceneY() - orgSceneY) / scaleY);
+            event.consume();
         });
         anchorGraphPanel.addEventHandler(ScrollEvent.SCROLL, event -> {
             deltaX = event.getDeltaX();
@@ -445,6 +446,8 @@ public class GuiController implements Observer {
     private void zoom(double sceneX, double sceneY, double delta) {
         scaleX = grpDrawArea.getScaleX();
         scaleY = grpDrawArea.getScaleY();
+        double oldScaleX = scaleX;
+        double oldScaleY = scaleY;
 
         if (deltaX < 0 || deltaY < 0) {
             scaleX /= delta;
@@ -456,7 +459,14 @@ public class GuiController implements Observer {
         scaleX = clamp(scaleX, MIN_SCALE, MAX_SCALE);
         scaleY = clamp(scaleY, MIN_SCALE, MAX_SCALE);
 
-        Scale scaleTransform = new Scale(scaleX, scaleY, sceneX / scaleX, sceneY / scaleY);
+        double fx = (scaleX / oldScaleX) - 1;
+        double fy = (scaleY / oldScaleY) - 1;
+        double boundsX = grpDrawArea.getBoundsInParent().getWidth() / 2;
+        double boundsY = grpDrawArea.getBoundsInParent().getHeight() / 2;
+        double dx = (sceneX - (boundsX + grpDrawArea.getBoundsInParent().getMinX()));
+        double dy = (sceneY - (boundsY + grpDrawArea.getBoundsInParent().getMinY()));
+
+        Scale scaleTransform = new Scale(scaleX, scaleY, (orgSceneX - fx * dx) / scaleX, (orgSceneY - fy * dy) / scaleY);
         grpDrawArea.getTransforms().add(scaleTransform);
     }
 

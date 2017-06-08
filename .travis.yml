@@ -5,9 +5,9 @@ before_install:
   - "sh -e /etc/init.d/xvfb start"
   - sleep 3 # give xvfb some time to start
 script: "mvn clean test"
+notifications:
+  email:
+    on_success: never
+    on_failure: always
 jdk:
   - oraclejdk8
-addons:
-  apt:
-    packages:
-      - oracle-java8-installer
