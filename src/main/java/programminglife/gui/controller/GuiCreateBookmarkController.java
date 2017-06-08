@@ -50,7 +50,7 @@ public class GuiCreateBookmarkController {
                     Alerts.warning("Radius can only contain positive integers");
                 } else if (txtBookmarkName.getText().length() == 0) {
                     Alerts.warning("Bookmark must contain a name");
-                } else if (!txtBookmarkName.getText().matches("\\S.*\\S")) {
+                } else if (!txtBookmarkName.getText().matches("[\\S.*]?\\S")) {
                     Alerts.warning("Bookmark name must begin and end with a non whitespace character");
                 } else if (!BookmarkController.storeBookmark(name, guiController.getFile().getAbsolutePath(),
                         txtBookmarkName.getText(), txtDescription.getText(), inputCenter, inputRadius)) {
