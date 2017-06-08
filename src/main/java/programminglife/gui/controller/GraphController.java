@@ -128,13 +128,13 @@ public class GraphController {
      */
     public void highlightNode(int nodeID, Color color) {
         DrawableNode node = subGraph.getNodes().get(new Segment(graph, nodeID));
+        highlightNode(node, color);
     }
 
     public void highlightNode(DrawableNode node, Color color){
         node.setStroke(color);
         node.setStrokeWidth(3);
         node.setStrokeType(OUTSIDE);
-
     }
 
     /**
