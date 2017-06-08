@@ -7,6 +7,7 @@ import programminglife.parser.Cache;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * The class that handles the genome graph.
@@ -131,7 +132,44 @@ public class GenomeGraph implements Graph {
      * @return int[] list the genomes.
      */
     public int[] getGenomes(int parentID, int childID) {
-        return null;
+        Collection<Integer> mutualGenomes = new LinkedHashSet<>();
+        int[] parentGenomes = getGenomes(parentID);
+        Map<Integer, Collection<Integer>> parentGenomesNodes = getNodeIDs(parentGenomes);
+
+        // For every genome of the parent
+        for (Map.Entry<Integer, Collection<Integer>> genome : parentGenomesNodes.entrySet()) {
+            // set this flag to false
+            boolean parentFound = false;
+
+            // for every node of this genome
+            for (int nodeID : genome.getValue()) {
+                if (nodeID == parentID) {
+                    // if it is the parent, set the flag
+                    parentFound = true;
+                } else if (parentFound && nodeID == childID) {
+                    // the child is a direct successor of the parent,
+                    // so the genome does go through this edge
+                    mutualGenomes.add(genome.getKey());
+                    break;
+                } else if (parentFound) {
+                    // the child is not a direct successor of the parent,
+                    // so the genome does not go through this edge
+                    break;
+                }
+            }
+        }
+        return mutualGenomes.stream().mapToInt(x -> x).toArray();
+    }
+
+    /**
+     * Return a collection of names.
+     * @param genomes the IDs of the genomes to identify
+     * @return their names
+     */
+    public Collection<String> getGenomeNames(int[] genomes) {
+        return Arrays.stream(genomes)
+                .mapToObj(this::getGenomeName)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -341,7 +379,30 @@ public class GenomeGraph implements Graph {
         this.cache.getChildrenAdjacencyMap().put(this.cache.getCurrentParentID(), allChildren);
     }
 
+    /**
+     * The fraction of genomes through a node.
+     * @param nodeID the ID of the nods
+     * @return the fraction
+     */
     public double getGenomeFraction(int nodeID) {
-        return this.getGenomes(nodeID).length / (double) this.cache.getGenomeNamesIdMap().size();
+        return this.getGenomesNumber(nodeID) / (double) this.cache.getGenomeNamesIdMap().size();
+    }
+
+    /**
+     * The fraction of genomes through a link.
+     * @param link the link
+     * @return the fraction
+     */
+    public double getGenomeFraction(Link link) {
+        return link.getGenomes().length / (double) this.cache.getGenomeNamesIdMap().size();
+    }
+
+    /**
+     * The number of genomes through a node.
+     * @param nodeID the ID of the node
+     * @return the number
+     */
+    private int getGenomesNumber(int nodeID) {
+        return this.cache.getNodeIdGenomesNumberMap().get(nodeID);
     }
 }

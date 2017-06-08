@@ -169,7 +169,7 @@ public class DrawableNode extends Rectangle {
         return this.node.getGenomeFraction();
     }
 
-    private int[] getGenomes() {
+    public int[] getGenomes() {
         return this.node.getGenomes();
     }
 
@@ -269,15 +269,23 @@ public class DrawableNode extends Rectangle {
         return node.getLink(child.getNode());
     }
 
-    public void colorize() {
-        double genomeFraction = this.getGenomeFraction();
-        double maxSaturation = 0.8, minSaturation = 0.05;
-        double saturation = minSaturation + genomeFraction * (maxSaturation - minSaturation);
+    /**
+     * Color a {@link DrawableNode} depending on its properties.
+     * @param graph the {@link GenomeGraph} belonging to the {@link DrawableNode}
+     */
+    public void colorize(GenomeGraph graph) {
+        if (this.node instanceof Dummy) {
+            DrawableEdge.colorize(this, node.getLink(null), graph);
+        } else {
+            double genomeFraction = this.getGenomeFraction();
+            double maxSaturation = 0.8, minSaturation = 0.05;
+            double saturation = minSaturation + genomeFraction * (maxSaturation - minSaturation);
 
-        Color fillColor = Color.hsb(227, saturation, 1.d);
-        Color strokeColor = Color.hsb(227, maxSaturation, 1.d);
+            Color fillColor = Color.hsb(227, saturation, 1.d);
+            Color strokeColor = Color.hsb(227, maxSaturation, 1.d);
 
-        this.setFill(fillColor);
-        this.setStroke(strokeColor);
+            this.setFill(fillColor);
+            this.setStroke(strokeColor);
+        }
     }
 }

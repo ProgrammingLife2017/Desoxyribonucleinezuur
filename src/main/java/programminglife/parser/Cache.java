@@ -21,6 +21,7 @@ public final class Cache {
     private static final String SEQUENCE_MAP_NAME = "sequenceMap";
     private static final String SEQUENCE_LENGTH_MAP_NAME = "sequenceLengthMap";
     private static final String NODE_ID_GENOMES_MAP = "nodeIdGenomesMap";
+    private static final String NODE_ID_GENOMES_NUMBER_MAP = "nodeIdGenomesNumberMap";
     private static final String GENOME_ID_NAMES_MAP_NAME = "genomeIdNamesMap";
     private static final String GENOME_NAMES_ID_MAP_NAME = "genomeNamesIdMap";
     private static final String CHILDREN_ADJACENCY_MAP_NAME = "childrenNamesMap";
@@ -33,6 +34,7 @@ public final class Cache {
     private Map<Integer, String> sequenceMap;
     private Map<Integer, Integer> sequenceLengthMap;
     private Map<Integer, int[]> nodeIdGenomesMap; // node id -> array of genome ids
+    private Map<Integer, Integer> nodeIdGenomesNumberMap; // node id -> number of genomes
     private Map<Integer, String> genomeIdNamesMap; // genome id -> genome name
     private Map<String, Integer> genomeNamesIdMap; // genome name -> genome id
     private Map<Integer, int[]> childrenAdjacencyMap;
@@ -68,6 +70,7 @@ public final class Cache {
         this.sequenceMap = getMap(db, SEQUENCE_MAP_NAME, Serializer.INTEGER, Serializer.STRING_ASCII);
         this.sequenceLengthMap = getMap(db, SEQUENCE_LENGTH_MAP_NAME, Serializer.INTEGER, Serializer.INTEGER);
         this.nodeIdGenomesMap = getMap(db, NODE_ID_GENOMES_MAP, Serializer.INTEGER, Serializer.INT_ARRAY);
+        this.nodeIdGenomesNumberMap = getMap(db, NODE_ID_GENOMES_NUMBER_MAP, Serializer.INTEGER, Serializer.INTEGER);
         this.genomeIdNamesMap = getMap(db, GENOME_ID_NAMES_MAP_NAME, Serializer.INTEGER, Serializer.STRING_ASCII);
         this.genomeNamesIdMap = getMap(db, GENOME_NAMES_ID_MAP_NAME, Serializer.STRING_ASCII, Serializer.INTEGER);
         this.childrenAdjacencyMap = getMap(db, CHILDREN_ADJACENCY_MAP_NAME, Serializer.INTEGER, Serializer.INT_ARRAY);
@@ -122,6 +125,10 @@ public final class Cache {
 
     private Map<Integer, int[]> getNodeIdGenomesMap() {
         return nodeIdGenomesMap;
+    }
+
+    public Map<Integer, Integer> getNodeIdGenomesNumberMap() {
+        return nodeIdGenomesNumberMap;
     }
 
     /**
@@ -229,6 +236,7 @@ public final class Cache {
      */
     public void setGenomes(int nodeID, int[] genomeIDs) {
         this.getNodeIdGenomesMap().put(nodeID, genomeIDs);
+        this.getNodeIdGenomesNumberMap().put(nodeID, genomeIDs.length);
     }
 
     /**
@@ -338,7 +346,8 @@ public final class Cache {
      * @return a {@link Collection} of IDs
      */
     public Collection<Integer> getGenomeNodeIDs(int genomeID) {
-        Set<Integer> nodeIDs = new LinkedHashSet<>();
+        // TODO assumption: nodes ordered by ID in genome
+        Set<Integer> nodeIDs = new TreeSet<>();
         for (Map.Entry<Integer, int[]> entry : this.getNodeIdGenomesMap().entrySet()) {
             if (ArrayUtils.contains(entry.getValue(), genomeID)) {
                 nodeIDs.add(entry.getKey());
@@ -358,7 +367,7 @@ public final class Cache {
             for (int genomeID : genomeIDs) {
                 if (ArrayUtils.contains(entry.getValue(), genomeID)) {
                     if (genomes.get(genomeID) == null) {
-                        genomes.put(genomeID, new LinkedHashSet<>());
+                        genomes.put(genomeID, new TreeSet<>());
                     }
                     genomes.get(genomeID).add(entry.getKey());
                 }

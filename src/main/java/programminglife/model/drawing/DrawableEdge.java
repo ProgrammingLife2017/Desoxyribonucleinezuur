@@ -1,6 +1,9 @@
 package programminglife.model.drawing;
 
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Shape;
+import programminglife.model.GenomeGraph;
 import programminglife.model.Link;
 import programminglife.model.XYCoordinate;
 
@@ -60,5 +63,38 @@ public class DrawableEdge extends Line {
     @Override
     public String toString() {
         return this.link.toString();
+    }
+
+    /**
+     * Color a {@link Shape} depending on its properties.
+     * @param shape the {@link Shape} to color
+     * @param link the {@link Link} belonging to the {@link DrawableNode} or {@link DrawableEdge}
+     * @param graph the {@link GenomeGraph} belonging to the {@link DrawableNode} or {@link DrawableEdge}
+     */
+    public static void colorize(Shape shape, Link link, GenomeGraph graph) {
+        double genomeFraction = graph.getGenomeFraction(link);
+
+        double minStrokeWidth = 1.d, maxStrokeWidth = 6.5;
+        double strokeWidth = minStrokeWidth + genomeFraction * (maxStrokeWidth - minStrokeWidth);
+
+        double minBrightNess = 0.6, maxBrightNess = 0.25;
+        double brightness = minBrightNess + genomeFraction * (maxBrightNess - minBrightNess);
+
+        Color strokeColor = Color.hsb(0.d, 0.d, brightness);
+
+        shape.setStrokeWidth(strokeWidth);
+        shape.setStroke(strokeColor);
+    }
+
+    /**
+     * Color a {@link DrawableEdge} depending on its properties.
+     * @param graph the {@link GenomeGraph} belonging to the {@link DrawableEdge}
+     */
+    public void colorize(GenomeGraph graph) {
+        colorize(this, link, graph);
+    }
+
+    public int[] getGenomes() {
+        return this.getLink().getGenomes();
     }
 }

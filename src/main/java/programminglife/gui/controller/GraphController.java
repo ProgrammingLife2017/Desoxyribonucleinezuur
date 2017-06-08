@@ -6,11 +6,11 @@ import javafx.scene.paint.Color;
 import programminglife.model.Dummy;
 import programminglife.model.GenomeGraph;
 import programminglife.model.Segment;
-import programminglife.model.drawing.Drawable;
 import programminglife.model.drawing.DrawableEdge;
 import programminglife.model.drawing.DrawableNode;
 import programminglife.model.drawing.SubGraph;
 import programminglife.utility.Console;
+
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -167,16 +167,18 @@ public class GraphController {
             edge.setOnMouseClicked(event -> {
                 Console.println(parent.getNode().getLink(null).toString());
             });
-        } else if (child.getNode() instanceof  Dummy) {
+        } else if (child.getNode() instanceof Dummy) {
             edge.setOnMouseClicked(event -> {
                 Console.println(child.getNode().getLink(null).toString());
             });
         } else {
-            edge.setOnMouseClicked(event -> Console.println(edge.toString()));
+            edge.setOnMouseClicked(event -> {
+                Console.println(edge.toString());
+                Console.println("Genomes: " + graph.getGenomeNames(edge.getGenomes()));
+            });
         }
 
-        edge.setStroke(Color.DARKGRAY);
-        edge.setStrokeWidth(3);
+        edge.colorize(graph);
         edge.setStartLocation(edge.getStart().getRightBorderCenter());
         edge.setEndLocation(edge.getEnd().getLeftBorderCenter());
         this.grpDrawArea.getChildren().add(edge);
@@ -189,19 +191,18 @@ public class GraphController {
      */
     public void drawNode(DrawableNode drawableNode) {
         if (!(drawableNode.getNode() instanceof Dummy)) {
-            drawableNode.colorize();
             drawableNode.setOnMouseClicked(event -> {
                 Console.println(drawableNode.getSequence());
                 Console.println(drawableNode.toString());
+                Console.println("Genomes: " + graph.getGenomeNames(drawableNode.getGenomes()));
             });
         } else {
-            drawableNode.setStroke(Color.DARKGRAY);
-            drawableNode.setStrokeWidth(3);
             Dummy node = (Dummy) drawableNode.getNode();
             drawableNode.setOnMouseClicked(event -> {
                 Console.println(node.getLink(null).toString());
             });
         }
+        drawableNode.colorize(graph);
         this.grpDrawArea.getChildren().add(drawableNode);
     }
 
