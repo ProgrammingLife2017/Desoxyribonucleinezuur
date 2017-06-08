@@ -6,6 +6,7 @@ import javafx.scene.paint.Color;
 import programminglife.model.Dummy;
 import programminglife.model.GenomeGraph;
 import programminglife.model.Segment;
+import programminglife.model.drawing.Drawable;
 import programminglife.model.drawing.DrawableEdge;
 import programminglife.model.drawing.DrawableNode;
 import programminglife.model.drawing.SubGraph;
@@ -60,7 +61,7 @@ public class GraphController {
         }
 
         centerOnNodeId(center);
-        highlightNode(centerNode, Color.ORANGE);
+        highlightNode(center, Color.ORANGE);
 
 
 //        // An example of how to highlight. This is not very practical atm but it works.
@@ -105,18 +106,19 @@ public class GraphController {
      * @param nodes the Collection of {@link DrawableNode} to highlight.
      * @param color the {@link Color} to highlight with.
      */
-    private void highlightNodes(Collection<DrawableNode> nodes, Color color) {
-        for (DrawableNode dwnode : nodes) {
-            highlightNode(dwnode, color);
+    private void highlightNodes(Collection<Integer> nodes, Color color) {
+        for (int i : nodes) {
+            highlightNode(i, color);
         }
     }
 
     /**
      * Fill the rectangle with the color.
-     * @param node the {@link DrawableNode} to highlight.
+     * @param nodeID the nodeID of the node to highlight.
      * @param color the {@link Color} to highlight with.
      */
-    private void highlightNode(DrawableNode node, Color color) {
+    public void highlightNode(int nodeID, Color color) {
+        DrawableNode node = subGraph.getNodes().get(new Segment(graph, nodeID));
         node.setFill(color);
     }
 

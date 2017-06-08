@@ -20,6 +20,8 @@ import javafx.stage.Stage;
 import jp.uphy.javafx.console.ConsoleView;
 import programminglife.ProgrammingLife;
 import programminglife.model.GenomeGraph;
+import programminglife.model.Segment;
+import programminglife.model.drawing.DrawableNode;
 import programminglife.model.exception.UnknownTypeException;
 import programminglife.parser.GraphParser;
 import programminglife.utility.Alerts;
@@ -34,6 +36,7 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 /**
  * The controller for the GUI that is used in the application.
@@ -60,10 +63,12 @@ public class GuiController implements Observer {
     @FXML private Button btnDraw;
     @FXML private Button btnDrawRandom;
     @FXML private Button btnBookmark;
+    @FXML private Button btnHighlight;
     @FXML private ProgressBar progressBar;
 
     @FXML private TextField txtMaxDrawDepth;
     @FXML private TextField txtCenterNode;
+    @FXML private TextField txtNodeRegex;
 
     @FXML private Group grpDrawArea;
     @FXML private AnchorPane anchorLeftControlPanel;
@@ -82,6 +87,7 @@ public class GuiController implements Observer {
     private double boundsHeight;
 
 
+
     /**
      * The initialize will call the other methods that are run in the .
      */
@@ -96,6 +102,7 @@ public class GuiController implements Observer {
         initLeftControlpanelDraw();
         initMouse();
         initConsole();
+        initLeftControlpanelHighlight();
     }
 
     /**
@@ -365,6 +372,19 @@ public class GuiController implements Observer {
 
         txtCenterNode.textProperty().addListener(new NumbersOnlyListener(txtCenterNode));
         txtCenterNode.setText(INITIAL_CENTER_NODE);
+    }
+
+    /**
+     * Initializes the buttons and textfields that are used to highlight.
+     */
+    private void initLeftControlpanelHighlight() {
+
+        btnHighlight.setOnAction(event -> {
+            String input = txtNodeRegex.getText();
+            int node = Integer.valueOf(input);
+            System.out.println(node);
+            graphController.highlightNode(node, Color.PINK);
+        });
     }
 
     /**
