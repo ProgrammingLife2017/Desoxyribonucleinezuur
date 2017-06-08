@@ -11,3 +11,7 @@ notifications:
     on_failure: always
 jdk:
   - oraclejdk8
+addons:
+  apt:
+    packages:
+      - oracle-java8-installer

@@ -14,6 +14,7 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Scale;
 import javafx.stage.FileChooser;
@@ -47,6 +48,7 @@ public class GuiController implements Observer {
     private static final String INITIAL_MAX_DRAW_DEPTH = "10";
 
     //FXML imports.
+    @FXML private VBox mainBox;
     @FXML private MenuItem btnOpen;
     @FXML private MenuItem btnQuit;
     @FXML private MenuItem btnBookmarks;
@@ -461,12 +463,15 @@ public class GuiController implements Observer {
 
         double fx = (scaleX / oldScaleX) - 1;
         double fy = (scaleY / oldScaleY) - 1;
-        double boundsX = grpDrawArea.getBoundsInParent().getWidth() / 2;
-        double boundsY = grpDrawArea.getBoundsInParent().getHeight() / 2;
-        double dx = (sceneX - (boundsX + grpDrawArea.getBoundsInParent().getMinX()));
-        double dy = (sceneY - (boundsY + grpDrawArea.getBoundsInParent().getMinY()));
 
-        Scale scaleTransform = new Scale(scaleX, scaleY, (orgSceneX - fx * dx) / scaleX, (orgSceneY - fy * dy) / scaleY);
+        double boundsX = anchorGraphPanel.getWidth() / 3;
+        double boundsY = anchorGraphPanel.getHeight() / 2;
+        double spacingWidth = mainBox.getWidth() - anchorGraphPanel.getWidth();
+        double spacingHeight = mainBox.getHeight() - anchorGraphPanel.getHeight();
+        double pivotX = sceneX - boundsX + spacingWidth;
+        double pivotY = sceneY - boundsY + spacingHeight + 21;
+
+        Scale scaleTransform = new Scale(scaleX, scaleY, pivotX, pivotY);
         grpDrawArea.getTransforms().add(scaleTransform);
     }
 
