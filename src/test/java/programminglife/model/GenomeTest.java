@@ -32,7 +32,7 @@ public class GenomeTest {
                 new Segment(graph, 3, "GG"),
                 new Segment(graph, 4, "TATA"));
         longGenome = new Genome("test genome", segments);
-        graph.addGenome(longGenome);
+        graph.addGenome(longGenome.getName());
 
         emptyGenome = new Genome("empty test genome");
     }
