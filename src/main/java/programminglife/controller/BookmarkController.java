@@ -193,7 +193,7 @@ public final class BookmarkController {
                     StreamResult streamResult = new StreamResult(new File(fileName));
                     transformer.transform(source, streamResult);
                 } catch (TransformerException e) {
-                    e.printStackTrace();
+                    Alerts.error("The bookmarks cannot be deleted");
                 }
             }
         }
