@@ -440,6 +440,8 @@ public class GuiController implements Observer {
      * Handles the zooming in and out of the group.
      * @param sceneX double for the x location.
      * @param sceneY double for the y location.
+     * @param deltaX The scroll amount in the X direction. See {@link ScrollEvent#getDeltaX()}
+     * @param deltaY The scroll amount in the Y direction. See {@link ScrollEvent#getDeltaY()}
      * @param delta double the factor by which is zoomed.
      */
     private void zoom(double sceneX, double sceneY, double deltaX, double deltaY, double delta) {
