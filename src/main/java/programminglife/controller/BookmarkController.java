@@ -11,10 +11,7 @@ import programminglife.utility.Alerts;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
@@ -79,23 +76,13 @@ public final class BookmarkController {
      * @return true if it exists, false otherwise
      */
     private static boolean bookmarkExists(String fileName, String graphName, String bookmarkName) {
-        checkFile(fileName);
-        Document dom;
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        try {
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            dom = builder.parse(fileName);
-            dom.getDocumentElement().normalize();
-            Element doc = dom.getDocumentElement();
-            Element graph = findTag(doc.getElementsByTagName("graph"), graphName);
-            if (graph != null) {
-                Element bookmark = findTag(graph.getElementsByTagName("bookmark"), bookmarkName);
-                if (bookmark != null) {
-                    return true;
-                }
+        Element doc = loadDoc(fileName);
+        Element graph = findTag(doc.getElementsByTagName("graph"), graphName);
+        if (graph != null) {
+            Element bookmark = findTag(graph.getElementsByTagName("bookmark"), bookmarkName);
+            if (bookmark != null) {
+                return true;
             }
-        } catch (ParserConfigurationException | SAXException | IOException e) {
-            Alerts.error("Bookmark file error");
         }
         return false;
     }
@@ -123,25 +110,7 @@ public final class BookmarkController {
             Document doc = builder.parse(fileName);
             doc.getDocumentElement().normalize();
             Element rootElement = doc.getDocumentElement();
-
-            Element newBookmark = doc.createElement("bookmark");
-            Element nameTag = doc.createElement("name");
-            nameTag.appendChild(doc.createTextNode(bookMarkName));
-            Element descriptionTag = doc.createElement("description");
-            descriptionTag.appendChild(doc.createTextNode(description));
-            Element radiusTag = doc.createElement("radius");
-            radiusTag.appendChild(doc.createTextNode(String.valueOf(radius)));
-            Element iDTag = doc.createElement("ID");
-            iDTag.appendChild(doc.createTextNode(String.valueOf(nodeID)));
-            Element pathTag = doc.createElement("path");
-            pathTag.appendChild(doc.createTextNode(filePath));
-
-            newBookmark.appendChild(nameTag);
-            newBookmark.appendChild(iDTag);
-            newBookmark.appendChild(radiusTag);
-            newBookmark.appendChild(descriptionTag);
-            newBookmark.appendChild(pathTag);
-
+            Element newBookmark = createNewBookmarkTag(doc, bookMarkName, description, radius, nodeID, filePath);
             Element graphTag = findTag(doc.getElementsByTagName("graph"), graphName);
 
             // No earlier bookmarks in this graph
@@ -172,34 +141,61 @@ public final class BookmarkController {
     }
 
     /**
+     * Creates a bookmark Element.
+     * @param doc The Document to create the bookmark with
+     * @param bookMarkName The name of the bookmark
+     * @param description The description of the bookmark
+     * @param radius The radius of the bookmark
+     * @param nodeID The id of the center node of the bookmark
+     * @param filePath The path of the file
+     * @return An element containing the new bookmark
+     */
+    private static Element createNewBookmarkTag(Document doc, String bookMarkName,
+                                                String description, int radius, int nodeID, String filePath) {
+        Element newBookmark = doc.createElement("bookmark");
+        Element nameTag = doc.createElement("name");
+        nameTag.appendChild(doc.createTextNode(bookMarkName));
+        Element descriptionTag = doc.createElement("description");
+        descriptionTag.appendChild(doc.createTextNode(description));
+        Element radiusTag = doc.createElement("radius");
+        radiusTag.appendChild(doc.createTextNode(String.valueOf(radius)));
+        Element iDTag = doc.createElement("ID");
+        iDTag.appendChild(doc.createTextNode(String.valueOf(nodeID)));
+        Element pathTag = doc.createElement("path");
+        pathTag.appendChild(doc.createTextNode(filePath));
+
+        newBookmark.appendChild(nameTag);
+        newBookmark.appendChild(iDTag);
+        newBookmark.appendChild(radiusTag);
+        newBookmark.appendChild(descriptionTag);
+        newBookmark.appendChild(pathTag);
+        return newBookmark;
+    }
+
+    /**
      * Deletes a bookmark from the bookmark file.
      * @param fileName The name of the bookmark file.
      * @param graphName The name of the graph.
      * @param bookmarkName The name of the bookmark to be deleted.
      */
     static void deleteBookmark(String fileName, String graphName, String bookmarkName) {
-        checkFile(fileName);
-        try {
-            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = docFactory.newDocumentBuilder();
-            Document doc = builder.parse(fileName);
-            doc.getDocumentElement().normalize();
-            Element graphTag = findTag(doc.getElementsByTagName("graph"), graphName);
-
-            if (graphTag != null) {
-                Element bookmarkTag = findTag(graphTag.getElementsByTagName("bookmark"), bookmarkName);
-                if (bookmarkTag != null) {
-                    graphTag.removeChild(bookmarkTag);
-                    TransformerFactory transformerFactory = TransformerFactory.newInstance();
-                    Transformer transformer = transformerFactory.newTransformer();
+        Element doc = loadDoc(fileName);
+        Element graphTag = findTag(doc.getElementsByTagName("graph"), graphName);
+        if (graphTag != null) {
+            Element bookmarkTag = findTag(graphTag.getElementsByTagName("bookmark"), bookmarkName);
+            if (bookmarkTag != null) {
+                graphTag.removeChild(bookmarkTag);
+                TransformerFactory transformerFactory = TransformerFactory.newInstance();
+                Transformer transformer;
+                try {
+                    transformer = transformerFactory.newTransformer();
                     DOMSource source = new DOMSource(doc);
                     StreamResult streamResult = new StreamResult(new File(fileName));
                     transformer.transform(source, streamResult);
+                } catch (TransformerException e) {
+                    e.printStackTrace();
                 }
             }
-
-        } catch (ParserConfigurationException | SAXException | IOException | TransformerException e) {
-            Alerts.error("The bookmarks cannot be deleted");
         }
     }
 
@@ -211,6 +207,21 @@ public final class BookmarkController {
      */
     static List<Bookmark> loadAllGraphBookmarks(String fileName, String graphName) {
         List<Bookmark> result = new ArrayList<>();
+        Element doc = loadDoc(fileName);
+        Element graph = findTag(doc.getElementsByTagName("graph"), graphName);
+        if (graph != null) {
+            NodeList nodeList = graph.getElementsByTagName("bookmark");
+            result.addAll(parseBookmarks(graphName, nodeList));
+        }
+        return result;
+    }
+
+    /**
+     * Finds and loads the doc element from the bookmark file.
+     * @param fileName The name of the file where the bookmarks reside.
+     * @return A DOM Element containing all graphs and bookmarks.
+     */
+    public static Element loadDoc(String fileName) {
         checkFile(fileName);
         Document dom;
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -219,15 +230,11 @@ public final class BookmarkController {
             dom = builder.parse(fileName);
             dom.getDocumentElement().normalize();
             Element doc = dom.getDocumentElement();
-            Element graph = findTag(doc.getElementsByTagName("graph"), graphName);
-            if (graph != null) {
-                NodeList nodeList = graph.getElementsByTagName("bookmark");
-                result.addAll(parseBookmarks(graphName, nodeList));
-            }
+            return doc;
         } catch (ParserConfigurationException | SAXException | IOException e) {
-            Alerts.error("The bookmarks cannot be loaded");
+            Alerts.error("Bookmark file error");
         }
-        return result;
+        return null;
     }
 
     /**
@@ -237,27 +244,17 @@ public final class BookmarkController {
      */
     private static Map<String, List<Bookmark>> loadAllBookmarks(String fileName) {
         Map<String, List<Bookmark>> result = new HashMap<>();
-        checkFile(fileName);
-        Document dom;
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        try {
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            dom = builder.parse(fileName);
-            dom.getDocumentElement().normalize();
-            Element doc = dom.getDocumentElement();
-            NodeList graphs = doc.getElementsByTagName("graph");
-            if (graphs != null) {
-                for (int i = 0; i < graphs.getLength(); i++) {
-                    if (graphs.item(i).getNodeType() == Node.ELEMENT_NODE) {
-                        Element element = (Element) graphs.item(i);
-                        String graphName = element.getElementsByTagName("name").item(0).getTextContent();
-                        NodeList bookmarks = element.getElementsByTagName("bookmark");
-                        result.put(graphName, parseBookmarks(graphName, bookmarks));
-                    }
+        Element doc = loadDoc(fileName);
+        NodeList graphs = doc.getElementsByTagName("graph");
+        if (graphs != null) {
+            for (int i = 0; i < graphs.getLength(); i++) {
+                if (graphs.item(i).getNodeType() == Node.ELEMENT_NODE) {
+                    Element element = (Element) graphs.item(i);
+                    String graphName = element.getElementsByTagName("name").item(0).getTextContent();
+                    NodeList bookmarks = element.getElementsByTagName("bookmark");
+                    result.put(graphName, parseBookmarks(graphName, bookmarks));
                 }
             }
-        } catch (ParserConfigurationException | SAXException | IOException e) {
-            Alerts.error("The bookmarks cannot be loaded");
         }
         return result;
     }
