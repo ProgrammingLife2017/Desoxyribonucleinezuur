@@ -427,8 +427,8 @@ public class GuiController implements Observer {
             grpDrawArea.setTranslateY((orgTranslateY + event.getSceneY() - orgSceneY));
             event.consume();
         });
-        anchorGraphPanel.addEventHandler(ScrollEvent.SCROLL, event -> zoom(event.getDeltaX(),
-                event.getDeltaY(), event.getSceneX(), event.getSceneY(), ZOOM_FACTOR));
+        anchorGraphPanel.addEventHandler(ScrollEvent.SCROLL, event ->
+                zoom(event.getDeltaX(), event.getDeltaY(), event.getSceneX(), event.getSceneY(), ZOOM_FACTOR));
     }
 
     /**
@@ -448,18 +448,18 @@ public class GuiController implements Observer {
         } else {
             scale *= delta;
         }
+        
         scale = clamp(scale, MIN_SCALE, MAX_SCALE);
-
         grpDrawArea.setScaleX(scale);
         grpDrawArea.setScaleY(scale);
-
-        double  f = (scale / oldScale) - 1;
+        //factor to determine the difference in the scales.
+        double factor = (scale / oldScale) - 1;
         Bounds bounds = grpDrawArea.localToScene(grpDrawArea.getBoundsInLocal());
         double dx = (sceneX - (bounds.getWidth() / 2 + bounds.getMinX()));
         double dy = (sceneY - (bounds.getHeight() / 2 + bounds.getMinY()));
 
-        grpDrawArea.setTranslateX(grpDrawArea.getTranslateX() - f * dx);
-        grpDrawArea.setTranslateY(grpDrawArea.getTranslateY() - f * dy);
+        grpDrawArea.setTranslateX(grpDrawArea.getTranslateX() - factor * dx);
+        grpDrawArea.setTranslateY(grpDrawArea.getTranslateY() - factor * dy);
     }
 
     /**
@@ -470,7 +470,6 @@ public class GuiController implements Observer {
      * @return double scale value.
      */
     private static double clamp(double value, double min, double max) {
-
         if (Double.compare(value, min) < 0) {
             return min;
         }
