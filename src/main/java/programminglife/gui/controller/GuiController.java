@@ -73,7 +73,6 @@ public class GuiController implements Observer {
     private double orgSceneX, orgSceneY;
     private double orgTranslateX, orgTranslateY;
     private double scaleX, scaleY;
-    private double deltaX, deltaY;
     private GraphController graphController;
     private File file;
     private File recentFile = new File("Recent.txt");
@@ -433,9 +432,7 @@ public class GuiController implements Observer {
             event.consume();
         });
         anchorGraphPanel.addEventHandler(ScrollEvent.SCROLL, event -> {
-            deltaX = event.getDeltaX();
-            deltaY = event.getDeltaY();
-            zoom(event.getSceneX(), event.getSceneY(), ZOOM_FACTOR);
+            zoom(event.getSceneX(), event.getSceneY(), event.getDeltaX(), event.getDeltaY(), ZOOM_FACTOR);
         });
     }
 
@@ -445,7 +442,7 @@ public class GuiController implements Observer {
      * @param sceneY double for the y location.
      * @param delta double the factor by which is zoomed.
      */
-    private void zoom(double sceneX, double sceneY, double delta) {
+    private void zoom(double sceneX, double sceneY, double deltaX, double deltaY, double delta) {
         scaleX = grpDrawArea.getScaleX();
         scaleY = grpDrawArea.getScaleY();
         double oldScaleX = scaleX;
