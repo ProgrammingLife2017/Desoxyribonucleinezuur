@@ -340,4 +340,8 @@ public class GenomeGraph implements Graph {
         int[] allChildren = this.append(oldChildren, this.cache.getCurrentParentChildren());
         this.cache.getChildrenAdjacencyMap().put(this.cache.getCurrentParentID(), allChildren);
     }
+
+    public double getGenomeFraction(int nodeID) {
+        return this.getGenomes(nodeID).length / (double) this.cache.getGenomeNamesIdMap().size();
+    }
 }

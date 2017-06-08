@@ -174,8 +174,7 @@ public class GraphController {
      */
     public void drawNode(DrawableNode drawableNode) {
         if (!(drawableNode.getNode() instanceof Dummy)) {
-            drawableNode.setFill(Color.TRANSPARENT);
-            drawableNode.setStroke(Color.BLUE);
+            drawableNode.colorize();
             drawableNode.setOnMouseClicked(event -> {
                 Console.println(drawableNode.getSequence());
                 Console.println(drawableNode.toString());

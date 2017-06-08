@@ -77,4 +77,6 @@ public interface Node {
      * @param sequence {@link String} of the sequence.
      */
     void setSequence(String sequence);
+
+    double getGenomeFraction();
 }

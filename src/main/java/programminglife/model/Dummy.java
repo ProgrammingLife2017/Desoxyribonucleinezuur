@@ -73,6 +73,11 @@ public class Dummy implements Node {
     public void setSequence(String sequence) { }
 
     @Override
+    public double getGenomeFraction() {
+        return 0.d;
+    }
+
+    @Override
     public String getSequence() {
         return "";
     }
