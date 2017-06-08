@@ -22,8 +22,6 @@ import javafx.stage.Stage;
 import jp.uphy.javafx.console.ConsoleView;
 import programminglife.ProgrammingLife;
 import programminglife.model.GenomeGraph;
-import programminglife.model.Segment;
-import programminglife.model.drawing.DrawableNode;
 import programminglife.model.exception.UnknownTypeException;
 import programminglife.parser.GraphParser;
 import programminglife.utility.Alerts;
@@ -38,7 +36,6 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Random;
 import java.util.Scanner;
-import java.util.regex.Pattern;
 
 /**
  * The controller for the GUI that is used in the application.

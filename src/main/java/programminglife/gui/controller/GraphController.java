@@ -3,6 +3,7 @@ package programminglife.gui.controller;
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.StrokeType;
 import programminglife.model.Dummy;
 import programminglife.model.GenomeGraph;
 import programminglife.model.Segment;
@@ -11,7 +12,10 @@ import programminglife.model.drawing.DrawableNode;
 import programminglife.model.drawing.SubGraph;
 import programminglife.utility.Console;
 
+import java.awt.*;
 import java.util.Collection;
+
+import static javafx.scene.shape.StrokeType.OUTSIDE;
 
 /**
  * Created by Martijn van Meerten on 8-5-2017.
@@ -60,8 +64,7 @@ public class GraphController {
         }
 
         centerOnNodeId(center);
-        highlightNode(center, Color.ORANGE);
-
+        highlightNode(center, Color.DARKORANGE);
 
 //        // An example of how to highlight. This is not very practical atm but it works.
 //        for (Object o : grpDrawArea.getChildren()) {
@@ -118,7 +121,9 @@ public class GraphController {
      */
     public void highlightNode(int nodeID, Color color) {
         DrawableNode node = subGraph.getNodes().get(new Segment(graph, nodeID));
-        node.setFill(color);
+        node.setStroke(color);
+        node.setStrokeWidth(3);
+        node.setStrokeType(OUTSIDE);
     }
 
 
