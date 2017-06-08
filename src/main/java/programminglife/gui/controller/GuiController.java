@@ -68,7 +68,6 @@ public class GuiController implements Observer {
 
     @FXML private TextField txtMaxDrawDepth;
     @FXML private TextField txtCenterNode;
-    @FXML private TextField txtNodeRegex;
 
     @FXML private Group grpDrawArea;
     @FXML private AnchorPane anchorLeftControlPanel;
@@ -83,8 +82,6 @@ public class GuiController implements Observer {
     private File recentFile = new File("Recent.txt");
     private String recentItems = "";
     private Thread parseThread;
-    private double boundsWidth;
-    private double boundsHeight;
 
 
 
@@ -380,10 +377,21 @@ public class GuiController implements Observer {
     private void initLeftControlpanelHighlight() {
 
         btnHighlight.setOnAction(event -> {
-            String input = txtNodeRegex.getText();
-            int node = Integer.valueOf(input);
-            System.out.println(node);
-            graphController.highlightNode(node, Color.PINK);
+            try {
+                FXMLLoader loader = new FXMLLoader(ProgrammingLife.class.getResource("/HighlightWindow.fxml"));
+                AnchorPane page = loader.load();
+                HighlightController gc = loader.getController();
+                gc.setGuiController(this);
+                Scene scene = new Scene(page);
+                Stage highlightDialogStage = new Stage();
+                highlightDialogStage.setResizable(false);
+                highlightDialogStage.setScene(scene);
+                highlightDialogStage.setTitle("Highlights");
+                highlightDialogStage.initOwner(ProgrammingLife.getStage());
+                highlightDialogStage.showAndWait();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         });
     }
 

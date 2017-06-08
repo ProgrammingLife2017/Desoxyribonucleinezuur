@@ -46,7 +46,6 @@
                      <TextField fx:id="txtCenterNode" layoutX="20.0" layoutY="251.0" minWidth="100.0" promptText="Origin node" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
                      <Button fx:id="btnDrawRandom" layoutX="20.0" layoutY="350.0" minWidth="100.0" mnemonicParsing="false" text="Surprise me!" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
                      <Button fx:id="btnBookmark" layoutX="20.0" layoutY="384.0" minWidth="100.0" mnemonicParsing="false" text="Bookmark" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
-                  <TextField fx:id="txtNodeRegex" layoutX="20.0" layoutY="428.0" prefHeight="25.0" prefWidth="100.0" promptText="Node regex" />
                   <Button fx:id="btnHighlight" layoutX="20.0" layoutY="462.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="Highlight" />
                  </children>
               </AnchorPane>
