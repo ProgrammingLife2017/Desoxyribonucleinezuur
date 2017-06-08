@@ -32,6 +32,7 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Random;
 import java.util.Scanner;
 
 /**
@@ -66,6 +67,7 @@ public class GuiController implements Observer {
 
     @FXML private Group grpDrawArea;
     @FXML private AnchorPane anchorLeftControlPanel;
+    @FXML private AnchorPane anchorGraphPanel;
 
     private double orgSceneX, orgSceneY;
     private double orgTranslateX, orgTranslateY;
@@ -76,6 +78,9 @@ public class GuiController implements Observer {
     private File recentFile = new File("Recent.txt");
     private String recentItems = "";
     private Thread parseThread;
+    private double boundsWidth;
+    private double boundsHeight;
+
 
     /**
      * The initialize will call the other methods that are run in the .
@@ -319,8 +324,8 @@ public class GuiController implements Observer {
         });
 
         btnTranslateReset.setOnAction(event -> {
-            grpDrawArea.setTranslateX(0);
-            grpDrawArea.setTranslateY(0);
+            grpDrawArea.setTranslateX(graphController.getLocationCenterX());
+            grpDrawArea.setTranslateY(graphController.getLocationCenterY());
         });
 
         btnZoomIn.setOnAction(event -> {
@@ -348,7 +353,7 @@ public class GuiController implements Observer {
         btnDraw.setOnAction(e -> this.draw());
 
         btnDrawRandom.setOnAction(event -> {
-            int randomNodeID = (int) Math.ceil(Math.random() * this.graphController.getGraph().size());
+            int randomNodeID = (new Random()).nextInt(this.graphController.getGraph().size() - 1) + 1;
             txtCenterNode.setText(Integer.toString(randomNodeID));
             this.draw();
         });
@@ -438,19 +443,17 @@ public class GuiController implements Observer {
      * Initialises the mouse events.
      */
     private void initMouse() {
-        grpDrawArea.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
+        anchorGraphPanel.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
             orgSceneX = event.getSceneX();
             orgSceneY = event.getSceneY();
-            orgTranslateX = ((Group) (event.getSource())).getTranslateX();
-            orgTranslateY = ((Group) (event.getSource())).getTranslateY();
+            orgTranslateX = grpDrawArea.getTranslateX();
+            orgTranslateY = grpDrawArea.getTranslateY();
         });
-        grpDrawArea.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> {
-            if (event.isAltDown()) {
-                ((Group) (event.getSource())).setTranslateX(orgTranslateX + event.getSceneX() - orgSceneX);
-                ((Group) (event.getSource())).setTranslateY(orgTranslateY + event.getSceneY() - orgSceneY);
-            }
+        anchorGraphPanel.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> {
+            grpDrawArea.setTranslateX(orgTranslateX + event.getSceneX() - orgSceneX);
+            grpDrawArea.setTranslateY(orgTranslateY + event.getSceneY() - orgSceneY);
         });
-        grpDrawArea.addEventHandler(ScrollEvent.SCROLL, event -> {
+        anchorGraphPanel.addEventHandler(ScrollEvent.SCROLL, event -> {
             if (event.isAltDown()) {
                 grpDrawArea.setScaleX(grpDrawArea.getScaleX() + event.getDeltaY() / 250);
                 grpDrawArea.setScaleY(grpDrawArea.getScaleY() + event.getDeltaY() / 250);

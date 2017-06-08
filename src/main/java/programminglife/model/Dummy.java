@@ -55,7 +55,7 @@ public class Dummy implements Node {
     @Override
     public Collection<? extends Node> getParents() {
         Collection result = new LinkedHashSet();
-        result.add(child);
+        result.add(parent);
         return result;
     }
 
