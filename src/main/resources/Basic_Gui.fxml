@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.text.*?>
-<?import java.lang.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.Group?>
 <?import javafx.scene.layout.*?>
-
 <VBox prefHeight="900.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="programminglife.gui.controller.GuiController">
    <children>
        <MenuBar VBox.vgrow="NEVER">
@@ -36,21 +33,18 @@
           <items>
               <AnchorPane fx:id="anchorLeftControlPanel" maxWidth="140.0" minHeight="0.0" minWidth="140.0" prefHeight="875.0" prefWidth="100.0" SplitPane.resizableWithParent="false">
                  <children>
-                     <Button fx:id="btnZoomIn" layoutX="12.0" layoutY="14.0" minWidth="100.0" mnemonicParsing="false" text="Zoom In" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
-                     <Button fx:id="btnZoomOut" layoutX="12.0" layoutY="40.0" minWidth="100.0" mnemonicParsing="false" text="Zoom Out" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
-                     <Button fx:id="btnZoomReset" layoutX="12.0" layoutY="66.0" minWidth="100.0" mnemonicParsing="false" text="Reset Zoom" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
-                     <Button fx:id="btnTranslate" layoutX="12.0" layoutY="110.0" minWidth="75.0" mnemonicParsing="false" text="Translate" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
-                     <Button fx:id="btnTranslateReset" layoutX="12.0" layoutY="160.0" minWidth="100.0" mnemonicParsing="false" text="Reset X/Y" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
-                     <Button fx:id="btnDraw" layoutX="27.0" layoutY="316.0" minWidth="100.0" mnemonicParsing="false" text="Draw" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
-                     <TextField fx:id="txtMaxDrawDepth" layoutX="20.0" layoutY="283.0" minWidth="100.0" promptText="Max depth" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
-                     <TextField fx:id="txtCenterNode" layoutX="20.0" layoutY="251.0" minWidth="100.0" promptText="Origin node" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
-                     <Button fx:id="btnDrawRandom" layoutX="20.0" layoutY="350.0" minWidth="100.0" mnemonicParsing="false" text="Surprise me!" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
-                     <Button fx:id="btnBookmark" layoutX="20.0" layoutY="384.0" minWidth="100.0" mnemonicParsing="false" text="Bookmark" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
-                  <TextField fx:id="txtNodeRegex" layoutX="20.0" layoutY="428.0" prefHeight="25.0" prefWidth="100.0" promptText="Node regex" />
-                  <Button fx:id="btnHighlight" layoutX="20.0" layoutY="462.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="Highlight" />
+                     <Button fx:id="btnZoomReset" layoutX="12.0" layoutY="20.0" minWidth="100.0" mnemonicParsing="false" text="Reset Zoom" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
+                     <Button fx:id="btnTranslateReset" layoutX="12.0" layoutY="50.0" minWidth="100.0" mnemonicParsing="false" text="Reset X/Y" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
+                     <Button fx:id="btnDraw" layoutX="27.0" layoutY="180.0" minWidth="100.0" mnemonicParsing="false" text="Draw" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
+                     <TextField fx:id="txtMaxDrawDepth" layoutX="20.0" layoutY="130.0" minWidth="100.0" promptText="Max depth" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
+                     <TextField fx:id="txtCenterNode" layoutX="20.0" layoutY="100.0" minWidth="100.0" promptText="Origin node" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
+                     <Button fx:id="btnDrawRandom" layoutX="20.0" layoutY="210.0" minWidth="100.0" mnemonicParsing="false" text="Surprise me!" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
+                     <Button fx:id="btnBookmark" layoutX="20.0" layoutY="240.0" minWidth="100.0" mnemonicParsing="false" text="Bookmark" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
+                     <TextField fx:id="txtNodeRegex" layoutX="20.0" layoutY="428.0" prefHeight="25.0" prefWidth="100.0" promptText="Node regex" />
+                     <Button fx:id="btnHighlight" layoutX="20.0" layoutY="462.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="Highlight" />
                  </children>
               </AnchorPane>
-              <AnchorPane fx:id="anchorGraphPanel" minHeight="200" minWidth="600" prefHeight="400" prefWidth="600">
+              <AnchorPane fx:id="anchorGraphPanel" minHeight="200" minWidth="600" prefHeight="Infinity" prefWidth="Infinity">
                  <children>
                      <Group fx:id="grpDrawArea" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                  </children>

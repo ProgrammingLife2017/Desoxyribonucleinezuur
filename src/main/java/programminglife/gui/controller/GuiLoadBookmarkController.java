@@ -7,6 +7,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import programminglife.ProgrammingLife;
@@ -65,7 +67,7 @@ public class GuiLoadBookmarkController implements Observer {
      * Initializes the buttons in the window.
      */
     private void initButtons() {
-        btnOpenBookmark.setOnAction(event -> buttonOpen());
+        btnOpenBookmark.setOnAction(event -> openBookmark());
         btnDeleteBookmark.setOnAction(event -> buttonDelete());
         btnCreateBookmark.setOnAction(event -> createBookmark());
         btnShowInfo.setOnAction(event -> showInfo());
@@ -74,7 +76,7 @@ public class GuiLoadBookmarkController implements Observer {
     /**
      * Handles the actions of the open bookmark button.
      */
-    private void buttonOpen() {
+    private void openBookmark() {
         Bookmark bookmark = checkBookmarkSelection();
         if (bookmark != null) {
             guiController.setText(bookmark.getNodeID(), bookmark.getRadius());
@@ -173,6 +175,13 @@ public class GuiLoadBookmarkController implements Observer {
         TableView<Bookmark> tableView = new TableView<>();
         tableView.getColumns().add(0, tableColumn);
         tableView.getColumns().add(1, tableColumn1);
+
+        tableView.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
+            if (event.getButton().equals(MouseButton.PRIMARY) && event.getClickCount() == 2) {
+                openBookmark();
+            }
+        });
+
         tableViews.add(tableView);
 
         AnchorPane anchorPane = new AnchorPane(tableView);
