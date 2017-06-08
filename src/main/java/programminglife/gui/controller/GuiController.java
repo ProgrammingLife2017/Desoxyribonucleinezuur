@@ -6,6 +6,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -14,9 +15,7 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.transform.Scale;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
@@ -48,7 +47,6 @@ public class GuiController implements Observer {
     private static final String INITIAL_MAX_DRAW_DEPTH = "10";
 
     //FXML imports.
-    @FXML private VBox mainBox;
     @FXML private MenuItem btnOpen;
     @FXML private MenuItem btnQuit;
     @FXML private MenuItem btnBookmarks;
@@ -72,7 +70,7 @@ public class GuiController implements Observer {
 
     private double orgSceneX, orgSceneY;
     private double orgTranslateX, orgTranslateY;
-    private double scaleX, scaleY;
+    private double scale;
     private double deltaX, deltaY;
     private GraphController graphController;
     private File file;
@@ -82,8 +80,6 @@ public class GuiController implements Observer {
     private static final double MAX_SCALE = 10.0d;
     private static final double MIN_SCALE = .1d;
     private static final double ZOOM_FACTOR = 1.05d;
-    private double boundsWidth;
-    private double boundsHeight;
 
     /**
      * The initialize will call the other methods that are run in the .
@@ -91,8 +87,6 @@ public class GuiController implements Observer {
     @FXML
     @SuppressWarnings("unused")
     private void initialize() {
-        scaleY = 1;
-        scaleX = 1;
         this.graphController = new GraphController(null, this.grpDrawArea);
         initRecent();
         initMenubar();
@@ -317,7 +311,11 @@ public class GuiController implements Observer {
             grpDrawArea.setTranslateY(graphController.getLocationCenterY());
         });
 
-        btnZoomReset.setOnAction(event -> grpDrawArea.getTransforms().clear());
+        btnZoomReset.setOnAction(event -> {
+            scale = 1;
+            grpDrawArea.setScaleX(1);
+            grpDrawArea.setScaleY(1);
+        });
     }
 
     /**
@@ -426,10 +424,8 @@ public class GuiController implements Observer {
             orgTranslateY = grpDrawArea.getTranslateY();
         });
         anchorGraphPanel.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> {
-            scaleX = grpDrawArea.getScaleX();
-            scaleY = grpDrawArea.getScaleY();
-            grpDrawArea.setTranslateX((orgTranslateX + event.getSceneX() - orgSceneX) / scaleX);
-            grpDrawArea.setTranslateY((orgTranslateY + event.getSceneY() - orgSceneY) / scaleY);
+            grpDrawArea.setTranslateX((orgTranslateX + event.getSceneX() - orgSceneX));
+            grpDrawArea.setTranslateY((orgTranslateY + event.getSceneY() - orgSceneY));
             event.consume();
         });
         anchorGraphPanel.addEventHandler(ScrollEvent.SCROLL, event -> {
@@ -446,33 +442,26 @@ public class GuiController implements Observer {
      * @param delta double the factor by which is zoomed.
      */
     private void zoom(double sceneX, double sceneY, double delta) {
-        scaleX = grpDrawArea.getScaleX();
-        scaleY = grpDrawArea.getScaleY();
-        double oldScaleX = scaleX;
-        double oldScaleY = scaleY;
+        double oldScale = grpDrawArea.getScaleX();
+        scale = oldScale;
 
         if (deltaX < 0 || deltaY < 0) {
-            scaleX /= delta;
-            scaleY /= delta;
+            scale /= delta;
         } else {
-            scaleX *= delta;
-            scaleY *= delta;
+            scale *= delta;
         }
-        scaleX = clamp(scaleX, MIN_SCALE, MAX_SCALE);
-        scaleY = clamp(scaleY, MIN_SCALE, MAX_SCALE);
+        scale = clamp(scale, MIN_SCALE, MAX_SCALE);
 
-        double fx = (scaleX / oldScaleX) - 1;
-        double fy = (scaleY / oldScaleY) - 1;
+        grpDrawArea.setScaleX(scale);
+        grpDrawArea.setScaleY(scale);
 
-        double boundsX = anchorGraphPanel.getWidth() / 3;
-        double boundsY = anchorGraphPanel.getHeight() / 2;
-        double spacingWidth = mainBox.getWidth() - anchorGraphPanel.getWidth();
-        double spacingHeight = mainBox.getHeight() - anchorGraphPanel.getHeight();
-        double pivotX = sceneX - boundsX + spacingWidth;
-        double pivotY = sceneY - boundsY + spacingHeight + 21;
+        double  f = (scale / oldScale) - 1;
+        Bounds bounds = grpDrawArea.localToScene(grpDrawArea.getBoundsInLocal());
+        double dx = (sceneX - (bounds.getWidth() / 2 + bounds.getMinX()));
+        double dy = (sceneY - (bounds.getHeight() / 2 + bounds.getMinY()));
 
-        Scale scaleTransform = new Scale(scaleX, scaleY, pivotX, pivotY);
-        grpDrawArea.getTransforms().add(scaleTransform);
+        grpDrawArea.setTranslateX(grpDrawArea.getTranslateX() - f * dx);
+        grpDrawArea.setTranslateY(grpDrawArea.getTranslateY() - f * dy);
     }
 
     /**
