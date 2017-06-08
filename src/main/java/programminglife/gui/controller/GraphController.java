@@ -62,26 +62,28 @@ public class GraphController {
         centerOnNodeId(center);
         highlightNode(centerNode, Color.ORANGE);
 
-        for (Object o : grpDrawArea.getChildren()){
-            if (o instanceof DrawableEdge) {
-                DrawableEdge edge = (DrawableEdge) o;
-                if (edge.getLink().getEnd() instanceof Dummy) {
-                    if (edge.getLink().getEnd().getLink(null).getEnd().getIdentifier() % 2 == 0)
-                        highlightEdge(edge, Color.GOLDENROD);
-                }
-                if ((int) edge.getLink().getEnd().getIdentifier() % 2 == 0)
-                    highlightEdge(edge, Color.GOLDENROD);
-            }
-            if (o instanceof DrawableNode) {
-                DrawableNode node = (DrawableNode) o;
-                if (node.getNode() instanceof Dummy) {
-                    Dummy dummy = (Dummy) node.getNode();
-                    if ((int) dummy.getLink(null).getEnd().getIdentifier() % 2 == 0)
-                        highlightDummyNode(node, Color.GOLDENROD);
-                }
 
-            }
-        }
+//        // An example of how to highlight. This is not very practical atm but it works.
+//        for (Object o : grpDrawArea.getChildren()) {
+//            if (o instanceof DrawableEdge) {
+//                DrawableEdge edge = (DrawableEdge) o;
+//                if (edge.getLink().getEnd() instanceof Dummy) {
+//                    if (edge.getLink().getEnd().getLink(null).getEnd().getIdentifier() % 2 == 0)
+//                        highlightEdge(edge, Color.GOLDENROD);
+//                }
+//                if ((int) edge.getLink().getEnd().getIdentifier() % 2 == 0)
+//                    highlightEdge(edge, Color.GOLDENROD);
+//            }
+//            if (o instanceof DrawableNode) {
+//                DrawableNode node = (DrawableNode) o;
+//                if (node.getNode() instanceof Dummy) {
+//                    Dummy dummy = (Dummy) node.getNode();
+//                    if ((int) dummy.getLink(null).getEnd().getIdentifier() % 2 == 0)
+//                        highlightDummyNode(node, Color.GOLDENROD);
+//                }
+//
+//            }
+//        }
 
 
 
@@ -119,11 +121,24 @@ public class GraphController {
     }
 
 
-    private void highlightEdge(DrawableEdge edge, Color color) { edge.setStroke(color); }
+    /**
+     * Method to highlight a Edge. Changes the stroke color of the Edge.
+     * @param edge {@link DrawableEdge} is the edge to highlight.
+     * @param color {@link Color} is the color in which the Edge node needs to highlight.
+     */
+    private void highlightEdge(DrawableEdge edge, Color color) {
+        edge.setStroke(color);
+    }
 
+    /**
+     * Method to highlight a dummy node. Changes the stroke color of the node.
+     * @param node {@link DrawableNode} is the dummy node that needs highlighting.
+     * @param color {@link Color} is the color in which the dummy node needs a highlight.
+     */
     private void highlightDummyNode(DrawableNode node, Color color) {
         node.setStroke(color);
     }
+
     /**
      * Draws a edge on the location it has.
      * @param parent {@link DrawableNode} is the node to be draw from.
