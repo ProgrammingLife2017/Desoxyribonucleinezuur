@@ -1,5 +1,6 @@
 package programminglife.parser;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.mapdb.Atomic;
 import org.mapdb.DB;
@@ -11,9 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 /**
  * A class for managing persistent data. It can open one cache, which contains the information for one gfa file.
@@ -21,21 +20,25 @@ import java.util.NoSuchElementException;
 public final class Cache {
     private static final String SEQUENCE_MAP_NAME = "sequenceMap";
     private static final String SEQUENCE_LENGTH_MAP_NAME = "sequenceLengthMap";
-    private static final String GENOME_NAMES_MAP_NAME = "genomeNamesMap";
+    private static final String NODE_ID_GENOMES_MAP = "nodeIdGenomesMap";
+    private static final String GENOME_ID_NAMES_MAP_NAME = "genomeIdNamesMap";
+    private static final String GENOME_NAMES_ID_MAP_NAME = "genomeNamesIdMap";
     private static final String CHILDREN_ADJACENCY_MAP_NAME = "childrenNamesMap";
     private static final String PARENTS_ADJACENCY_MAP_NAME = "parentsNamesMap";
-    private static final String LINE_NUMBER_INTEGER_NAME = "lineNumberInteger";
+    private static final String NUMBER_OF_NODES_INT_NAME = "numberOfNodes";
 
     private String dbFileName;
     private DB db;
 
     private Map<Integer, String> sequenceMap;
     private Map<Integer, Integer> sequenceLengthMap;
-    private Map<Integer, String> genomeNamesMap;
+    private Map<Integer, int[]> nodeIdGenomesMap; // node id -> array of genome ids
+    private Map<Integer, String> genomeIdNamesMap; // genome id -> genome name
+    private Map<String, Integer> genomeNamesIdMap; // genome name -> genome id
     private Map<Integer, int[]> childrenAdjacencyMap;
     private Map<Integer, int[]> parentsAdjacencyMap;
 
-    private Atomic.Integer lineNumberInteger;
+    private Atomic.Integer numberOfNodes;
 
     private LinkedList<Integer> currentParentChildren;
     private int currentParentID;
@@ -64,11 +67,13 @@ public final class Cache {
     private void initialize() {
         this.sequenceMap = getMap(db, SEQUENCE_MAP_NAME, Serializer.INTEGER, Serializer.STRING_ASCII);
         this.sequenceLengthMap = getMap(db, SEQUENCE_LENGTH_MAP_NAME, Serializer.INTEGER, Serializer.INTEGER);
-        this.genomeNamesMap = getMap(db, GENOME_NAMES_MAP_NAME, Serializer.INTEGER, Serializer.STRING_ASCII);
+        this.nodeIdGenomesMap = getMap(db, NODE_ID_GENOMES_MAP, Serializer.INTEGER, Serializer.INT_ARRAY);
+        this.genomeIdNamesMap = getMap(db, GENOME_ID_NAMES_MAP_NAME, Serializer.INTEGER, Serializer.STRING_ASCII);
+        this.genomeNamesIdMap = getMap(db, GENOME_NAMES_ID_MAP_NAME, Serializer.STRING_ASCII, Serializer.INTEGER);
         this.childrenAdjacencyMap = getMap(db, CHILDREN_ADJACENCY_MAP_NAME, Serializer.INTEGER, Serializer.INT_ARRAY);
         this.parentsAdjacencyMap = getMap(db, PARENTS_ADJACENCY_MAP_NAME, Serializer.INTEGER, Serializer.INT_ARRAY);
 
-        this.lineNumberInteger = db.atomicInteger(LINE_NUMBER_INTEGER_NAME).createOrOpen();
+        this.numberOfNodes = db.atomicInteger(NUMBER_OF_NODES_INT_NAME).createOrOpen();
 
         this.currentParentID = -1;
         this.currentParentChildren = new LinkedList<>();
@@ -115,12 +120,20 @@ public final class Cache {
         return this.sequenceMap;
     }
 
+    private Map<Integer, int[]> getNodeIdGenomesMap() {
+        return nodeIdGenomesMap;
+    }
+
     /**
      * Get the HTreeMap cache for the cached genomes.
      * @return the HTreeMap cache for the sequences.
      */
-    private Map<Integer, String> getGenomeNamesMap() {
-        return this.genomeNamesMap;
+    private Map<Integer, String> getGenomeIdNamesMap() {
+        return this.genomeIdNamesMap;
+    }
+
+    public Map<String, Integer> getGenomeNamesIdMap() {
+        return genomeNamesIdMap;
     }
 
     public Map<Integer, int[]> getChildrenAdjacencyMap() {
@@ -129,6 +142,10 @@ public final class Cache {
 
     public Map<Integer, int[]> getParentsAdjacencyMap() {
         return this.parentsAdjacencyMap;
+    }
+
+    public int getNumberOfNodes() {
+        return this.numberOfNodes.get();
     }
 
     /**
@@ -186,7 +203,9 @@ public final class Cache {
      * @param sequence new sequence.
      */
     public void setSequence(int nodeID, String sequence) {
-        getSequenceMap().put(nodeID, sequence);
+        if (getSequenceMap().put(nodeID, sequence) == null) {
+            this.numberOfNodes.incrementAndGet();
+        }
         getSequenceLengthMap().put(nodeID, sequence.length());
     }
 
@@ -204,16 +223,48 @@ public final class Cache {
     }
 
     /**
+     * Set the Genomes through a specific Node.
+     * @param nodeID the ID of the Node
+     * @param genomeIDs an Array of IDs of Genomes
+     */
+    public void setGenomes(int nodeID, int[] genomeIDs) {
+        this.getNodeIdGenomesMap().put(nodeID, genomeIDs);
+    }
+
+    /**
+     * Get the Genomes through a specific Node.
+     * @param nodeID the ID of the Node
+     * @return an Array of Genome IDs
+     */
+    public int[] getGenomes(int nodeID) {
+        return this.getNodeIdGenomesMap().get(nodeID);
+    }
+
+    /**
      * Get the name of a {@link programminglife.model.Genome} based on its index.
      * @param genomeID the index (0-based) of the {@link programminglife.model.Genome} in the GFA header
      * @return the name of the {@link programminglife.model.Genome}
      */
     @NotNull
     public String getGenomeName(int genomeID) {
-        if (getGenomeNamesMap().containsKey(genomeID)) {
-            return getGenomeNamesMap().get(genomeID);
+        if (getGenomeIdNamesMap().containsKey(genomeID)) {
+            return getGenomeIdNamesMap().get(genomeID);
         } else {
             throw new NoSuchElementException(String.format("No name is cached for genome %d", genomeID));
+        }
+    }
+
+    /**
+     * Get the ID of a {@link programminglife.model.Genome} based on its name.
+     * @param genomeName the name of the {@link programminglife.model.Genome}
+     * @return the index of the {@link programminglife.model.Genome} in the GFA header
+     */
+    @NotNull
+    public int getGenomeID(String genomeName) {
+        if (getGenomeNamesIdMap().containsKey(genomeName)) {
+            return getGenomeNamesIdMap().get(genomeName);
+        } else {
+            throw new NoSuchElementException(String.format("No ID is cached for genome %s", genomeName));
         }
     }
 
@@ -222,24 +273,9 @@ public final class Cache {
      * @param genomeName the name of the {@link programminglife.model.Genome} to add
      */
     public void addGenomeName(String genomeName) {
-        int index = getGenomeNamesMap().size();
-        getGenomeNamesMap().put(index, genomeName);
-    }
-
-    /**
-     * Get the cached number of lines.
-     * @return # of lines
-     */
-    public int getNumberOfLines() {
-        return this.lineNumberInteger.get();
-    }
-
-    /**
-     * Set the number of lines of the file.
-     * @param numberOfLines # of lines
-     */
-    public void setNumberOfLines(int numberOfLines) {
-        this.lineNumberInteger.set(numberOfLines);
+        int index = getGenomeIdNamesMap().size();
+        getGenomeIdNamesMap().put(index, genomeName);
+        getGenomeNamesIdMap().put(genomeName, index);
     }
 
     /**
@@ -281,7 +317,7 @@ public final class Cache {
     }
 
     public LinkedList<Integer> getCurrentParentChildren() {
-        return currentParentChildren;
+        return this.currentParentChildren;
     }
 
     public void setCurrentParentChildren(LinkedList<Integer> currentParentChildren) {
@@ -289,10 +325,45 @@ public final class Cache {
     }
 
     public int getCurrentParentID() {
-        return currentParentID;
+        return this.currentParentID;
     }
 
     public void setCurrentParentID(int currentParentID) {
         this.currentParentID = currentParentID;
+    }
+
+    /**
+     * Get Node IDs belonging to a Genome.
+     * @param genomeID the ID of the Genome to look up
+     * @return a {@link Collection} of IDs
+     */
+    public Collection<Integer> getGenomeNodeIDs(int genomeID) {
+        Set<Integer> nodeIDs = new LinkedHashSet<>();
+        for (Map.Entry<Integer, int[]> entry : this.getNodeIdGenomesMap().entrySet()) {
+            if (ArrayUtils.contains(entry.getValue(), genomeID)) {
+                nodeIDs.add(entry.getKey());
+            }
+        }
+        return nodeIDs;
+    }
+
+    /**
+     * Get Node IDs belonging to a Genome.
+     * @param genomeIDs the IDs of the Genomes to look up
+     * @return a {@link Map} mapping Genome names to {@link Collection}s of Node IDs
+     */
+    public Map<Integer, Collection<Integer>> getGenomeNodeIDs(int... genomeIDs) {
+        Map<Integer, Collection<Integer>> genomes = new HashMap<>();
+        for (Map.Entry<Integer, int[]> entry : this.getNodeIdGenomesMap().entrySet()) {
+            for (int genomeID : genomeIDs) {
+                if (ArrayUtils.contains(entry.getValue(), genomeID)) {
+                    if (genomes.get(genomeID) == null) {
+                        genomes.put(genomeID, new LinkedHashSet<>());
+                    }
+                    genomes.get(genomeID).add(entry.getKey());
+                }
+            }
+        }
+        return genomes;
     }
 }

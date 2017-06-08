@@ -6,13 +6,15 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -55,10 +57,7 @@ public class GuiController implements Observer {
     @FXML private MenuItem btnInstructions;
     @FXML private Menu menuRecent;
     @FXML private RadioMenuItem btnToggle;
-    @FXML private Button btnZoomIn;
-    @FXML private Button btnZoomOut;
     @FXML private Button btnZoomReset;
-    @FXML private Button btnTranslate;
     @FXML private Button btnTranslateReset;
     @FXML private Button btnDraw;
     @FXML private Button btnDrawRandom;
@@ -75,13 +74,16 @@ public class GuiController implements Observer {
 
     private double orgSceneX, orgSceneY;
     private double orgTranslateX, orgTranslateY;
-    private int translateX;
-    private int translateY;
+    private double scale;
     private GraphController graphController;
     private File file;
     private File recentFile = new File("Recent.txt");
     private String recentItems = "";
     private Thread parseThread;
+
+    private static final double MAX_SCALE = 5.0d;
+    private static final double MIN_SCALE = .02d;
+    private static final double ZOOM_FACTOR = 1.05d;
 
 
 
@@ -113,6 +115,7 @@ public class GuiController implements Observer {
         if (file != null) {
             if (this.graphController != null && this.graphController.getGraph() != null) {
                 this.graphController.getGraph().close();
+                this.grpDrawArea.getChildren().clear();
             }
 
             disableGraphUIElements(true);
@@ -242,9 +245,13 @@ public class GuiController implements Observer {
             }
         });
 
+        btnOpen.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCodeCombination.CONTROL_DOWN));
         btnQuit.setOnAction(event -> Alerts.quitAlert());
+        btnQuit.setAccelerator(new KeyCodeCombination(KeyCode.E, KeyCodeCombination.CONTROL_DOWN));
         btnAbout.setOnAction(event -> Alerts.infoAboutAlert());
+        btnAbout.setAccelerator(new KeyCodeCombination(KeyCode.I, KeyCodeCombination.CONTROL_DOWN));
         btnInstructions.setOnAction(event -> Alerts.infoInstructionAlert());
+        btnInstructions.setAccelerator(new KeyCodeCombination(KeyCode.H, KeyCodeCombination.CONTROL_DOWN));
     }
 
     /**
@@ -289,6 +296,7 @@ public class GuiController implements Observer {
                 Alerts.error("The bookmarks file can't be opened");
             }
         });
+        btnBookmarks.setAccelerator(new KeyCodeCombination(KeyCode.B, KeyCodeCombination.CONTROL_DOWN));
     }
 
     /**
@@ -305,44 +313,13 @@ public class GuiController implements Observer {
     private void initLeftControlpanelScreenModifiers() {
         disableGraphUIElements(true);
 
-        btnTranslate.setOnAction(event -> {
-            GridPane root = new GridPane();
-            TextField f1 = new TextField();
-            TextField f2 = new TextField();
-            Button translate = new Button("Translate");
-            root.add(new Label("X value"), 0, 0);
-            root.add(f1, 1, 0);
-            root.add(new Label("Y value"), 0, 1);
-            root.add(f2, 1, 1);
-            root.add(translate, 1, 2);
-            Stage s = new Stage();
-            s.setScene(new Scene(root, 300, 200));
-            s.show();
-            translate.setOnAction(event2 -> {
-                this.translateX = Integer.valueOf(f1.getText());
-                this.translateY = Integer.valueOf(f2.getText());
-                grpDrawArea.setTranslateX(grpDrawArea.getTranslateX() + this.translateX);
-                grpDrawArea.setTranslateY(grpDrawArea.getTranslateY() + this.translateY);
-                s.close();
-            });
-        });
-
         btnTranslateReset.setOnAction(event -> {
             grpDrawArea.setTranslateX(graphController.getLocationCenterX());
             grpDrawArea.setTranslateY(graphController.getLocationCenterY());
         });
 
-        btnZoomIn.setOnAction(event -> {
-            grpDrawArea.setScaleX(grpDrawArea.getScaleX() + 0.05);
-            grpDrawArea.setScaleY(grpDrawArea.getScaleY() + 0.05);
-        });
-
-        btnZoomOut.setOnAction(event -> {
-            grpDrawArea.setScaleX(grpDrawArea.getScaleX() - 0.05);
-            grpDrawArea.setScaleY(grpDrawArea.getScaleY() - 0.05);
-        });
-
         btnZoomReset.setOnAction(event -> {
+            scale = 1;
             grpDrawArea.setScaleX(1);
             grpDrawArea.setScaleY(1);
         });
@@ -357,7 +334,7 @@ public class GuiController implements Observer {
         btnDraw.setOnAction(e -> this.draw());
 
         btnDrawRandom.setOnAction(event -> {
-            int randomNodeID = (new Random()).nextInt(this.graphController.getGraph().size());
+            int randomNodeID = (new Random()).nextInt(this.graphController.getGraph().size() - 1) + 1;
             txtCenterNode.setText(Integer.toString(randomNodeID));
             this.draw();
         });
@@ -478,15 +455,60 @@ public class GuiController implements Observer {
             orgTranslateY = grpDrawArea.getTranslateY();
         });
         anchorGraphPanel.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> {
-            grpDrawArea.setTranslateX(orgTranslateX + event.getSceneX() - orgSceneX);
-            grpDrawArea.setTranslateY(orgTranslateY + event.getSceneY() - orgSceneY);
+            grpDrawArea.setTranslateX((orgTranslateX + event.getSceneX() - orgSceneX));
+            grpDrawArea.setTranslateY((orgTranslateY + event.getSceneY() - orgSceneY));
+            event.consume();
         });
-        anchorGraphPanel.addEventHandler(ScrollEvent.SCROLL, event -> {
-            if (event.isAltDown()) {
-                grpDrawArea.setScaleX(grpDrawArea.getScaleX() + event.getDeltaY() / 250);
-                grpDrawArea.setScaleY(grpDrawArea.getScaleY() + event.getDeltaY() / 250);
-            }
-        });
+        anchorGraphPanel.addEventHandler(ScrollEvent.SCROLL, event ->
+                zoom(event.getDeltaX(), event.getDeltaY(), event.getSceneX(), event.getSceneY(), ZOOM_FACTOR));
+    }
+
+    /**
+     * Handles the zooming in and out of the group.
+     * @param deltaX The scroll amount in the X direction. See {@link ScrollEvent#getDeltaX()}
+     * @param deltaY The scroll amount in the Y direction. See {@link ScrollEvent#getDeltaY()}
+     * @param sceneX double for the x location.
+     * @param sceneY double for the y location.
+     * @param delta double the factor by which is zoomed.
+     */
+    private void zoom(double deltaX, double deltaY, double sceneX, double sceneY, double delta) {
+        double oldScale = grpDrawArea.getScaleX();
+        scale = oldScale;
+
+        if (deltaX < 0 || deltaY < 0) {
+            scale /= delta;
+        } else {
+            scale *= delta;
+        }
+        
+        scale = clamp(scale, MIN_SCALE, MAX_SCALE);
+        grpDrawArea.setScaleX(scale);
+        grpDrawArea.setScaleY(scale);
+        //factor to determine the difference in the scales.
+        double factor = (scale / oldScale) - 1;
+        Bounds bounds = grpDrawArea.localToScene(grpDrawArea.getBoundsInLocal());
+        double dx = (sceneX - (bounds.getWidth() / 2 + bounds.getMinX()));
+        double dy = (sceneY - (bounds.getHeight() / 2 + bounds.getMinY()));
+
+        grpDrawArea.setTranslateX(grpDrawArea.getTranslateX() - factor * dx);
+        grpDrawArea.setTranslateY(grpDrawArea.getTranslateY() - factor * dy);
+    }
+
+    /**
+     * Clamp function used for zooming in and out.
+     * @param value double current scale.
+     * @param min double min scale value.
+     * @param max double max scale value.
+     * @return double scale value.
+     */
+    private static double clamp(double value, double min, double max) {
+        if (Double.compare(value, min) < 0) {
+            return min;
+        }
+        if (Double.compare(value, max) > 0) {
+            return max;
+        }
+        return value;
     }
 
     /**
