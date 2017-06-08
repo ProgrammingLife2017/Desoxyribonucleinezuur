@@ -165,6 +165,7 @@ public class GraphController {
         edge.setStartLocation(edge.getStart().getRightBorderCenter());
         edge.setEndLocation(edge.getEnd().getLeftBorderCenter());
         this.grpDrawArea.getChildren().add(edge);
+        edge.toBack();
     }
 
     /**
