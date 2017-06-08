@@ -207,7 +207,7 @@
         <dependency>
             <groupId>com.github.uphy</groupId>
             <artifactId>javafx-console</artifactId>
-            <version>-SNAPSHOT</version>
+            <version>ce9860eb36</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.mapdb/mapdb -->
