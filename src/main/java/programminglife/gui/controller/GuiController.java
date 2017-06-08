@@ -76,8 +76,8 @@ public class GuiController implements Observer {
     private File recentFile = new File("Recent.txt");
     private String recentItems = "";
     private Thread parseThread;
-    private static final double MAX_SCALE = 10.0d;
-    private static final double MIN_SCALE = .1d;
+    private static final double MAX_SCALE = 5.0d;
+    private static final double MIN_SCALE = .02d;
     private static final double ZOOM_FACTOR = 1.05d;
 
     /**
