@@ -65,8 +65,21 @@ public class GraphController {
         for (Object o : grpDrawArea.getChildren()){
             if (o instanceof DrawableEdge) {
                 DrawableEdge edge = (DrawableEdge) o;
-                if ((int) edge.getEnd().getNode().getIdentifier() % 2 == 0)
-                highlightEdge(edge, Color.GOLDENROD);
+                if (edge.getLink().getEnd() instanceof Dummy) {
+                    if (edge.getLink().getEnd().getLink(null).getEnd().getIdentifier() % 2 == 0)
+                        highlightEdge(edge, Color.GOLDENROD);
+                }
+                if ((int) edge.getLink().getEnd().getIdentifier() % 2 == 0)
+                    highlightEdge(edge, Color.GOLDENROD);
+            }
+            if (o instanceof DrawableNode) {
+                DrawableNode node = (DrawableNode) o;
+                if (node.getNode() instanceof Dummy) {
+                    Dummy dummy = (Dummy) node.getNode();
+                    if ((int) dummy.getLink(null).getEnd().getIdentifier() % 2 == 0)
+                        highlightDummyNode(node, Color.GOLDENROD);
+                }
+
             }
         }
 
@@ -107,6 +120,10 @@ public class GraphController {
 
 
     private void highlightEdge(DrawableEdge edge, Color color) { edge.setStroke(color); }
+
+    private void highlightDummyNode(DrawableNode node, Color color) {
+        node.setStroke(color);
+    }
     /**
      * Draws a edge on the location it has.
      * @param parent {@link DrawableNode} is the node to be draw from.
