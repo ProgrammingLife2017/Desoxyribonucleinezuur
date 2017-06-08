@@ -2,7 +2,10 @@ package programminglife.gui.controller;
 
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import programminglife.model.Dummy;
 import programminglife.model.GenomeGraph;
 import programminglife.model.Segment;
@@ -11,6 +14,7 @@ import programminglife.model.drawing.DrawableNode;
 import programminglife.model.drawing.SubGraph;
 import programminglife.utility.Console;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 /**
@@ -24,15 +28,18 @@ public class GraphController {
     private double locationCenterY;
     private double locationCenterX;
     private SubGraph subGraph;
+    private AnchorPane anchorGraphInfo;
 
     /**
      * Initialize controller object.
      * @param graph The genome graph to control
      * @param grpDrawArea The {@link Group} to draw in
+     * @param anchorGraphInfo the {@link AnchorPane} were to show the info of a node or edge.
      */
-    public GraphController(GenomeGraph graph, Group grpDrawArea) {
+    public GraphController(GenomeGraph graph, Group grpDrawArea, AnchorPane anchorGraphInfo) {
         this.graph = graph;
         this.grpDrawArea = grpDrawArea;
+        this.anchorGraphInfo = anchorGraphInfo;
     }
 
     /**
@@ -115,7 +122,13 @@ public class GraphController {
         } else {
             edge.setOnMouseClicked(event -> Console.println(edge.toString()));
         }
-
+        edge.setOnMouseClicked(event -> {
+            if (event.isShiftDown()) {
+                showInfoEdge(edge, 140);
+            } else {
+                showInfoEdge(edge, 10);
+            }
+        });
         edge.setStroke(Color.DARKGRAY);
         edge.setStrokeWidth(3);
         edge.setStartLocation(edge.getStart().getRightBorderCenter());
@@ -139,10 +152,15 @@ public class GraphController {
             drawableNode.setStroke(Color.DARKGRAY);
             drawableNode.setStrokeWidth(3);
             Dummy node = (Dummy) drawableNode.getNode();
-            drawableNode.setOnMouseClicked(event -> {
-                Console.println(node.getLink(null).toString());
-            });
+            drawableNode.setOnMouseClicked(event -> Console.println(node.getLink(null).toString()));
         }
+        drawableNode.setOnMouseClicked(event -> {
+            if (event.isShiftDown()) {
+                showInfoNode(drawableNode, 140);
+            } else {
+                showInfoNode(drawableNode, 10);
+            }
+        });
         this.grpDrawArea.getChildren().add(drawableNode);
     }
 
@@ -195,6 +213,54 @@ public class GraphController {
 
         grpDrawArea.setTranslateX(locationCenterX);
         grpDrawArea.setTranslateY(locationCenterY);
+    }
 
+    private void showInfoEdge(DrawableEdge edge, int x) {
+        Text idText = new Text("Genomes"); idText.setLayoutX(x); idText.setLayoutY(50);
+        Text parentsText = new Text("Parent"); parentsText.setLayoutX(x); parentsText.setLayoutY(100);
+        Text childrenText = new Text("Child"); childrenText.setLayoutX(x); childrenText.setLayoutY(150);
+
+        anchorGraphInfo.getChildren().removeIf(node1 -> node1.getLayoutX() == x);
+
+        TextField id = getTextField("Genomes: ", x, 60, Arrays.toString(edge.getLink().getGenomes()));
+        TextField parent = getTextField("Parent Node: ", x, 110, edge.getStart().toString());
+        TextField child = getTextField("Child Node: ", x, 160, edge.getEnd().toString());
+        anchorGraphInfo.getChildren().addAll(idText, parentsText, childrenText, id, parent, child);
+    }
+
+    private void showInfoNode(DrawableNode node, int x) {
+        Text idText = new Text("ID"); idText.setLayoutX(x); idText.setLayoutY(50);
+        Text parentText = new Text("Parents"); parentText.setLayoutX(x); parentText.setLayoutY(100);
+        Text childText = new Text("Children"); childText.setLayoutX(x); childText.setLayoutY(150);
+        Text inEdgeText = new Text("Incoming Edges"); inEdgeText.setLayoutX(x); inEdgeText.setLayoutY(200);
+        Text outEdgeText = new Text("Outgoing Edges"); outEdgeText.setLayoutX(x); outEdgeText.setLayoutY(250);
+        Text genomeText = new Text("Genome"); genomeText.setLayoutX(x); genomeText.setLayoutY(300);
+        Text seqText = new Text("Sequence"); seqText.setLayoutX(x); seqText.setLayoutY(350);
+
+        anchorGraphInfo.getChildren().removeIf(node1 -> node1.getLayoutX() == x);
+
+
+        TextField id = getTextField("ID: ", x, 60, node.getNode().getIdentifier() + "");
+        TextField parents = getTextField("Parents: ", x, 110, node.getNode().getParents().toString());
+        TextField children = getTextField("Children: ", x, 160, node.getNode().getChildren().toString());
+        TextField inEdges = getTextField("Incoming Edges: ", x, 210, node.getNode().getParentEdges().size() + "");
+        TextField outEdges = getTextField("Outgoing Edges: ", x, 260, node.getNode().getChildEdges().size() + "");
+        TextField genome = getTextField("Genome: ", x, 310, Arrays.toString(node.getNode().getGenomes()));
+        TextField seq = getTextField("Sequence: ", x, 360, node.getNode().getSequence());
+
+        anchorGraphInfo.getChildren().addAll(idText, parentText, childText, inEdgeText, outEdgeText, genomeText, seqText);
+        anchorGraphInfo.getChildren().addAll(id, parents, children, inEdges, outEdges, genome, seq);
+    }
+
+    private TextField getTextField(String id, int x, int y, String text) {
+        TextField textField = new TextField();
+        textField.setId(id);
+        textField.setText(text);
+        textField.setEditable(false);
+        textField.setLayoutX(x);
+        textField.setLayoutY(y);
+        textField.setPrefSize(120, 25);
+
+        return textField;
     }
 }

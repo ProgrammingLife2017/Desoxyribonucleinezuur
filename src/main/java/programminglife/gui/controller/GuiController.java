@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
@@ -59,6 +60,7 @@ public class GuiController implements Observer {
     @FXML private Button btnDraw;
     @FXML private Button btnDrawRandom;
     @FXML private Button btnBookmark;
+    @FXML private Button btnClipboard;
     @FXML private ProgressBar progressBar;
 
     @FXML private TextField txtMaxDrawDepth;
@@ -67,6 +69,7 @@ public class GuiController implements Observer {
     @FXML private Group grpDrawArea;
     @FXML private AnchorPane anchorLeftControlPanel;
     @FXML private AnchorPane anchorGraphPanel;
+    @FXML private AnchorPane anchorGraphInfo;
 
     private double orgSceneX, orgSceneY;
     private double orgTranslateX, orgTranslateY;
@@ -86,13 +89,14 @@ public class GuiController implements Observer {
     @FXML
     @SuppressWarnings("unused")
     private void initialize() {
-        this.graphController = new GraphController(null, this.grpDrawArea);
+        this.graphController = new GraphController(null, this.grpDrawArea, this.anchorGraphInfo);
         initRecent();
         initMenubar();
         initBookmarkMenu();
         initLeftControlpanelScreenModifiers();
         initLeftControlpanelDraw();
         initMouse();
+        initShowInfoTab();
         initConsole();
     }
 
@@ -448,7 +452,7 @@ public class GuiController implements Observer {
         } else {
             scale *= delta;
         }
-        
+
         scale = clamp(scale, MIN_SCALE, MAX_SCALE);
         grpDrawArea.setScaleX(scale);
         grpDrawArea.setScaleY(scale);
@@ -513,6 +517,20 @@ public class GuiController implements Observer {
     private ProgressBar getProgressBar() {
         return this.progressBar;
     }
+
+    private void initShowInfoTab() {
+        btnClipboard.setOnAction(event -> {
+            String clipboard = "";
+            for (Node node : anchorGraphInfo.getChildren()) {
+                if (node instanceof TextField) {
+                    clipboard = clipboard.concat(node.getId());
+                    clipboard = clipboard.concat(((TextField) node).getText()) + System.getProperty("line.separator");
+                }
+            }
+            System.out.println(clipboard);
+        });
+    }
+
     /**
      * Sets the text field for drawing the graph.
      * @param center The center node
