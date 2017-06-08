@@ -2,16 +2,14 @@ package programminglife.parser;
 
 import com.diffplug.common.base.Errors;
 import javafx.application.Platform;
-import programminglife.model.Genome;
 import programminglife.model.GenomeGraph;
-import programminglife.model.Node;
-import programminglife.model.Segment;
 import programminglife.model.exception.UnknownTypeException;
 import programminglife.utility.Alerts;
 import programminglife.utility.Console;
 import programminglife.utility.FileProgressCounter;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.Observable;
 
@@ -57,6 +55,8 @@ public class GraphParser extends Observable implements Runnable {
             } else {
                 Console.println("[%s] Loaded %s from cache", Thread.currentThread().getName(), this.name);
             }
+
+            this.progressCounter.finished();
             int secondsElapsed = (int) ((System.nanoTime() - startTime) / 1000000000.d);
             Console.println("[%s] Parsing took %d seconds", Thread.currentThread().getName(), secondsElapsed);
             this.setChanged();
@@ -100,7 +100,6 @@ public class GraphParser extends Observable implements Runnable {
         Console.print("[%s] Calculating number of lines in file... ", Thread.currentThread().getName());
         int lineCount = countLines(this.graphFile.getPath());
         Console.println("done (%d lines)", lineCount);
-        this.graph.setNumberOfLines(lineCount);
         this.progressCounter.setTotalLineCount(lineCount);
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(this.graphFile)))) {
@@ -139,7 +138,6 @@ public class GraphParser extends Observable implements Runnable {
         }
 
         this.graph.cacheLastEdges();
-        this.progressCounter.finished();
     }
 
     /**
@@ -168,9 +166,9 @@ public class GraphParser extends Observable implements Runnable {
     }
 
     /**
-     * Parse a {@link String} representing a {@link Segment}.
+     * Parse a {@link String} representing a Segment.
      * @param propertyString the {@link String} from a GFA file.
-     * @throws UnknownTypeException when a {@link Segment} references a {@link Genome} that is not in the GFA header
+     * @throws UnknownTypeException when a Segment references a Genome that is not in the GFA header
      */
     synchronized void parseSegment(String propertyString) throws UnknownTypeException {
         String[] properties = propertyString.split("\\s");
@@ -182,25 +180,22 @@ public class GraphParser extends Observable implements Runnable {
         assert (properties[4].startsWith("ORI:Z:"));
         String[] genomeNames = properties[4].split(";");
         genomeNames[0] = genomeNames[0].substring(6);
-
-        Segment segment = new Segment(this.graph, segmentID, sequence);
-        if (!this.getGraph().contains(segmentID)) {
-            this.getGraph().addNode(segment);
-        }
-
-        for (String genomeName : genomeNames) {
-            if (this.getGraph().containsGenome(genomeName)) {
-                this.getGraph().getGenome(genomeName).addSegment(segment);
-            } else {
-                try {
-                    int genomeID = Integer.parseInt(genomeName);
-                    String name = this.getGraph().getGenomeName(genomeID);
-                    this.getGraph().getGenome(name).addSegment(segment);
-                } catch (NumberFormatException | NoSuchElementException e) {
-                    throw new UnknownTypeException(String.format("Genome %s does not exist in this graph", genomeName));
-                }
+        int[] genomeIDs;
+        try {
+            genomeIDs = Arrays.stream(genomeNames).mapToInt(this.graph::getGenomeID).toArray();
+        } catch (NoSuchElementException e) {
+            try {
+                genomeIDs = Arrays.stream(genomeNames).mapToInt(Integer::parseInt).toArray();
+            } catch (NumberFormatException nfe) {
+                throw new UnknownTypeException(nfe.getMessage());
             }
         }
+
+        if (!this.graph.contains(segmentID)) {
+            this.graph.replaceNode(segmentID);
+        }
+        this.graph.setSequence(segmentID, sequence);
+        this.graph.setGenomes(segmentID, genomeIDs);
     }
 
     /**
@@ -210,21 +205,19 @@ public class GraphParser extends Observable implements Runnable {
     synchronized void parseLink(String propertyString) {
         String[] properties = propertyString.split("\\s");
         assert (properties[0].equals("L")); // properties[0] is 'L'
-        int sourceId = Integer.parseInt(properties[1]);
+        int sourceID = Integer.parseInt(properties[1]);
         // properties[2] is unused
-        int destinationId = Integer.parseInt(properties[3]);
+        int destinationID = Integer.parseInt(properties[3]);
         // properties[4] and further are unused
-        Node sourceNode = new Segment(this.graph, sourceId);
-        Node destinationNode = new Segment(this.graph, destinationId);
-        if (!this.getGraph().contains(sourceId)) {
-            this.getGraph().addNode(sourceNode);
+        if (!this.graph.contains(sourceID)) {
+            this.graph.replaceNode(sourceID);
         }
 
-        if (!this.getGraph().contains(destinationId)) {
-            this.getGraph().addNode(destinationNode);
+        if (!this.graph.contains(destinationID)) {
+            this.graph.replaceNode(destinationID);
         }
 
-        this.getGraph().addEdge(sourceNode, destinationNode);
+        this.graph.addEdge(sourceID, destinationID);
     }
 
     /**
@@ -238,7 +231,7 @@ public class GraphParser extends Observable implements Runnable {
             String[] names = properties[1].split(";");
             names[0] = names[0].substring(6);
             for (String name : names) {
-                this.getGraph().addGenome(new Genome(name));
+                this.getGraph().addGenome(name);
             }
         } else if (properties[1].startsWith("VN:Z:")) {
             // Version, ignored

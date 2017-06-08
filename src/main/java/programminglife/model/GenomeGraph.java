@@ -1,7 +1,6 @@
 package programminglife.model;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
 import programminglife.model.exception.NodeExistsException;
 import programminglife.parser.Cache;
@@ -16,16 +15,12 @@ public class GenomeGraph implements Graph {
     private String id;
     private Cache cache;
 
-    // TODO cache genomes
-    private Map<String, Genome> genomes;
-
     /**
      * Create a genomeGraph with id.
      * @param id id of the graph
      */
     public GenomeGraph(String id) {
         this.id = id;
-        this.genomes = new HashMap<>();
         this.cache = new Cache(id);
     }
 
@@ -38,29 +33,29 @@ public class GenomeGraph implements Graph {
     }
 
     @Override
-    public void addNode(Node node) {
-        this.addNode(node, new int[0], new int[0]);
+    public void addNode(int nodeID) {
+        this.addNode(nodeID, new int[0], new int[0]);
     }
 
     @Override
-    public void addNode(Node node, int[] children, int[] parents) {
-        if (this.contains(node)) {
-            throw new NodeExistsException(String.format("%s already exists in graph %s",
-                    node.toString(), this.getID()));
+    public void addNode(int nodeID, int[] children, int[] parents) {
+        if (this.contains(nodeID)) {
+            throw new NodeExistsException(String.format("Node<%d> already exists in graph %s",
+                    nodeID, this.getID()));
         }
 
-        this.replaceNode(node, children, parents);
+        this.replaceNode(nodeID, children, parents);
     }
 
     @Override
-    public void replaceNode(Node node) {
-        this.replaceNode(node, new int[0], new int[0]);
+    public void replaceNode(int nodeID) {
+        this.replaceNode(nodeID, new int[0], new int[0]);
     }
 
     @Override
-    public void replaceNode(Node node, int[] children, int[] parents) {
-        this.cache.getChildrenAdjacencyMap().put(node.getIdentifier(), children);
-        this.cache.getParentsAdjacencyMap().put(node.getIdentifier(), parents);
+    public void replaceNode(int nodeID, int[] children, int[] parents) {
+        this.cache.getChildrenAdjacencyMap().put(nodeID, children);
+        this.cache.getParentsAdjacencyMap().put(nodeID, parents);
     }
 
     /**
@@ -68,8 +63,7 @@ public class GenomeGraph implements Graph {
      * @return the number of nodes
      */
     public int size() {
-        assert (this.cache.getChildrenAdjacencyMap().size() == this.cache.getParentsAdjacencyMap().size());
-        return this.cache.getChildrenAdjacencyMap().size();
+        return this.cache.getNumberOfNodes();
     }
 
     @Override
@@ -89,7 +83,7 @@ public class GenomeGraph implements Graph {
 
     @Override
     public Link getLink(Node parent, Node child) {
-        return new Link(parent, child, getGenomes(parent, child));
+        return new Link(parent, child, getGenomes(parent.getIdentifier(), child.getIdentifier()));
     }
 
     @Override
@@ -121,51 +115,80 @@ public class GenomeGraph implements Graph {
         return this.cache.getParentsAdjacencyMap().get(nodeID);
     }
 
-    @Override
-    public int[] getGenomes(Node node) {
-        throw new NotImplementedException("GenomeGraph#getGenomes(Node) is not yet implemented");
+    /**
+     * Get the Genomes through a specific Node.
+     * @param nodeID the Node to look up
+     * @return a {@link Collection} of Genome IDs
+     */
+    public int[] getGenomes(int nodeID) {
+        return this.cache.getGenomes(nodeID);
     }
 
     /**
      * Get for the genomes of a parent and child.
-     * @param parent Node of the parent.
-     * @param child Node of the child.
+     * @param parentID Node of the parent.
+     * @param childID Node of the child.
      * @return int[] list the genomes.
      */
-    public int[] getGenomes(Node parent, Node child) {
+    public int[] getGenomes(int parentID, int childID) {
         return null;
     }
 
+    /**
+     * Get Nodes through a Genome.
+     * @param genomeID the Genome to look up
+     * @return a {@link Collection} of Node IDs in the Genome
+     */
+    public Collection<Integer> getNodeIDs(int genomeID) {
+        return this.cache.getGenomeNodeIDs(genomeID);
+    }
+
+    /**
+     * Get Nodes through several Genomes.
+     * @param genomeIDs the Genomes to look up
+     * @return a {@link Map} mapping Genome names to {@link Collection}s of Node IDs
+     */
+    public Map<Integer, Collection<Integer>> getNodeIDs(int... genomeIDs) {
+        return this.cache.getGenomeNodeIDs(genomeIDs);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean contains(Node node) {
         return this.contains(node.getIdentifier());
     }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean contains(int nodeID) {
         return this.cache.getChildrenAdjacencyMap().containsKey(nodeID);
     }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void addEdge(Node source, Node destination) {
-        this.addChild(source, destination);
-        this.addParent(destination, source);
+    public void addEdge(int sourceID, int destinationID) {
+        this.addChild(sourceID, destinationID);
+        this.addParent(destinationID, sourceID);
     }
 
     /**
      * Add a child to a node.
-     * @param node Node to which the child will be added.
-     * @param child Node of the child to be added.
+     * @param nodeID Node ID to which the child will be added.
+     * @param childID Node ID of the child to be added.
      */
-    private void addChild(Node node, Node child) {
+    private void addChild(int nodeID, int childID) {
         if (this.cache.getCurrentParentID() == -1) {
-            this.cache.setCurrentParentID(node.getIdentifier());
+            this.cache.setCurrentParentID(nodeID);
         }
 
-        if (node.getIdentifier() == this.cache.getCurrentParentID()) {
+        if (nodeID == this.cache.getCurrentParentID()) {
             // if same parent as previous link || if first link of graph,
             // just add the child
-            this.cache.getCurrentParentChildren().add(child.getIdentifier());
+            this.cache.getCurrentParentChildren().add(childID);
         } else {
             // write previous list to cache
             int[] oldChildren = this.getChildIDs(this.cache.getCurrentParentID());
@@ -173,75 +196,59 @@ public class GenomeGraph implements Graph {
             this.cache.getChildrenAdjacencyMap().put(this.cache.getCurrentParentID(), allChildren);
 
             // reset node id
-            this.cache.setCurrentParentID(node.getIdentifier());
+            this.cache.setCurrentParentID(nodeID);
             // reset children list
             this.cache.setCurrentParentChildren(new LinkedList<>());
-            this.cache.getCurrentParentChildren().add(child.getIdentifier());
+            this.cache.getCurrentParentChildren().add(childID);
         }
     }
 
     /**
      * Add a parent to a node.
-     * @param node Node to which the parent will be added.
-     * @param parent Node of the parent to be added.
+     * @param nodeID Node ID to which the parent will be added.
+     * @param parentID Node ID of the parent to be added.
      */
-    private void addParent(Node node, Node parent) {
-        int[] oldParents = this.getParentIDs(node.getIdentifier());
+    private void addParent(int nodeID, int parentID) {
+        int[] oldParents = this.getParentIDs(nodeID);
         //TODO find a way to do this more efficiently
         int[] newParents = Arrays.copyOf(oldParents, oldParents.length + 1);
-        newParents[newParents.length - 1] = parent.getIdentifier();
-        this.cache.getParentsAdjacencyMap().put(node.getIdentifier(), newParents);
+        newParents[newParents.length - 1] = parentID;
+        this.cache.getParentsAdjacencyMap().put(nodeID, newParents);
     }
 
     /**
-     * Add a {@link Genome} to this {@link GenomeGraph}.
-     * @param genome the {@link Genome} to add
+     * Set Genomes through a Node.
+     * @param nodeID the Node to address
+     * @param genomeIDs the Genomes through this Node
      */
-    public void addGenome(Genome genome) {
-        this.cache.addGenomeName(genome.getName());
-        this.genomes.put(genome.getName(), genome);
+    public void setGenomes(int nodeID, int[] genomeIDs) {
+        this.cache.setGenomes(nodeID, genomeIDs);
     }
 
     /**
-     * Get the name of a {@link Genome}.
-     * @param id the id of the {@link Genome} as it occurs in the GFA header
-     * @return its name as described in the GFA header
+     * Get the name of a Genome.
+     * @param genomeID the ID of the Genome
+     * @return its name
      */
-    public String getGenomeName(int id) {
-        return this.cache.getGenomeName(id);
+    public String getGenomeName(int genomeID) {
+        return this.cache.getGenomeName(genomeID);
     }
 
     /**
-     * Get the {@link Genome} by name.
-     * @param name the name as in the GFA header
-     * @return the {@link Genome} with this name
+     * Get the ID of a Genome.
+     * @param genomeName the name of the Genome
+     * @return its ID
      */
-    public Genome getGenome(String name) {
-        Genome res = this.genomes.get(name);
-        if (res != null) {
-            return res;
-        } else {
-            throw new NoSuchElementException(
-                    String.format("The Graph %s does not contain a genome with name %s",
-                            this.getID(), name));
-        }
+    public int getGenomeID(String genomeName) {
+        return this.cache.getGenomeID(genomeName);
     }
 
     /**
-     * Get the {@link Genome}s of this {@link GenomeGraph}.
-     * @return a {@link Collection} of {@link Genome}s
+     * Add a Genome to the {@link GenomeGraph}.
+     * @param name its name
      */
-    public Collection<Genome> getGenomes() {
-        return this.genomes.values();
-    }
-
-    /**
-     * Check if this {@link GenomeGraph} contains a {@link Genome}.
-     * @param genomeName the name to look up
-     * @return if this {@link Genome} is in there
-     */
-    public boolean containsGenome(String genomeName) {
-        return this.genomes.containsKey(genomeName);
+    public void addGenome(String name) {
+        this.cache.addGenomeName(name);
     }
 
     /**
@@ -270,22 +277,6 @@ public class GenomeGraph implements Graph {
      */
     public int getSequenceLength(int nodeID) {
         return this.cache.getSequenceLength(nodeID);
-    }
-
-    /**
-     * Get the number of lines in the GFA file.
-     * @return # of lines
-     */
-    public int getNumberOfLines() {
-        return this.cache.getNumberOfLines();
-    }
-
-    /**
-     * Set the number of lines in the GFA file.
-     * @param numberOfLines # of lines
-     */
-    public void setNumberOfLines(int numberOfLines) {
-        this.cache.setNumberOfLines(numberOfLines);
     }
 
     /**
