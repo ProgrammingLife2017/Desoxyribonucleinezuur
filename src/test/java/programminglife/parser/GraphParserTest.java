@@ -42,7 +42,7 @@ public class GraphParserTest implements Observer {
     public void setUp() throws Exception {
         File testFile = new File(TEST_PATH);
         graphParser = new GraphParser(testFile);
-        graphParser.getGraph().addGenome(new Genome("TKK_04_0031.fasta"));
+        graphParser.getGraph().addGenome("TKK_04_0031.fasta");
 
         File faultyTestFile = new File(TEST_FAULTY_PATH);
         faultyGraphParser = new GraphParser(faultyTestFile);
