@@ -301,9 +301,8 @@ public class GraphController {
         textField.setLayoutX(x);
         textField.setLayoutY(y);
         textField.setEditable(false);
-        textField.setStyle("-fx-text-box-border: transparent;-fx-background-color: none; -fx-control-inner-background; "
-                + "-fx-background-insets: 0; -fx-padding: 1 3 1 3; -fx-focus-color: transparent; "
-                + "-fx-faint-focus-color: transparent;");
+        textField.setStyle("-fx-text-box-border: transparent;-fx-background-color: none; -fx-background-insets: 0;"
+                + " -fx-padding: 1 3 1 3; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;");
         textField.setPrefSize(220, 25);
 
         return textField;
