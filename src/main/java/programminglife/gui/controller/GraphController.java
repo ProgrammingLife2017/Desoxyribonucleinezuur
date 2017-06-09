@@ -3,11 +3,9 @@ package programminglife.gui.controller;
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import programminglife.ProgrammingLife;
 import programminglife.model.Dummy;
 import programminglife.model.GenomeGraph;
 import programminglife.model.Segment;
@@ -18,7 +16,6 @@ import programminglife.utility.Console;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Map;
 
 /**
  * Created by Martijn van Meerten on 8-5-2017.
@@ -218,12 +215,17 @@ public class GraphController {
         grpDrawArea.setTranslateY(locationCenterY);
     }
 
+    /**
+     * Method to show the information of an edge.
+     * @param edge DrawableEdge the edge which has been clicked on.
+     * @param x int the x location of the TextField.
+     */
     private void showInfoEdge(DrawableEdge edge, int x) {
+        anchorGraphInfo.getChildren().removeIf(node1 -> node1.getLayoutX() == x);
+
         Text idText = new Text("Genomes: "); idText.setLayoutX(x); idText.setLayoutY(65);
         Text parentsText = new Text("Parent: "); parentsText.setLayoutX(x); parentsText.setLayoutY(115);
         Text childrenText = new Text("Child: "); childrenText.setLayoutX(x); childrenText.setLayoutY(165);
-
-        anchorGraphInfo.getChildren().removeIf(node1 -> node1.getLayoutX() == x);
 
         TextField id = getTextField("Genomes: ", x, 70, Arrays.toString(edge.getLink().getGenomes()));
         TextField parent = getTextField("Parent Node: ", x, 120, edge.getStart().toString());
@@ -232,6 +234,11 @@ public class GraphController {
         anchorGraphInfo.getChildren().addAll(idText, parentsText, childrenText, id, parent, child);
     }
 
+    /**
+     * Method to show the information of a node.
+     * @param node DrawableNode the node which has been clicked on.
+     * @param x int the x location of the TextField.
+     */
     private void showInfoNode(DrawableNode node, int x) {
         Text idText = new Text("ID: "); idText.setLayoutX(x); idText.setLayoutY(65);
         Text parentText = new Text("Parents: "); parentText.setLayoutX(x); parentText.setLayoutY(115);
@@ -272,9 +279,10 @@ public class GraphController {
         TextField outEdges = getTextField("Outgoing Edges: ", x, 270, node.getNode().getChildEdges().size() + "");
         TextField genome = getTextField("Genome: ", x, 320, Arrays.toString(node.getNode().getGenomes()));
         TextField seqLength = getTextField("Sequence Length: ", x, 370, node.getNode().getSequence().length() + "");
-        TextField seq = getTextField("Sequence: ", x, 420, node.getNode().getSequence());
+        TextField seq = getTextField(x + " Sequence: ", x, 420, node.getNode().getSequence());
 
-        anchorGraphInfo.getChildren().addAll(idText, parentText, childText, inEdgeText, outEdgeText, genomeText, seqLengthText, seqText);
+        anchorGraphInfo.getChildren().addAll(idText, parentText, childText, inEdgeText,
+                outEdgeText, genomeText, seqLengthText, seqText);
         anchorGraphInfo.getChildren().addAll(id, parents, children, inEdges, outEdges, genome, seqLength, seq);
     }
 
@@ -293,8 +301,9 @@ public class GraphController {
         textField.setLayoutX(x);
         textField.setLayoutY(y);
         textField.setEditable(false);
-        textField.setStyle("-fx-text-box-border: transparent;-fx-background-color: -fx-control-inner-background;"
-                + "-fx-background-insets: 0; -fx-padding: 1 3 1 3; -fx-focus-color: transparent;");
+        textField.setStyle("-fx-text-box-border: transparent;-fx-background-color: -fx-control-inner-background; "
+                + "-fx-background-insets: 0; -fx-padding: 1 3 1 3; -fx-focus-color: transparent; "
+                + "-fx-faint-focus-color: transparent;");
         textField.setPrefSize(220, 25);
 
         return textField;

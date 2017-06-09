@@ -68,6 +68,7 @@ public class GuiController implements Observer {
     @FXML private Button btnDrawRandom;
     @FXML private Button btnBookmark;
     @FXML private Button btnClipboard;
+    @FXML private Button btnClipboard2;
     @FXML private ProgressBar progressBar;
 
     @FXML private TextField txtMaxDrawDepth;
@@ -525,21 +526,29 @@ public class GuiController implements Observer {
         return this.progressBar;
     }
 
+    /**
+     * Initializes the info tab.
+     */
     private void initShowInfoTab() {
+        btnClipboard.setOnAction(event -> copyToClipboard(10));
+        btnClipboard2.setOnAction(event -> copyToClipboard(250));
+    }
 
+    /**
+     * Copies information to the clipboard.
+     * @param x int used in the ID, to know which sequence to get.
+     */
+    private void copyToClipboard(int x) {
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        btnClipboard.setOnAction(event -> {
-            String toClipboard = "";
-            for (Node node : anchorGraphInfo.getChildren()) {
-                if (node instanceof TextField) {
-                    toClipboard = toClipboard.concat(node.getId());
-                    toClipboard = toClipboard.concat(((TextField) node).getText()) + System.getProperty("line.separator");
-                    toClipboard = toClipboard.replaceAll("(.{200})", "$1" + System.getProperty("line.separator"));
-                }
+        String toClipboard = "";
+        for (Node node : anchorGraphInfo.getChildren()) {
+            if (node instanceof TextField && node.getId().equals(x + " Sequence: ")) {
+                toClipboard = toClipboard.concat(((TextField) node).getText()) + System.getProperty("line.separator");
+                toClipboard = toClipboard.replaceAll("(.{100})", "$1" + System.getProperty("line.separator"));
             }
-            StringSelection selection = new StringSelection(toClipboard);
-            clipboard.setContents(selection, selection);
-        });
+        }
+        StringSelection selection = new StringSelection(toClipboard);
+        clipboard.setContents(selection, selection);
     }
 
     /**
