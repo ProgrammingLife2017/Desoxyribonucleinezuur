@@ -6,8 +6,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.MouseEvent;
@@ -27,6 +32,9 @@ import programminglife.utility.Console;
 import programminglife.utility.ProgressCounter;
 import programminglife.utility.NumbersOnlyListener;
 
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.FileAlreadyExistsException;
@@ -58,6 +66,8 @@ public class GuiController implements Observer {
     @FXML private Button btnDraw;
     @FXML private Button btnDrawRandom;
     @FXML private Button btnBookmark;
+    @FXML private Button btnClipboard;
+    @FXML private Button btnClipboard2;
     @FXML private Button btnHighlight;
     @FXML private ProgressBar progressBar;
 
@@ -67,6 +77,7 @@ public class GuiController implements Observer {
     @FXML private Group grpDrawArea;
     @FXML private AnchorPane anchorLeftControlPanel;
     @FXML private AnchorPane anchorGraphPanel;
+    @FXML private AnchorPane anchorGraphInfo;
 
     private double orgSceneX, orgSceneY;
     private double orgTranslateX, orgTranslateY;
@@ -89,13 +100,14 @@ public class GuiController implements Observer {
     @FXML
     @SuppressWarnings("unused")
     private void initialize() {
-        this.graphController = new GraphController(null, this.grpDrawArea);
+        this.graphController = new GraphController(null, this.grpDrawArea, this.anchorGraphInfo);
         initRecent();
         initMenubar();
         initBookmarkMenu();
         initLeftControlpanelScreenModifiers();
         initLeftControlpanelDraw();
         initMouse();
+        initShowInfoTab();
         initConsole();
         initLeftControlpanelHighlight();
     }
@@ -457,6 +469,7 @@ public class GuiController implements Observer {
         } else {
             scale *= delta;
         }
+
         scale = clamp(scale, MIN_SCALE, MAX_SCALE);
         grpDrawArea.setScaleX(scale);
         grpDrawArea.setScaleY(scale);
@@ -521,6 +534,32 @@ public class GuiController implements Observer {
     private ProgressBar getProgressBar() {
         return this.progressBar;
     }
+
+    /**
+     * Initializes the info tab.
+     */
+    private void initShowInfoTab() {
+        btnClipboard.setOnAction(event -> copyToClipboard(10));
+        btnClipboard2.setOnAction(event -> copyToClipboard(250));
+    }
+
+    /**
+     * Copies information to the clipboard.
+     * @param x int used in the ID, to know which sequence to get.
+     */
+    private void copyToClipboard(int x) {
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        String toClipboard = "";
+        for (Node node : anchorGraphInfo.getChildren()) {
+            if (node instanceof TextField && node.getId().equals(x + " Sequence: ")) {
+                toClipboard = toClipboard.concat(((TextField) node).getText()) + System.getProperty("line.separator");
+                toClipboard = toClipboard.replaceAll("(.{100})", "$1" + System.getProperty("line.separator"));
+            }
+        }
+        StringSelection selection = new StringSelection(toClipboard);
+        clipboard.setContents(selection, selection);
+    }
+
     /**
      * Sets the text field for drawing the graph.
      * @param center The center node
