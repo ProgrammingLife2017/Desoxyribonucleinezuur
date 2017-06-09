@@ -228,8 +228,8 @@ public class GraphController {
         Text childrenText = new Text("Child: "); childrenText.setLayoutX(x); childrenText.setLayoutY(165);
 
         TextField id = getTextField("Genomes: ", x, 70, Arrays.toString(edge.getLink().getGenomes()));
-        TextField parent = getTextField("Parent Node: ", x, 120, edge.getStart().toString());
-        TextField child = getTextField("Child Node: ", x, 170, edge.getEnd().toString());
+        TextField parent = getTextField("Parent Node: ", x, 120, edge.getStart().getNode().getIdentifier() + "");
+        TextField child = getTextField("Child Node: ", x, 170, edge.getEnd().getNode().getIdentifier() + "");
 
         anchorGraphInfo.getChildren().addAll(idText, parentsText, childrenText, id, parent, child);
     }
