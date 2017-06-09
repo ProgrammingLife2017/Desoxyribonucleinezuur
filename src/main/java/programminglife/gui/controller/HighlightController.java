@@ -7,6 +7,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import programminglife.utility.NumbersOnlyListener;
 
@@ -15,7 +16,8 @@ import programminglife.utility.NumbersOnlyListener;
  */
 public class HighlightController {
 
-    GraphController graphController;
+    private static final Color HIGHLIGHT_MIN_MAX_COLOR = Color.HOTPINK;
+    private GraphController graphController;
 
     @FXML private Button btnClose;
     @FXML private Button btnHighlight;
@@ -95,7 +97,7 @@ public class HighlightController {
         }
 
         if (checkMax.isSelected() || checkMin.isSelected()) {
-            graphController.highlightMinMax(minGenome, maxGenome);
+            graphController.highlightMinMax(minGenome, maxGenome, HIGHLIGHT_MIN_MAX_COLOR);
         }
 
     }

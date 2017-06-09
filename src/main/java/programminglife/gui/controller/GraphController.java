@@ -114,7 +114,6 @@ public class GraphController {
     }
 
     private void highlightNodes(Collection<DrawableNode> nodes, Color color) {
-        System.out.println("Got to highlight nodes");
         for (DrawableNode drawNode: nodes){
             highlightNode(drawNode, color);
 
@@ -258,14 +257,22 @@ public class GraphController {
 
     }
 
-    public void highlightMinMax(int min, int max) {
+    /**
+     * Method to do highlighting based on a min and max amount of genomes in a node.
+     * @param min The minimal amount of genomes
+     * @param max The maximal amount of genomes
+     * @param color the {@link Color} in which the highlight has to be done.
+     */
+    public void highlightMinMax(int min, int max, Color color) {
         LinkedList<DrawableNode> drawNodeList = new LinkedList<>();
         for (DrawableNode drawableNode: subGraph.getNodes().values()){
-            int genomeCount = drawableNode.getNode().getGenomes().length;
-            if (genomeCount > min && genomeCount < max){
-                drawNodeList.add(drawableNode);
+            if (drawableNode != null && !(drawableNode.getNode() instanceof Dummy)) {
+                int genomeCount = drawableNode.getNode().getGenomes().length;
+                if (genomeCount > min && genomeCount < max) {
+                    drawNodeList.add(drawableNode);
+                }
             }
         }
-        highlightNodes(drawNodeList, Color.AZURE);
+        highlightNodes(drawNodeList, color);
     }
 }
