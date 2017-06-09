@@ -271,7 +271,7 @@ public class GraphController {
         TextField inEdges = getTextField("Incoming Edges: ", x, 220, node.getNode().getParentEdges().size() + "");
         TextField outEdges = getTextField("Outgoing Edges: ", x, 270, node.getNode().getChildEdges().size() + "");
         TextField genome = getTextField("Genome: ", x, 320, Arrays.toString(node.getNode().getGenomes()));
-        TextField seqLength = getTextField("Sequence Length: ", x, 420, node.getNode().getSequence().length() + "");
+        TextField seqLength = getTextField("Sequence Length: ", x, 370, node.getNode().getSequence().length() + "");
         TextField seq = getTextField("Sequence: ", x, 420, node.getNode().getSequence());
 
         anchorGraphInfo.getChildren().addAll(idText, parentText, childText, inEdgeText, outEdgeText, genomeText, seqLengthText, seqText);
