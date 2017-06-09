@@ -6,7 +6,7 @@
 
     <groupId>nl.tudelft.contextproject</groupId>
     <artifactId>ProgrammingLife</artifactId>
-    <version>milestone3</version>
+    <version>milestone4</version>
     <packaging>jar</packaging>
 
     <name>ProgrammingLife</name>
