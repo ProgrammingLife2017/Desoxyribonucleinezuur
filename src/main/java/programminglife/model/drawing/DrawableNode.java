@@ -288,4 +288,8 @@ public class DrawableNode extends Rectangle {
             this.setStroke(strokeColor);
         }
     }
+
+    public int getIdentifier() {
+        return node.getIdentifier();
+    }
 }
