@@ -48,7 +48,6 @@ public class GuiCreateBookmarkController {
                 inputCenter = Integer.parseInt(txtId.getText());
                 inputRadius = Integer.parseInt(txtRadius.getText());
                 bookmarkName = txtBookmarkName.getText();
-                System.out.println(bookmarkName);
                 bookmarkDescription = txtDescription.getText();
                 Bookmark bookmark = new Bookmark(name, guiController.getFile().getAbsolutePath(),
                         inputCenter, inputRadius, bookmarkName, bookmarkDescription);
