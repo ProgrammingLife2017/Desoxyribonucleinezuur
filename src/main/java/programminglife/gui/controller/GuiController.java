@@ -121,6 +121,7 @@ public class GuiController implements Observer {
             }
             this.parseThread = new Thread(graphParser);
             this.parseThread.start();
+            this.setFile(file);
 
             return graphParser;
         }
