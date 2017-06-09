@@ -12,6 +12,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.*;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
@@ -545,8 +546,8 @@ public class GuiController implements Observer {
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         String toClipboard = "";
         for (Node node : anchorGraphInfo.getChildren()) {
-            if (node instanceof TextField && node.getId().equals(x + " Sequence: ")) {
-                toClipboard = toClipboard.concat(((TextField) node).getText()) + System.getProperty("line.separator");
+            if (node instanceof TextArea && node.getId().equals(x + " Sequence: ")) {
+                toClipboard = toClipboard.concat(((TextArea) node).getText()) + System.getProperty("line.separator");
                 toClipboard = toClipboard.replaceAll("(.{100})", "$1" + System.getProperty("line.separator"));
             }
         }

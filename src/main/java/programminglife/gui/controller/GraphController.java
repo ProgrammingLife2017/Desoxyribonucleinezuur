@@ -2,6 +2,7 @@ package programminglife.gui.controller;
 
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
@@ -341,7 +342,14 @@ public class GraphController {
         TextField genome = getTextField("Genome: ", x, 320,
                 graph.getGenomeNames(node.getNode().getGenomes()).toString());
         TextField seqLength = getTextField("Sequence Length: ", x, 370, node.getNode().getSequence().length() + "");
-        TextField seq = getTextField(x + " Sequence: ", x, 420, node.getNode().getSequence());
+
+        TextArea seq = new TextArea(" Sequence: ");
+        seq.setEditable(false);
+        seq.setLayoutX(x); seq.setLayoutY(420);
+        seq.setText(node.getNode().getSequence().replaceAll("(.{25})", "$1" + System.getProperty("line.separator")));
+        seq.setPrefWidth(225); seq.setPrefHeight(25 * Math.ceil(node.getSequence().length() / 25));
+        seq.setStyle("-fx-text-box-border: transparent;-fx-background-color: none; -fx-background-insets: 0;"
+                + " -fx-padding: 1 3 1 3; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;");
 
         anchorGraphInfo.getChildren().addAll(idText, parentText, childText, inEdgeText,
                 outEdgeText, genomeText, seqLengthText, seqText);
@@ -365,7 +373,7 @@ public class GraphController {
         textField.setEditable(false);
         textField.setStyle("-fx-text-box-border: transparent;-fx-background-color: none; -fx-background-insets: 0;"
                 + " -fx-padding: 1 3 1 3; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;");
-        textField.setPrefSize(220, 25);
+        textField.setPrefSize(220, 20);
 
         return textField;
     }

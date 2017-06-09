@@ -1,53 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
 <?import javafx.scene.Group?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.RadioMenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
 <!--suppress ALL -->
-<VBox prefHeight="800.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="programminglife.gui.controller.GuiController">
+
+<VBox prefHeight="800.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="programminglife.gui.controller.GuiController">
     <MenuBar VBox.vgrow="NEVER">
         <Menu fx:id="menuFile" mnemonicParsing="false" text="File">
-            <MenuItem fx:id="btnOpen" mnemonicParsing="false" text="Open"/>
-            <Menu fx:id="menuRecent" mnemonicParsing="false" text="Open Recent"/>
-            <SeparatorMenuItem mnemonicParsing="false"/>
-            <RadioMenuItem fx:id="btnToggle" mnemonicParsing="false" text="Toggle Console"/>
-            <MenuItem fx:id="btnQuit" mnemonicParsing="false" text="Quit"/>
+            <MenuItem fx:id="btnOpen" mnemonicParsing="false" text="Open" />
+            <Menu fx:id="menuRecent" mnemonicParsing="false" text="Open Recent" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <RadioMenuItem fx:id="btnToggle" mnemonicParsing="false" text="Toggle Console" />
+            <MenuItem fx:id="btnQuit" mnemonicParsing="false" text="Quit" />
         </Menu>
         <Menu fx:id="menuHelp" mnemonicParsing="false" text="Help">
-            <MenuItem fx:id="btnAbout" mnemonicParsing="false" text="About"/>
-            <MenuItem fx:id="btnInstructions" mnemonicParsing="false" text="Instructions"/>
+            <MenuItem fx:id="btnAbout" mnemonicParsing="false" text="About" />
+            <MenuItem fx:id="btnInstructions" mnemonicParsing="false" text="Instructions" />
         </Menu>
         <Menu fx:id="menuBookmark" mnemonicParsing="false" text="Bookmarks">
-            <MenuItem fx:id="btnBookmarks" mnemonicParsing="false" text="Bookmarks"/>
+            <MenuItem fx:id="btnBookmarks" mnemonicParsing="false" text="Bookmarks" />
         </Menu>
     </MenuBar>
-    <SplitPane dividerPositions="0.14, 1.0" prefHeight="800.0" prefWidth="1000.0">
+    <SplitPane dividerPositions="0.14, 1.0" prefHeight="500.0" prefWidth="1000.0">
         <AnchorPane fx:id="anchorLeftControlPanel" maxWidth="140.0" minHeight="0.0" minWidth="140.0" prefHeight="800.0" prefWidth="100.0" SplitPane.resizableWithParent="false">
-            <Button fx:id="btnZoomReset" layoutX="12.0" layoutY="20.0" minWidth="100.0" mnemonicParsing="false" text="Reset Zoom" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0"/>
-            <Button fx:id="btnTranslateReset" layoutX="12.0" layoutY="50.0" minWidth="100.0" mnemonicParsing="false" text="Reset X/Y" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0"/>
-            <Button fx:id="btnDraw" layoutX="27.0" layoutY="180.0" minWidth="100.0" mnemonicParsing="false" text="Draw" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0"/>
-            <TextField fx:id="txtMaxDrawDepth" layoutX="20.0" layoutY="130.0" minWidth="100.0" promptText="Max depth" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0"/>
-            <TextField fx:id="txtCenterNode" layoutX="20.0" layoutY="100.0" minWidth="100.0" promptText="Origin node" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0"/>
-            <Button fx:id="btnDrawRandom" layoutX="20.0" layoutY="210.0" minWidth="100.0" mnemonicParsing="false" text="Surprise me!" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0"/>
-            <Button fx:id="btnBookmark" layoutX="20.0" layoutY="240.0" minWidth="100.0" mnemonicParsing="false" text="Bookmark" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0"/>
+            <Button fx:id="btnZoomReset" layoutX="12.0" layoutY="20.0" minWidth="100.0" mnemonicParsing="false" text="Reset Zoom" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
+            <Button fx:id="btnTranslateReset" layoutX="12.0" layoutY="50.0" minWidth="100.0" mnemonicParsing="false" text="Reset X/Y" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
+            <Button fx:id="btnDraw" layoutX="27.0" layoutY="180.0" minWidth="100.0" mnemonicParsing="false" text="Draw" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
+            <TextField fx:id="txtMaxDrawDepth" layoutX="20.0" layoutY="130.0" minWidth="100.0" promptText="Max depth" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
+            <TextField fx:id="txtCenterNode" layoutX="20.0" layoutY="100.0" minWidth="100.0" promptText="Origin node" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
+            <Button fx:id="btnDrawRandom" layoutX="20.0" layoutY="210.0" minWidth="100.0" mnemonicParsing="false" text="Surprise me!" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
+            <Button fx:id="btnBookmark" layoutX="20.0" layoutY="240.0" minWidth="100.0" mnemonicParsing="false" text="Bookmark" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
             <Button fx:id="btnHighlight" layoutX="20.0" layoutY="462.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="Highlight" />
         </AnchorPane>
         <AnchorPane fx:id="anchorGraphPanel" minHeight="200" minWidth="200" prefHeight="Infinity" prefWidth="Infinity">
-            <Group fx:id="grpDrawArea" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+            <Group fx:id="grpDrawArea" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
         </AnchorPane>
-        <AnchorPane minWidth="140" prefHeight="800.0" prefWidth="Infinity" maxWidth="500">
-            <TabPane prefHeight="875.0" prefWidth="500.0" tabClosingPolicy="UNAVAILABLE" maxWidth="500.0">
+        <AnchorPane maxWidth="500" minWidth="140" prefHeight="800.0" prefWidth="Infinity">
+            <TabPane maxWidth="500.0" prefHeight="800.0" prefWidth="500.0" tabClosingPolicy="UNAVAILABLE">
                 <Tab text="Graph Info">
-                    <AnchorPane fx:id="anchorGraphInfo" minHeight="0.0" minWidth="500.0" prefHeight="180.0" prefWidth="500.0" maxWidth="500.0">
-                        <Button fx:id="btnClipboard" layoutX="15.0" layoutY="15.0" mnemonicParsing="false" text="Copy to clipboard"/>
-                        <Button fx:id="btnClipboard2" layoutX="255.0" layoutY="15.0" mnemonicParsing="false" text="Copy to clipboard"/>
+                    <AnchorPane fx:id="anchorGraphInfo" maxWidth="500.0" minHeight="0.0" minWidth="500.0" prefHeight="180.0" prefWidth="500.0">
+                        <Button fx:id="btnClipboard" layoutX="15.0" layoutY="15.0" mnemonicParsing="false" text="Copy to clipboard" />
+                        <Button fx:id="btnClipboard2" layoutX="255.0" layoutY="15.0" mnemonicParsing="false" text="Copy to clipboard" />
                     </AnchorPane>
                 </Tab>
                 <Tab text="Search">
-                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="140.0"/>
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="140.0" />
                 </Tab>
             </TabPane>
         </AnchorPane>
     </SplitPane>
-    <ProgressBar fx:id="progressBar" maxWidth="Infinity" minHeight="18.0" prefHeight="18.0" prefWidth="1000.0" progress="0.0"/>
+    <ProgressBar fx:id="progressBar" maxWidth="Infinity" minHeight="18.0" prefHeight="18.0" prefWidth="1000.0" progress="0.0" />
 </VBox>
