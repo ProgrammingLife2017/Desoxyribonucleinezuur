@@ -135,7 +135,7 @@ public final class Cache {
      * Get the HTreeMap cache for the cached genomes.
      * @return the HTreeMap cache for the sequences.
      */
-    private Map<Integer, String> getGenomeIdNamesMap() {
+    public Map<Integer, String> getGenomeIdNamesMap() {
         return this.genomeIdNamesMap;
     }
 
@@ -366,7 +366,7 @@ public final class Cache {
         for (Map.Entry<Integer, int[]> entry : this.getNodeIdGenomesMap().entrySet()) {
             for (int genomeID : genomeIDs) {
                 if (ArrayUtils.contains(entry.getValue(), genomeID)) {
-                    if (genomes.get(genomeID) == null) {
+                    if (!genomes.containsKey(genomeID)) {
                         genomes.put(genomeID, new TreeSet<>());
                     }
                     genomes.get(genomeID).add(entry.getKey());
