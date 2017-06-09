@@ -14,7 +14,6 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import programminglife.gui.controller.GuiController;
 import programminglife.parser.Cache;
-import programminglife.model.exception.UnknownTypeException;
 import programminglife.utility.Alerts;
 import programminglife.utility.Console;
 
@@ -65,8 +64,6 @@ public final class ProgrammingLife extends Application {
             arguments(ctrl);
         } catch (IOException e) {
             Alerts.warning("An error occurred opening the specified file!");
-        } catch (UnknownTypeException e) {
-            Alerts.error("This file is malformed and cannot be opened");
         }
     }
 
@@ -74,9 +71,8 @@ public final class ProgrammingLife extends Application {
      * Process command line arguments.
      * @param guiCtrl the {@link GuiController}, needed for opening files
      * @throws IOException if a specified file cannot be opened
-     * @throws UnknownTypeException if the file is malformed
      */
-    private void arguments(GuiController guiCtrl) throws IOException, UnknownTypeException {
+    private void arguments(GuiController guiCtrl) throws IOException {
         Parameters params = this.getParameters();
         if (params.getNamed().containsKey("file")) {
             String fileName = params.getNamed().get("file");
@@ -102,14 +98,14 @@ public final class ProgrammingLife extends Application {
         closeConfirmation.initOwner(primaryStage);
 
         Optional<ButtonType> closeResponse = closeConfirmation.showAndWait();
-        if (closeResponse.isPresent()) {
-            if (!ButtonType.OK.equals(closeResponse.get())) {
+        closeResponse.ifPresent(buttonType -> {
+            if (!ButtonType.OK.equals(buttonType)) {
                 event.consume();
             } else {
                 Platform.exit();
                 System.exit(0);
             }
-        }
+        });
     };
 
     /**

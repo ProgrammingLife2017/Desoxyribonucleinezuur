@@ -16,7 +16,6 @@ public class GenomeTest {
     private Genome longGenome;
     private Genome emptyGenome;
     private GenomeGraph graph;
-    private List<Segment> segments;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -26,7 +25,7 @@ public class GenomeTest {
     @Before
     public void setUp() throws Exception {
         graph = new GenomeGraph("test graph");
-        segments = Arrays.asList(
+        List<Segment> segments = Arrays.asList(
                 new Segment(graph, 1, "CAT"),
                 new Segment(graph, 2, "TAG"),
                 new Segment(graph, 3, "GG"),

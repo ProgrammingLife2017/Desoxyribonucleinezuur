@@ -1,7 +1,6 @@
 package programminglife.model.drawing;
 
 import org.jetbrains.annotations.NotNull;
-import programminglife.model.Node;
 
 import java.util.*;
 
@@ -131,7 +130,8 @@ public class Layer implements Iterable<DrawableNode> {
     }
 
     /**
-     *
+     * Creates of toString of the layer.
+     * @return String of the layer.
      */
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder("Layer[Segments: ");

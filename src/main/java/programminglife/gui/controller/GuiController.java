@@ -8,10 +8,10 @@ import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
@@ -25,12 +25,11 @@ import javafx.stage.Stage;
 import jp.uphy.javafx.console.ConsoleView;
 import programminglife.ProgrammingLife;
 import programminglife.model.GenomeGraph;
-import programminglife.model.exception.UnknownTypeException;
 import programminglife.parser.GraphParser;
 import programminglife.utility.Alerts;
 import programminglife.utility.Console;
-import programminglife.utility.ProgressCounter;
 import programminglife.utility.NumbersOnlyListener;
+import programminglife.utility.ProgressCounter;
 
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -102,7 +101,7 @@ public class GuiController implements Observer {
     private void initialize() {
         this.graphController = new GraphController(null, this.grpDrawArea, this.anchorGraphInfo);
         initRecent();
-        initMenubar();
+        initMenuBar();
         initBookmarkMenu();
         initLeftControlpanelScreenModifiers();
         initLeftControlpanelDraw();
@@ -116,10 +115,9 @@ public class GuiController implements Observer {
      * Open and parse a file.
      * @param file The {@link File} to open.
      * @throws IOException if the {@link File} is not found.
-     * @throws UnknownTypeException if the {@link File} is not compliant with the GFA standard.
      * @return the parser to be notified when it is finished
      */
-    public GraphParser openFile(File file) throws IOException, UnknownTypeException {
+    public GraphParser openFile(File file) throws IOException {
         if (file != null) {
             if (this.graphController != null && this.graphController.getGraph() != null) {
                 this.graphController.getGraph().close();
@@ -210,8 +208,6 @@ public class GuiController implements Observer {
                         try {
                             file = new File(mi.getText());
                             openFile(file);
-                        } catch (UnknownTypeException e) {
-                            Alerts.error("This file is malformed and cannot be parsed");
                         } catch (IOException e) {
                             Alerts.error("This file can't be opened");
                         }
@@ -230,7 +226,7 @@ public class GuiController implements Observer {
      * Sets the action for the open MenuItem.
      * Sets the event for the quit MenuItem.
      */
-    private void initMenubar() {
+    private void initMenuBar() {
         btnOpen.setOnAction((ActionEvent event) -> {
             FileChooser fileChooser = new FileChooser();
             final ExtensionFilter extFilterGFA = new ExtensionFilter("GFA files (*.gfa)", "*.GFA");
@@ -249,8 +245,6 @@ public class GuiController implements Observer {
                 Alerts.error("This file can't be found");
             } catch (IOException e) {
                 Alerts.error("This file can't be opened");
-            } catch (UnknownTypeException e) {
-                Alerts.error("This file is malformed and cannot be parsed");
             }
         });
 
@@ -267,11 +261,11 @@ public class GuiController implements Observer {
      * Updates the recent files file after opening a file.
      */
     private void updateRecent() {
-        try (BufferedWriter recentsWriter = new BufferedWriter(new FileWriter(recentFile, true))) {
+        try (BufferedWriter recentWriter = new BufferedWriter(new FileWriter(recentFile, true))) {
             if (!recentItems.contains(file.getAbsolutePath())) {
-                recentsWriter.write(file.getAbsolutePath() + System.getProperty("line.separator"));
-                recentsWriter.flush();
-                recentsWriter.close();
+                recentWriter.write(file.getAbsolutePath() + System.getProperty("line.separator"));
+                recentWriter.flush();
+                recentWriter.close();
                 initRecent();
             }
         } catch (IOException e) {
@@ -358,7 +352,7 @@ public class GuiController implements Observer {
     }
 
     /**
-     * Initializes the buttons and textfields that are used to highlight.
+     * Initializes the buttons and textFields that are used to highlight.
      */
     private void initLeftControlpanelHighlight() {
 
@@ -386,7 +380,7 @@ public class GuiController implements Observer {
     /**
      * Draw the current graph with current center node and depth settings.
      */
-    public void draw() {
+    void draw() {
         Console.println("[%s] Drawing graph...", Thread.currentThread().getName());
         int centerNode = 0;
         int maxDepth = 0;
@@ -563,7 +557,7 @@ public class GuiController implements Observer {
     /**
      * Sets the text field for drawing the graph.
      * @param center The center node
-     * @param radius The radius of the subgraph
+     * @param radius The radius of the subGraph
      */
     void setText(int center, int radius) {
         txtCenterNode.setText(String.valueOf(center));

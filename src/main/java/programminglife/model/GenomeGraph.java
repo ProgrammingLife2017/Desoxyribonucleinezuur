@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class GenomeGraph implements Graph {
     private String id;
     private Cache cache;
-    public Map<Integer, Collection<Integer>> parentGenomesNodes;
+    private Map<Integer, Collection<Integer>> parentGenomesNodes;
 
     /**
      * Create a genomeGraph with id.
@@ -185,8 +185,7 @@ public class GenomeGraph implements Graph {
 
     /**
      * Get Nodes through several Genomes.
-     *
-     * @param progressCounter
+     * @param progressCounter ProgressCounter keep track of the progress.
      * @param genomeIDs the Genomes to look up
      * @return a {@link Map} mapping Genome names to {@link Collection}s of Node IDs
      */
@@ -194,8 +193,14 @@ public class GenomeGraph implements Graph {
         return this.cache.getGenomeNodeIDs(progressCounter, genomeIDs);
     }
 
-    private Map<Integer, Collection<Integer>> getNodeIDs(ProgressCounter progressCounter, Collection<Integer> genomeIDs) {
-        return this.getNodeIDs(progressCounter, genomeIDs.stream().mapToInt(x -> x).toArray());
+    /**
+     * Get nodes from a collection.
+     * @param pc ProgressCounter keep track of the progress.
+     * @param genomeIDs Collection of the genome id's.
+     * @return the mapped genome id's.
+     */
+    private Map<Integer, Collection<Integer>> getNodeIDs(ProgressCounter pc, Collection<Integer> genomeIDs) {
+        return this.getNodeIDs(pc, genomeIDs.stream().mapToInt(x -> x).toArray());
     }
 
     /**
@@ -354,9 +359,8 @@ public class GenomeGraph implements Graph {
 
     /**
      * Closes the cache of the {@link GenomeGraph}.
-     * @throws IOException when strange things happen
      */
-    public void close() throws IOException {
+    public void close() {
         if (this.cache != null) {
             this.cache.close();
             this.cache = null;
@@ -422,6 +426,10 @@ public class GenomeGraph implements Graph {
         return this.cache.getGenomeNamesIdMap().size();
     }
 
+    /**
+     * Load the genomes from a map.
+     * @param progressCounter ProgressCounter keeps track of the progress.
+     */
     public void loadGenomes(ProgressCounter progressCounter) {
         this.parentGenomesNodes = getNodeIDs(progressCounter, this.cache.getGenomeIdNamesMap().keySet());
     }

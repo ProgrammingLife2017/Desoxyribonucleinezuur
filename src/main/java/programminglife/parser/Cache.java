@@ -157,14 +157,14 @@ public final class Cache {
     }
 
     /**
-     * Get a disk-backed hashmap named name. If it doesn't exist, it is created using the provided serializers.
+     * Get a disk-backed hashMap named name. If it doesn't exist, it is created using the provided serializers.
      * @param db the db to get the map from.
-     * @param name The name of the hashmap
+     * @param name The name of the hashMap
      * @param keySerializer The serializer for the keys
      * @param valueSerializer The serializer for th values
      * @param <K> The type of the keys
      * @param <V> The type of the values.
-     * @return a disk-backed hashmap named name.
+     * @return a disk-backed hashMap named name.
      */
     @NotNull
     private static <K, V> Map<K, V> getMap(DB db, String name,
@@ -182,9 +182,8 @@ public final class Cache {
 
     /**
      * Close the database.
-     * @throws IOException when unexpected things happen while closing
      */
-    public void close() throws IOException {
+    public void close() {
         if (!this.db.isClosed()) {
             Console.println("[%s] Closing MapDB...", Thread.currentThread().getName());
             this.db.close();
@@ -268,7 +267,6 @@ public final class Cache {
      * @param genomeName the name of the {@link programminglife.model.Genome}
      * @return the index of the {@link programminglife.model.Genome} in the GFA header
      */
-    @NotNull
     public int getGenomeID(String genomeName) {
         if (getGenomeNamesIdMap().containsKey(genomeName)) {
             return getGenomeNamesIdMap().get(genomeName);
@@ -290,7 +288,7 @@ public final class Cache {
     /**
      * Completely remove a database. This cannot be undone.
      * @return true if the file was removed, false if it did not exist
-     * @throws IOException when something strange happenes during deletion
+     * @throws IOException when something strange happens during deletion
      */
     public boolean removeDB() throws IOException {
         Console.println("[%s] Removing database %s", Thread.currentThread().getName(), this.dbFileName);
@@ -359,8 +357,7 @@ public final class Cache {
 
     /**
      * Get Node IDs belonging to a Genome.
-     *
-     * @param progressCounter
+     * @param progressCounter ProgressCounter keeps track of the progress.
      * @param genomeIDs the IDs of the Genomes to look up
      * @return a {@link Map} mapping Genome names to {@link Collection}s of Node IDs
      */

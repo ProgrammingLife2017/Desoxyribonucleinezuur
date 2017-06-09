@@ -2,7 +2,6 @@ package programminglife.parser;
 
 import org.junit.*;
 import programminglife.utility.InitFXThread;
-import programminglife.model.Genome;
 import programminglife.model.GenomeGraph;
 import programminglife.model.GenomeGraphTest;
 import programminglife.model.Segment;

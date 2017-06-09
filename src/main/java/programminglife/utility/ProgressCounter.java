@@ -81,6 +81,9 @@ public class ProgressCounter extends Observable {
         this.setProgress(this.total);
     }
 
+    /**
+     * Resets the progressCounter.
+     */
     public void reset() {
         this.setProgress(0);
     }

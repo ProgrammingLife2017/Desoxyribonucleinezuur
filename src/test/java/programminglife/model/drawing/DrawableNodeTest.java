@@ -10,7 +10,7 @@ import programminglife.utility.InitFXThread;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Created by Ivo on 2017-05-30.
+ * Test class for the DrawableNode.
  */
 public class DrawableNodeTest {
     private static final String GRAPH_NAME = "testGraph";

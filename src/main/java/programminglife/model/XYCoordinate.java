@@ -19,8 +19,8 @@ public class XYCoordinate {
     }
 
     /**
-     * Sum coords.
-     * @param other the coord to add to this one
+     * Sum coordinates.
+     * @param other the coordinate to add to this one
      * @return the sum
      */
     public XYCoordinate add(XYCoordinate other) {
@@ -38,9 +38,9 @@ public class XYCoordinate {
     }
 
     /**
-     * Multiply the coord with a factor.
+     * Multiply the coordinate with a factor.
      * @param factor the factor
-     * @return the new coord
+     * @return the new coordinate
      */
     public XYCoordinate multiply(double factor) {
         return new XYCoordinate((int) (this.getX() * factor), (int) (this.getY() * factor));

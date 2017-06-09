@@ -229,8 +229,7 @@ public final class BookmarkController {
             DocumentBuilder builder = factory.newDocumentBuilder();
             dom = builder.parse(fileName);
             dom.getDocumentElement().normalize();
-            Element doc = dom.getDocumentElement();
-            return doc;
+            return dom.getDocumentElement();
         } catch (ParserConfigurationException | SAXException | IOException e) {
             Alerts.error("Bookmark file error");
         }
@@ -309,7 +308,7 @@ public final class BookmarkController {
     /**
      * Parses a list of bookmark nodes and returns them.
      * @param graphName The file these bookmarks are about.
-     * @param bookmarks The nodelist containing all bookmarks
+     * @param bookmarks The nodeList containing all bookmarks
      * @return A bookmark represented by the element
      */
     private static List<Bookmark> parseBookmarks(String graphName, NodeList bookmarks) {
