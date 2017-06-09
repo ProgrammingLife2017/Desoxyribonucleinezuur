@@ -15,7 +15,6 @@ import programminglife.ProgrammingLife;
 import programminglife.controller.BookmarkController;
 import programminglife.model.Bookmark;
 import programminglife.model.Graph;
-import programminglife.model.exception.UnknownTypeException;
 import programminglife.parser.GraphParser;
 import programminglife.utility.Alerts;
 import programminglife.utility.Console;
@@ -86,7 +85,7 @@ public class GuiLoadBookmarkController implements Observer {
                 try {
                     guiController.setFile(file);
                     guiController.openFile(file).addObserver(this);
-                } catch (IOException | UnknownTypeException e) {
+                } catch (IOException e) {
                     Alerts.error("File location has changed");
                 }
             } else {
