@@ -4,6 +4,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import programminglife.model.exception.NodeExistsException;
 import programminglife.parser.Cache;
+import programminglife.utility.ProgressCounter;
 
 import java.io.IOException;
 import java.util.*;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 public class GenomeGraph implements Graph {
     private String id;
     private Cache cache;
+    public Map<Integer, Collection<Integer>> parentGenomesNodes;
 
     /**
      * Create a genomeGraph with id.
@@ -134,22 +136,22 @@ public class GenomeGraph implements Graph {
     public int[] getGenomes(int parentID, int childID) {
         Collection<Integer> mutualGenomes = new LinkedHashSet<>();
         int[] parentGenomes = getGenomes(parentID);
-        Map<Integer, Collection<Integer>> parentGenomesNodes = getNodeIDs(parentGenomes);
 
         // For every genome of the parent
-        for (Map.Entry<Integer, Collection<Integer>> genome : parentGenomesNodes.entrySet()) {
+        for (int parentGenome : parentGenomes) {
+            Collection<Integer> genome = parentGenomesNodes.get(parentGenome);
             // set this flag to false
             boolean parentFound = false;
 
             // for every node of this genome
-            for (int nodeID : genome.getValue()) {
+            for (int nodeID : genome) {
                 if (nodeID == parentID) {
                     // if it is the parent, set the flag
                     parentFound = true;
                 } else if (parentFound && nodeID == childID) {
                     // the child is a direct successor of the parent,
                     // so the genome does go through this edge
-                    mutualGenomes.add(genome.getKey());
+                    mutualGenomes.add(parentGenome);
                     break;
                 } else if (parentFound) {
                     // the child is not a direct successor of the parent,
@@ -177,17 +179,23 @@ public class GenomeGraph implements Graph {
      * @param genomeID the Genome to look up
      * @return a {@link Collection} of Node IDs in the Genome
      */
-    public Collection<Integer> getNodeIDs(int genomeID) {
+    Collection<Integer> getNodeIDs(int genomeID) {
         return this.cache.getGenomeNodeIDs(genomeID);
     }
 
     /**
      * Get Nodes through several Genomes.
+     *
+     * @param progressCounter
      * @param genomeIDs the Genomes to look up
      * @return a {@link Map} mapping Genome names to {@link Collection}s of Node IDs
      */
-    public Map<Integer, Collection<Integer>> getNodeIDs(int... genomeIDs) {
-        return this.cache.getGenomeNodeIDs(genomeIDs);
+    private Map<Integer, Collection<Integer>> getNodeIDs(ProgressCounter progressCounter, int... genomeIDs) {
+        return this.cache.getGenomeNodeIDs(progressCounter, genomeIDs);
+    }
+
+    private Map<Integer, Collection<Integer>> getNodeIDs(ProgressCounter progressCounter, Collection<Integer> genomeIDs) {
+        return this.getNodeIDs(progressCounter, genomeIDs.stream().mapToInt(x -> x).toArray());
     }
 
     /**
@@ -408,5 +416,9 @@ public class GenomeGraph implements Graph {
 
     public int getTotalGenomeNumber() {
         return this.cache.getGenomeNamesIdMap().size();
+    }
+
+    public void loadGenomes(ProgressCounter progressCounter) {
+        this.parentGenomesNodes = getNodeIDs(progressCounter, this.cache.getGenomeIdNamesMap().keySet());
     }
 }

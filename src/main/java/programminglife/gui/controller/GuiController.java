@@ -24,7 +24,7 @@ import programminglife.model.exception.UnknownTypeException;
 import programminglife.parser.GraphParser;
 import programminglife.utility.Alerts;
 import programminglife.utility.Console;
-import programminglife.utility.FileProgressCounter;
+import programminglife.utility.ProgressCounter;
 import programminglife.utility.NumbersOnlyListener;
 
 import java.io.*;
@@ -146,9 +146,9 @@ public class GuiController implements Observer {
                 e.printStackTrace();
                 Alerts.error(e.getMessage());
             }
-        } else if (o instanceof FileProgressCounter) {
+        } else if (o instanceof ProgressCounter) {
             progressBar.setVisible(true);
-            FileProgressCounter progress = (FileProgressCounter) o;
+            ProgressCounter progress = (ProgressCounter) o;
             this.getProgressBar().setProgress(progress.percentage());
             if (progressBar.getProgress() == 1.0d) {
                 progressBar.setVisible(false);
