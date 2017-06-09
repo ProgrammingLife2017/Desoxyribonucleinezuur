@@ -26,6 +26,7 @@ public class GraphController {
     private Group grpDrawArea;
     private double locationCenterY;
     private double locationCenterX;
+    private LinkedList<DrawableNode> oldMinMaxList = new LinkedList<>();
     private SubGraph subGraph;
 
     /**
@@ -113,10 +114,14 @@ public class GraphController {
         }
     }
 
+    /**
+     * Method to highlight a collection of nodes.
+     * @param nodes The nodes to highlight.
+     * @param color The color to highligh with.
+     */
     private void highlightNodes(Collection<DrawableNode> nodes, Color color) {
-        for (DrawableNode drawNode: nodes){
+        for (DrawableNode drawNode: nodes) {
             highlightNode(drawNode, color);
-
         }
     }
 
@@ -130,7 +135,12 @@ public class GraphController {
         highlightNode(node, color);
     }
 
-    public void highlightNode(DrawableNode node, Color color){
+    /**
+     * Highlights a single node.
+     * @param node {@link DrawableNode} to highlight.
+     * @param color {@link Color} to color with.
+     */
+    public void highlightNode(DrawableNode node, Color color) {
         node.setStroke(color);
         node.setStrokeWidth(3);
         node.setStrokeType(OUTSIDE);
@@ -265,14 +275,27 @@ public class GraphController {
      */
     public void highlightMinMax(int min, int max, Color color) {
         LinkedList<DrawableNode> drawNodeList = new LinkedList<>();
-        for (DrawableNode drawableNode: subGraph.getNodes().values()){
+
+        removeHighlight(oldMinMaxList);
+        for (DrawableNode drawableNode: subGraph.getNodes().values()) {
             if (drawableNode != null && !(drawableNode.getNode() instanceof Dummy)) {
                 int genomeCount = drawableNode.getNode().getGenomes().length;
-                if (genomeCount > min && genomeCount < max) {
+                if (genomeCount >= min && genomeCount <= max) {
                     drawNodeList.add(drawableNode);
                 }
             }
         }
+        oldMinMaxList = drawNodeList;
         highlightNodes(drawNodeList, color);
+    }
+
+    /**
+     * Resets the node highlighting to remove highlights.
+     * @param nodes are the nodes to remove the highlight from.
+     */
+    private void removeHighlight(Collection<DrawableNode> nodes) {
+        for (DrawableNode node: nodes) {
+            node.colorize(graph);
+        }
     }
 }

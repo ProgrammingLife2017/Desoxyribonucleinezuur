@@ -405,4 +405,8 @@ public class GenomeGraph implements Graph {
     private int getGenomesNumber(int nodeID) {
         return this.cache.getNodeIdGenomesNumberMap().get(nodeID);
     }
+
+    public int getTotalGenomeNumber() {
+        return this.cache.getGenomeNamesIdMap().size();
+    }
 }

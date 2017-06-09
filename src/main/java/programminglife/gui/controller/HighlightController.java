@@ -3,7 +3,6 @@ package programminglife.gui.controller;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
@@ -35,7 +34,7 @@ public class HighlightController {
     @SuppressWarnings("unused")
     public void initialize() {
         initButtons();
-        initMinMax();
+
     }
 
 
@@ -54,7 +53,7 @@ public class HighlightController {
     /**
      * Initializes the Min and Max field + checkbox.
      */
-    private void initMinMax() {
+    public void initMinMax() {
 
         checkMax.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
@@ -74,8 +73,7 @@ public class HighlightController {
 
         txtMax.setDisable(true);
         txtMax.textProperty().addListener(new NumbersOnlyListener(txtMax));
-        //TODO change to max genomes in graph
-        txtMax.setText("328");
+        txtMax.setText(Integer.toString(graphController.getGraph().getTotalGenomeNumber()));
 
         txtMin.setDisable(true);
         txtMin.textProperty().addListener(new NumbersOnlyListener(txtMin));
@@ -86,7 +84,7 @@ public class HighlightController {
     /**
      * Checks the Min en Max to see if things need to be highlighted.
      */
-    private void highlightMinMax(){
+    private void highlightMinMax() {
         int minGenome = 0;
         int maxGenome = Integer.MAX_VALUE;
         if (checkMin.isSelected()) {
@@ -98,6 +96,8 @@ public class HighlightController {
 
         if (checkMax.isSelected() || checkMin.isSelected()) {
             graphController.highlightMinMax(minGenome, maxGenome, HIGHLIGHT_MIN_MAX_COLOR);
+        } else {
+            graphController.highlightMinMax(0, 0, null);
         }
 
     }

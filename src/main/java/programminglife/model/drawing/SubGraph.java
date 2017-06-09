@@ -201,7 +201,6 @@ public class SubGraph {
 
 
     }
-    
 
     /**
      * Find out which {@link Drawable} is at the given location.

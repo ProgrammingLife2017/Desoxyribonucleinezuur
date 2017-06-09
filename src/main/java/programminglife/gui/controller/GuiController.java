@@ -355,6 +355,7 @@ public class GuiController implements Observer {
                 AnchorPane page = loader.load();
                 HighlightController gc = loader.getController();
                 gc.setGraphController(this.getGraphController());
+                gc.initMinMax();
                 Scene scene = new Scene(page);
                 Stage highlightDialogStage = new Stage();
                 highlightDialogStage.setResizable(false);
@@ -454,7 +455,6 @@ public class GuiController implements Observer {
         } else {
             scale *= delta;
         }
-        
         scale = clamp(scale, MIN_SCALE, MAX_SCALE);
         grpDrawArea.setScaleX(scale);
         grpDrawArea.setScaleY(scale);
