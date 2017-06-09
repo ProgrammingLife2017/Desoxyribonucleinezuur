@@ -233,14 +233,14 @@ public class GraphController {
     }
 
     private void showInfoNode(DrawableNode node, int x) {
-
         Text idText = new Text("ID: "); idText.setLayoutX(x); idText.setLayoutY(65);
         Text parentText = new Text("Parents: "); parentText.setLayoutX(x); parentText.setLayoutY(115);
         Text childText = new Text("Children: "); childText.setLayoutX(x); childText.setLayoutY(165);
         Text inEdgeText = new Text("Incoming Edges: "); inEdgeText.setLayoutX(x); inEdgeText.setLayoutY(215);
         Text outEdgeText = new Text("Outgoing Edges: "); outEdgeText.setLayoutX(x); outEdgeText.setLayoutY(265);
         Text genomeText = new Text("Genome: "); genomeText.setLayoutX(x); genomeText.setLayoutY(315);
-        Text seqText = new Text("Sequence: "); seqText.setLayoutX(x); seqText.setLayoutY(365);
+        Text seqLengthText = new Text("Sequence Length: "); seqText.setLayoutX(x); seqText.setLayoutY(365);
+        Text seqText = new Text("Sequence: "); seqText.setLayoutX(x); seqText.setLayoutY(415);
 
         anchorGraphInfo.getChildren().removeIf(node1 -> node1.getLayoutX() == x);
 
@@ -251,10 +251,10 @@ public class GraphController {
         TextField parents;
         if (parentSB.length() > 2) {
             parentSB.setLength(parentSB.length() - 2);
-            parents = getTextField("Parents: ", x, 170, "Parent ID's: " + parentSB.toString());
+            parents = getTextField("Parents: ", x, 120, parentSB.toString());
         } else {
             parentSB.replace(0, parentSB.length(), "This node has no parent(s)");
-            parents = getTextField("Parents: ", x, 170, parentSB.toString());
+            parents = getTextField("Parents: ", x, 120, parentSB.toString());
         }
 
         StringBuilder childSB = new StringBuilder();
@@ -262,29 +262,39 @@ public class GraphController {
         TextField children;
         if (childSB.length() > 2) {
             childSB.setLength(childSB.length() - 2);
-            children = getTextField("Children: ", x, 170, "Children ID's: " + childSB.toString());
+            children = getTextField("Children: ", x, 170, childSB.toString());
         } else {
             childSB.replace(0, childSB.length(), "This node has no child(ren)");
             children = getTextField("Children: ", x, 170, childSB.toString());
         }
-        
+
         TextField inEdges = getTextField("Incoming Edges: ", x, 220, node.getNode().getParentEdges().size() + "");
         TextField outEdges = getTextField("Outgoing Edges: ", x, 270, node.getNode().getChildEdges().size() + "");
         TextField genome = getTextField("Genome: ", x, 320, Arrays.toString(node.getNode().getGenomes()));
-        TextField seq = getTextField("Sequence: ", x, 370, node.getNode().getSequence());
+        TextField seqLength = getTextField("Sequence Length: ", x, 420, node.getNode().getSequence().length() + "");
+        TextField seq = getTextField("Sequence: ", x, 420, node.getNode().getSequence());
 
-        anchorGraphInfo.getChildren().addAll(idText, parentText, childText, inEdgeText, outEdgeText, genomeText, seqText);
-        anchorGraphInfo.getChildren().addAll(id, parents, children, inEdges, outEdges, genome, seq);
+        anchorGraphInfo.getChildren().addAll(idText, parentText, childText, inEdgeText, outEdgeText, genomeText, seqLengthText, seqText);
+        anchorGraphInfo.getChildren().addAll(id, parents, children, inEdges, outEdges, genome, seqLength, seq);
     }
 
+    /**
+     * Returns a textField to be used by the edge and node information show panel.
+     * @param id String the id of the textField.
+     * @param x int the x coordinate of the textField inside the anchorPane.
+     * @param y int the y coordinate of the textField inside the anchorPane.
+     * @param text String the text to be shown by the textField.
+     * @return TextField the created textField.
+     */
     private TextField getTextField(String id, int x, int y, String text) {
         TextField textField = new TextField();
         textField.setId(id);
         textField.setText(text);
         textField.setLayoutX(x);
         textField.setLayoutY(y);
-        textField.setStyle("-fx-text-box-border: transparent;-fx-background-color: -fx-control-inner-background;\n" +
-                "-fx-background-insets: 0; -fx-padding: 1 3 1 3; -fx-focus-color: transparent;");
+        textField.setEditable(false);
+        textField.setStyle("-fx-text-box-border: transparent;-fx-background-color: -fx-control-inner-background;"
+                + "-fx-background-insets: 0; -fx-padding: 1 3 1 3; -fx-focus-color: transparent;");
         textField.setPrefSize(220, 25);
 
         return textField;

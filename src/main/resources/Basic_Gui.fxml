@@ -31,7 +31,7 @@
             <Button fx:id="btnDrawRandom" layoutX="20.0" layoutY="210.0" minWidth="100.0" mnemonicParsing="false" text="Surprise me!" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0"/>
             <Button fx:id="btnBookmark" layoutX="20.0" layoutY="240.0" minWidth="100.0" mnemonicParsing="false" text="Bookmark" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0"/>
         </AnchorPane>
-        <AnchorPane fx:id="anchorGraphPanel" minHeight="200" minWidth="600" prefHeight="Infinity" prefWidth="Infinity">
+        <AnchorPane fx:id="anchorGraphPanel" minHeight="200" minWidth="200" prefHeight="Infinity" prefWidth="Infinity">
             <Group fx:id="grpDrawArea" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
         </AnchorPane>
         <AnchorPane minWidth="140" prefHeight="800.0" prefWidth="Infinity" maxWidth="500">
@@ -39,6 +39,7 @@
                 <Tab text="Graph Info">
                     <AnchorPane fx:id="anchorGraphInfo" minHeight="0.0" minWidth="500.0" prefHeight="180.0" prefWidth="500.0" maxWidth="500.0">
                         <Button fx:id="btnClipboard" layoutX="15.0" layoutY="15.0" mnemonicParsing="false" text="Copy to clipboard"/>
+                        <Button fx:id="btnClipboard2" layoutX="255.0" layoutY="15.0" mnemonicParsing="false" text="Copy to clipboard"/>
                     </AnchorPane>
                 </Tab>
                 <Tab text="Search">

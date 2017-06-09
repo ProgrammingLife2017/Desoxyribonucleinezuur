@@ -537,7 +537,6 @@ public class GuiController implements Observer {
                     toClipboard = toClipboard.replaceAll("(.{200})", "$1" + System.getProperty("line.separator"));
                 }
             }
-            System.out.println(toClipboard);
             StringSelection selection = new StringSelection(toClipboard);
             clipboard.setContents(selection, selection);
         });
