@@ -77,4 +77,10 @@ public interface Node {
      * @param sequence {@link String} of the sequence.
      */
     void setSequence(String sequence);
+
+    /**
+     * Returns the fraction of the graphs total genomes in this node.
+     * @return the fraction as a double.
+     */
+    double getGenomeFraction();
 }

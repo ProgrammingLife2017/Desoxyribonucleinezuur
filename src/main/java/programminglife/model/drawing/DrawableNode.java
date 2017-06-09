@@ -1,5 +1,6 @@
 package programminglife.model.drawing;
 
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import programminglife.model.*;
 
@@ -164,6 +165,16 @@ public class DrawableNode extends Rectangle {
         this.drawDimensionsUpToDate = true;
     }
 
+    public double getGenomeFraction() {
+        return this.node.getGenomeFraction();
+    }
+
+    public int[] getGenomes() {
+        return this.node.getGenomes();
+    }
+
+
+
     /**
      * get the length of the sequence of this segment.
      * @return the length of the sequence of this segment
@@ -256,6 +267,26 @@ public class DrawableNode extends Rectangle {
      */
     Link getLink(DrawableNode child) {
         return node.getLink(child.getNode());
+    }
+
+    /**
+     * Color a {@link DrawableNode} depending on its properties.
+     * @param graph the {@link GenomeGraph} belonging to the {@link DrawableNode}
+     */
+    public void colorize(GenomeGraph graph) {
+        if (this.node instanceof Dummy) {
+            DrawableEdge.colorize(this, node.getLink(null), graph);
+        } else {
+            double genomeFraction = this.getGenomeFraction();
+            double maxSaturation = 0.8, minSaturation = 0.05;
+            double saturation = minSaturation + genomeFraction * (maxSaturation - minSaturation);
+
+            Color fillColor = Color.hsb(227, saturation, 1.d);
+            Color strokeColor = Color.hsb(227, maxSaturation, 1.d);
+
+            this.setFill(fillColor);
+            this.setStroke(strokeColor);
+        }
     }
 
     public int getIdentifier() {

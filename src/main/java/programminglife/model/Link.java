@@ -4,7 +4,7 @@ package programminglife.model;
  * The class that handles the links used for the nodes.
  */
 public class Link implements Edge {
-    private int[] genomeSet;
+    private int[] genomes;
     private Node start;
     private Node end;
 
@@ -17,7 +17,7 @@ public class Link implements Edge {
     public Link(Node start, Node end, int[] genomes) {
         this.start = start;
         this.end = end;
-        this.genomeSet = genomes;
+        this.genomes = genomes;
     }
 
     /**
@@ -25,7 +25,7 @@ public class Link implements Edge {
      */
     @Override
     public int[] getGenomes() {
-        return this.genomeSet;
+        return this.genomes;
     }
 
     /**
