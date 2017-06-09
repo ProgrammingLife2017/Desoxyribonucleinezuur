@@ -2,11 +2,12 @@ package programminglife.parser;
 
 import com.diffplug.common.base.Errors;
 import javafx.application.Platform;
+import programminglife.ProgrammingLife;
 import programminglife.model.GenomeGraph;
 import programminglife.model.exception.UnknownTypeException;
 import programminglife.utility.Alerts;
 import programminglife.utility.Console;
-import programminglife.utility.FileProgressCounter;
+import programminglife.utility.ProgressCounter;
 
 import java.io.*;
 import java.util.Arrays;
@@ -24,7 +25,7 @@ public class GraphParser extends Observable implements Runnable {
     private File graphFile;
     private String name;
     private boolean verbose;
-    private FileProgressCounter progressCounter;
+    private ProgressCounter progressCounter;
     private boolean isCached;
 
 
@@ -37,7 +38,7 @@ public class GraphParser extends Observable implements Runnable {
         this.graphFile = graphFile;
         this.name = graphFile.getName();
         this.verbose = PARSE_LINE_VERBOSE_DEFAULT;
-        this.progressCounter = new FileProgressCounter("Lines read");
+        this.progressCounter = new ProgressCounter("Lines read");
         this.isCached = Cache.hasCache(this.name);
         this.graph = new GenomeGraph(name);
     }
@@ -51,18 +52,18 @@ public class GraphParser extends Observable implements Runnable {
             long startTime = System.nanoTime();
             if (!this.isCached) {
                 Console.println("[%s] Parsing %s on separate Thread", Thread.currentThread().getName(), this.name);
+                Platform.runLater(() -> ProgrammingLife.getStage().setTitle("Parsing " + this.graphFile.getPath()));
                 parse(this.verbose);
             } else {
                 Console.println("[%s] Loaded %s from cache", Thread.currentThread().getName(), this.name);
             }
 
-            System.out.print("Loading all genomes...");
-            this.graph.loadGenomes();
-            System.out.println(" done!");
+            Platform.runLater(() -> ProgrammingLife.getStage().setTitle("Loading genomes..."));
+            this.graph.loadGenomes(this.progressCounter);
 
-            this.progressCounter.finished();
             int secondsElapsed = (int) ((System.nanoTime() - startTime) / 1000000000.d);
             Console.println("[%s] Parsing took %d seconds", Thread.currentThread().getName(), secondsElapsed);
+            this.progressCounter.finished();
             this.setChanged();
             this.notifyObservers(this.graph);
         } catch (Exception e) {
@@ -104,7 +105,7 @@ public class GraphParser extends Observable implements Runnable {
         Console.print("[%s] Calculating number of lines in file... ", Thread.currentThread().getName());
         int lineCount = countLines(this.graphFile.getPath());
         Console.println("done (%d lines)", lineCount);
-        this.progressCounter.setTotalLineCount(lineCount);
+        this.progressCounter.setTotal(lineCount);
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(this.graphFile)))) {
             reader.lines().forEach(Errors.rethrow().wrap(line -> {
@@ -142,6 +143,7 @@ public class GraphParser extends Observable implements Runnable {
         }
 
         this.graph.cacheLastEdges();
+        this.progressCounter.finished();
     }
 
     /**
@@ -249,7 +251,7 @@ public class GraphParser extends Observable implements Runnable {
         return graph;
     }
 
-    public FileProgressCounter getProgressCounter() {
+    public ProgressCounter getProgressCounter() {
         return progressCounter;
     }
 }

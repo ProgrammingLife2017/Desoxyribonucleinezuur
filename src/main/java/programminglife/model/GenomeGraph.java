@@ -4,6 +4,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import programminglife.model.exception.NodeExistsException;
 import programminglife.parser.Cache;
+import programminglife.utility.ProgressCounter;
 
 import java.io.IOException;
 import java.util.*;
@@ -178,21 +179,23 @@ public class GenomeGraph implements Graph {
      * @param genomeID the Genome to look up
      * @return a {@link Collection} of Node IDs in the Genome
      */
-    public Collection<Integer> getNodeIDs(int genomeID) {
+    Collection<Integer> getNodeIDs(int genomeID) {
         return this.cache.getGenomeNodeIDs(genomeID);
     }
 
     /**
      * Get Nodes through several Genomes.
+     *
+     * @param progressCounter
      * @param genomeIDs the Genomes to look up
      * @return a {@link Map} mapping Genome names to {@link Collection}s of Node IDs
      */
-    public Map<Integer, Collection<Integer>> getNodeIDs(int... genomeIDs) {
-        return this.cache.getGenomeNodeIDs(genomeIDs);
+    private Map<Integer, Collection<Integer>> getNodeIDs(ProgressCounter progressCounter, int... genomeIDs) {
+        return this.cache.getGenomeNodeIDs(progressCounter, genomeIDs);
     }
 
-    public Map<Integer, Collection<Integer>> getNodeIDs(Collection<Integer> genomeIDs) {
-        return this.getNodeIDs(genomeIDs.stream().mapToInt(x -> x).toArray());
+    private Map<Integer, Collection<Integer>> getNodeIDs(ProgressCounter progressCounter, Collection<Integer> genomeIDs) {
+        return this.getNodeIDs(progressCounter, genomeIDs.stream().mapToInt(x -> x).toArray());
     }
 
     /**
@@ -415,7 +418,7 @@ public class GenomeGraph implements Graph {
         return this.cache.getGenomeNamesIdMap().size();
     }
 
-    public void loadGenomes() {
-        this.parentGenomesNodes = getNodeIDs(this.cache.getGenomeIdNamesMap().keySet());
+    public void loadGenomes(ProgressCounter progressCounter) {
+        this.parentGenomesNodes = getNodeIDs(progressCounter, this.cache.getGenomeIdNamesMap().keySet());
     }
 }

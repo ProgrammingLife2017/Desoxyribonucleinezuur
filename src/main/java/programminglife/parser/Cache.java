@@ -7,6 +7,7 @@ import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.Serializer;
 import programminglife.utility.Console;
+import programminglife.utility.ProgressCounter;
 
 import java.io.File;
 import java.io.IOException;
@@ -358,12 +359,17 @@ public final class Cache {
 
     /**
      * Get Node IDs belonging to a Genome.
+     *
+     * @param progressCounter
      * @param genomeIDs the IDs of the Genomes to look up
      * @return a {@link Map} mapping Genome names to {@link Collection}s of Node IDs
      */
-    public Map<Integer, Collection<Integer>> getGenomeNodeIDs(int... genomeIDs) {
+    public Map<Integer, Collection<Integer>> getGenomeNodeIDs(ProgressCounter progressCounter, int... genomeIDs) {
         Map<Integer, Collection<Integer>> genomes = new HashMap<>();
+        progressCounter.reset();
+        progressCounter.setTotal(this.getNodeIdGenomesMap().size());
         for (Map.Entry<Integer, int[]> entry : this.getNodeIdGenomesMap().entrySet()) {
+            progressCounter.count();
             for (int genomeID : genomeIDs) {
                 if (ArrayUtils.contains(entry.getValue(), genomeID)) {
                     if (!genomes.containsKey(genomeID)) {
@@ -373,6 +379,7 @@ public final class Cache {
                 }
             }
         }
+        progressCounter.finished();
         return genomes;
     }
 }
