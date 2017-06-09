@@ -24,7 +24,6 @@ public class SubGraph {
     private static final int LINE_PADDING = 30;
 
     private LinkedHashMap<Node, DrawableNode> nodes;
-    private DrawableNode centerNode;
     private boolean layout;
     /**
      * The radius around the center node. Eventually,
@@ -48,7 +47,6 @@ public class SubGraph {
     public SubGraph(DrawableNode centerNode, int radius) {
         // TODO
         // tactic: first go to all parents at exactly radius, then find all children of those parents
-        this.centerNode = centerNode;
         this.radius = radius;
         this.layout = false;
 
@@ -102,12 +100,12 @@ public class SubGraph {
      * @param radius Number indicating the number of steps to take.
      */
     private void findParents(LinkedHashMap<Node, DrawableNode> found, DrawableNode node, int radius) {
-        // TODO: improve datastructure so that parents can be safely skipped if already found
+        // TODO: improve dataStructure so that parents can be safely skipped if already found
         // it can currently not safely be skipped: 0-1-2-3-4
         //                                            \_/
         // assuming radius 3, if you find the nodes in the order 0, 1, 2, 3,
         // you cannot skip 3 as that would then miss 4 (which is also within radius 3, via 0-1-3-4)
-        //Also check the childeren if one of the nodes has not been added yet.
+        //Also check the children if one of the nodes has not been added yet.
         if (this.radius <= 0) {
             return;
         }
@@ -155,7 +153,7 @@ public class SubGraph {
     private LinkedHashMap<Node, DrawableNode> findChildren(Set<DrawableNode> nodes, int radius) {
         LinkedHashMap<Node, DrawableNode> found = new LinkedHashMap<>();
 
-        //Put all node that are already found by findparents into the find.
+        //Put all node that are already found by findParents into the find.
         for (DrawableNode node: nodes) {
            found.put(node.getNode(), node);
         }
@@ -173,7 +171,7 @@ public class SubGraph {
      * @param radius Number indicating the number of steps to take.
      */
     private void findChildren(LinkedHashMap<Node, DrawableNode> found, DrawableNode node, int radius) {
-        // TODO: improve datastructure so that parents can be safely skipped if already found
+        // TODO: improve dataStructure so that parents can be safely skipped if already found
         // it can currently not safely be skipped: 0-1-2-3-4
         //                                            \_/
         // assuming radius 3, if you find the nodes in the order 0, 1, 2, 3,
@@ -294,8 +292,8 @@ public class SubGraph {
         List<DrawableNode> sorted = topoSort();
         long finishTime = System.nanoTime();
         long differenceTime = finishTime - startTime;
-        long milisecondTime = differenceTime / 1000000;
-        Console.println("TIMERINO OF TOPOSORTERINO:  " + milisecondTime);
+        long millisecondTime = differenceTime / 1000000;
+        Console.println("TIME OF TOPOSORT:  " + millisecondTime);
         Console.println("Amount of nodes: " + sorted.size());
         Map<DrawableNode, Integer> nodeLevel = new HashMap<>();
         List<Layer> layerList = new ArrayList<>();
@@ -304,9 +302,7 @@ public class SubGraph {
             int maxParentLevel = -1;
             for (DrawableNode parent : this.getParents(node)) {
                 Integer parentLevel = nodeLevel.get(parent);
-                if (parentLevel == null) {
-                    continue;
-                } else if (maxParentLevel < parentLevel) {
+                if (maxParentLevel < parentLevel) {
                     maxParentLevel = parentLevel;
                 }
             }
@@ -438,9 +434,9 @@ public class SubGraph {
 
     /**
      * Toposort all ancestors of a node.
-     * @param result The reult list to which these nodes will be added,
+     * @param result The result list to which these nodes will be added,
      * @param found The nodes that have already been found,
-     * @param node The node to start seaching from.
+     * @param node The node to start searching from.
      */
     private void topoSortFromNode(ArrayList<DrawableNode> result,
                                   LinkedHashSet<DrawableNode> found, DrawableNode node) {

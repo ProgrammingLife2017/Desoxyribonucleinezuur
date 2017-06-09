@@ -1,7 +1,5 @@
 package programminglife.gui.controller;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -11,7 +9,7 @@ import javafx.stage.Stage;
 import programminglife.utility.NumbersOnlyListener;
 
 /**
- * Created by iwanh on 08/06/2017.
+ * Controller class for the highlights.
  */
 public class HighlightController {
 
@@ -57,6 +55,9 @@ public class HighlightController {
         btnClose.setOnAction(event -> ((Stage) btnClose.getScene().getWindow()).close());
     }
 
+    /**
+     * Initializes the genomes.
+     */
     public void initGenome() {
         txtGenome.getEntries().addAll(graphController.getGraph().getGenomeNames());
     }
@@ -66,21 +67,11 @@ public class HighlightController {
      */
     public void initMinMax() {
 
-        checkMax.selectedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                txtMax.setDisable(!checkMax.isSelected());
+        checkMax.selectedProperty().addListener((observable, oldValue, newValue) ->
+                txtMax.setDisable(!checkMax.isSelected()));
 
-            }
-        });
-
-        checkMin.selectedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                txtMin.setDisable(!checkMin.isSelected());
-
-            }
-        });
+        checkMin.selectedProperty().addListener((observable, oldValue, newValue) ->
+                txtMin.setDisable(!checkMin.isSelected()));
 
         txtMax.setDisable(true);
         txtMax.textProperty().addListener(new NumbersOnlyListener(txtMax));

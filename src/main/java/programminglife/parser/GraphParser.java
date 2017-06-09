@@ -32,9 +32,8 @@ public class GraphParser extends Observable implements Runnable {
     /**
      * Initiates an empty graph and the {@link File} to parse.
      * @param graphFile the file to parse the {@link GenomeGraph} from.
-     * @throws IOException when the file can't be read.
      */
-    public GraphParser(File graphFile) throws IOException {
+    public GraphParser(File graphFile) {
         this.graphFile = graphFile;
         this.name = graphFile.getName();
         this.verbose = PARSE_LINE_VERBOSE_DEFAULT;
@@ -71,7 +70,7 @@ public class GraphParser extends Observable implements Runnable {
                 this.getGraph().rollback();
             } catch (IOException eio) {
                 Platform.runLater(() ->
-                        Alerts.error(String.format("An error occured while removing the cache. "
+                        Alerts.error(String.format("An error occurred while removing the cache. "
                                 + "Please remove %s manually.", Cache.toDBFile(this.getGraph().getID()))));
             }
             this.setChanged();
@@ -131,7 +130,6 @@ public class GraphParser extends Observable implements Runnable {
                     this.getGraph().rollback();
                     Console.println("[%s] Stopping this thread gracefully...", Thread.currentThread().getName());
                     this.progressCounter.finished();
-                    return;
                 }
             }));
         } catch (Errors.WrappedAsRuntimeException e) {

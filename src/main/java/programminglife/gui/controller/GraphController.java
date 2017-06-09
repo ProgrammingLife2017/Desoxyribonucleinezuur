@@ -2,6 +2,7 @@ package programminglife.gui.controller;
 
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
@@ -14,7 +15,6 @@ import programminglife.model.drawing.DrawableNode;
 import programminglife.model.drawing.SubGraph;
 import programminglife.utility.Console;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -48,7 +48,7 @@ public class GraphController {
     }
 
     /**
-     * Method to draw the subgraph decided by a center node and radius.
+     * Method to draw the subGraph decided by a center node and radius.
      * @param center the node of which the radius starts.
      * @param radius the amount of layers to be drawn.
      */
@@ -102,12 +102,12 @@ public class GraphController {
         long differenceTimeProgram = finishTime - startTimeProgram;
         long differenceTimeDrawing = finishTime - startTimeDrawing;
         long differenceTimeLayout = finishTime - startLayoutTime;
-        long msdifferenceTimeProgram = differenceTimeProgram / 1000000;
-        long milisecondTimeDrawing = differenceTimeDrawing   / 1000000;
-        long msdifferenceTimeLayout = differenceTimeLayout   / 1000000;
-        Console.println("Time of Drawing:  " + milisecondTimeDrawing);
-        Console.println("Time of layout:  " + msdifferenceTimeLayout);
-        Console.println("Time of Total Program:  " + msdifferenceTimeProgram);
+        long msDifferenceTimeProgram = differenceTimeProgram / 1000000;
+        long millisecondTimeDrawing = differenceTimeDrawing   / 1000000;
+        long msDifferenceTimeLayout = differenceTimeLayout   / 1000000;
+        Console.println("Time of Drawing:  " + millisecondTimeDrawing);
+        Console.println("Time of layout:  " + msDifferenceTimeLayout);
+        Console.println("Time of Total Program:  " + msDifferenceTimeProgram);
 
     }
 
@@ -125,7 +125,7 @@ public class GraphController {
     /**
      * Method to highlight a collection of nodes.
      * @param nodes The nodes to highlight.
-     * @param color The color to highligh with.
+     * @param color The color to highlight with.
      */
     private void highlightNodes(Collection<DrawableNode> nodes, Color color) {
         for (DrawableNode drawNode: nodes) {
@@ -181,13 +181,9 @@ public class GraphController {
         DrawableEdge edge = new DrawableEdge(parent, child);
         // If either parent or child are dummy nodes make on click use the link in that dummy.
         if (parent.getNode() instanceof Dummy) {
-            edge.setOnMouseClicked(event -> {
-                Console.println(parent.getNode().getLink(null).toString());
-            });
+            edge.setOnMouseClicked(event -> Console.println(parent.getNode().getLink(null).toString()));
         } else if (child.getNode() instanceof  Dummy) {
-            edge.setOnMouseClicked(event -> {
-                Console.println(child.getNode().getLink(null).toString());
-            });
+            edge.setOnMouseClicked(event -> Console.println(child.getNode().getLink(null).toString()));
         } else {
             edge.setOnMouseClicked(event -> Console.println(edge.toString()));
         }
@@ -268,14 +264,14 @@ public class GraphController {
      */
     public void centerOnNodeId(int nodeId) {
         DrawableNode drawableCenterNode = subGraph.getNodes().get(new Segment(graph, nodeId));
-        double xCoord = drawableCenterNode.getX();
+        double xCoordinate = drawableCenterNode.getX();
 
         Bounds bounds = grpDrawArea.getParent().getLayoutBounds();
         double boundsHeight = bounds.getHeight();
         double boundsWidth = bounds.getWidth();
 
         locationCenterY = boundsHeight / 4;
-        locationCenterX = boundsWidth / 2 - xCoord;
+        locationCenterX = boundsWidth / 2 - xCoordinate;
 
         grpDrawArea.setTranslateX(locationCenterX);
         grpDrawArea.setTranslateY(locationCenterY);
@@ -343,9 +339,17 @@ public class GraphController {
 
         TextField inEdges = getTextField("Incoming Edges: ", x, 220, node.getNode().getParentEdges().size() + "");
         TextField outEdges = getTextField("Outgoing Edges: ", x, 270, node.getNode().getChildEdges().size() + "");
-        TextField genome = getTextField("Genome: ", x, 320, graph.getGenomeNames(node.getNode().getGenomes()).toString());
+        TextField genome = getTextField("Genome: ", x, 320,
+                graph.getGenomeNames(node.getNode().getGenomes()).toString());
         TextField seqLength = getTextField("Sequence Length: ", x, 370, node.getNode().getSequence().length() + "");
-        TextField seq = getTextField(x + " Sequence: ", x, 420, node.getNode().getSequence());
+
+        TextArea seq = new TextArea(" Sequence: ");
+        seq.setEditable(false);
+        seq.setLayoutX(x); seq.setLayoutY(420);
+        seq.setText(node.getNode().getSequence().replaceAll("(.{25})", "$1" + System.getProperty("line.separator")));
+        seq.setPrefWidth(225); seq.setPrefHeight(25 * Math.ceil(node.getSequence().length() / 25));
+        seq.setStyle("-fx-text-box-border: transparent;-fx-background-color: none; -fx-background-insets: 0;"
+                + " -fx-padding: 1 3 1 3; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;");
 
         anchorGraphInfo.getChildren().addAll(idText, parentText, childText, inEdgeText,
                 outEdgeText, genomeText, seqLengthText, seqText);
@@ -369,7 +373,7 @@ public class GraphController {
         textField.setEditable(false);
         textField.setStyle("-fx-text-box-border: transparent;-fx-background-color: none; -fx-background-insets: 0;"
                 + " -fx-padding: 1 3 1 3; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;");
-        textField.setPrefSize(220, 25);
+        textField.setPrefSize(220, 20);
 
         return textField;
     }
@@ -409,7 +413,7 @@ public class GraphController {
 
 
     /**
-     * Highlights based on genomeID
+     * Highlights based on genomeID.
      * @param genomeID the GenomeID to highlight on.
      */
     public void highlightByGenome(int genomeID) {
@@ -418,10 +422,10 @@ public class GraphController {
         removeHighlight(oldMinMaxList);
         for (DrawableNode drawableNode: subGraph.getNodes().values()) {
             int[] genomes = drawableNode.getGenomes();
-            for (int i = 0; i < genomes.length; i++){
-               if (genomes[i] == genomeID && !(drawableNode.getNode() instanceof Dummy)) {
-                  drawNodeList.add(drawableNode);
-               }
+            for (int genome : genomes) {
+                if (genome == genomeID && !(drawableNode.getNode() instanceof Dummy)) {
+                    drawNodeList.add(drawableNode);
+                }
             }
         }
         oldGenomeList = drawNodeList;

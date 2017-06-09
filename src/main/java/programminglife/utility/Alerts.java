@@ -66,7 +66,7 @@ public final class Alerts {
     }
 
     /**
-     * Alert method used to show the infomation from the group.
+     * Alert method used to show the information from the group.
      */
     public static void infoAboutAlert() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);

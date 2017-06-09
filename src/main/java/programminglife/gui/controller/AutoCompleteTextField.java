@@ -28,6 +28,9 @@ public class AutoCompleteTextField extends TextField {
     private ContextMenu entriesPopup;
 
 
+    /**
+     * Constructor for the auto complete TextField.
+     */
     public AutoCompleteTextField() {
         super();
         this.entries = new TreeSet<>();
@@ -37,13 +40,13 @@ public class AutoCompleteTextField extends TextField {
     }
 
     /**
-     * "Suggestion" specific listners
+     * "Suggestion" specific listeners.
      */
     private void setListener() {
         //Add "suggestions" by changing text
         textProperty().addListener((observable, oldValue, newValue) -> {
             String enteredText = getText();
-            //always hide suggestion if nothing has been entered (only "spacebars" are dissalowed in TextFieldWithLengthLimit)
+            //always hide suggestion if nothing has been entered ("space bar" is disallowed in TextFieldWithLengthLimit)
             if (enteredText == null || enteredText.isEmpty()) {
                 entriesPopup.hide();
             } else {
@@ -66,9 +69,7 @@ public class AutoCompleteTextField extends TextField {
         });
 
         //Hide always by focus-in (optional) and out
-        focusedProperty().addListener((observableValue, oldValue, newValue) -> {
-            entriesPopup.hide();
-        });
+        focusedProperty().addListener((observableValue, oldValue, newValue) -> entriesPopup.hide());
     }
 
 
@@ -76,8 +77,9 @@ public class AutoCompleteTextField extends TextField {
      * Populate the entry set with the given search results. Display is limited to 10 entries, for performance.
      *
      * @param searchResult The set of matching strings.
+     * @param searchRequest String of the request to be processed.
      */
-    private void populatePopup(List<String> searchResult, String searchReauest) {
+    private void populatePopup(List<String> searchResult, String searchRequest) {
         //List of "suggestions"
         List<CustomMenuItem> menuItems = new LinkedList<>();
         //List size - 10 or founded suggestions count
@@ -88,7 +90,7 @@ public class AutoCompleteTextField extends TextField {
             final String result = searchResult.get(i);
             //label with graphic (text flow) to highlight founded subtext in suggestions
             Label entryLabel = new Label();
-            entryLabel.setGraphic(buildTextFlow(result, searchReauest));
+            entryLabel.setGraphic(buildTextFlow(result, searchRequest));
             entryLabel.setPrefHeight(10);  //don't sure why it's changed with "graphic"
             CustomMenuItem item = new CustomMenuItem(entryLabel, true);
             menuItems.add(item);
@@ -112,7 +114,9 @@ public class AutoCompleteTextField extends TextField {
      *
      * @return The existing autocomplete entries.
      */
-    public SortedSet<String> getEntries() { return entries; }
+    public SortedSet<String> getEntries() {
+        return entries;
+    }
 
     /**
      * Build TextFlow with selected text. Return "case" dependent.
@@ -125,7 +129,8 @@ public class AutoCompleteTextField extends TextField {
         int filterIndex = text.toLowerCase().indexOf(filter.toLowerCase());
         Text textBefore = new Text(text.substring(0, filterIndex));
         Text textAfter = new Text(text.substring(filterIndex + filter.length()));
-        Text textFilter = new Text(text.substring(filterIndex,  filterIndex + filter.length())); //instead of "filter" to keep all "case sensitive"
+        //instead of "filter" to keep all "case sensitive"
+        Text textFilter = new Text(text.substring(filterIndex,  filterIndex + filter.length()));
         textFilter.setFill(Color.ORANGE);
         textFilter.setFont(Font.font("Helvetica", FontWeight.BOLD, 12));
         return new TextFlow(textBefore, textFilter, textAfter);

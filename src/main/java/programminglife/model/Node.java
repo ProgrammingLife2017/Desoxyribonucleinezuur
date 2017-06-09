@@ -27,7 +27,7 @@ public interface Node {
      * Returns the childEdges {@link Collection} of the node {@link Node}.
      * @return childEdges {@link Collection} are the edges to the children of the {@link Node}.
      */
-    Collection<? extends Edge> getChildEdges();
+    Collection getChildEdges();
 
     /**
      * Returns the parentEdges {@link Collection} of the node {@link Node}.
@@ -60,7 +60,7 @@ public interface Node {
     String getSequence();
 
     /**
-     * getter for sequencelength.
+     * getter for sequenceLength.
      * @return int with length of the sequence.
      */
     int getSequenceLength();

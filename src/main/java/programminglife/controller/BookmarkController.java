@@ -7,6 +7,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import programminglife.model.Bookmark;
 import programminglife.utility.Alerts;
+import programminglife.utility.Console;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -119,7 +120,7 @@ public final class BookmarkController {
             DOMSource source = new DOMSource(doc);
             StreamResult streamResult = new StreamResult(new File(fileName));
             transformer.transform(source, streamResult);
-            System.out.println("Created bookmark " + bookmark.getBookmarkName() + " Center Node: " + bookmark.getNodeID()
+            Console.println("Created bookmark " + bookmark.getBookmarkName() + " Center Node: " + bookmark.getNodeID()
                     + " Radius: " + bookmark.getRadius());
             return true;
         } catch (ParserConfigurationException | SAXException | IOException | TransformerException pce) {
@@ -212,8 +213,7 @@ public final class BookmarkController {
             DocumentBuilder builder = factory.newDocumentBuilder();
             dom = builder.parse(fileName);
             dom.getDocumentElement().normalize();
-            Element doc = dom.getDocumentElement();
-            return doc;
+            return dom.getDocumentElement();
         } catch (ParserConfigurationException | SAXException | IOException e) {
             Alerts.error("Bookmark file error");
         }
@@ -292,7 +292,7 @@ public final class BookmarkController {
     /**
      * Parses a list of bookmark nodes and returns them.
      * @param graphName The file these bookmarks are about.
-     * @param bookmarks The nodelist containing all bookmarks
+     * @param bookmarks The nodeList containing all bookmarks
      * @return A bookmark represented by the element
      */
     private static List<Bookmark> parseBookmarks(String graphName, NodeList bookmarks) {

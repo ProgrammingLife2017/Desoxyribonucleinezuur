@@ -15,7 +15,7 @@ public class Dummy implements Node {
 
     /**
      * Create a dummy node.
-     * @param id The id of this dummynode (must be negative)
+     * @param id The id of this dummyNode (must be negative)
      * @param child {@link Node} is the child node.
      * @param link {@link Link} the link between two segments in which this dummy node gets drawn.
      * @param parent {@link Node} is the parent node.

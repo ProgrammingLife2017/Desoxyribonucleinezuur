@@ -4,7 +4,6 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 /**
- * Created by Martijn van Meerten and Iwan Hoogenboom on 15-5-2017.
  * Class representing a bookmark. Consists of a location and radius.
  */
 public class Bookmark {

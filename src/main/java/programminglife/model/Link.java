@@ -12,7 +12,7 @@ public class Link implements Edge {
      * Constructor for Link.
      * @param start the start (parent) of this Link
      * @param end the end (child) of this Link
-     * @param genomes Thegenomes that flow through this Link.
+     * @param genomes The genomes that flow through this Link.
      */
     public Link(Node start, Node end, int[] genomes) {
         this.start = start;
