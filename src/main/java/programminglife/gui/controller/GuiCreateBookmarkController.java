@@ -2,20 +2,20 @@ package programminglife.gui.controller;
 
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import programminglife.controller.BookmarkController;
+import programminglife.model.Bookmark;
+import programminglife.utility.Alerts;
 
 /**
  * Class for the GuiCreateBookmarkController. This class handles the FXML file that comes with it.
  */
 public class GuiCreateBookmarkController {
 
-    private String graphName;
-    private GraphController graphController;
+    private GuiController guiController;
 
     @FXML private Button btnOk;
     @FXML private Button btnCancel;
@@ -23,6 +23,10 @@ public class GuiCreateBookmarkController {
     @FXML private TextField txtId;
     @FXML private TextField txtRadius;
     @FXML private TextArea txtDescription;
+    private int inputRadius;
+    private int inputCenter;
+    private String bookmarkName;
+    private String bookmarkDescription;
 
     /**
      * Initialize method for BookmarkController.
@@ -30,6 +34,7 @@ public class GuiCreateBookmarkController {
     @FXML
     @SuppressWarnings("unused")
     public void initialize() {
+        txtDescription.setWrapText(true);
         initButtons();
     }
 
@@ -38,97 +43,46 @@ public class GuiCreateBookmarkController {
      */
     private void initButtons() {
         btnOk.setOnAction(event -> {
-            if (txtBookmarkName.getText().contains(" ")) {
-                nameSpaceAlert();
-            } else if (txtBookmarkName.getText().matches(".*\\d+.*")) {
-                nameIntAlert();
-            } else if (!txtId.getText().matches("^[1-9]\\d*$")) {
-                intAlert("Center Node");
-            } else if (Integer.parseInt(txtId.getText()) > graphController.getGraph().size()) {
-                sizeAlert(graphController.getGraph().size());
-            } else if (!txtRadius.getText().matches("^[1-9]\\d*$")) {
-               intAlert("radius");
-            } else {
-                BookmarkController.storeBookmark(graphName, txtBookmarkName.getText(), txtDescription.getText(),
-                        Integer.parseInt(txtId.getText()), Integer.parseInt(txtRadius.getText()));
-                Stage s = (Stage) btnOk.getScene().getWindow();
-                s.close();
+            String name = guiController.getGraphController().getGraph().getID();
+            try {
+                inputCenter = Integer.parseInt(txtId.getText());
+                inputRadius = Integer.parseInt(txtRadius.getText());
+                bookmarkName = txtBookmarkName.getText();
+                bookmarkDescription = txtDescription.getText();
+                Bookmark bookmark = new Bookmark(name, guiController.getFile().getAbsolutePath(),
+                        inputCenter, inputRadius, bookmarkName, bookmarkDescription);
+                if (!guiController.getGraphController().getGraph().contains(inputCenter)) {
+                    Alerts.warning("Center node is not present in graph");
+                } else if (inputRadius < 0) {
+                    Alerts.warning("Radius can only contain positive integers");
+                } else if (bookmarkName.length() == 0) {
+                    Alerts.warning("Bookmark must contain a name");
+                } else if (!bookmarkName.matches("\\S|\\S.*\\S")) {
+                    Alerts.warning("Bookmark name must begin and end with a non whitespace character");
+                } else if (!BookmarkController.storeBookmark(bookmark)) {
+                    Alerts.warning("Bookmarks must have unique names in files");
+                } else {
+                    ((Stage) btnOk.getScene().getWindow()).close();
+                }
+            } catch (NumberFormatException e) {
+                Alerts.warning("Center node and radius input should be numeric values below 2 billion");
             }
+
         });
-        btnCancel.setOnAction(event -> {
-            Stage s = (Stage) btnCancel.getScene().getWindow();
-            s.close();
-        });
+        btnCancel.setOnAction(event -> ((Stage) btnCancel.getScene().getWindow()).close());
+    }
+
+    void setGuiController(GuiController guiController) {
+        this.guiController = guiController;
     }
 
     /**
-     * Alert for title if numbers are in name.
+     * Set the text in the center node and radius areas.
+     * @param center The text to fill the center area with
+     * @param radius The text to fill the radius area with
      */
-    private void nameIntAlert() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Name error");
-        alert.setHeaderText(null);
-        alert.setContentText("Title can not contains numbers");
-        alert.show();
-    }
-
-    /**
-     * Alert for when node id is too large for graph size.
-     * @param size The size of the graph
-     */
-    private void sizeAlert(int size) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Center Node error");
-        alert.setHeaderText(null);
-        alert.setContentText("Center Node is larger than graph size: " + size);
-        alert.show();
-    }
-
-    /**
-     * Check bookmark for positive integers.
-     * @param field The field that is not an integer
-     */
-    private void intAlert(String field) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(field + " error");
-        alert.setContentText("Bookmark " + field + " can only contains positive integers");
-        alert.setHeaderText(null);
-        alert.show();
-    }
-
-    /**
-     * Alerts the user if a space is present in the bookmark name.
-     */
-    private void nameSpaceAlert() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Name error");
-        alert.setContentText("Bookmark name can not contain spaces");
-        alert.setHeaderText(null);
-        alert.show();
-    }
-
-    /**
-     * Getter for the Ok Button.
-     * @return Button.
-     */
-    public Button getBtnOk() {
-        return btnOk;
-    }
-
-    /**
-     * Getter for the Cancel Button.
-     * @return Button.
-     */
-    public Button getBtnCancel() {
-        return btnCancel;
-    }
-
-    /**
-     * Set the graphcontroller.
-     * @param graphController The graphcontroller.
-     */
-    public void setGraphController(GraphController graphController) {
-        this.graphController = graphController;
-        this.graphName = graphController.getGraph().getID();
+    void setText(String center, String radius) {
+        txtId.setText(center);
+        txtRadius.setText(radius);
     }
 }

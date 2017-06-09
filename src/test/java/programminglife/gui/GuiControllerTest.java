@@ -1,6 +1,5 @@
 package programminglife.gui;
 
-import javafx.scene.Group;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
@@ -9,17 +8,16 @@ import org.testfx.api.FxRobot;
 import org.testfx.api.FxToolkit;
 import org.testfx.util.WaitForAsyncUtils;
 import programminglife.ProgrammingLife;
-import programminglife.model.DataManager;
+import programminglife.parser.Cache;
+import programminglife.utility.Console;
 
 import java.io.File;
-import java.io.IOException;
+import java.io.PrintStream;
 import java.net.URISyntaxException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 /**
  * This test class is there to interactively test the GUI. It is capable of clicking on certain buttons and items
@@ -27,8 +25,9 @@ import static org.junit.Assert.fail;
  * This is only usable if you have a USA QWERTY layout on your keyboard!!!
  */
 public class GuiControllerTest extends FxRobot {
-    private static final String TEST_DB = "test.db";
-    private static final String TEST_File = "/test.gfa";
+    private static final String TEST_DB = "test-gui.gfa.db";
+    private static final String TEST_File = "/test-gui.gfa";
+    private static final String TEST_DB2 = "test-gui.db";
 
     private static Stage primaryStage;
     private static String operatingSystem;
@@ -38,7 +37,7 @@ public class GuiControllerTest extends FxRobot {
 
     public GuiControllerTest() {
         try {
-            testFileName = new File(getClass().getResource("/test.gfa").toURI()).getAbsolutePath();
+            testFileName = new File(getClass().getResource(TEST_File).toURI()).getAbsolutePath();
         } catch (URISyntaxException e) {
             e.printStackTrace();
             fail();
@@ -47,7 +46,6 @@ public class GuiControllerTest extends FxRobot {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        DataManager.initialize(TEST_DB);
         operatingSystem = System.getProperty("os.name").toLowerCase();
         primaryStage = FxToolkit.registerPrimaryStage();
     }
@@ -60,15 +58,16 @@ public class GuiControllerTest extends FxRobot {
 
     @After
     public void tearDown() throws Exception {
-        DataManager.clearDB(TEST_DB);
-        DataManager.removeDB(TEST_File);
+        Cache.removeDB(TEST_DB);
+        Cache.removeDB(TEST_File);
         FxToolkit.cleanupApplication(this.pl);
     }
 
     @AfterClass
     public static void tearDownClass() throws Exception {
-        DataManager.removeDB(TEST_DB);
-        DataManager.removeDB(TEST_File);
+        Console.setOut(new PrintStream(System.out));
+        Cache.removeDB(TEST_DB);
+        Cache.removeDB(TEST_File);
     }
 
     @Test
@@ -85,15 +84,12 @@ public class GuiControllerTest extends FxRobot {
         openAndParseFile(testFileName);
 
         clickOn("#txtMaxDrawDepth").type(KeyCode.BACK_SPACE);
-        clickOn("#txtMaxDrawDepth").type(KeyCode.DIGIT9);
+        clickOn("#txtMaxDrawDepth").type(KeyCode.DIGIT4);
         clickOn("#txtCenterNode").type(KeyCode.BACK_SPACE);
         clickOn("#txtCenterNode").type(KeyCode.DIGIT2);
         clickOn("#btnDraw");
         assertEquals("2", ((TextField) lookup("#txtCenterNode").query()).getCharacters().toString());
-        assertEquals("9", ((TextField) lookup("#txtMaxDrawDepth").query()).getCharacters().toString());
-        assertEquals(2 * 7 + 8, ((Group) lookup("#grpDrawArea").query()).getChildren().size());
-        clickOn("#btnZoomIn");
-        clickOn("#btnZoomOut");
+        assertEquals("4", ((TextField) lookup("#txtMaxDrawDepth").query()).getCharacters().toString());
         clickOn("#btnZoomReset");
         clickOn("#btnDrawRandom");
         sleep(500);

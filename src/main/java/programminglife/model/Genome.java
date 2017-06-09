@@ -1,9 +1,12 @@
 package programminglife.model;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.TreeMap;
 
 /**
- * Created by Ivo on 2017-05-17.
+ * The class that handles the genomes.
  */
 public class Genome {
     private String name;
@@ -13,24 +16,31 @@ public class Genome {
      * The Integer represents the coordinate of the first base pair of the Segment it maps to.
      */
     private TreeMap<Integer, Segment> segments;
+    private int length;
 
     /**
-     * Constructor for a Genome. The coordinates are used as is, so modifying it will also modify this Genome!
-     * This is done for the sake of performance.
+     * Constructor for {@link Genome}, no segments added.
+     * @param name the name of the {@link Genome}
+     */
+    public Genome(String name) {
+        this(name, new LinkedList<>());
+    }
+
+    /**
+     * Constructor for a Genome.
+     *
+     * It adds the given segments in order.
      * @param name The name of this Genome.
      * @param segments A list of segments, sorted in the order in which they appear in this Genome.
      */
     public Genome(String name, List<Segment> segments) {
         this.name = name;
+        this.length = 0;
         this.segments = new TreeMap<>();
 
         // TODO: verify (assert) that the order of segments is correct.
 
-        int coordinate = 1; // coordinates are 1 based.
-        for (Segment s : segments) {
-            this.segments.put(coordinate, s);
-            coordinate += s.getSequenceLength();
-        }
+        segments.forEach(this::addSegment);
     }
 
     /**
@@ -39,6 +49,10 @@ public class Genome {
      * @return The Segment that contains the base pair.
      */
     public Segment getSegment(int coordinate) {
+        if (coordinate > this.length()) {
+            throw new NoSuchElementException(String.format("There is no segment at coordinate %d in genome %s",
+                    coordinate, this.getName()));
+        }
         return segments.floorEntry(coordinate).getValue();
     }
 
@@ -56,5 +70,32 @@ public class Genome {
      */
     public Segment getEnd() {
         return this.segments.lastEntry().getValue();
+    }
+
+    /**
+     * Get the name of the {@link Genome}.
+     * @return its name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Add a {@link Segment} to this {@link Genome}.
+     * @param segment the specific {@link Segment}
+     */
+    public void addSegment(Segment segment) {
+        this.segments.put(this.length + 1, segment);
+        this.length += segment.getSequenceLength();
+    }
+
+    /**
+     * The number of base pairs in this {@link Genome}.
+     *
+     * In other words, the sum of lengths of sequences in this {@link Genome}.
+     * @return the number of base pairs
+     */
+    public int length() {
+        return this.length;
     }
 }

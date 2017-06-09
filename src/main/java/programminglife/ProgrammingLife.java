@@ -12,14 +12,17 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import programminglife.gui.controller.GuiController;
+import programminglife.parser.Cache;
+import programminglife.utility.Alerts;
+import programminglife.utility.Console;
 
 import java.awt.*;
-import java.text.SimpleDateFormat;
-import java.util.Locale;
+import java.io.File;
+import java.io.IOException;
 import java.util.Optional;
 
 /**
- * Created by Martijn van Meerten on 25-4-2017.
  * Main class for starting the application.
  */
 
@@ -27,11 +30,6 @@ public final class ProgrammingLife extends Application {
 
     private static Stage primaryStage;
     private static VBox vbox;
-
-    private static final String DATA_FOLDER = "data/";
-    private static final String TB_DATA = DATA_FOLDER + "real/TB10.gfa";
-    private static final String HUMAN_DATA = DATA_FOLDER + "real/chr19.hg38.w115.gfa";
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("m:ss.SSS", Locale.getDefault());
 
     /**
      * Main method for the application.
@@ -42,14 +40,16 @@ public final class ProgrammingLife extends Application {
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) throws IOException {
         GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         int screenWidth = gd.getDisplayMode().getWidth();
         int screenHeight = gd.getDisplayMode().getHeight();
 
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Basic_Gui.fxml"));
+
+        vbox = loader.load();
         primaryStage = stage;
         primaryStage.setTitle("Programming Life");
-        vbox = FXMLLoader.load(getClass().getResource("/Basic_Gui.fxml"));
         primaryStage.setScene(new Scene(vbox, 0.8 * screenWidth, 0.8 * screenHeight));
         primaryStage.setOnCloseRequest(confirmCloseEventHandler);
         Button close = new Button("Close Application");
@@ -58,6 +58,31 @@ public final class ProgrammingLife extends Application {
         );
         primaryStage.sizeToScene();
         primaryStage.show();
+
+        GuiController ctrl = loader.getController();
+        try {
+            arguments(ctrl);
+        } catch (IOException e) {
+            Alerts.warning("An error occurred opening the specified file!");
+        }
+    }
+
+    /**
+     * Process command line arguments.
+     * @param guiCtrl the {@link GuiController}, needed for opening files
+     * @throws IOException if a specified file cannot be opened
+     */
+    private void arguments(GuiController guiCtrl) throws IOException {
+        Parameters params = this.getParameters();
+        if (params.getNamed().containsKey("file")) {
+            String fileName = params.getNamed().get("file");
+            File file = new File(fileName);
+            if (params.getUnnamed().contains("--clean")) {
+                boolean removed = Cache.removeDB(file.getName());
+                Console.println("[%s] Removed: %b", Thread.currentThread().getName(), removed);
+            }
+            guiCtrl.openFile(file);
+        }
     }
 
     /**
@@ -73,12 +98,14 @@ public final class ProgrammingLife extends Application {
         closeConfirmation.initOwner(primaryStage);
 
         Optional<ButtonType> closeResponse = closeConfirmation.showAndWait();
-        if (!ButtonType.OK.equals(closeResponse.get())) {
-            event.consume();
-        } else {
-            Platform.exit();
-            System.exit(0);
-        }
+        closeResponse.ifPresent(buttonType -> {
+            if (!ButtonType.OK.equals(buttonType)) {
+                event.consume();
+            } else {
+                Platform.exit();
+                System.exit(0);
+            }
+        });
     };
 
     /**

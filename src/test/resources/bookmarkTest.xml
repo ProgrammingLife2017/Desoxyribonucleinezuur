@@ -1,10 +1,13 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><graphs>
-    <test>
-        <testbm>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<graphs>
+    <graph>
+        <name>test</name>
+        <bookmark>
             <name>testbm</name>
             <ID>2</ID>
             <radius>6</radius>
             <description>testing</description>
-        </testbm>
-    </test>
+            <path>dummypath</path>
+        </bookmark>
+    </graph>
 </graphs>

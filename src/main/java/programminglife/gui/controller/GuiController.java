@@ -1,18 +1,24 @@
 package programminglife.gui.controller;
 
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Bounds;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.*;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -20,15 +26,23 @@ import javafx.stage.Stage;
 import jp.uphy.javafx.console.ConsoleView;
 import programminglife.ProgrammingLife;
 import programminglife.model.GenomeGraph;
-import programminglife.model.exception.UnknownTypeException;
 import programminglife.parser.GraphParser;
-import programminglife.utility.FileProgressCounter;
+import programminglife.utility.Alerts;
+import programminglife.utility.Console;
+import programminglife.utility.NumbersOnlyListener;
+import programminglife.utility.ProgressCounter;
 
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.Random;
+import java.util.Scanner;
 
 /**
  * The controller for the GUI that is used in the application.
@@ -38,52 +52,47 @@ public class GuiController implements Observer {
     //static finals
     private static final String INITIAL_CENTER_NODE = "1";
     private static final String INITIAL_MAX_DRAW_DEPTH = "10";
-    private static final double INSTRUCTIONS_MIN_WIDTH = 800;
-    private static final double ABOUT_MIN_WIDTH = 500;
 
     //FXML imports.
     @FXML private MenuItem btnOpen;
     @FXML private MenuItem btnQuit;
-    @FXML private MenuItem btnCreateBookmark;
     @FXML private MenuItem btnBookmarks;
     @FXML private MenuItem btnAbout;
     @FXML private MenuItem btnInstructions;
     @FXML private Menu menuRecent;
     @FXML private RadioMenuItem btnToggle;
-    @FXML private Button btnZoomIn;
-    @FXML private Button btnZoomOut;
     @FXML private Button btnZoomReset;
-    @FXML private Button btnTranslate;
     @FXML private Button btnTranslateReset;
     @FXML private Button btnDraw;
     @FXML private Button btnDrawRandom;
-    @FXML private Menu menuBookmark;
+    @FXML private Button btnBookmark;
+    @FXML private Button btnClipboard;
+    @FXML private Button btnClipboard2;
+    @FXML private Button btnHighlight;
+    @FXML private ProgressBar progressBar;
 
     @FXML private TextField txtMaxDrawDepth;
     @FXML private TextField txtCenterNode;
 
     @FXML private Group grpDrawArea;
     @FXML private AnchorPane anchorLeftControlPanel;
+    @FXML private AnchorPane anchorGraphPanel;
+    @FXML private AnchorPane anchorGraphInfo;
 
-    //Privates used by method.
-    private String informationText = "Open a gfa file, wait for it to be parsed.\n"
-            + "Give the start node and the amount of layers (depth) to be drawn on the left.\n\n"
-            + "Zoom using the zoom buttons or alt + scrollwheel.\n"
-            + "Move the graph by pressing alt + dragging a node or edge.\n"
-            + "Reset the zoom with reset zoom and jump back to the beginning"
-            + " of the drawn graph with the Reset X/Y button.\n"
-            + "The suprise me! button chooses a random start node and draws with the depth you gave.";
-    private ConsoleView consoleView;
     private double orgSceneX, orgSceneY;
     private double orgTranslateX, orgTranslateY;
-    private int translateX;
-    private int translateY;
+    private double scale;
     private GraphController graphController;
     private File file;
     private File recentFile = new File("Recent.txt");
     private String recentItems = "";
-
     private Thread parseThread;
+
+    private static final double MAX_SCALE = 5.0d;
+    private static final double MIN_SCALE = .02d;
+    private static final double ZOOM_FACTOR = 1.05d;
+
+
 
     /**
      * The initialize will call the other methods that are run in the .
@@ -91,25 +100,33 @@ public class GuiController implements Observer {
     @FXML
     @SuppressWarnings("unused")
     private void initialize() {
-        this.graphController = new GraphController(null, this.grpDrawArea);
+        this.graphController = new GraphController(null, this.grpDrawArea, this.anchorGraphInfo);
         initRecent();
-        initMenubar();
+        initMenuBar();
         initBookmarkMenu();
         initLeftControlpanelScreenModifiers();
         initLeftControlpanelDraw();
         initMouse();
-        consoleView = initConsole();
-        this.graphController.setConsole(consoleView);
+        initShowInfoTab();
+        initConsole();
+        initLeftControlpanelHighlight();
     }
 
     /**
      * Open and parse a file.
      * @param file The {@link File} to open.
      * @throws IOException if the {@link File} is not found.
-     * @throws UnknownTypeException if the {@link File} is not compliant with the GFA standard.
+     * @return the parser to be notified when it is finished
      */
-    public void openFile(File file) throws IOException, UnknownTypeException {
+    public GraphParser openFile(File file) throws IOException {
         if (file != null) {
+            if (this.graphController != null && this.graphController.getGraph() != null) {
+                this.graphController.getGraph().close();
+                this.grpDrawArea.getChildren().clear();
+            }
+
+            disableGraphUIElements(true);
+
             GraphParser graphParser = new GraphParser(file);
             graphParser.addObserver(this);
             graphParser.getProgressCounter().addObserver(this);
@@ -119,7 +136,12 @@ public class GuiController implements Observer {
             }
             this.parseThread = new Thread(graphParser);
             this.parseThread.start();
+            this.setFile(file);
+
+            return graphParser;
         }
+
+        return null;
     }
 
     @Override
@@ -128,18 +150,20 @@ public class GuiController implements Observer {
             if (arg instanceof GenomeGraph) {
                 GenomeGraph graph = (GenomeGraph) arg;
 
-                System.out.printf("[%s] File Parsed.\n", Thread.currentThread().getName());
+                Console.println("[%s] File Parsed.", Thread.currentThread().getName());
 
                 this.setGraph(graph);
             } else if (arg instanceof Exception) {
                 Exception e = (Exception) arg;
-                // TODO find out a smart way to catch Exceptions across threads
-                throw new RuntimeException(e);
+                e.printStackTrace();
+                Alerts.error(e.getMessage());
             }
-        } else if (o instanceof FileProgressCounter) {
-            FileProgressCounter progress = (FileProgressCounter) o;
-            if (progress.getLineCount() % 250 == 0) {
-                System.out.println(progress);
+        } else if (o instanceof ProgressCounter) {
+            progressBar.setVisible(true);
+            ProgressCounter progress = (ProgressCounter) o;
+            this.getProgressBar().setProgress(progress.percentage());
+            if (progressBar.getProgress() == 1.0d) {
+                progressBar.setVisible(false);
             }
         }
     }
@@ -151,12 +175,14 @@ public class GuiController implements Observer {
     public void setGraph(GenomeGraph graph) {
         this.graphController.setGraph(graph);
         disableGraphUIElements(graph == null);
+        Platform.runLater(() -> {
+            assert graph != null;
+            ProgrammingLife.getStage().setTitle(graph.getID());
+        });
 
         if (graph != null) {
-            System.out.printf("[%s] Graph was set to %s.\n", Thread.currentThread().getName(), graph.getID());
-            System.out.printf("[%s] The graph has %d nodes\n", Thread.currentThread().getName(), graph.size());
-        } else {
-            System.out.printf("[%s] graph was set to null.\n", Thread.currentThread().getName());
+            Console.println("[%s] Graph was set to %s.", Thread.currentThread().getName(), graph.getID());
+            Console.println("[%s] The graph has %d nodes", Thread.currentThread().getName(), graph.size());
         }
     }
 
@@ -165,39 +191,33 @@ public class GuiController implements Observer {
      */
     private void initRecent() {
         try {
-            Files.createFile(new File("Recent.txt").toPath());
+            Files.createFile(recentFile.toPath());
         } catch (FileAlreadyExistsException e) {
             //This will always happen if a user has used the program before.
             //Therefore it is unnecessary to handle further.
         } catch (IOException e) {
-            Alert a = new Alert(Alert.AlertType.ERROR);
-            a.setTitle("ERROR");
-            a.setContentText("Cannot create a file here, try again.");
+            Alerts.error("This file can't be opened");
             return;
         }
         if (recentFile != null) {
-            try {
-                Scanner sc = new Scanner(recentFile);
+            try (Scanner sc = new Scanner(recentFile)) {
+                menuRecent.getItems().clear();
                 while (sc.hasNextLine()) {
                     String next = sc.nextLine();
                     MenuItem mi = new MenuItem(next);
                     mi.setOnAction(event -> {
                         try {
-                            openFile(new File(mi.getText()));
-                        } catch (IOException | UnknownTypeException e) {
-                            (new Alert(Alert.AlertType.ERROR,
-                                    "This file can't be opened!",
-                                    ButtonType.CLOSE)).show();
+                            file = new File(mi.getText());
+                            openFile(file);
+                        } catch (IOException e) {
+                            Alerts.error("This file can't be opened");
                         }
                     });
                     menuRecent.getItems().add(mi);
-                    recentItems = recentItems.concat(next + "\n");
+                    recentItems = recentItems.concat(next + System.getProperty("line.separator"));
                 }
-                sc.close();
             } catch (FileNotFoundException e) {
-                (new Alert(Alert.AlertType.ERROR,
-                        "This file cannot be found!",
-                        ButtonType.CLOSE)).show();
+                Alerts.error("This file can't be found");
             }
         }
     }
@@ -207,7 +227,7 @@ public class GuiController implements Observer {
      * Sets the action for the open MenuItem.
      * Sets the event for the quit MenuItem.
      */
-    private void initMenubar() {
+    private void initMenuBar() {
         btnOpen.setOnAction((ActionEvent event) -> {
             FileChooser fileChooser = new FileChooser();
             final ExtensionFilter extFilterGFA = new ExtensionFilter("GFA files (*.gfa)", "*.GFA");
@@ -218,70 +238,40 @@ public class GuiController implements Observer {
             }
             try {
                 file = fileChooser.showOpenDialog(ProgrammingLife.getStage());
-                this.openFile(file);
-                try (BufferedWriter fw = new BufferedWriter(new FileWriter(recentFile, true))) {
-                    if (!recentItems.contains(file.getAbsolutePath())) {
-                        fw.write(file.getAbsolutePath() + "\n");
-                        fw.flush();
-                        fw.close();
-                    }
-                } catch (IOException e) {
-                    (new Alert(Alert.AlertType.ERROR,
-                            "Can't update the file containing the recently opened files!",
-                            ButtonType.CLOSE)).show();
+                if (file != null) {
+                    this.openFile(file);
+                    updateRecent();
                 }
             } catch (FileNotFoundException e) {
-                (new Alert(Alert.AlertType.ERROR,
-                        "This file was not found!",
-                        ButtonType.CLOSE)).show();
-            } catch (UnknownTypeException e) {
-                (new Alert(Alert.AlertType.ERROR,
-                        "This file is malformed!",
-                        ButtonType.CLOSE)).show();
+                Alerts.error("This file can't be found");
             } catch (IOException e) {
-                (new Alert(Alert.AlertType.ERROR,
-                        "An unexpected filesystem error occurred!",
-                        ButtonType.CLOSE)).show();
+                Alerts.error("This file can't be opened");
             }
         });
 
-        btnQuit.setOnAction(event -> {
-            Alert a = new Alert(Alert.AlertType.CONFIRMATION);
-            a.setTitle("Confirm Exit");
-            a.setHeaderText("Do you really want to exit?");
-            Optional<ButtonType> result = a.showAndWait();
-            if (result.isPresent()) {
-                if (result.get() == ButtonType.OK) {
-                    Platform.exit();
-                    System.exit(0);
-                }
-                if (result.get() == ButtonType.CANCEL) {
-                    a.close();
-                }
+        btnOpen.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCodeCombination.CONTROL_DOWN));
+        btnQuit.setOnAction(event -> Alerts.quitAlert());
+        btnQuit.setAccelerator(new KeyCodeCombination(KeyCode.E, KeyCodeCombination.CONTROL_DOWN));
+        btnAbout.setOnAction(event -> Alerts.infoAboutAlert());
+        btnAbout.setAccelerator(new KeyCodeCombination(KeyCode.I, KeyCodeCombination.CONTROL_DOWN));
+        btnInstructions.setOnAction(event -> Alerts.infoInstructionAlert());
+        btnInstructions.setAccelerator(new KeyCodeCombination(KeyCode.H, KeyCodeCombination.CONTROL_DOWN));
+    }
+
+    /**
+     * Updates the recent files file after opening a file.
+     */
+    private void updateRecent() {
+        try (BufferedWriter recentWriter = new BufferedWriter(new FileWriter(recentFile, true))) {
+            if (!recentItems.contains(file.getAbsolutePath())) {
+                recentWriter.write(file.getAbsolutePath() + System.getProperty("line.separator"));
+                recentWriter.flush();
+                recentWriter.close();
+                initRecent();
             }
-        });
-
-        btnAbout.setOnAction(event -> {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("About");
-            alert.setHeaderText(null);
-            alert.setResizable(true);
-            alert.getDialogPane().setMinWidth(ABOUT_MIN_WIDTH);
-            alert.setContentText("This application is made by Contextproject group Desoxyribonucleïnezuur:\n\n"
-                    + "Ivo Wilms \n" + "Iwan Hoogenboom \n" + "Martijn van Meerten \n" + "Toine Hartman\n"
-                    + "Yannick Haveman");
-            alert.show();
-        });
-
-        btnInstructions.setOnAction(event -> {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Instructions");
-            alert.setHeaderText(null);
-            alert.setResizable(true);
-            alert.getDialogPane().setMinWidth(INSTRUCTIONS_MIN_WIDTH);
-            alert.setContentText(informationText);
-            alert.show();
-        });
+        } catch (IOException e) {
+            Alerts.error("This file can't be updated");
+        }
     }
 
     /**
@@ -294,18 +284,23 @@ public class GuiController implements Observer {
                 FXMLLoader loader = new FXMLLoader(ProgrammingLife.class.getResource("/LoadBookmarkWindow.fxml"));
                 AnchorPane page = loader.load();
                 GuiLoadBookmarkController gc = loader.getController();
-                gc.setGraphController(graphController);
-                gc.initColumns();
+                gc.setGuiController(this);
+                gc.initBookmarks();
+                if (this.graphController.getGraph() != null) {
+                    gc.setBtnCreateBookmarkActive(true);
+                }
                 Scene scene = new Scene(page);
                 Stage bookmarkDialogStage = new Stage();
+                bookmarkDialogStage.setResizable(false);
                 bookmarkDialogStage.setScene(scene);
                 bookmarkDialogStage.setTitle("Load Bookmark");
                 bookmarkDialogStage.initOwner(ProgrammingLife.getStage());
                 bookmarkDialogStage.showAndWait();
             } catch (IOException e) {
-                (new Alert(Alert.AlertType.ERROR, "Bookmarks cannot be loaded.", ButtonType.CLOSE)).show();
+                Alerts.error("The bookmarks file can't be opened");
             }
         });
+        btnBookmarks.setAccelerator(new KeyCodeCombination(KeyCode.B, KeyCodeCombination.CONTROL_DOWN));
     }
 
     /**
@@ -314,7 +309,6 @@ public class GuiController implements Observer {
      */
     private void disableGraphUIElements(boolean isDisabled) {
         anchorLeftControlPanel.setDisable(isDisabled);
-        menuBookmark.setDisable(isDisabled);
     }
 
     /**
@@ -323,44 +317,13 @@ public class GuiController implements Observer {
     private void initLeftControlpanelScreenModifiers() {
         disableGraphUIElements(true);
 
-        btnTranslate.setOnAction(event -> {
-            GridPane root = new GridPane();
-            TextField f1 = new TextField();
-            root.add(new Label("X value"), 0, 0);
-            root.add(f1, 1, 0);
-            TextField f2 = new TextField();
-            root.add(new Label("Y value"), 0, 1);
-            root.add(f2, 1, 1);
-            Button ok = new Button("Translate");
-            root.add(ok, 1, 2);
-            Stage s = new Stage();
-            s.setScene(new Scene(root, 300, 200));
-            s.show();
-            ok.setOnAction(event2 -> {
-                this.translateX = Integer.valueOf(f1.getText());
-                this.translateY = Integer.valueOf(f2.getText());
-                grpDrawArea.setTranslateX(grpDrawArea.getTranslateX() + this.translateX);
-                grpDrawArea.setTranslateY(grpDrawArea.getTranslateY() + this.translateY);
-                s.close();
-            });
-        });
-//
         btnTranslateReset.setOnAction(event -> {
-            grpDrawArea.setTranslateX(0);
-            grpDrawArea.setTranslateY(0);
-        });
-
-        btnZoomIn.setOnAction(event -> {
-            grpDrawArea.setScaleX(grpDrawArea.getScaleX() + 0.05);
-            grpDrawArea.setScaleY(grpDrawArea.getScaleY() + 0.05);
-        });
-
-        btnZoomOut.setOnAction(event -> {
-            grpDrawArea.setScaleX(grpDrawArea.getScaleX() - 0.05);
-            grpDrawArea.setScaleY(grpDrawArea.getScaleY() - 0.05);
+            grpDrawArea.setTranslateX(graphController.getLocationCenterX());
+            grpDrawArea.setTranslateY(graphController.getLocationCenterY());
         });
 
         btnZoomReset.setOnAction(event -> {
+            scale = 1;
             grpDrawArea.setScaleX(1);
             grpDrawArea.setScaleY(1);
         });
@@ -372,36 +335,15 @@ public class GuiController implements Observer {
     private void initLeftControlpanelDraw() {
         disableGraphUIElements(true);
 
-        btnDraw.setOnAction(event -> {
-            System.out.printf("[%s] Drawing graph...\n", Thread.currentThread().getName());
-
-            int centerNode = 0;
-            int maxDepth = 0;
-
-            try {
-                centerNode = Integer.parseInt(txtCenterNode.getText());
-                maxDepth = Integer.parseInt(txtMaxDrawDepth.getText());
-            } catch (NumberFormatException e) {
-                Alert alert = new Alert(Alert.AlertType.WARNING, "Make sure you have entered a number as input.");
-                alert.show();
-            }
-
-            try {
-                this.graphController.clear();
-                this.graphController.draw(centerNode, maxDepth);
-                System.out.printf("[%s] Graph drawn.\n", Thread.currentThread().getName());
-            } catch (NoSuchElementException e) {
-                Alert alert = new Alert(Alert.AlertType.WARNING, "There is no node with this ID."
-                        + " Choose another start Node.", ButtonType.OK);
-                alert.show();
-            }
-        });
+        btnDraw.setOnAction(e -> this.draw());
 
         btnDrawRandom.setOnAction(event -> {
-            int randomNodeID = (int) Math.ceil(Math.random() * this.graphController.getGraph().size());
+            int randomNodeID = (new Random()).nextInt(this.graphController.getGraph().size() - 1) + 1;
             txtCenterNode.setText(Integer.toString(randomNodeID));
-            btnDraw.fire();
+            this.draw();
         });
+
+        btnBookmark.setOnAction(event -> buttonBookmark());
 
         txtMaxDrawDepth.textProperty().addListener(new NumbersOnlyListener(txtMaxDrawDepth));
         txtMaxDrawDepth.setText(INITIAL_MAX_DRAW_DEPTH);
@@ -411,24 +353,78 @@ public class GuiController implements Observer {
     }
 
     /**
-     * {@link ChangeListener} to make a {@link TextField} only accept numbers.
+     * Initializes the buttons and textFields that are used to highlight.
      */
-    private class NumbersOnlyListener implements ChangeListener<String> {
-        private final TextField tf;
+    private void initLeftControlpanelHighlight() {
 
-        /**
-         * Constructor for the Listener.
-         * @param tf {@link TextField} is the text field on which the listener listens
-         */
-        NumbersOnlyListener(TextField tf) {
-            this.tf = tf;
+        btnHighlight.setOnAction(event -> {
+            try {
+                FXMLLoader loader = new FXMLLoader(ProgrammingLife.class.getResource("/HighlightWindow.fxml"));
+                AnchorPane page = loader.load();
+                HighlightController gc = loader.getController();
+                gc.setGraphController(this.getGraphController());
+                gc.initMinMax();
+                gc.initGenome();
+                Scene scene = new Scene(page);
+                Stage highlightDialogStage = new Stage();
+                highlightDialogStage.setResizable(false);
+                highlightDialogStage.setScene(scene);
+                highlightDialogStage.setTitle("Highlights");
+                highlightDialogStage.initOwner(ProgrammingLife.getStage());
+                highlightDialogStage.showAndWait();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    /**
+     * Draw the current graph with current center node and depth settings.
+     */
+    void draw() {
+        Console.println("[%s] Drawing graph...", Thread.currentThread().getName());
+        int centerNode = 0;
+        int maxDepth = 0;
+        try {
+            centerNode = Integer.parseInt(txtCenterNode.getText());
+            try {
+                maxDepth = Integer.parseInt(txtMaxDrawDepth.getText());
+            } catch (NumberFormatException e) {
+                Alerts.warning("Radius is not a number, try again with a number as input.");
+            }
+        } catch (NumberFormatException e) {
+            Alerts.warning("Center node ID is not a number, try again with a number as input.");
         }
 
-        @Override
-        public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-            if (!newValue.matches("\\d")) {
-                tf.setText(newValue.replaceAll("[^\\d]", ""));
-            }
+        if (graphController.getGraph().contains(centerNode)) {
+            this.graphController.clear();
+            this.graphController.draw(centerNode, maxDepth);
+            Console.println("[%s] Graph drawn.", Thread.currentThread().getName());
+        } else {
+            Alerts.warning("The centernode is not a existing node, "
+                    + "try again with a number that exists as a node.");
+        }
+    }
+
+    /**
+     * Handles the events of the bookmark button.
+     */
+    private void buttonBookmark() {
+        try {
+            FXMLLoader loader = new FXMLLoader(ProgrammingLife.class.getResource("/CreateBookmarkWindow.fxml"));
+            AnchorPane page = loader.load();
+            GuiCreateBookmarkController gc = loader.getController();
+            gc.setGuiController(this);
+            gc.setText(txtCenterNode.getText(), txtMaxDrawDepth.getText());
+            Scene scene = new Scene(page);
+            Stage bookmarkDialogStage = new Stage();
+            bookmarkDialogStage.setResizable(false);
+            bookmarkDialogStage.setScene(scene);
+            bookmarkDialogStage.setTitle("Create Bookmark");
+            bookmarkDialogStage.initOwner(ProgrammingLife.getStage());
+            bookmarkDialogStage.showAndWait();
+        } catch (IOException e) {
+            Alerts.error("This bookmark cannot be created.");
         }
     }
 
@@ -436,66 +432,148 @@ public class GuiController implements Observer {
      * Initialises the mouse events.
      */
     private void initMouse() {
-        grpDrawArea.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
+        anchorGraphPanel.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
             orgSceneX = event.getSceneX();
             orgSceneY = event.getSceneY();
-            orgTranslateX = ((Group) (event.getSource())).getTranslateX();
-            orgTranslateY = ((Group) (event.getSource())).getTranslateY();
+            orgTranslateX = grpDrawArea.getTranslateX();
+            orgTranslateY = grpDrawArea.getTranslateY();
         });
-        grpDrawArea.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> {
-            if (event.isAltDown()) {
-                ((Group) (event.getSource())).setTranslateX(orgTranslateX + event.getSceneX() - orgSceneX);
-                ((Group) (event.getSource())).setTranslateY(orgTranslateY + event.getSceneY() - orgSceneY);
-            }
+        anchorGraphPanel.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> {
+            grpDrawArea.setTranslateX((orgTranslateX + event.getSceneX() - orgSceneX));
+            grpDrawArea.setTranslateY((orgTranslateY + event.getSceneY() - orgSceneY));
+            event.consume();
         });
-        grpDrawArea.addEventHandler(ScrollEvent.SCROLL, event -> {
-            if (event.isAltDown()) {
-                grpDrawArea.setScaleX(grpDrawArea.getScaleX() + event.getDeltaY() / 250);
-                grpDrawArea.setScaleY(grpDrawArea.getScaleY() + event.getDeltaY() / 250);
-            }
-        });
+        anchorGraphPanel.addEventHandler(ScrollEvent.SCROLL, event ->
+                zoom(event.getDeltaX(), event.getDeltaY(), event.getSceneX(), event.getSceneY(), ZOOM_FACTOR));
+    }
+
+    /**
+     * Handles the zooming in and out of the group.
+     * @param deltaX The scroll amount in the X direction. See {@link ScrollEvent#getDeltaX()}
+     * @param deltaY The scroll amount in the Y direction. See {@link ScrollEvent#getDeltaY()}
+     * @param sceneX double for the x location.
+     * @param sceneY double for the y location.
+     * @param delta double the factor by which is zoomed.
+     */
+    private void zoom(double deltaX, double deltaY, double sceneX, double sceneY, double delta) {
+        double oldScale = grpDrawArea.getScaleX();
+        scale = oldScale;
+
+        if (deltaX < 0 || deltaY < 0) {
+            scale /= delta;
+        } else {
+            scale *= delta;
+        }
+
+        scale = clamp(scale, MIN_SCALE, MAX_SCALE);
+        grpDrawArea.setScaleX(scale);
+        grpDrawArea.setScaleY(scale);
+        //factor to determine the difference in the scales.
+        double factor = (scale / oldScale) - 1;
+        Bounds bounds = grpDrawArea.localToScene(grpDrawArea.getBoundsInLocal());
+        double dx = (sceneX - (bounds.getWidth() / 2 + bounds.getMinX()));
+        double dy = (sceneY - (bounds.getHeight() / 2 + bounds.getMinY()));
+
+        grpDrawArea.setTranslateX(grpDrawArea.getTranslateX() - factor * dx);
+        grpDrawArea.setTranslateY(grpDrawArea.getTranslateY() - factor * dy);
+    }
+
+    /**
+     * Clamp function used for zooming in and out.
+     * @param value double current scale.
+     * @param min double min scale value.
+     * @param max double max scale value.
+     * @return double scale value.
+     */
+    private static double clamp(double value, double min, double max) {
+        if (Double.compare(value, min) < 0) {
+            return min;
+        }
+        if (Double.compare(value, max) > 0) {
+            return max;
+        }
+        return value;
     }
 
     /**
      * Initialises the Console.
-     * @return the ConsoleView to print to.
      */
-    private ConsoleView initConsole() {
+    private void initConsole() {
         final ConsoleView console = new ConsoleView(Charset.forName("UTF-8"));
-        AnchorPane root = new AnchorPane();
-        btnToggle.setSelected(false);
-        console.setVisible(false);
-        root.setVisible(false);
+        AnchorPane root = new AnchorPane(console);
         Stage st = new Stage();
         st.setScene(new Scene(root, 500, 500, Color.GRAY));
         st.setMinWidth(500);
         st.setMinHeight(250);
-        root.getChildren().add(console);
 
-        st.setOnCloseRequest(e -> {
-            btnToggle.setSelected(false);
-            root.setVisible(false);
-            console.setVisible(false);
-        });
-
-        root.setBottomAnchor(console, 0.d);
-        root.setTopAnchor(console, 0.d);
-        root.setRightAnchor(console, 0.d);
-        root.setLeftAnchor(console, 0.d);
+        AnchorPane.setBottomAnchor(console, 0.d);
+        AnchorPane.setTopAnchor(console, 0.d);
+        AnchorPane.setRightAnchor(console, 0.d);
+        AnchorPane.setLeftAnchor(console, 0.d);
 
         btnToggle.setOnAction(event -> {
-            if (console.isVisible()) {
-                st.close();
-                root.setVisible(false);
-                console.setVisible(false);
-            } else {
+            if (btnToggle.isSelected()) {
                 st.show();
-                root.setVisible(true);
-                console.setVisible(true);
+            } else {
+                st.close();
             }
         });
 
-        System.setOut(console.getOut());
-        return console;
+        st.show();
+        btnToggle.setSelected(true);
+        root.visibleProperty().bind(btnToggle.selectedProperty());
+
+        Console.setOut(console.getOut());
+    }
+
+    private ProgressBar getProgressBar() {
+        return this.progressBar;
+    }
+
+    /**
+     * Initializes the info tab.
+     */
+    private void initShowInfoTab() {
+        btnClipboard.setOnAction(event -> copyToClipboard(10));
+        btnClipboard2.setOnAction(event -> copyToClipboard(250));
+    }
+
+    /**
+     * Copies information to the clipboard.
+     * @param x int used in the ID, to know which sequence to get.
+     */
+    private void copyToClipboard(int x) {
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        String toClipboard = "";
+        for (Node node : anchorGraphInfo.getChildren()) {
+            if (node instanceof TextArea && node.getId().equals(x + " Sequence: ")) {
+                toClipboard = toClipboard.concat(((TextArea) node).getText()) + System.getProperty("line.separator");
+                toClipboard = toClipboard.replaceAll("(.{100})", "$1" + System.getProperty("line.separator"));
+            }
+        }
+        StringSelection selection = new StringSelection(toClipboard);
+        clipboard.setContents(selection, selection);
+    }
+
+    /**
+     * Sets the text field for drawing the graph.
+     * @param center The center node
+     * @param radius The radius of the subGraph
+     */
+    void setText(int center, int radius) {
+        txtCenterNode.setText(String.valueOf(center));
+        txtMaxDrawDepth.setText(String.valueOf(radius));
+    }
+
+    public File getFile() {
+        return this.file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
+    }
+
+    GraphController getGraphController() {
+        return this.graphController;
     }
 }

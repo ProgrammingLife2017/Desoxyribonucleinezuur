@@ -1,50 +1,53 @@
 package programminglife.model;
 
 import org.junit.*;
+import programminglife.utility.InitFXThread;
+import programminglife.parser.Cache;
 
-import java.util.HashSet;
+import java.util.NoSuchElementException;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class SegmentTest {
     private static final String TEST_DB = "test.db";
 
     Segment node;
+    GenomeGraph g;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        DataManager.initialize(TEST_DB);
+        InitFXThread.setupClass();
     }
 
     @Before
     public void setUp() throws Exception {
-        node = new Segment(1, "ATCG");
+        g = new GenomeGraph("segment test graph");
+        node = new Segment(g, 1, "ATCG");
     }
 
     @After
     public void tearDown() throws Exception {
-        DataManager.clearDB(TEST_DB);
+        g.removeCache();
     }
 
     @AfterClass
     public static void tearDownClass() throws Exception {
-        DataManager.removeDB(TEST_DB);
+        Cache.removeDB(TEST_DB);
     }
 
 
 
-    @Test
+    @Test(expected = NoSuchElementException.class)
     public void NodeId() {
-        node = new Segment(8);
+        node = new Segment(g, 8);
 
         assertEquals(8, node.getIdentifier());
-        assertEquals(null, node.getSequence());
+        node.getSequence();
     }
 
     @Test
     public void NodeIdSequence() {
-        node = new Segment(8, "ATCG");
+        node = new Segment(g, 8, "ATCG");
 
         assertEquals(8, node.getIdentifier());
         assertEquals("ATCG", node.getSequence());
@@ -60,48 +63,5 @@ public class SegmentTest {
         node.setSequence("GCTA");
 
         assertEquals("GCTA", node.getSequence());
-    }
-
-    @Test
-    public void locationTest() {
-        node.setLocation(new XYCoordinate(1, 2));
-
-        assertEquals(1, node.getLocation().getX());
-        assertEquals(2, node.getLocation().getY());
-    }
-
-    @Test
-    public void sizeTest() {
-        node.setSize(new XYCoordinate(3, 4));
-
-        assertEquals(3, node.getSize().getX());
-        assertEquals(4, node.getSize().getY());
-    }
-
-    @Test
-    public void centerTest() {
-        node.setLocation(new XYCoordinate(2, 2));
-        node.setSize(new XYCoordinate(4, 2));
-
-        assertEquals(4, node.getCenter().getX());
-        assertEquals(3, node.getCenter().getY());
-    }
-
-    @Test
-    public void rightBorderCenterTest() {
-        node.setLocation(new XYCoordinate(2, 2));
-        node.setSize(new XYCoordinate(4, 2));
-
-        assertEquals(6, node.getRightBorderCenter().getX());
-        assertEquals(3, node.getRightBorderCenter().getY());
-    }
-
-    @Test
-    public void leftBorderCenterTest() {
-        node.setLocation(new XYCoordinate(2, 2));
-        node.setSize(new XYCoordinate(4, 2));
-
-        assertEquals(2, node.getLeftBorderCenter().getX());
-        assertEquals(3, node.getLeftBorderCenter().getY());
     }
 }

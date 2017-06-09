@@ -5,22 +5,22 @@ package programminglife.model;
  * Class representing a 2D coordinate.
  */
 public class XYCoordinate {
-    private int x;
-    private int y;
+    private double x;
+    private double y;
 
     /**
      * Constructor for X-Y coordinate.
      * @param x The x-coordinate
      * @param y The y-coordinate
      */
-    public XYCoordinate(int x, int y) {
+    public XYCoordinate(double x, double y) {
         this.x = x;
         this.y = y;
     }
 
     /**
-     * Sum coords.
-     * @param other the coord to add to this one
+     * Sum coordinates.
+     * @param other the coordinate to add to this one
      * @return the sum
      */
     public XYCoordinate add(XYCoordinate other) {
@@ -33,14 +33,14 @@ public class XYCoordinate {
      * @param y The value to add to y
      * @return the new {@link XYCoordinate}
      */
-    public XYCoordinate add(int x, int y) {
+    public XYCoordinate add(double x, double y) {
         return new XYCoordinate(this.getX() + x, this.getY() + y);
     }
 
     /**
-     * Multiply the coord with a factor.
+     * Multiply the coordinate with a factor.
      * @param factor the factor
-     * @return the new coord
+     * @return the new coordinate
      */
     public XYCoordinate multiply(double factor) {
         return new XYCoordinate((int) (this.getX() * factor), (int) (this.getY() * factor));
@@ -50,7 +50,7 @@ public class XYCoordinate {
      * Get the X coordinate.
      * @return the x
      */
-    public int getX() {
+    public double getX() {
         return x;
     }
 
@@ -59,7 +59,7 @@ public class XYCoordinate {
      * @param x the value to set
      * @return the {@link XYCoordinate} for chaining
      */
-    public XYCoordinate setX(int x) {
+    public XYCoordinate setX(double x) {
         this.x = x;
 
         return this;
@@ -69,7 +69,7 @@ public class XYCoordinate {
      * Get the Y coordinate.
      * @return the y
      */
-    public int getY() {
+    public double getY() {
         return y;
     }
 
@@ -78,7 +78,7 @@ public class XYCoordinate {
      * @param y the value to set
      * @return the {@link XYCoordinate} for chaining
      */
-    public XYCoordinate setY(int y) {
+    public XYCoordinate setY(double y) {
         this.y = y;
 
         return this;

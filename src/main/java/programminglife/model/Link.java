@@ -1,41 +1,38 @@
 package programminglife.model;
 
-import java.util.Collection;
-import java.util.Set;
-
 /**
- * Created by toinehartman on 17/05/2017.
+ * The class that handles the links used for the nodes.
  */
-public class Link implements Edge<Segment> {
-    private Set<Genome> genomeSet;
-    private Segment start;
-    private Segment end;
+public class Link implements Edge {
+    private int[] genomes;
+    private Node start;
+    private Node end;
 
     /**
      * Constructor for Link.
      * @param start the start (parent) of this Link
      * @param end the end (child) of this Link
-     * @param genomes Thegenomes that flow through this Link.
+     * @param genomes The genomes that flow through this Link.
      */
-    public Link(Segment start, Segment end, Set<Genome> genomes) {
+    public Link(Node start, Node end, int[] genomes) {
         this.start = start;
         this.end = end;
-        this.genomeSet = genomes;
+        this.genomes = genomes;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Collection<Genome> getGenomes() {
-        return this.genomeSet;
+    public int[] getGenomes() {
+        return this.genomes;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Segment getStart() {
+    public Node getStart() {
         return start;
     }
 
@@ -43,7 +40,14 @@ public class Link implements Edge<Segment> {
      * {@inheritDoc}
      */
     @Override
-    public Segment getEnd() {
+    public Node getEnd() {
         return end;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Link from [node: %s] to [node: %s]",
+                this.start.toString(),
+                this.end.toString());
     }
 }

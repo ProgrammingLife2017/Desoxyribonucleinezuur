@@ -1,58 +1,51 @@
 package programminglife.model;
 
 import org.junit.*;
+import programminglife.model.exception.NodeExistsException;
+import programminglife.parser.Cache;
+import programminglife.utility.InitFXThread;
 
-import java.io.File;
 import java.util.NoSuchElementException;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
- * Created by toinehartman on 03/05/2017.
+ * The class that handles the tests for the genome graph.
  */
 public class GenomeGraphTest {
-    private static final String TEST_DB = "test.db";
 
+
+    private static final String TEST_DB = "test.db";
     GenomeGraph graph;
     Segment node;
-    String link;
-
-    private static String TEST_PATH, TEST_FAULTY_PATH;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        DataManager.initialize(TEST_DB);
-
-        TEST_PATH = new File(GenomeGraphTest.class.getResource("/test.gfa").toURI()).getAbsolutePath();
-        TEST_FAULTY_PATH = new File(
-                GenomeGraphTest.class.getClass().getResource("/test-faulty.gfa").toURI()
-        ).getAbsolutePath();
+        InitFXThread.setupClass();
     }
 
     @Before
     public void setUp() throws Exception {
         graph = new GenomeGraph("test graph");
-        node = new Segment(3, "ATCG");
+        node = new Segment(graph, 3, "ATCG");
 
-        graph.addNode(node);
+        graph.addNode(node.getIdentifier());
     }
 
     @After
     public void tearDown() throws Exception {
-        DataManager.clearDB(TEST_DB);
+        graph.removeCache();
     }
 
     @AfterClass
     public static void tearDownClass() throws Exception {
-        DataManager.removeDB(TEST_DB);
+        Cache.removeDB(TEST_DB);
     }
 
     @Test
     public void addNodeTest() throws Exception {
-        Segment secondNode = new Segment(8);
-        graph.addNode(secondNode);
+        graph.setSequence(8, "A");
+        graph.addNode(8);
 
         assertEquals(2, graph.size());
         assertTrue(graph.contains(3));
@@ -64,24 +57,43 @@ public class GenomeGraphTest {
         assertTrue(graph.contains(3));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void getNodeTest1() {
-        graph.getChildren(121);
+        assertNull(graph.getChildIDs(121));
+    }
+
+    @Test(expected = NoSuchElementException.class)
+    public void getNonExistingGenomeTest() {
+        graph.getNodeIDs(graph.getGenomeID("nonexistent"));
     }
 
     @Test
     public void sizeTest() {
         assertEquals(1,graph.size());
-        graph.addNode(new Segment(2,"AAAAT"));
+        graph.addNode(2);
+        graph.setSequence(2, "A");
         assertEquals(2,graph.size());
     }
 
     @Test
     public void containsTest() {
-        Node node2 = new Segment( 2, "ATTCTT");
-        graph.addNode(node2);
+        Node node2 = new Segment(graph, 2, "ATTCTT");
+        graph.addNode(node2.getIdentifier());
         assertTrue(graph.contains(node2));
-        Node node3 = new Segment(37,"AAAAAAAA");
+        Node node3 = new Segment(graph, 37,"AAAAAAAA");
         assertFalse(graph.contains(node3));
+    }
+
+    @Test(expected = NodeExistsException.class)
+    public void addExistingNodeTest() {
+        graph.addNode(node.getIdentifier());
+    }
+
+    @Test
+    public void replaceExistingNodeTest() {
+        assertEquals("ATCG", graph.getSequence(3));
+        node.setSequence("AAAA");
+        graph.replaceNode(node.getIdentifier());
+        assertEquals("AAAA", graph.getSequence(3));
     }
 }
