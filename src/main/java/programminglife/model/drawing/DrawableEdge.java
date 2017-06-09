@@ -3,6 +3,7 @@ package programminglife.model.drawing;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Shape;
+import programminglife.model.Dummy;
 import programminglife.model.GenomeGraph;
 import programminglife.model.Link;
 import programminglife.model.XYCoordinate;
@@ -24,6 +25,13 @@ public class DrawableEdge extends Line {
         this.parent = parent;
         this.child = child;
         this.link = parent.getLink(child);
+        if (parent.getNode() instanceof Dummy) {
+            this.link = parent.getNode().getLink(null);
+        } else if (child.getNode() instanceof Dummy) {
+            this.link = child.getNode().getLink(null);
+        } else {
+            this.link = parent.getLink(child);
+        }
     }
 
 //    public Collection<Genome> getGenomes() {
@@ -77,8 +85,8 @@ public class DrawableEdge extends Line {
         double minStrokeWidth = 1.d, maxStrokeWidth = 6.5;
         double strokeWidth = minStrokeWidth + genomeFraction * (maxStrokeWidth - minStrokeWidth);
 
-        double minBrightNess = 0.6, maxBrightNess = 0.25;
-        double brightness = minBrightNess + genomeFraction * (maxBrightNess - minBrightNess);
+        double minBrightness = 0.6, maxBrightness = 0.25;
+        double brightness = minBrightness + genomeFraction * (maxBrightness - minBrightness);
 
         Color strokeColor = Color.hsb(0.d, 0.d, brightness);
 

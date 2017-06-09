@@ -171,21 +171,10 @@ public class GraphController {
      */
     private void drawEdge(DrawableNode parent, DrawableNode child) {
         DrawableEdge edge = new DrawableEdge(parent, child);
-        // If either parent or child are dummy nodes make on click use the link in that dummy.
-        if (parent.getNode() instanceof Dummy) {
-            edge.setOnMouseClicked(event -> {
-                Console.println(parent.getNode().getLink(null).toString());
-            });
-        } else if (child.getNode() instanceof Dummy) {
-            edge.setOnMouseClicked(event -> {
-                Console.println(child.getNode().getLink(null).toString());
-            });
-        } else {
-            edge.setOnMouseClicked(event -> {
-                Console.println(edge.toString());
-                Console.println("Genomes: " + graph.getGenomeNames(edge.getGenomes()));
-            });
-        }
+        edge.setOnMouseClicked(event -> {
+            Console.println(edge.toString());
+            Console.println("Genomes: " + graph.getGenomeNames(edge.getGenomes()));
+        });
 
         edge.colorize(graph);
         edge.setStartLocation(edge.getStart().getRightBorderCenter());
@@ -209,6 +198,7 @@ public class GraphController {
             Dummy node = (Dummy) drawableNode.getNode();
             drawableNode.setOnMouseClicked(event -> {
                 Console.println(node.getLink(null).toString());
+                Console.println("Genomes: " + graph.getGenomeNames(node.getGenomes()));
             });
         }
         drawableNode.colorize(graph);
