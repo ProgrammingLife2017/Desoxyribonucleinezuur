@@ -7,6 +7,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import programminglife.controller.BookmarkController;
+import programminglife.model.Bookmark;
 import programminglife.utility.Alerts;
 
 /**
@@ -24,6 +25,8 @@ public class GuiCreateBookmarkController {
     @FXML private TextArea txtDescription;
     private int inputRadius;
     private int inputCenter;
+    private String bookmarkName;
+    private String bookmarkDescription;
 
     /**
      * Initialize method for BookmarkController.
@@ -44,16 +47,20 @@ public class GuiCreateBookmarkController {
             try {
                 inputCenter = Integer.parseInt(txtId.getText());
                 inputRadius = Integer.parseInt(txtRadius.getText());
+                bookmarkName = txtBookmarkName.getText();
+                System.out.println(bookmarkName);
+                bookmarkDescription = txtDescription.getText();
+                Bookmark bookmark = new Bookmark(name, guiController.getFile().getAbsolutePath(),
+                        inputCenter, inputRadius, bookmarkName, bookmarkDescription);
                 if (!guiController.getGraphController().getGraph().contains(inputCenter)) {
                     Alerts.warning("Center node is not present in graph");
                 } else if (inputRadius < 0) {
                     Alerts.warning("Radius can only contain positive integers");
-                } else if (txtBookmarkName.getText().length() == 0) {
+                } else if (bookmarkName.length() == 0) {
                     Alerts.warning("Bookmark must contain a name");
-                } else if (!txtBookmarkName.getText().matches("[\\S.*]?\\S")) {
+                } else if (!bookmarkName.matches("\\S|\\S.*\\S")) {
                     Alerts.warning("Bookmark name must begin and end with a non whitespace character");
-                } else if (!BookmarkController.storeBookmark(name, guiController.getFile().getAbsolutePath(),
-                        txtBookmarkName.getText(), txtDescription.getText(), inputCenter, inputRadius)) {
+                } else if (!BookmarkController.storeBookmark(bookmark)) {
                     Alerts.warning("Bookmarks must have unique names in files");
                 } else {
                     ((Stage) btnOk.getScene().getWindow()).close();

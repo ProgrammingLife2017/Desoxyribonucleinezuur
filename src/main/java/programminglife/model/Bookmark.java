@@ -90,11 +90,11 @@ public class Bookmark {
         return super.hashCode();
     }
 
-    public String getFile() {
+    public String getGraphName() {
         return file;
     }
 
-    public void setFile(String file) {
+    public void setGraphName(String file) {
         this.file = file;
     }
 
@@ -102,7 +102,7 @@ public class Bookmark {
     public boolean equals(Object other) {
         if (other instanceof Bookmark) {
             Bookmark that = (Bookmark) other;
-            if (this.file.equals(that.getFile())
+            if (this.file.equals(that.getGraphName())
                     && this.radius == that.getRadius()
                     && this.nodeID == that.getNodeID()
                     && this.bookmarkName.equals(that.getBookmarkName())

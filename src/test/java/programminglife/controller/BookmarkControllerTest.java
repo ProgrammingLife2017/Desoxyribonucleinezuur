@@ -48,24 +48,23 @@ public class BookmarkControllerTest {
 
     @Test
     public void readAllGraphTest() {
-        BookmarkController.storeBookmark(testPath, "dummypath", "test", "testbm2", "testing", 2, 4);
+        BookmarkController.storeBookmark(testPath, bookmark);
         List<Bookmark> actual = BookmarkController.loadAllGraphBookmarks(testPath, "test");
         List<Bookmark> expected = new ArrayList<>();
         expected.add(bookmark);
-        expected.add(new Bookmark("test", "dummypath", 2, 4, "testbm2", "testing"));
         assertEquals(expected, actual);
     }
 
     @Test
     public void writeTest() {
-        BookmarkController.storeBookmark(testPath, "dummypath", "writeTestGraph", "writeTest", "writing", 2, 4);
-        BookmarkController.storeBookmark(testPath, "dummypath", "writeTestGraph", "writeTeest", "writing", 2, 4);
+        BookmarkController.storeBookmark(testPath, new Bookmark("dummypath", "writeTestGraph",2, 4, "writeTest", "writing"));
+        BookmarkController.storeBookmark(testPath, new Bookmark("dummypath", "writeTestGraph", 2, 4, "writeTeest", "writing"));
         assertNotNull(BookmarkController.loadAllGraphBookmarks(testPath, "writeTestGraph"));
     }
 
     @Test
     public void deleteTest() {
-        BookmarkController.storeBookmark(testPath, "dummypath", "deleteTestGraph", "deleteTest", "deleting", 3, 5);
+        BookmarkController.storeBookmark(testPath, new Bookmark("dummypath", "deleteTestGraph", 3, 5, "deleteTest", "deleting"));
         BookmarkController.deleteBookmark(testPath, "deleteTestGraph", "deleteTest");
         assertEquals(new ArrayList<>(), BookmarkController.loadAllGraphBookmarks(testPath, "deleteTestGraph"));
     }
