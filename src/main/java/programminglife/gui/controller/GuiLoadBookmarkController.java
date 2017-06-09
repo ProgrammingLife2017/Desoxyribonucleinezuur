@@ -209,11 +209,18 @@ public class GuiLoadBookmarkController implements Observer {
      */
     void initBookmarks() {
         accordionBookmark.getPanes().clear();
+
         tableViews = new ArrayList<>();
 
         Map<String, List<Bookmark>> bookmarks = BookmarkController.loadAllBookmarks();
         for (Map.Entry<String, List<Bookmark>> graphBookmarks : bookmarks.entrySet()) {
             createTableView(graphBookmarks.getKey(), graphBookmarks.getValue());
+        }
+        String graphName = guiController.getGraphController().getGraph().getID();
+        for (TitledPane pane : accordionBookmark.getPanes()) {
+            if (pane.getText().equals(graphName)) {
+                accordionBookmark.setExpandedPane(pane);
+            }
         }
     }
 
