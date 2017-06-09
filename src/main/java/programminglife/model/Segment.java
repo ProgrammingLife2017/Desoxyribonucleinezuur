@@ -53,6 +53,11 @@ public class Segment implements Node {
         graph.setSequence(this.id, sequence);
     }
 
+    @Override
+    public double getGenomeFraction() {
+        return this.graph.getGenomeFraction(this.getIdentifier());
+    }
+
     /**
      * get the length of the sequence of this segment.
      * @return the length of the sequence of this segment

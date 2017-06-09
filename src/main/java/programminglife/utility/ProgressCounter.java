@@ -5,27 +5,27 @@ import java.util.Observable;
 /**
  * Keeps track of how many lines are read from the file, percentage of total.
  */
-public class FileProgressCounter extends Observable {
-    private int lineCount;
-    private int totalLineCount;
+public class ProgressCounter extends Observable {
+    private int progress;
+    private int total;
     private String description;
 
     /**
      * Constructor with description.
      * @param description String.
      */
-    public FileProgressCounter(String description) {
+    public ProgressCounter(String description) {
         this(Integer.MAX_VALUE, description);
     }
 
     /**
      * Constructor with description and integer of line count.
-     * @param totalLineCount int.
+     * @param total int.
      * @param description String.
      */
-    public FileProgressCounter(int totalLineCount, String description) {
-        this.lineCount = 0;
-        this.totalLineCount = totalLineCount;
+    public ProgressCounter(int total, String description) {
+        this.progress = 0;
+        this.total = total;
         this.description = description;
 
         this.setChanged();
@@ -36,14 +36,14 @@ public class FileProgressCounter extends Observable {
      * Counter for the progress.
      */
     public void count() {
-        this.lineCount++;
+        this.progress++;
 
         this.setChanged();
         this.notifyObservers(this);
     }
 
-    public void setTotalLineCount(int totalLineCount) {
-        this.totalLineCount = totalLineCount;
+    public void setTotal(int total) {
+        this.total = total;
     }
 
     @Override
@@ -56,19 +56,19 @@ public class FileProgressCounter extends Observable {
      * @return percentage of file parsed.
      */
     public double percentage() {
-        return this.lineCount / (double) this.totalLineCount;
+        return this.progress / (double) this.total;
     }
 
-    public int getLineCount() {
-        return lineCount;
+    public int getProgress() {
+        return progress;
     }
 
     /**
      * set the line count to the max so that it is 100%.
-     * @param count int equal to the totalLineCount
+     * @param count int equal to the total
      */
-    private void setLineCount(int count) {
-        this.lineCount = count;
+    private void setProgress(int count) {
+        this.progress = count;
 
         this.setChanged();
         this.notifyObservers(this);
@@ -78,6 +78,10 @@ public class FileProgressCounter extends Observable {
      * Tells the ProgressBar loading is finished so it becomes invisible.
      */
     public void finished() {
-        this.setLineCount(this.totalLineCount);
+        this.setProgress(this.total);
+    }
+
+    public void reset() {
+        this.setProgress(0);
     }
 }

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<?import programminglife.gui.controller.AutoCompleteTextField?>
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="programminglife.gui.controller.HighlightController">
+
+   <children>
+      <Button fx:id="btnClose" layoutX="419.0" layoutY="323.0" mnemonicParsing="false" text="Close" />
+      <Button fx:id="btnHighlight" layoutX="129.0" layoutY="323.0" mnemonicParsing="false" text="Highlight" />
+      <AutoCompleteTextField fx:id="txtGenome" layoutX="92.0" layoutY="188.0" prefHeight="25.0" prefWidth="140.0" promptText="Highlight genome" />
+      <TextField fx:id="txtMin" layoutX="438.0" layoutY="163.0" prefHeight="25.0" prefWidth="59.0" />
+      <Text layoutX="385.0" layoutY="150.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Number of genomes:" underline="true" />
+      <CheckBox fx:id="checkMin" layoutX="385.0" layoutY="167.0" mnemonicParsing="false" text="Min:" />
+      <TextField fx:id="txtMax" layoutX="438.0" layoutY="201.0" prefHeight="25.0" prefWidth="59.0" />
+      <CheckBox fx:id="checkMax" layoutX="385.0" layoutY="205.0" mnemonicParsing="false" text="Max:" />
+   </children>
+</AnchorPane>

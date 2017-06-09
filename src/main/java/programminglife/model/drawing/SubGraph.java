@@ -203,13 +203,6 @@ public class SubGraph {
     }
 
     /**
-     * Draw this SubGraph on the screen.
-     */
-    public void draw() {
-
-    }
-
-    /**
      * Find out which {@link Drawable} is at the given location.
      * @param loc The location to search for Drawables.
      * @return The {@link Drawable} that is on top at the given location.
