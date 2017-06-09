@@ -21,7 +21,7 @@ public class SubGraph {
     /**
      * The amount of padding between nodes within a Layer (vertical padding).
      */
-    private static final int LINE_PADDING = 20;
+    private static final int LINE_PADDING = 30;
 
     private LinkedHashMap<Node, DrawableNode> nodes;
     private DrawableNode centerNode;
@@ -242,14 +242,23 @@ public class SubGraph {
 
 
         int x = 50;
+        int size = 1;
         for (Layer layer : layers) {
+            int newSize = layer.size();
+            int diff = Math.abs(newSize - size);
             int y = 50;
-            x += LAYER_PADDING * 0.3 * layer.size();
+            x += LAYER_PADDING * 0.1 * newSize;
+            x += LAYER_PADDING * 0.6 * diff;
             for (DrawableNode d : layer) {
-                d.setLocation(new XYCoordinate(x, y));
+                if (d.getNode() instanceof Dummy) {
+                    d.setLocation(new XYCoordinate(x, y + 5));
+                } else {
+                    d.setLocation(new XYCoordinate(x, y));
+                }
                 y += LINE_PADDING;
             }
-            x += layer.getWidth() + LAYER_PADDING * 0.3 * layer.size();
+            x += layer.getWidth() + LAYER_PADDING * 0.1 * newSize;
+            size = newSize;
         }
         layout = true;
         // TODO: translate so that the centerNode is at 0,0;
@@ -260,14 +269,16 @@ public class SubGraph {
      * @param layers {@link List} representing all layers to be drawn.
      */
     private void createDummyNodes(List<Layer> layers) {
+        int dummyId = -1;
         Layer current = new Layer();
         for (Layer next : layers) {
             for (DrawableNode node : current) {
                 for (DrawableNode child : this.getChildren(node)) {
                     if (!next.contains(child)) {
                         DrawableNode dummy = new DrawableNode(
-                                new Dummy(node.getNode(), child.getNode(), node.getLink(child))
+                                new Dummy(dummyId, child.getNode(), node.getLink(child), node.getNode())
                         );
+                        dummyId--;
                         node.replaceChild(child, dummy);
                         child.replaceParent(node, dummy);
                         dummy.setWidth(next.getWidth());
@@ -352,22 +363,38 @@ public class SubGraph {
      * @param layers The layers to sort.
      */
     private void sortWithinLayers(List<Layer> layers) {
-        // TODO: improve to reduce edge crossings
-        // note: in case of ambiguity in choosing what node to draw first, use node with lowest id
-        // (to break ties and make layout deterministic)
+        ListIterator<Layer> nextIter = layers.listIterator();
 
-        // For each edge: place it on the row it came from or lower.
-        // Start from sorting in previous layer.
-        // note: this is here as a skeleton for sorting. It compiles, but doesn't
-        // do anything useful, so it is commented out.
-//        for (Layer l : layers) {
-//            l.sort(new Comparator<DrawableNode>() {
-//                @Override
-//                public int compare(DrawableNode o1, DrawableNode o2) {
-//                    return 0;
-//                }
-//            });
-//        }
+        // find a layer with a single node
+        Layer prev = null;
+        int min = Integer.MAX_VALUE;
+        while (nextIter.hasNext()) {
+            Layer currentLayer = nextIter.next();
+            int currentSize = currentLayer.size();
+            if (currentSize < min) {
+                prev = currentLayer;
+                if (currentSize <= 1) {
+                    break;
+                } else {
+                    min = currentSize;
+                }
+            }
+        }
+
+        Layer next = prev;
+        ListIterator<Layer> prevIter = layers.listIterator(nextIter.previousIndex());
+
+        while (nextIter.hasNext()) {
+            Layer layer = nextIter.next();
+            layer.sort(this, prev, true);
+            prev = layer;
+        }
+
+        while (prevIter.hasPrevious()) {
+            Layer layer = prevIter.previous();
+            layer.sort(this, next, false);
+            next = layer;
+        }
     }
 
     /**
