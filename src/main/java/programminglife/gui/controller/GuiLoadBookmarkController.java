@@ -110,7 +110,7 @@ public class GuiLoadBookmarkController implements Observer {
             Optional<ButtonType> result = alert.showAndWait();
             result.ifPresent(buttonType -> {
                 if (buttonType == ButtonType.OK) {
-                    BookmarkController.deleteBookmark(bookmark.getFile(), bookmark.getBookmarkName());
+                    BookmarkController.deleteBookmark(bookmark.getGraphName(), bookmark.getBookmarkName());
                     Console.println("Deleted bookmark " + bookmark.getBookmarkName()
                             + " Center Node: " + bookmark.getNodeID() + " Radius: " + bookmark.getRadius());
                     initBookmarks();
