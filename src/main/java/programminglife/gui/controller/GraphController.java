@@ -245,7 +245,7 @@ public class GraphController {
         Text childText = new Text("Children: "); childText.setLayoutX(x); childText.setLayoutY(165);
         Text inEdgeText = new Text("Incoming Edges: "); inEdgeText.setLayoutX(x); inEdgeText.setLayoutY(215);
         Text outEdgeText = new Text("Outgoing Edges: "); outEdgeText.setLayoutX(x); outEdgeText.setLayoutY(265);
-        Text genomeText = new Text("Genome: "); genomeText.setLayoutX(x); genomeText.setLayoutY(315);
+        Text genomeText = new Text("Genomes: "); genomeText.setLayoutX(x); genomeText.setLayoutY(315);
         Text seqLengthText = new Text("Sequence Length: "); seqLengthText.setLayoutX(x); seqLengthText.setLayoutY(365);
         Text seqText = new Text("Sequence: "); seqText.setLayoutX(x); seqText.setLayoutY(415);
 
