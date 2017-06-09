@@ -293,7 +293,7 @@ public class GraphController {
         Text parentsText = new Text("Parent: "); parentsText.setLayoutX(x); parentsText.setLayoutY(115);
         Text childrenText = new Text("Child: "); childrenText.setLayoutX(x); childrenText.setLayoutY(165);
 
-        TextField id = getTextField("Genomes: ", x, 70, Arrays.toString(edge.getLink().getGenomes()));
+        TextField id = getTextField("Genomes: ", x, 70, graph.getGenomeNames(edge.getLink().getGenomes()).toString());
         TextField parent = getTextField("Parent Node: ", x, 120, edge.getStart().getNode().getIdentifier() + "");
         TextField child = getTextField("Child Node: ", x, 170, edge.getEnd().getNode().getIdentifier() + "");
 
@@ -343,7 +343,7 @@ public class GraphController {
 
         TextField inEdges = getTextField("Incoming Edges: ", x, 220, node.getNode().getParentEdges().size() + "");
         TextField outEdges = getTextField("Outgoing Edges: ", x, 270, node.getNode().getChildEdges().size() + "");
-        TextField genome = getTextField("Genome: ", x, 320, Arrays.toString(node.getNode().getGenomes()));
+        TextField genome = getTextField("Genome: ", x, 320, graph.getGenomeNames(node.getNode().getGenomes()).toString());
         TextField seqLength = getTextField("Sequence Length: ", x, 370, node.getNode().getSequence().length() + "");
         TextField seq = getTextField(x + " Sequence: ", x, 420, node.getNode().getSequence());
 
