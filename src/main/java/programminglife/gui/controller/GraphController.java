@@ -190,7 +190,7 @@ public class GraphController {
         double boundsHeight = bounds.getHeight();
         double boundsWidth = bounds.getWidth();
 
-        locationCenterY = boundsHeight / 3;
+        locationCenterY = boundsHeight / 4;
         locationCenterX = boundsWidth / 2 - xCoord;
 
         grpDrawArea.setTranslateX(locationCenterX);

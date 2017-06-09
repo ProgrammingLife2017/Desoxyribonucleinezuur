@@ -14,31 +14,31 @@ public interface Graph {
 
     /**
      * Add a node to the graph.
-     * @param node Node.
+     * @param nodeID the ID of the node.
      */
-    void addNode(Node node);
+    void addNode(int nodeID);
 
     /**
      * Add a node to the graph.
-     * @param node Node.
+     * @param nodeID the ID of the node.
      * @param children int[] which contains the children.
      * @param parents int[] which contains the parents.
      */
-    void addNode(Node node, int[] children, int[] parents);
+    void addNode(int nodeID, int[] children, int[] parents);
 
     /**
      * Replaces a node.
-     * @param node Node.
+     * @param nodeID the ID of the node.
      */
-    void replaceNode(Node node);
+    void replaceNode(int nodeID);
 
     /**
      * Replaces a node.
-     * @param node Node.
+     * @param nodeID the ID of the node.
      * @param children int[] of the children.
      * @param parents int[] of the parents.
      */
-    void replaceNode(Node node, int[] children, int[] parents);
+    void replaceNode(int nodeID, int[] children, int[] parents);
 
     /**
      * Gives the size of a graph.
@@ -90,13 +90,6 @@ public interface Graph {
     Link getLink(Node parent, Node child);
 
     /**
-     * getter for the genomes of a node.
-     * @param node Node.
-     * @return int[] of the genomes.
-     */
-    int[] getGenomes(Node node);
-
-    /**
      * Checks to see if the graph contains a certain node.
      * @param node the {@link Node} to check.
      * @return if the {@link Node} is in the {@link Graph}
@@ -112,8 +105,8 @@ public interface Graph {
 
     /**
      * Adds an edge between two nodes.
-     * @param source Node of the source.
-     * @param destination Node of the destination.
+     * @param sourceID Node of the source.
+     * @param destinationID Node of the destination.
      */
-    void addEdge(Node source, Node destination);
+    void addEdge(int sourceID, int destinationID);
 }
