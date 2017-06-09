@@ -28,6 +28,7 @@ public class GraphController {
     private double locationCenterX;
     private LinkedList<DrawableNode> oldMinMaxList = new LinkedList<>();
     private SubGraph subGraph;
+    private LinkedList<DrawableNode> oldGenomeList = new LinkedList<>();
 
     /**
      * Initialize controller object.
@@ -267,6 +268,7 @@ public class GraphController {
         LinkedList<DrawableNode> drawNodeList = new LinkedList<>();
 
         removeHighlight(oldMinMaxList);
+        removeHighlight(oldGenomeList);
         for (DrawableNode drawableNode: subGraph.getNodes().values()) {
             if (drawableNode != null && !(drawableNode.getNode() instanceof Dummy)) {
                 int genomeCount = drawableNode.getNode().getGenomes().length;
@@ -287,5 +289,26 @@ public class GraphController {
         for (DrawableNode node: nodes) {
             node.colorize(graph);
         }
+    }
+
+
+    /**
+     * Highlights based on genomeID
+     * @param genomeID the GenomeID to highlight on.
+     */
+    public void highlightByGenome(int genomeID) {
+        LinkedList<DrawableNode> drawNodeList = new LinkedList<>();
+        removeHighlight(oldGenomeList);
+        removeHighlight(oldMinMaxList);
+        for (DrawableNode drawableNode: subGraph.getNodes().values()) {
+            int[] genomes = drawableNode.getGenomes();
+            for (int i = 0; i < genomes.length; i++){
+               if (genomes[i] == genomeID && !(drawableNode.getNode() instanceof Dummy)) {
+                  drawNodeList.add(drawableNode);
+               }
+            }
+        }
+        oldGenomeList = drawNodeList;
+        highlightNodes(drawNodeList, Color.YELLOW);
     }
 }

@@ -44,7 +44,14 @@ public class HighlightController {
     private void initButtons() {
 
         btnHighlight.setOnAction(event -> {
-            highlightMinMax();
+            if (txtGenome.getText().isEmpty()) {
+                highlightMinMax();
+            } else {
+                if (txtGenome.getEntries().contains(txtGenome.getText())) {
+                    int genomeID = graphController.getGraph().getGenomeID(txtGenome.getText());
+                    graphController.highlightByGenome(genomeID);
+                }
+            }
         });
 
         btnClose.setOnAction(event -> ((Stage) btnClose.getScene().getWindow()).close());
