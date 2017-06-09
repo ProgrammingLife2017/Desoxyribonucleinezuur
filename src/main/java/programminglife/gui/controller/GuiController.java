@@ -356,6 +356,7 @@ public class GuiController implements Observer {
                 HighlightController gc = loader.getController();
                 gc.setGraphController(this.getGraphController());
                 gc.initMinMax();
+                gc.initGenome();
                 Scene scene = new Scene(page);
                 Stage highlightDialogStage = new Stage();
                 highlightDialogStage.setResizable(false);

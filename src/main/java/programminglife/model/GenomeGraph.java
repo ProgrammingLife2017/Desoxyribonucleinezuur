@@ -280,6 +280,10 @@ public class GenomeGraph implements Graph {
         return this.cache.getGenomeName(genomeID);
     }
 
+    public Collection<String> getGenomeNames() {
+        return this.cache.getGenomeNamesIdMap().keySet();
+    }
+
     /**
      * Get the ID of a Genome.
      * @param genomeName the name of the Genome

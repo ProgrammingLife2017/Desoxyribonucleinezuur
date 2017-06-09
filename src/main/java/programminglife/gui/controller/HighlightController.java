@@ -20,6 +20,7 @@ public class HighlightController {
 
     @FXML private Button btnClose;
     @FXML private Button btnHighlight;
+    @FXML private AutoCompleteTextField txtGenome;
     @FXML private TextField txtMin;
     @FXML private TextField txtMax;
     @FXML private CheckBox checkMin;
@@ -34,7 +35,6 @@ public class HighlightController {
     @SuppressWarnings("unused")
     public void initialize() {
         initButtons();
-
     }
 
 
@@ -48,6 +48,10 @@ public class HighlightController {
         });
 
         btnClose.setOnAction(event -> ((Stage) btnClose.getScene().getWindow()).close());
+    }
+
+    public void initGenome() {
+        txtGenome.getEntries().addAll(graphController.getGraph().getGenomeNames());
     }
 
     /**
