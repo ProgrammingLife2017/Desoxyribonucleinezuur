@@ -14,7 +14,7 @@ import static org.junit.Assert.assertTrue;
 
 public class SubGraphTest {
     GenomeGraph graph;
-    DrawableNode centerNode;
+    DrawableSegment centerNode;
 
     private static String TEST_PATH;
 
@@ -32,7 +32,7 @@ public class SubGraphTest {
         graphParser.parse();
         graph = graphParser.getGraph();
 
-        centerNode = new DrawableNode(new Segment(graph, 4));
+        centerNode = new DrawableSegment(graph, 4);
     }
 
     @After
@@ -69,7 +69,7 @@ public class SubGraphTest {
 
         Set<DrawableNode> expected = new HashSet<>();
         for (Integer id : new int[] {1, 2, 3, 4, 5, 6, 7, 8}) {
-            expected.add(new DrawableNode(new Segment(graph, id)));
+            expected.add(new DrawableSegment(graph, id));
         }
 
         Set<DrawableNode> actual = new LinkedHashSet<>(sg.getNodes().values());

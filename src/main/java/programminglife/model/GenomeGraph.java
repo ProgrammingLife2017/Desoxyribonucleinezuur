@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 /**
  * The class that handles the genome graph.
  */
-public class GenomeGraph implements Graph {
+public class GenomeGraph {
     private String id;
     private Cache cache;
     private Map<Integer, Collection<Integer>> parentGenomesNodes;
@@ -35,12 +35,20 @@ public class GenomeGraph implements Graph {
         return id;
     }
 
-    @Override
+    /**
+     * Add a node to the graph.
+     * @param nodeID the ID of the node
+     */
     public void addNode(int nodeID) {
         this.addNode(nodeID, new int[0], new int[0]);
     }
 
-    @Override
+    /**
+     * Add a node to the graph.
+     * @param nodeID the ID of the node
+     * @param children the children of this node
+     * @param parents the parents of this node
+     */
     public void addNode(int nodeID, int[] children, int[] parents) {
         if (this.contains(nodeID)) {
             throw new NodeExistsException(String.format("Node<%d> already exists in graph %s",
@@ -50,12 +58,20 @@ public class GenomeGraph implements Graph {
         this.replaceNode(nodeID, children, parents);
     }
 
-    @Override
+    /**
+     * Replace a node in the graph.
+     * @param nodeID the ID of the node
+     */
     public void replaceNode(int nodeID) {
         this.replaceNode(nodeID, new int[0], new int[0]);
     }
 
-    @Override
+    /**
+     * Replace a node in the graph.
+     * @param nodeID the ID of the node
+     * @param children the new children
+     * @param parents the new parents
+     */
     public void replaceNode(int nodeID, int[] children, int[] parents) {
         this.cache.getChildrenAdjacencyMap().put(nodeID, children);
         this.cache.getParentsAdjacencyMap().put(nodeID, parents);
@@ -69,44 +85,23 @@ public class GenomeGraph implements Graph {
         return this.cache.getNumberOfNodes();
     }
 
-    @Override
-    public int[] getChildIDs(Node node) {
-        return this.getChildIDs(node.getIdentifier());
-    }
-
-    @Override
+    /**
+     * Get IDs of children of a node.
+     * @param nodeID the ID of the node to look up
+     * @return an int[] of IDs
+     */
     public int[] getChildIDs(int nodeID) {
         return this.cache.getChildrenAdjacencyMap().get(nodeID);
     }
 
-    @Override
-    public int[] getParentIDs(Node node) {
-        return this.getParentIDs(node.getIdentifier());
-    }
-
-    @Override
-    public Link getLink(Node parent, Node child) {
-        return new Link(parent, child, getGenomes(parent.getIdentifier(), child.getIdentifier()));
-    }
-
-    @Override
-    public Collection<Node> getParents(Node node) {
-        int[] parents = this.getParentIDs(node.getIdentifier());
-        Collection<Node> parentNodes = new LinkedHashSet<>();
-        for (int parent : parents) {
-            parentNodes.add(new Segment(this, parent));
-        }
-        return parentNodes;
-    }
-
-    @Override
-    public Collection<Node> getChildren(Node node) {
-        int[] children = this.getChildIDs(node.getIdentifier());
-        Collection<Node> childNodes = new LinkedHashSet<>();
-        for (int aChildren : children) {
-            childNodes.add(new Segment(this, aChildren));
-        }
-        return childNodes;
+    /**
+     * Get a {@link Link} from this graph.
+     * @param parentID the node to find the link from
+     * @param childID the node to find the link to
+     * @return the {@link Link} itself
+     */
+    public Link getLink(int parentID, int childID) {
+        return new Link(parentID, childID, getGenomes(parentID, childID));
     }
 
     /**
@@ -206,21 +201,13 @@ public class GenomeGraph implements Graph {
     /**
      * {@inheritDoc}
      */
-    @Override
-    public boolean contains(Node node) {
-        return this.contains(node.getIdentifier());
-    }
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public boolean contains(int nodeID) {
         return this.cache.getChildrenAdjacencyMap().containsKey(nodeID);
     }
+
     /**
      * {@inheritDoc}
      */
-    @Override
     public void addEdge(int sourceID, int destinationID) {
         this.addChild(sourceID, destinationID);
         this.addParent(destinationID, sourceID);
@@ -285,6 +272,10 @@ public class GenomeGraph implements Graph {
         return this.cache.getGenomeName(genomeID);
     }
 
+    /**
+     * Get all names of genomes in the graph.
+     * @return a {@link Collection} of names
+     */
     public Collection<String> getGenomeNames() {
         return this.cache.getGenomeNamesIdMap().keySet();
     }
@@ -307,8 +298,8 @@ public class GenomeGraph implements Graph {
     }
 
     /**
-     * Set the sequence for a {@link Segment}.
-     * @param nodeID the ID of the {@link Segment}
+     * Set the sequence for a Segment.
+     * @param nodeID the ID of the Segment
      * @param sequence the sequence {@link String}
      */
     public void setSequence(int nodeID, String sequence) {
@@ -316,8 +307,8 @@ public class GenomeGraph implements Graph {
     }
 
     /**
-     * Get the sequence of a {@link Segment}.
-     * @param nodeID the ID of the {@link Segment}
+     * Get the sequence of a Segment.
+     * @param nodeID the ID of the Segment
      * @return the sequence {@link String}
      */
     @NotNull
@@ -326,8 +317,8 @@ public class GenomeGraph implements Graph {
     }
 
     /**
-     * Get the sequence length of a {@link Segment}.
-     * @param nodeID the ID of the {@link Segment}
+     * Get the sequence length of a Segment.
+     * @param nodeID the ID of the Segment
      * @return the sequence length {@link String}
      */
     public int getSequenceLength(int nodeID) {
