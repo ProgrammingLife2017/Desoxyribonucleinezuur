@@ -320,14 +320,14 @@ public class GuiController implements Observer {
         disableGraphUIElements(true);
 
         btnTranslateReset.setOnAction(event -> {
-            grpDrawArea.setTranslateX(graphController.getLocationCenterX());
-            grpDrawArea.setTranslateY(graphController.getLocationCenterY());
+            canvas.setTranslateX(graphController.getLocationCenterX());
+            canvas.setTranslateY(graphController.getLocationCenterY());
         });
 
         btnZoomReset.setOnAction(event -> {
             scale = 1;
-            grpDrawArea.setScaleX(1);
-            grpDrawArea.setScaleY(1);
+            canvas.setScaleX(1);
+            canvas.setScaleY(1);
         });
     }
 
@@ -437,12 +437,12 @@ public class GuiController implements Observer {
         anchorCanvasPanel.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
             orgSceneX = event.getSceneX();
             orgSceneY = event.getSceneY();
-            orgTranslateX = grpDrawArea.getTranslateX();
-            orgTranslateY = grpDrawArea.getTranslateY();
+            orgTranslateX = canvas.getTranslateX();
+            orgTranslateY = canvas.getTranslateY();
         });
         anchorCanvasPanel.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> {
-            grpDrawArea.setTranslateX((orgTranslateX + event.getSceneX() - orgSceneX));
-            grpDrawArea.setTranslateY((orgTranslateY + event.getSceneY() - orgSceneY));
+            canvas.setTranslateX((orgTranslateX + event.getSceneX() - orgSceneX));
+            canvas.setTranslateY((orgTranslateY + event.getSceneY() - orgSceneY));
             event.consume();
         });
         anchorCanvasPanel.addEventHandler(ScrollEvent.SCROLL, event ->
@@ -458,7 +458,7 @@ public class GuiController implements Observer {
      * @param delta double the factor by which is zoomed.
      */
     private void zoom(double deltaX, double deltaY, double sceneX, double sceneY, double delta) {
-        double oldScale = grpDrawArea.getScaleX();
+        double oldScale = canvas.getScaleX();
         scale = oldScale;
 
         if (deltaX < 0 || deltaY < 0) {
@@ -468,16 +468,16 @@ public class GuiController implements Observer {
         }
 
         scale = clamp(scale, MIN_SCALE, MAX_SCALE);
-        grpDrawArea.setScaleX(scale);
-        grpDrawArea.setScaleY(scale);
+        canvas.setScaleX(scale);
+        canvas.setScaleY(scale);
         //factor to determine the difference in the scales.
         double factor = (scale / oldScale) - 1;
-        Bounds bounds = grpDrawArea.localToScene(grpDrawArea.getBoundsInLocal());
+        Bounds bounds = canvas.localToScene(canvas.getBoundsInLocal());
         double dx = (sceneX - (bounds.getWidth() / 2 + bounds.getMinX()));
         double dy = (sceneY - (bounds.getHeight() / 2 + bounds.getMinY()));
 
-        grpDrawArea.setTranslateX(grpDrawArea.getTranslateX() - factor * dx);
-        grpDrawArea.setTranslateY(grpDrawArea.getTranslateY() - factor * dy);
+        canvas.setTranslateX(canvas.getTranslateX() - factor * dx);
+        canvas.setTranslateY(canvas.getTranslateY() - factor * dy);
     }
 
     /**

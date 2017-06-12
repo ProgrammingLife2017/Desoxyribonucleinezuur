@@ -105,4 +105,8 @@ public class DrawableEdge extends Line {
     public int[] getGenomes() {
         return this.getLink().getGenomes();
     }
+
+    public double getLineWidth() {
+        return 5;
+    }
 }

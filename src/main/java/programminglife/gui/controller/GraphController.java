@@ -241,7 +241,7 @@ public class GraphController {
 
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.setStroke(drawableNode.getStrokeColor());
-        gc.strokeRect(drawableNode.getX(), drawableNode.getY() , drawableNode.getWidth(), drawableNode.getHeight());
+        gc.strokeRect(drawableNode.getX(), drawableNode.getY(), drawableNode.getWidth(), drawableNode.getHeight());
 
     }
 
@@ -285,15 +285,15 @@ public class GraphController {
         DrawableNode drawableCenterNode = subGraph.getNodes().get(new Segment(graph, nodeId));
         double xCoordinate = drawableCenterNode.getX();
 
-        Bounds bounds = grpDrawArea.getParent().getLayoutBounds();
+        Bounds bounds = canvas.getParent().getLayoutBounds();
         double boundsHeight = bounds.getHeight();
         double boundsWidth = bounds.getWidth();
 
         locationCenterY = boundsHeight / 4;
         locationCenterX = boundsWidth / 2 - xCoordinate;
 
-        grpDrawArea.setTranslateX(locationCenterX);
-        grpDrawArea.setTranslateY(locationCenterY);
+        canvas.setTranslateX(locationCenterX);
+        canvas.setTranslateY(locationCenterY);
     }
 
     /**

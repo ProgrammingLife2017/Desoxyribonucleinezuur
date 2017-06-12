@@ -289,6 +289,10 @@ public class DrawableNode extends Rectangle {
         }
     }
 
+    public Color getStrokeColor() {
+        return Color.BLACK;
+    }
+
     public int getIdentifier() {
         return node.getIdentifier();
     }
