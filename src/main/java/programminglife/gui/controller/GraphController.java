@@ -1,7 +1,8 @@
 package programminglife.gui.controller;
 
 import javafx.geometry.Bounds;
-import javafx.scene.Group;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
@@ -27,24 +28,26 @@ import static javafx.scene.shape.StrokeType.OUTSIDE;
 public class GraphController {
 
     private GenomeGraph graph;
-    private Group grpDrawArea;
     private double locationCenterY;
     private double locationCenterX;
     private LinkedList<DrawableNode> oldMinMaxList = new LinkedList<>();
     private SubGraph subGraph;
     private AnchorPane anchorGraphInfo;
+    private AnchorPane anchorCanvasPanel;
     private LinkedList<DrawableNode> oldGenomeList = new LinkedList<>();
+    private Canvas canvas;
 
     /**
      * Initialize controller object.
      * @param graph The genome graph to control
-     * @param grpDrawArea The {@link Group} to draw in
+     * @param canvas the {@link Canvas} to draw in
      * @param anchorGraphInfo the {@link AnchorPane} were to show the info of a node or edge.
      */
-    public GraphController(GenomeGraph graph, Group grpDrawArea, AnchorPane anchorGraphInfo) {
+    public GraphController(GenomeGraph graph, Canvas canvas, AnchorPane anchorGraphInfo, AnchorPane anchorCanvasPanel) {
         this.graph = graph;
-        this.grpDrawArea = grpDrawArea;
+        this.canvas = canvas;
         this.anchorGraphInfo = anchorGraphInfo;
+        this.anchorCanvasPanel = anchorCanvasPanel;
     }
 
     /**
@@ -71,6 +74,8 @@ public class GraphController {
             }
         }
 
+
+
         centerOnNodeId(center);
         highlightNode(center, Color.DARKORANGE);
 
@@ -96,6 +101,9 @@ public class GraphController {
 //            }
 //        }
 
+
+
+        this.anchorCanvasPanel.getChildren().add(canvas);
 
 
         long finishTime = System.nanoTime();
@@ -178,27 +186,32 @@ public class GraphController {
      * @param child {@link DrawableNode} is the node to draw to.
      */
     private void drawEdge(DrawableNode parent, DrawableNode child) {
-        DrawableEdge edge = new DrawableEdge(parent, child);
-        // If either parent or child are dummy nodes make on click use the link in that dummy.
-        if (parent.getNode() instanceof Dummy) {
-            edge.setOnMouseClicked(event -> Console.println(parent.getNode().getLink(null).toString()));
-        } else if (child.getNode() instanceof  Dummy) {
-            edge.setOnMouseClicked(event -> Console.println(child.getNode().getLink(null).toString()));
-        } else {
-            edge.setOnMouseClicked(event -> Console.println(edge.toString()));
-        }
-        edge.setOnMouseClicked(event -> {
-            if (event.isShiftDown()) {
-                showInfoEdge(edge, 250);
-            } else {
-                showInfoEdge(edge, 10);
-            }
-        });
-        edge.colorize(graph);
-        edge.setStartLocation(edge.getStart().getRightBorderCenter());
-        edge.setEndLocation(edge.getEnd().getLeftBorderCenter());
-        this.grpDrawArea.getChildren().add(edge);
-        edge.toBack();
+          DrawableEdge edge = new DrawableEdge(parent, child);
+//        // If either parent or child are dummy nodes make on click use the link in that dummy.
+//        if (parent.getNode() instanceof Dummy) {
+//            edge.setOnMouseClicked(event -> Console.println(parent.getNode().getLink(null).toString()));
+//        } else if (child.getNode() instanceof  Dummy) {
+//            edge.setOnMouseClicked(event -> Console.println(child.getNode().getLink(null).toString()));
+//        } else {
+//            edge.setOnMouseClicked(event -> Console.println(edge.toString()));
+//        }
+//        edge.setOnMouseClicked(event -> {
+//            if (event.isShiftDown()) {
+//                showInfoEdge(edge, 250);
+//            } else {
+//                showInfoEdge(edge, 10);
+//            }
+//        });
+//        edge.colorize(graph);
+//        edge.setStartLocation(edge.getStart().getRightBorderCenter());
+//        edge.setEndLocation(edge.getEnd().getLeftBorderCenter());
+//
+//
+//        edge.toBack();
+
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        gc.setLineWidth(edge.getLineWidth());
+        gc.strokeLine(edge.getStartX(), edge.getStartY(), edge.getEndX(), edge.getEndY());
     }
 
     /**
@@ -206,24 +219,30 @@ public class GraphController {
      * @param drawableNode {@link DrawableNode} is the node to be drawn.
      */
     public void drawNode(DrawableNode drawableNode) {
-        if (!(drawableNode.getNode() instanceof Dummy)) {
-            drawableNode.setOnMouseClicked(event -> {
-                Console.println(drawableNode.getSequence());
-                Console.println(drawableNode.toString());
-                Console.println("Genomes: " + graph.getGenomeNames(drawableNode.getGenomes()));
-            });
-        } else {
-            Dummy node = (Dummy) drawableNode.getNode();
-        }
-        drawableNode.setOnMouseClicked(event -> {
-            if (event.isShiftDown()) {
-                showInfoNode(drawableNode, 250);
-            } else {
-                showInfoNode(drawableNode, 10);
-            }
-        });
-        drawableNode.colorize(graph);
-        this.grpDrawArea.getChildren().add(drawableNode);
+//        if (!(drawableNode.getNode() instanceof Dummy)) {
+//            drawableNode.setOnMouseClicked(event -> {
+//                Console.println(drawableNode.getSequence());
+//                Console.println(drawableNode.toString());
+//                Console.println("Genomes: " + graph.getGenomeNames(drawableNode.getGenomes()));
+//            });
+//        } else {
+//            Dummy node = (Dummy) drawableNode.getNode();
+//        }
+//        drawableNode.setOnMouseClicked(event -> {
+//            if (event.isShiftDown()) {
+//                showInfoNode(drawableNode, 250);
+//            } else {
+//                showInfoNode(drawableNode, 10);
+//            }
+//        });
+//        drawableNode.colorize(graph);
+//
+//        this.grpDrawArea.getChildren().add(drawableNode);
+
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        gc.setStroke(drawableNode.getStrokeColor());
+        gc.strokeRect(drawableNode.getX(), drawableNode.getY() , drawableNode.getWidth(), drawableNode.getHeight());
+
     }
 
     /**
@@ -246,7 +265,7 @@ public class GraphController {
      * Clear the draw area.
      */
     public void clear() {
-        this.grpDrawArea.getChildren().clear();
+        this.canvas.getGraphicsContext2D().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
     }
 
     public double getLocationCenterX() {

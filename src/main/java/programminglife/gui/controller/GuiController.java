@@ -5,9 +5,10 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
-import javafx.scene.Group;
+
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
@@ -31,6 +32,7 @@ import programminglife.utility.Alerts;
 import programminglife.utility.Console;
 import programminglife.utility.NumbersOnlyListener;
 import programminglife.utility.ProgressCounter;
+
 
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -74,9 +76,9 @@ public class GuiController implements Observer {
     @FXML private TextField txtMaxDrawDepth;
     @FXML private TextField txtCenterNode;
 
-    @FXML private Group grpDrawArea;
+    @FXML private Canvas canvas;
     @FXML private AnchorPane anchorLeftControlPanel;
-    @FXML private AnchorPane anchorGraphPanel;
+    @FXML private AnchorPane anchorCanvasPanel;
     @FXML private AnchorPane anchorGraphInfo;
 
     private double orgSceneX, orgSceneY;
@@ -100,7 +102,7 @@ public class GuiController implements Observer {
     @FXML
     @SuppressWarnings("unused")
     private void initialize() {
-        this.graphController = new GraphController(null, this.grpDrawArea, this.anchorGraphInfo);
+        this.graphController = new GraphController(null, this.canvas, this.anchorGraphInfo, this.anchorCanvasPanel);
         initRecent();
         initMenuBar();
         initBookmarkMenu();
@@ -122,7 +124,7 @@ public class GuiController implements Observer {
         if (file != null) {
             if (this.graphController != null && this.graphController.getGraph() != null) {
                 this.graphController.getGraph().close();
-                this.grpDrawArea.getChildren().clear();
+                this.canvas.getGraphicsContext2D().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
             }
 
             disableGraphUIElements(true);
@@ -432,18 +434,18 @@ public class GuiController implements Observer {
      * Initialises the mouse events.
      */
     private void initMouse() {
-        anchorGraphPanel.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
+        anchorCanvasPanel.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
             orgSceneX = event.getSceneX();
             orgSceneY = event.getSceneY();
             orgTranslateX = grpDrawArea.getTranslateX();
             orgTranslateY = grpDrawArea.getTranslateY();
         });
-        anchorGraphPanel.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> {
+        anchorCanvasPanel.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> {
             grpDrawArea.setTranslateX((orgTranslateX + event.getSceneX() - orgSceneX));
             grpDrawArea.setTranslateY((orgTranslateY + event.getSceneY() - orgSceneY));
             event.consume();
         });
-        anchorGraphPanel.addEventHandler(ScrollEvent.SCROLL, event ->
+        anchorCanvasPanel.addEventHandler(ScrollEvent.SCROLL, event ->
                 zoom(event.getDeltaX(), event.getDeltaY(), event.getSceneX(), event.getSceneY(), ZOOM_FACTOR));
     }
 
