@@ -16,7 +16,6 @@ public class HighlightController {
     private static final Color HIGHLIGHT_MIN_MAX_COLOR = Color.HOTPINK;
     private GraphController graphController;
 
-    @FXML private Button btnClose;
     @FXML private Button btnHighlight;
     @FXML private AutoCompleteTextField txtGenome;
     @FXML private TextField txtMin;

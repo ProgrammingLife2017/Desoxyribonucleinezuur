@@ -346,8 +346,8 @@ public class GraphController {
         TextArea seq = new TextArea(" Sequence: ");
         seq.setEditable(false);
         seq.setLayoutX(x); seq.setLayoutY(420);
-        seq.setText(node.getNode().getSequence().replaceAll("(.{25})", "$1" + System.getProperty("line.separator")));
-        seq.setPrefWidth(225); seq.setPrefHeight(25 * Math.ceil(node.getSequence().length() / 25));
+        seq.setText(node.getNode().getSequence().replaceAll("(.{18})", "$1" + System.getProperty("line.separator")));
+        seq.setPrefWidth(225); seq.setPrefHeight(300);
         seq.setStyle("-fx-text-box-border: transparent;-fx-background-color: none; -fx-background-insets: 0;"
                 + " -fx-padding: 1 3 1 3; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;");
 
