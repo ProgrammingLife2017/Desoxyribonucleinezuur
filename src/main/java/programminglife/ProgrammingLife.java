@@ -58,6 +58,7 @@ public final class ProgrammingLife extends Application {
         );
         primaryStage.sizeToScene();
         primaryStage.show();
+        primaryStage.setMaximized(true);
 
         GuiController ctrl = loader.getController();
         try {
