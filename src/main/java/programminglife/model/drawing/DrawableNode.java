@@ -8,9 +8,11 @@ import programminglife.model.XYCoordinate;
 import java.util.Collection;
 
 /**
- * Created by toinehartman on 12/06/2017.
+ * A segment that also implements {@link Drawable}.
  */
 public abstract class DrawableNode extends Rectangle implements Drawable {
+    public static final int NODE_HEIGHT = 10;
+
     private final GenomeGraph graph;
     private final int id;
 
@@ -44,7 +46,7 @@ public abstract class DrawableNode extends Rectangle implements Drawable {
 
     /**
      * Set if the dimensions are up to date.
-     * @param upToDate if is is
+     * @param upToDate {@link boolean} true if up to date else false
      */
     final void setDrawDimensionsUpToDate(boolean upToDate) {
         this.drawDimensionsUpToDate = upToDate;
@@ -52,7 +54,7 @@ public abstract class DrawableNode extends Rectangle implements Drawable {
 
     /**
      * Get if the dimensions are up to date.
-     * @return if it is
+     * @return boolean true if up to date else false
      */
     final boolean isDrawDimensionsUpToDate() {
         return drawDimensionsUpToDate;

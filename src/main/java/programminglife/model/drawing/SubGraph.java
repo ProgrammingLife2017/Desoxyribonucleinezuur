@@ -41,14 +41,13 @@ public class SubGraph {
      * Create a SubGraph using a centerNode and a radius around that centerNode.
      * This SubGraph will include all Nodes within radius steps to a parent,
      * and then another 2radius steps to a child, and symmetrically the same with children / parents reversed.
-     * @param graph the graph to draw a SubGraph from
      * @param centerNode The centerNode
      * @param radius The radius
      */
-    public SubGraph(GenomeGraph graph, DrawableSegment centerNode, int radius) {
+    public SubGraph(DrawableSegment centerNode, int radius) {
         // TODO
         // tactic: first go to all parents at exactly radius, then find all children of those parents
-        this.graph = graph;
+        this.graph = centerNode.getGraph();
         this.radius = radius;
         this.layout = false;
 
@@ -66,7 +65,7 @@ public class SubGraph {
     // boolean flag for using longest or shortest path as determining factor for the radius)
 
     /**
-     * Find the parents for a single {@link DrawableSegment} up to radius.
+     * Find the parents for a single {@link DrawableNode} up to radius.
      * This method returns a set with all nodes with a shortest path of at most radius.
      * @param node The node to start from.
      * @param radius Number indicating the number of steps to take.
@@ -79,7 +78,7 @@ public class SubGraph {
     }
 
     /**
-     * Find the parents for a set of {@link DrawableSegment DrawableNodes} up to radius.
+     * Find the parents for a set of {@link DrawableNode DrawableNodes} up to radius.
      * This method returns a set with all nodes with a shortest
      * path of at most radius to at least one of the nodes in the set.
      * @param nodes The set of nodes to start from.
@@ -95,7 +94,7 @@ public class SubGraph {
     }
 
     /**
-     * Find the parents for a single {@link DrawableSegment} up to radius.
+     * Find the parents for a single {@link DrawableNode} up to radius.
      * This method returns a set with all nodes with a shortest path of at most radius.
      * @param found The Set of nodes that have been found. Nodes found by this method will be added to the set.
      * @param node The node to start from.
@@ -132,7 +131,7 @@ public class SubGraph {
     }
 
     /**
-     * Find the parents for a single {@link DrawableSegment} up to radius.
+     * Find the parents for a single {@link DrawableNode} up to radius.
      * This method returns a set with all nodes with a shortest path of at most radius.
      * @param node The node to start from.
      * @param radius Number indicating the number of steps to take.
@@ -145,7 +144,7 @@ public class SubGraph {
     }
 
     /**
-     * Find the parents for a set of {@link DrawableSegment DrawableNodes} up to radius.
+     * Find the parents for a set of {@link DrawableNode DrawableNodes} up to radius.
      * This method returns a set with all nodes with a shortest
      * path of at most radius to at least one of the nodes in the set.
      * @param nodes The set of nodes to start from.
@@ -166,7 +165,7 @@ public class SubGraph {
     }
 
     /**
-     * Find the parents for a single {@link DrawableSegment} up to radius.
+     * Find the parents for a single {@link DrawableNode} up to radius.
      * This method returns a set with all nodes with a shortest path of at most radius.
      * @param found The Set of nodes that have been found. Nodes found by this method will be added to the set.
      * @param node The node to start from.
@@ -254,7 +253,7 @@ public class SubGraph {
     }
 
     /**
-     * Create DrawableDummy nodes for layers to avoid more crossing edges.
+     * Create {@link DrawableDummy} nodes for layers to avoid more crossing edges.
      * @param layers {@link List} representing all layers to be drawn.
      */
     private void createDummyNodes(List<Layer> layers) {
@@ -314,9 +313,9 @@ public class SubGraph {
     }
 
     /**
-     * Get the parents of {@link DrawableSegment} node.
-     * @param node The {@link DrawableSegment} to get
-     * @return A {@link Collection} of {@link DrawableSegment}
+     * Get the parents of {@link DrawableNode} node.
+     * @param node The {@link DrawableNode} to get
+     * @return A {@link Collection} of {@link DrawableNode}
      */
     public Collection<DrawableNode> getParents(DrawableNode node) {
         Collection<DrawableNode> parents = new LinkedHashSet<>();
@@ -329,9 +328,9 @@ public class SubGraph {
     }
 
     /**
-     * Get the children of {@link DrawableSegment} node.
-     * @param node The {@link DrawableSegment} to get
-     * @return A {@link Collection} of {@link DrawableSegment}
+     * Get the children of {@link DrawableNode} node.
+     * @param node The {@link DrawableNode} to get
+     * @return A {@link Collection} of {@link DrawableNode}
      */
     public Collection<DrawableNode> getChildren(DrawableNode node) {
         Collection<DrawableNode> children = new LinkedHashSet<>();

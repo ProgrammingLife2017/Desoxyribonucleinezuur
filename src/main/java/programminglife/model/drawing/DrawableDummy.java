@@ -84,7 +84,7 @@ public class DrawableDummy extends DrawableNode {
     @Override
     public void setLocation(int x, int y) {
         this.setX(x);
-        this.setY(y + 5);
+        this.setY(y + NODE_HEIGHT / 2);
     }
 
     @Override

@@ -5,17 +5,14 @@ import programminglife.model.GenomeGraph;
 import programminglife.model.Link;
 import programminglife.model.XYCoordinate;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 /**
  * A Segment that also Implements {@link Drawable}.
  */
 public class DrawableSegment extends DrawableNode {
-    private Collection<Integer> parents;
-    private Collection<Integer> children;
+    private Set<Integer> parents;
+    private Set<Integer> children;
 
     /**
      * Create a DrawableSegment from a Segment.
@@ -39,7 +36,7 @@ public class DrawableSegment extends DrawableNode {
      * @return children {@link Collection} are the direct children of the node {@link DrawableSegment}.
      */
     @Override
-    public Collection<Integer> getChildren() {
+    public Set<Integer> getChildren() {
         return children;
     }
 
@@ -47,7 +44,7 @@ public class DrawableSegment extends DrawableNode {
      * Get all the parents of the node {@link DrawableSegment}.
      * @return parent {@link Collection} are the direct parents of the node {@link DrawableSegment}.
      **/
-    public Collection<Integer> getParents() {
+    public Set<Integer> getParents() {
         return parents;
     }
 
@@ -149,7 +146,7 @@ public class DrawableSegment extends DrawableNode {
         int width, height;
 
         width = 10 + (int) Math.pow(segmentLength, 1.0 / 2);
-        height = 10;
+        height = NODE_HEIGHT;
 
         this.setSize(new XYCoordinate(width, height));
         this.setDrawDimensionsUpToDate(true);

@@ -55,7 +55,7 @@ public class GraphController {
     public void draw(int center, int radius) {
         long startTimeProgram = System.nanoTime();
         DrawableSegment centerNode = new DrawableSegment(graph, center);
-        subGraph = new SubGraph(this.graph, centerNode, radius);
+        subGraph = new SubGraph(centerNode, radius);
 
         long startLayoutTime = System.nanoTime();
 
@@ -73,30 +73,6 @@ public class GraphController {
         centerOnNodeId(center);
         highlightNode(center, Color.DARKORANGE);
 
-//        // An example of how to highlight. This is not very practical atm but it works.
-//        for (Object o : grpDrawArea.getChildren()) {
-//            if (o instanceof DrawableEdge) {
-//                DrawableEdge edge = (DrawableEdge) o;
-//                if (edge.getLink().getEndID() instanceof DrawableDummy) {
-//                    if (edge.getLink().getEndID().getLink(null).getEndID().getIdentifier() % 2 == 0)
-//                        highlightEdge(edge, Color.GOLDENROD);
-//                }
-//                if ((int) edge.getLink().getEndID().getIdentifier() % 2 == 0)
-//                    highlightEdge(edge, Color.GOLDENROD);
-//            }
-//            if (o instanceof DrawableNode) {
-//                DrawableNode node = (DrawableNode) o;
-//                if (node.getNode() instanceof DrawableDummy) {
-//                    DrawableDummy dummy = (DrawableDummy) node.getNode();
-//                    if ((int) dummy.getLink(null).getEndID().getIdentifier() % 2 == 0)
-//                        highlightDummyNode(node, Color.GOLDENROD);
-//                }
-//
-//            }
-//        }
-
-
-
         long finishTime = System.nanoTime();
         long differenceTimeProgram = finishTime - startTimeProgram;
         long differenceTimeDrawing = finishTime - startTimeDrawing;
@@ -112,7 +88,7 @@ public class GraphController {
 
     /**
      * Fill the rectangles with the color.
-     * @param nodes the Collection of {@link DrawableSegment} to highlight.
+     * @param nodes the Collection of {@link Integer Integers} to highlight.
      * @param color the {@link Color} to highlight with.
      */
     private void highlightNodesByID(Collection<Integer> nodes, Color color) {
@@ -144,7 +120,7 @@ public class GraphController {
 
     /**
      * Highlights a single node.
-     * @param node {@link DrawableSegment} to highlight.
+     * @param node {@link DrawableNode} to highlight.
      * @param color {@link Color} to color with.
      */
     public void highlightNode(DrawableNode node, Color color) {
@@ -164,7 +140,7 @@ public class GraphController {
 
     /**
      * Method to highlight a dummy node. Changes the stroke color of the node.
-     * @param node {@link DrawableSegment} is the dummy node that needs highlighting.
+     * @param node {@link DrawableDummy} is the dummy node that needs highlighting.
      * @param color {@link Color} is the color in which the dummy node needs a highlight.
      */
     private void highlightDummyNode(DrawableSegment node, Color color) {
@@ -173,8 +149,8 @@ public class GraphController {
 
     /**
      * Draws a edge on the location it has.
-     * @param parent {@link DrawableSegment} is the node to be draw from.
-     * @param child {@link DrawableSegment} is the node to draw to.
+     * @param parent {@link DrawableNode} is the node to be draw from.
+     * @param child {@link DrawableNode} is the node to draw to.
      */
     private void drawEdge(DrawableNode parent, DrawableNode child) {
         DrawableEdge edge = new DrawableEdge(parent, child);
@@ -202,7 +178,7 @@ public class GraphController {
 
     /**
      * Draws a node on the location it has.
-     * @param drawableNode {@link DrawableSegment} is the node to be drawn.
+     * @param drawableNode {@link DrawableNode} is the node to be drawn.
      */
     public void drawNode(DrawableNode drawableNode) {
         if (!(drawableNode instanceof DrawableDummy)) {
@@ -217,8 +193,6 @@ public class GraphController {
                     showInfoNode((DrawableSegment) drawableNode, 10);
                 }
             });
-        } else {
-            DrawableDummy node = (DrawableDummy) drawableNode;
         }
 
         drawableNode.colorize();
@@ -297,7 +271,7 @@ public class GraphController {
 
     /**
      * Method to show the information of a node.
-     * @param node DrawableNode the node which has been clicked on.
+     * @param node DrawableSegment the node which has been clicked on.
      * @param x int the x location of the TextField.
      */
     private void showInfoNode(DrawableSegment node, int x) {
@@ -312,7 +286,7 @@ public class GraphController {
 
         anchorGraphInfo.getChildren().removeIf(node1 -> node1.getLayoutX() == x);
 
-        TextField idTextField = getTextField("ID: ", x, 70, node.getIdentifier() + "");
+        TextField idTextField = getTextField("ID: ", x, 70, Integer.toString(node.getIdentifier()));
 
         StringBuilder parentSB = new StringBuilder();
         node.getParents().forEach(id -> parentSB.append(id).append(", "));
@@ -340,7 +314,7 @@ public class GraphController {
         TextField outEdges = getTextField("Outgoing Edges: ", x, 270, Integer.toString(node.getChildren().size()));
         TextField genome = getTextField("Genome: ", x, 320,
                 graph.getGenomeNames(node.getGenomes()).toString());
-        TextField seqLength = getTextField("Sequence Length: ", x, 370, node.getSequence().length() + "");
+        TextField seqLength = getTextField("Sequence Length: ", x, 370, Integer.toString(node.getSequence().length()));
 
         TextArea seq = new TextArea(" Sequence: ");
         seq.setEditable(false);
