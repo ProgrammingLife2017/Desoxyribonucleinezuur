@@ -143,7 +143,7 @@ public class GraphController {
      * @param node {@link DrawableDummy} is the dummy node that needs highlighting.
      * @param color {@link Color} is the color in which the dummy node needs a highlight.
      */
-    private void highlightDummyNode(DrawableSegment node, Color color) {
+    private void highlightDummyNode(DrawableDummy node, Color color) {
         node.setStroke(color);
     }
 
