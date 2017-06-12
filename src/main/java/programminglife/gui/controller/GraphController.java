@@ -7,10 +7,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import programminglife.model.Dummy;
+import programminglife.model.drawing.DrawableDummy;
 import programminglife.model.GenomeGraph;
 import programminglife.model.drawing.DrawableEdge;
 import programminglife.model.drawing.DrawableNode;
+import programminglife.model.drawing.DrawableSegment;
 import programminglife.model.drawing.SubGraph;
 import programminglife.utility.Console;
 
@@ -53,8 +54,8 @@ public class GraphController {
      */
     public void draw(int center, int radius) {
         long startTimeProgram = System.nanoTime();
-        DrawableNode centerNode = new DrawableNode(center, graph);
-        subGraph = new SubGraph(centerNode, radius);
+        DrawableSegment centerNode = new DrawableSegment(graph, center);
+        subGraph = new SubGraph(this.graph, centerNode, radius);
 
         long startLayoutTime = System.nanoTime();
 
@@ -76,7 +77,7 @@ public class GraphController {
 //        for (Object o : grpDrawArea.getChildren()) {
 //            if (o instanceof DrawableEdge) {
 //                DrawableEdge edge = (DrawableEdge) o;
-//                if (edge.getLink().getEndID() instanceof Dummy) {
+//                if (edge.getLink().getEndID() instanceof DrawableDummy) {
 //                    if (edge.getLink().getEndID().getLink(null).getEndID().getIdentifier() % 2 == 0)
 //                        highlightEdge(edge, Color.GOLDENROD);
 //                }
@@ -85,8 +86,8 @@ public class GraphController {
 //            }
 //            if (o instanceof DrawableNode) {
 //                DrawableNode node = (DrawableNode) o;
-//                if (node.getNode() instanceof Dummy) {
-//                    Dummy dummy = (Dummy) node.getNode();
+//                if (node.getNode() instanceof DrawableDummy) {
+//                    DrawableDummy dummy = (DrawableDummy) node.getNode();
 //                    if ((int) dummy.getLink(null).getEndID().getIdentifier() % 2 == 0)
 //                        highlightDummyNode(node, Color.GOLDENROD);
 //                }
@@ -111,7 +112,7 @@ public class GraphController {
 
     /**
      * Fill the rectangles with the color.
-     * @param nodes the Collection of {@link DrawableNode} to highlight.
+     * @param nodes the Collection of {@link DrawableSegment} to highlight.
      * @param color the {@link Color} to highlight with.
      */
     private void highlightNodesByID(Collection<Integer> nodes, Color color) {
@@ -143,7 +144,7 @@ public class GraphController {
 
     /**
      * Highlights a single node.
-     * @param node {@link DrawableNode} to highlight.
+     * @param node {@link DrawableSegment} to highlight.
      * @param color {@link Color} to color with.
      */
     public void highlightNode(DrawableNode node, Color color) {
@@ -163,25 +164,25 @@ public class GraphController {
 
     /**
      * Method to highlight a dummy node. Changes the stroke color of the node.
-     * @param node {@link DrawableNode} is the dummy node that needs highlighting.
+     * @param node {@link DrawableSegment} is the dummy node that needs highlighting.
      * @param color {@link Color} is the color in which the dummy node needs a highlight.
      */
-    private void highlightDummyNode(DrawableNode node, Color color) {
+    private void highlightDummyNode(DrawableSegment node, Color color) {
         node.setStroke(color);
     }
 
     /**
      * Draws a edge on the location it has.
-     * @param parent {@link DrawableNode} is the node to be draw from.
-     * @param child {@link DrawableNode} is the node to draw to.
+     * @param parent {@link DrawableSegment} is the node to be draw from.
+     * @param child {@link DrawableSegment} is the node to draw to.
      */
     private void drawEdge(DrawableNode parent, DrawableNode child) {
         DrawableEdge edge = new DrawableEdge(parent, child);
         // If either parent or child are dummy nodes make on click use the link in that dummy.
-        if (parent.getNode() instanceof Dummy) {
-            edge.setOnMouseClicked(event -> Console.println(parent.getNode().getLink(null).toString()));
-        } else if (child.getNode() instanceof  Dummy) {
-            edge.setOnMouseClicked(event -> Console.println(child.getNode().getLink(null).toString()));
+        if (parent instanceof DrawableDummy) {
+            edge.setOnMouseClicked(event -> Console.println(parent.getLink(null).toString()));
+        } else if (child instanceof DrawableDummy) {
+            edge.setOnMouseClicked(event -> Console.println(child.getLink(null).toString()));
         } else {
             edge.setOnMouseClicked(event -> Console.println(edge.toString()));
         }
@@ -193,33 +194,33 @@ public class GraphController {
             }
         });
         edge.colorize(graph);
-        edge.setStartLocation(edge.getStart().getRightBorderCenter());
-        edge.setEndLocation(edge.getEnd().getLeftBorderCenter());
+        edge.setStartNode(edge.getStart());
+        edge.setEndNode(edge.getEnd());
         this.grpDrawArea.getChildren().add(edge);
         edge.toBack();
     }
 
     /**
      * Draws a node on the location it has.
-     * @param drawableNode {@link DrawableNode} is the node to be drawn.
+     * @param drawableNode {@link DrawableSegment} is the node to be drawn.
      */
     public void drawNode(DrawableNode drawableNode) {
-        if (!(drawableNode.getNode() instanceof Dummy)) {
+        if (!(drawableNode instanceof DrawableDummy)) {
             drawableNode.setOnMouseClicked(event -> {
-                Console.println(drawableNode.getSequence());
-                Console.println(drawableNode.toString());
-                Console.println("Genomes: " + graph.getGenomeNames(drawableNode.getGenomes()));
+                Console.println(drawableNode.details());
+            });
+
+            drawableNode.setOnMouseClicked(event -> {
+                if (event.isShiftDown()) {
+                    showInfoNode((DrawableSegment) drawableNode, 250);
+                } else {
+                    showInfoNode((DrawableSegment) drawableNode, 10);
+                }
             });
         } else {
-            Dummy node = (Dummy) drawableNode.getNode();
+            DrawableDummy node = (DrawableDummy) drawableNode;
         }
-        drawableNode.setOnMouseClicked(event -> {
-            if (event.isShiftDown()) {
-                showInfoNode(drawableNode, 250);
-            } else {
-                showInfoNode(drawableNode, 10);
-            }
-        });
+
         drawableNode.colorize(graph);
         this.grpDrawArea.getChildren().add(drawableNode);
     }
@@ -288,8 +289,8 @@ public class GraphController {
         Text childrenText = new Text("Child: "); childrenText.setLayoutX(x); childrenText.setLayoutY(165);
 
         TextField id = getTextField("Genomes: ", x, 70, graph.getGenomeNames(edge.getLink().getGenomes()).toString());
-        TextField parent = getTextField("Parent Node: ", x, 120, edge.getStart().getNode().getIdentifier() + "");
-        TextField child = getTextField("Child Node: ", x, 170, edge.getEnd().getNode().getIdentifier() + "");
+        TextField parent = getTextField("Parent Node: ", x, 120, edge.getStart().getIdentifier() + "");
+        TextField child = getTextField("Child Node: ", x, 170, edge.getEnd().getIdentifier() + "");
 
         anchorGraphInfo.getChildren().addAll(idText, parentsText, childrenText, id, parent, child);
     }
@@ -299,7 +300,7 @@ public class GraphController {
      * @param node DrawableNode the node which has been clicked on.
      * @param x int the x location of the TextField.
      */
-    private void showInfoNode(DrawableNode node, int x) {
+    private void showInfoNode(DrawableSegment node, int x) {
         Text idText = new Text("ID: "); idText.setLayoutX(x); idText.setLayoutY(65);
         Text parentText = new Text("Parents: "); parentText.setLayoutX(x); parentText.setLayoutY(115);
         Text childText = new Text("Children: "); childText.setLayoutX(x); childText.setLayoutY(165);
@@ -311,10 +312,10 @@ public class GraphController {
 
         anchorGraphInfo.getChildren().removeIf(node1 -> node1.getLayoutX() == x);
 
-        TextField id = getTextField("ID: ", x, 70, node.getNode().getIdentifier() + "");
+        TextField idTextField = getTextField("ID: ", x, 70, node.getIdentifier() + "");
 
         StringBuilder parentSB = new StringBuilder();
-        node.getNode().getParents().forEach(o -> parentSB.append(o.getIdentifier()).append(", "));
+        node.getParents().forEach(id -> parentSB.append(id).append(", "));
         TextField parents;
         if (parentSB.length() > 2) {
             parentSB.setLength(parentSB.length() - 2);
@@ -325,7 +326,7 @@ public class GraphController {
         }
 
         StringBuilder childSB = new StringBuilder();
-        node.getNode().getChildren().forEach(o -> childSB.append(o.getIdentifier()).append(", "));
+        node.getChildren().forEach(id -> childSB.append(id).append(", "));
         TextField children;
         if (childSB.length() > 2) {
             childSB.setLength(childSB.length() - 2);
@@ -335,23 +336,23 @@ public class GraphController {
             children = getTextField("Children: ", x, 170, childSB.toString());
         }
 
-        TextField inEdges = getTextField("Incoming Edges: ", x, 220, node.getNode().getParentEdges().size() + "");
-        TextField outEdges = getTextField("Outgoing Edges: ", x, 270, node.getNode().getChildEdges().size() + "");
+        TextField inEdges = getTextField("Incoming Edges: ", x, 220, Integer.toString(node.getParents().size()));
+        TextField outEdges = getTextField("Outgoing Edges: ", x, 270, Integer.toString(node.getChildren().size()));
         TextField genome = getTextField("Genome: ", x, 320,
-                graph.getGenomeNames(node.getNode().getGenomes()).toString());
-        TextField seqLength = getTextField("Sequence Length: ", x, 370, node.getNode().getSequence().length() + "");
+                graph.getGenomeNames(node.getGenomes()).toString());
+        TextField seqLength = getTextField("Sequence Length: ", x, 370, node.getSequence().length() + "");
 
         TextArea seq = new TextArea(" Sequence: ");
         seq.setEditable(false);
         seq.setLayoutX(x); seq.setLayoutY(420);
-        seq.setText(node.getNode().getSequence().replaceAll("(.{25})", "$1" + System.getProperty("line.separator")));
+        seq.setText(node.getSequence().replaceAll("(.{25})", "$1" + System.getProperty("line.separator")));
         seq.setPrefWidth(225); seq.setPrefHeight(25 * Math.ceil(node.getSequence().length() / 25));
         seq.setStyle("-fx-text-box-border: transparent;-fx-background-color: none; -fx-background-insets: 0;"
                 + " -fx-padding: 1 3 1 3; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;");
 
         anchorGraphInfo.getChildren().addAll(idText, parentText, childText, inEdgeText,
                 outEdgeText, genomeText, seqLengthText, seqText);
-        anchorGraphInfo.getChildren().addAll(id, parents, children, inEdges, outEdges, genome, seqLength, seq);
+        anchorGraphInfo.getChildren().addAll(idTextField, parents, children, inEdges, outEdges, genome, seqLength, seq);
     }
 
     /**
@@ -388,8 +389,8 @@ public class GraphController {
         removeHighlight(oldMinMaxList);
         removeHighlight(oldGenomeList);
         for (DrawableNode drawableNode: subGraph.getNodes().values()) {
-            if (drawableNode != null && !(drawableNode.getNode() instanceof Dummy)) {
-                int genomeCount = drawableNode.getNode().getGenomes().length;
+            if (drawableNode != null && !(drawableNode instanceof DrawableDummy)) {
+                int genomeCount = drawableNode.getGenomes().length;
                 if (genomeCount >= min && genomeCount <= max) {
                     drawNodeList.add(drawableNode);
                 }
@@ -421,7 +422,7 @@ public class GraphController {
         for (DrawableNode drawableNode: subGraph.getNodes().values()) {
             int[] genomes = drawableNode.getGenomes();
             for (int genome : genomes) {
-                if (genome == genomeID && !(drawableNode.getNode() instanceof Dummy)) {
+                if (genome == genomeID && !(drawableNode instanceof DrawableDummy)) {
                     drawNodeList.add(drawableNode);
                 }
             }

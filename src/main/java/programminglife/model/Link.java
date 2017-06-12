@@ -50,4 +50,8 @@ public class Link implements Edge {
                 this.startID,
                 this.endID);
     }
+
+    public String details() {
+        return this.toString();
+    }
 }

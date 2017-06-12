@@ -31,7 +31,7 @@ public class Layer implements Iterable<DrawableNode> {
     }
 
     /**
-     * Add a {@link DrawableNode} to this Layer.
+     * Add a {@link DrawableSegment} to this Layer.
      * @param node the node to add.
      */
     public void add(DrawableNode node) {
@@ -42,8 +42,8 @@ public class Layer implements Iterable<DrawableNode> {
     }
 
     /**
-     * Get an iterator over the {@link DrawableNode DrawableNodes} in this Layer.
-     * @return an iterator over the {@link DrawableNode DrawableNodes} in this Layer.
+     * Get an iterator over the {@link DrawableSegment DrawableNodes} in this Layer.
+     * @return an iterator over the {@link DrawableSegment DrawableNodes} in this Layer.
      */
     @NotNull
     @Override
@@ -52,7 +52,7 @@ public class Layer implements Iterable<DrawableNode> {
     }
 
     /**
-     * sort the {@link DrawableNode DrawableNodes} in this layer according to the order of the {@link Comparator} c.
+     * sort the {@link DrawableSegment DrawableNodes} in this layer according to the order of the {@link Comparator} c.
      * @param subGraph The subGraph that the neighbour layer is part of.
      * @param neighbour The neighbouring layer that is used to sort this one.
      * @param hasParents Whether the neighbouring layer contains the parents (true)
@@ -105,7 +105,7 @@ public class Layer implements Iterable<DrawableNode> {
 
     /**
      * Checks whether a node is in this layer.
-     * @param node {@link DrawableNode} to check for its presence.
+     * @param node {@link DrawableSegment} to check for its presence.
      * @return {@link boolean} true if it is in the layer, false otherwise.
      */
     public boolean contains(DrawableNode node) {
@@ -121,8 +121,8 @@ public class Layer implements Iterable<DrawableNode> {
     }
 
     /**
-     * Get the index of the a {@link DrawableNode} node in the layer.
-     * @param node {@link DrawableNode} to get the index of.
+     * Get the index of the a {@link DrawableSegment} node in the layer.
+     * @param node {@link DrawableSegment} to get the index of.
      * @return the index of the node, or -1 if this Layer does not contain the node.
      */
     public int indexOf(DrawableNode node) {

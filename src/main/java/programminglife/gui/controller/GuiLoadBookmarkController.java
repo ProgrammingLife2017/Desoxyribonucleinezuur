@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 import programminglife.ProgrammingLife;
 import programminglife.controller.BookmarkController;
 import programminglife.model.Bookmark;
+import programminglife.model.GenomeGraph;
 import programminglife.parser.GraphParser;
 import programminglife.utility.Alerts;
 import programminglife.utility.Console;
