@@ -8,10 +8,10 @@ import programminglife.model.Link;
 import programminglife.model.XYCoordinate;
 
 /**
- * A {@link programminglife.model.Edge} that also Implements {@link Drawable}.
+ * A {@link programminglife.model.Link} that also Implements {@link Drawable}.
  */
 public class DrawableEdge extends Line implements Drawable {
-    private Link link; // TODO: change to Edge?
+    private Link link;
     private DrawableNode parent;
     private DrawableNode child;
 

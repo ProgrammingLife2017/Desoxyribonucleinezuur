@@ -154,9 +154,9 @@ public class GraphController {
     }
 
     /**
-     * Method to highlight a Edge. Changes the stroke color of the Edge.
+     * Method to highlight a Link. Changes the stroke color of the Link.
      * @param edge {@link DrawableEdge} is the edge to highlight.
-     * @param color {@link Color} is the color in which the Edge node needs to highlight.
+     * @param color {@link Color} is the color in which the Link node needs to highlight.
      */
     private void highlightEdge(DrawableEdge edge, Color color) {
         edge.setStroke(color);

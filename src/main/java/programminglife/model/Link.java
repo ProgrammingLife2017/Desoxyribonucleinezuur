@@ -3,7 +3,7 @@ package programminglife.model;
 /**
  * The class that handles the links used for the nodes.
  */
-public class Link implements Edge {
+public class Link {
     private int[] genomes;
     private int startID;
     private int endID;
@@ -23,7 +23,6 @@ public class Link implements Edge {
     /**
      * {@inheritDoc}
      */
-    @Override
     public int[] getGenomes() {
         return this.genomes;
     }
@@ -31,7 +30,6 @@ public class Link implements Edge {
     /**
      * {@inheritDoc}
      */
-    @Override
     public int getStartID() {
         return startID;
     }
@@ -39,7 +37,6 @@ public class Link implements Edge {
     /**
      * {@inheritDoc}
      */
-    @Override
     public int getEndID() {
         return endID;
     }
