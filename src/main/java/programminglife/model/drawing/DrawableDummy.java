@@ -17,15 +17,17 @@ public class DrawableDummy extends DrawableNode {
 
     /**
      * Create a dummy node.
-     * @param childID ID of the child node.
-     * @param parentID ID of the parent node.
+     * @param id the ID
+     * @param parentNode the dummy's parent
+     * @param childNode the dummy's child
+     * @param graph the GenomeGraph currently drawn
      */
-    public DrawableDummy(int id, int childID, int parentID, GenomeGraph graph) {
+    public DrawableDummy(int id, DrawableNode parentNode, DrawableNode childNode, GenomeGraph graph) {
         super(graph, id);
 
-        this.parentID = parentID;
-        this.childID = childID;
-        this.link = graph.getLink(parentID, childID);
+        this.parentID = parentNode.getIdentifier();
+        this.childID = childNode.getIdentifier();
+        this.link = parentNode.getLink(childNode);
     }
 
     @Override
@@ -55,8 +57,8 @@ public class DrawableDummy extends DrawableNode {
 
     @Override
     void replaceChild(DrawableNode oldChild, DrawableNode newChild) {
-        if (this.parentID == oldChild.getIdentifier()) {
-            this.parentID = newChild.getIdentifier();
+        if (this.childID == oldChild.getIdentifier()) {
+            this.childID = newChild.getIdentifier();
         } else {
             throw new NoSuchElementException(
                     String.format("The node to be replaced (%d) is not a child of this node (%d).",
@@ -75,7 +77,7 @@ public class DrawableDummy extends DrawableNode {
     }
 
     @Override
-    public void colorize(GenomeGraph graph) {
+    public void colorize() {
         DrawableEdge.colorize(this, this.link, this.getGraph());
     }
 

@@ -221,7 +221,7 @@ public class GraphController {
             DrawableDummy node = (DrawableDummy) drawableNode;
         }
 
-        drawableNode.colorize(graph);
+        drawableNode.colorize();
         this.grpDrawArea.getChildren().add(drawableNode);
     }
 
@@ -289,8 +289,8 @@ public class GraphController {
         Text childrenText = new Text("Child: "); childrenText.setLayoutX(x); childrenText.setLayoutY(165);
 
         TextField id = getTextField("Genomes: ", x, 70, graph.getGenomeNames(edge.getLink().getGenomes()).toString());
-        TextField parent = getTextField("Parent Node: ", x, 120, edge.getStart().getIdentifier() + "");
-        TextField child = getTextField("Child Node: ", x, 170, edge.getEnd().getIdentifier() + "");
+        TextField parent = getTextField("Parent Node: ", x, 120, Integer.toString(edge.getLink().getStartID()));
+        TextField child = getTextField("Child Node: ", x, 170, Integer.toString(edge.getLink().getEndID()));
 
         anchorGraphInfo.getChildren().addAll(idText, parentsText, childrenText, id, parent, child);
     }
@@ -406,7 +406,7 @@ public class GraphController {
      */
     private void removeHighlight(Collection<DrawableNode> nodes) {
         for (DrawableNode node: nodes) {
-            node.colorize(graph);
+            node.colorize();
         }
     }
 

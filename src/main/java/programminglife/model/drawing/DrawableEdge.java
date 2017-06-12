@@ -24,13 +24,6 @@ public class DrawableEdge extends Line implements Drawable {
         this.parent = parent;
         this.child = child;
         this.link = parent.getLink(child);
-        if (parent instanceof DrawableDummy) {
-            this.link = parent.getLink(null);
-        } else if (child instanceof DrawableDummy) {
-            this.link = child.getLink(null);
-        } else {
-            this.link = parent.getLink(child);
-        }
     }
 
     public DrawableNode getStart() {
@@ -47,8 +40,8 @@ public class DrawableEdge extends Line implements Drawable {
      */
     public void setStartNode(DrawableNode startNode) {
         XYCoordinate rightBorderCenter = startNode.getRightBorderCenter();
-        this.setStartX(startNode.getX());
-        this.setStartY(startNode.getY());
+        this.setStartX(rightBorderCenter.getX());
+        this.setStartY(rightBorderCenter.getY());
     }
 
     /**
@@ -56,8 +49,9 @@ public class DrawableEdge extends Line implements Drawable {
      * @param endNode The {@link XYCoordinate} to end the drawing at.
      */
     public void setEndNode(DrawableNode endNode) {
-        this.setEndX(endNode.getX());
-        this.setEndY(endNode.getY());
+        XYCoordinate leftBorderCenter = endNode.getLeftBorderCenter();
+        this.setEndX(leftBorderCenter.getX());
+        this.setEndY(leftBorderCenter.getY());
     }
 
     public Link getLink() {

@@ -35,10 +35,20 @@ public class GenomeGraph {
         return id;
     }
 
+    /**
+     * Add a node to the graph.
+     * @param nodeID the ID of the node
+     */
     public void addNode(int nodeID) {
         this.addNode(nodeID, new int[0], new int[0]);
     }
 
+    /**
+     * Add a node to the graph.
+     * @param nodeID the ID of the node
+     * @param children the children of this node
+     * @param parents the parents of this node
+     */
     public void addNode(int nodeID, int[] children, int[] parents) {
         if (this.contains(nodeID)) {
             throw new NodeExistsException(String.format("Node<%d> already exists in graph %s",
@@ -48,10 +58,20 @@ public class GenomeGraph {
         this.replaceNode(nodeID, children, parents);
     }
 
+    /**
+     * Replace a node in the graph.
+     * @param nodeID the ID of the node
+     */
     public void replaceNode(int nodeID) {
         this.replaceNode(nodeID, new int[0], new int[0]);
     }
 
+    /**
+     * Replace a node in the graph.
+     * @param nodeID the ID of the node
+     * @param children the new children
+     * @param parents the new parents
+     */
     public void replaceNode(int nodeID, int[] children, int[] parents) {
         this.cache.getChildrenAdjacencyMap().put(nodeID, children);
         this.cache.getParentsAdjacencyMap().put(nodeID, parents);
@@ -65,10 +85,21 @@ public class GenomeGraph {
         return this.cache.getNumberOfNodes();
     }
 
+    /**
+     * Get IDs of children of a node.
+     * @param nodeID the ID of the node to look up
+     * @return an int[] of IDs
+     */
     public int[] getChildIDs(int nodeID) {
         return this.cache.getChildrenAdjacencyMap().get(nodeID);
     }
 
+    /**
+     * Get a {@link Link} from this graph.
+     * @param parentID the node to find the link from
+     * @param childID the node to find the link to
+     * @return the {@link Link} itself
+     */
     public Link getLink(int parentID, int childID) {
         return new Link(parentID, childID, getGenomes(parentID, childID));
     }
@@ -241,6 +272,10 @@ public class GenomeGraph {
         return this.cache.getGenomeName(genomeID);
     }
 
+    /**
+     * Get all names of genomes in the graph.
+     * @return a {@link Collection} of names
+     */
     public Collection<String> getGenomeNames() {
         return this.cache.getGenomeNamesIdMap().keySet();
     }

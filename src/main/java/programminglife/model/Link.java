@@ -48,6 +48,10 @@ public class Link {
                 this.endID);
     }
 
+    /**
+     * Get details about this link.
+     * @return a {@link String} representation
+     */
     public String details() {
         return this.toString();
     }

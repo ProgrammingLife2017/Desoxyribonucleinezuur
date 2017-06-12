@@ -19,6 +19,7 @@ public class DrawableSegment extends DrawableNode {
 
     /**
      * Create a DrawableSegment from a Segment.
+     * @param graph the graph this Segment is in
      * @param nodeID The segment to create this DrawableSegment from.
      */
     public DrawableSegment(GenomeGraph graph, int nodeID) {
@@ -64,7 +65,8 @@ public class DrawableSegment extends DrawableNode {
 
     @Override
     public String details() {
-        return String.format("Sequence: %s%nGenomes: %s", this.getSequence(), this.getGraph().getGenomeNames(this.getGenomes()));
+        return String.format("Sequence: %s%nGenomes: %s",
+                this.getSequence(), this.getGraph().getGenomeNames(this.getGenomes()));
     }
 
     /**
@@ -108,7 +110,9 @@ public class DrawableSegment extends DrawableNode {
     }
 
     /**
-     * Set an {@link XYCoordinate} representing the location of the Segment.
+     * Set the location of the Segment.
+     * @param x the x location
+     * @param y the y location
      */
     void setLocation(int x, int y) {
         this.setX(x);
@@ -213,16 +217,20 @@ public class DrawableSegment extends DrawableNode {
      * @param child The {@link DrawableSegment} that the link goes to.
      * @return {@link Link} between the two nodes.
      */
-    Link getLink(DrawableSegment child) {
-        return getGraph().getLink(this.getIdentifier(), child.getIdentifier());
+    @Override
+    public Link getLink(DrawableNode child) {
+        if (child instanceof DrawableDummy) {
+            return child.getLink(null);
+        } else {
+            return getGraph().getLink(this.getIdentifier(), child.getIdentifier());
+        }
     }
 
     /**
      * Color a {@link DrawableSegment} depending on its properties.
-     * @param graph the {@link GenomeGraph} belonging to the {@link DrawableSegment}
      */
     @Override
-    public void colorize(GenomeGraph graph) {
+    public void colorize() {
         double genomeFraction = this.getGenomeFraction();
         double maxSaturation = 0.8, minSaturation = 0.05;
         double saturation = minSaturation + genomeFraction * (maxSaturation - minSaturation);
@@ -232,10 +240,5 @@ public class DrawableSegment extends DrawableNode {
 
         this.setFill(fillColor);
         this.setStroke(strokeColor);
-    }
-
-    @Override
-    public Link getLink(DrawableNode child) {
-        return this.getGraph().getLink(this.getIdentifier(), child.getIdentifier());
     }
 }

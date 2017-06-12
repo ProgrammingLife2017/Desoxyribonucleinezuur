@@ -41,6 +41,7 @@ public class SubGraph {
      * Create a SubGraph using a centerNode and a radius around that centerNode.
      * This SubGraph will include all Nodes within radius steps to a parent,
      * and then another 2radius steps to a child, and symmetrically the same with children / parents reversed.
+     * @param graph the graph to draw a SubGraph from
      * @param centerNode The centerNode
      * @param radius The radius
      */
@@ -263,7 +264,7 @@ public class SubGraph {
             for (DrawableNode node : current) {
                 for (DrawableNode child : this.getChildren(node)) {
                     if (!next.contains(child)) {
-                        DrawableDummy dummy = new DrawableDummy(dummyId, child.getIdentifier(), node.getIdentifier(), this.getGraph());
+                        DrawableDummy dummy = new DrawableDummy(dummyId, node, child, this.getGraph());
                         dummyId--;
                         node.replaceChild(child, dummy);
                         child.replaceParent(node, dummy);
