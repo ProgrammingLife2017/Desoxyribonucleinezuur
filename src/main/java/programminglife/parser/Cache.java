@@ -6,12 +6,14 @@ import org.mapdb.Atomic;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.Serializer;
+import programminglife.utility.Alerts;
 import programminglife.utility.Console;
 import programminglife.utility.ProgressCounter;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
@@ -19,6 +21,9 @@ import java.util.*;
  * A class for managing persistent data. It can open one cache, which contains the information for one gfa file.
  */
 public final class Cache {
+    private static final String CACHE_FOLDER = "caches/";
+    private static final String CACHE_EXTENSION = ".db.desoxyribonucleinezuur";
+
     private static final String SEQUENCE_MAP_NAME = "sequenceMap";
     private static final String SEQUENCE_LENGTH_MAP_NAME = "sequenceLengthMap";
     private static final String NODE_ID_GENOMES_MAP = "nodeIdGenomesMap";
@@ -54,14 +59,22 @@ public final class Cache {
     public Cache(String name) {
         this.dbFileName = toDBFile(name);
         Console.println("[%s] Setting up cache (%s)...", Thread.currentThread().getName(), this.dbFileName);
-        this.db = DBMaker.fileDB(new File(this.dbFileName))
-                .fileMmapEnable()
-                .fileMmapPreclearDisable()
-                .cleanerHackEnable()
-                .closeOnJvmShutdown()
-                .checksumHeaderBypass()
-                .make();
-        this.initialize();
+
+        try {
+            Path dir = Paths.get(dbFileName).getParent();
+            Files.createDirectories(dir);
+            this.db = DBMaker.fileDB(new File(this.dbFileName))
+                    .fileMmapEnable()
+                    .fileMmapPreclearDisable()
+                    .cleanerHackEnable()
+                    .closeOnJvmShutdown()
+                    .checksumHeaderBypass()
+                    .make();
+            this.initialize();
+        } catch (IOException e) {
+            Alerts.error("Cache file cannot be created at this time. " +
+                    "Please run the application from a folder you have write permissions to.");
+        }
     }
 
     /**
@@ -93,10 +106,10 @@ public final class Cache {
         if (name.toLowerCase().endsWith(".gfa")) {
             name = name.substring(0, name.length() - 4);
         }
-        if (!name.toLowerCase().endsWith(".db")) {
-            name += ".db";
+        if (!name.toLowerCase().endsWith(CACHE_EXTENSION)) {
+            name += CACHE_EXTENSION;
         }
-        return name;
+        return Paths.get(CACHE_FOLDER, name).toString();
     }
 
     /**
