@@ -8,7 +8,7 @@ import programminglife.utility.Console;
 import java.util.*;
 
 /**
- * A part of a {@link programminglife.model.Graph}. It uses a centerNode and a radius.
+ * A part of a {@link programminglife.model.GenomeGraph}. It uses a centerNode and a radius.
  * Roughly, every node reachable within radius steps from centerNode is included in this graph.
  * When updating the centerNode or the radius, it also updates the Nodes within this SubGraph.
  */

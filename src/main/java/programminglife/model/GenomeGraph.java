@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 /**
  * The class that handles the genome graph.
  */
-public class GenomeGraph implements Graph {
+public class GenomeGraph {
     private String id;
     private Cache cache;
     private Map<Integer, Collection<Integer>> parentGenomesNodes;
@@ -35,12 +35,10 @@ public class GenomeGraph implements Graph {
         return id;
     }
 
-    @Override
     public void addNode(int nodeID) {
         this.addNode(nodeID, new int[0], new int[0]);
     }
 
-    @Override
     public void addNode(int nodeID, int[] children, int[] parents) {
         if (this.contains(nodeID)) {
             throw new NodeExistsException(String.format("Node<%d> already exists in graph %s",
@@ -50,12 +48,10 @@ public class GenomeGraph implements Graph {
         this.replaceNode(nodeID, children, parents);
     }
 
-    @Override
     public void replaceNode(int nodeID) {
         this.replaceNode(nodeID, new int[0], new int[0]);
     }
 
-    @Override
     public void replaceNode(int nodeID, int[] children, int[] parents) {
         this.cache.getChildrenAdjacencyMap().put(nodeID, children);
         this.cache.getParentsAdjacencyMap().put(nodeID, parents);
@@ -69,27 +65,22 @@ public class GenomeGraph implements Graph {
         return this.cache.getNumberOfNodes();
     }
 
-    @Override
     public int[] getChildIDs(Node node) {
         return this.getChildIDs(node.getIdentifier());
     }
 
-    @Override
     public int[] getChildIDs(int nodeID) {
         return this.cache.getChildrenAdjacencyMap().get(nodeID);
     }
 
-    @Override
     public int[] getParentIDs(Node node) {
         return this.getParentIDs(node.getIdentifier());
     }
 
-    @Override
     public Link getLink(Node parent, Node child) {
         return new Link(parent, child, getGenomes(parent.getIdentifier(), child.getIdentifier()));
     }
 
-    @Override
     public Collection<Node> getParents(Node node) {
         int[] parents = this.getParentIDs(node.getIdentifier());
         Collection<Node> parentNodes = new LinkedHashSet<>();
@@ -99,7 +90,6 @@ public class GenomeGraph implements Graph {
         return parentNodes;
     }
 
-    @Override
     public Collection<Node> getChildren(Node node) {
         int[] children = this.getChildIDs(node.getIdentifier());
         Collection<Node> childNodes = new LinkedHashSet<>();
@@ -206,21 +196,18 @@ public class GenomeGraph implements Graph {
     /**
      * {@inheritDoc}
      */
-    @Override
     public boolean contains(Node node) {
         return this.contains(node.getIdentifier());
     }
     /**
      * {@inheritDoc}
      */
-    @Override
     public boolean contains(int nodeID) {
         return this.cache.getChildrenAdjacencyMap().containsKey(nodeID);
     }
     /**
      * {@inheritDoc}
      */
-    @Override
     public void addEdge(int sourceID, int destinationID) {
         this.addChild(sourceID, destinationID);
         this.addParent(destinationID, sourceID);
