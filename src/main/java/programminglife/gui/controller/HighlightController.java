@@ -52,7 +52,6 @@ public class HighlightController {
             }
         });
 
-        btnClose.setOnAction(event -> ((Stage) btnClose.getScene().getWindow()).close());
     }
 
     /**
