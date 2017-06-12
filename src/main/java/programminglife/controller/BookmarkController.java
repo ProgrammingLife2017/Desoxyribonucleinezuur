@@ -188,7 +188,7 @@ public final class BookmarkController {
      * @param fileName The name of the file where the bookmarks reside.
      * @return A DOM Element containing all graphs and bookmarks.
      */
-    public static Element loadDoc(String fileName) {
+    static Element loadDoc(String fileName) {
         checkFile(fileName);
         Document dom;
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -208,7 +208,7 @@ public final class BookmarkController {
      * @param fileName The bookmark file from which to read
      * @return A map of lists containing all bookmarks
      */
-    public static Map<String, List<Bookmark>> loadAllBookmarks(String fileName) {
+    static Map<String, List<Bookmark>> loadAllBookmarks(String fileName) {
         Map<String, List<Bookmark>> result = new HashMap<>();
         Element doc = loadDoc(fileName);
         NodeList graphs = doc.getElementsByTagName("graph");

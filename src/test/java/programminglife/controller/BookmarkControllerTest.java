@@ -71,9 +71,9 @@ public class BookmarkControllerTest {
 
     @Test
     public void writeTest() {
-        BookmarkController.storeBookmark(testPath, new Bookmark("dummypath", "writeTestGraph",2, 4, "writeTest", "writing"));
-        BookmarkController.storeBookmark(testPath, new Bookmark("dummypath", "writeTestGraph", 2, 4, "writeTeest", "writing"));
-        assertNotNull(BookmarkController.loadAllBookmarks(testPath));
+        BookmarkController.storeBookmark(testPath, new Bookmark("writeTestGraph","dummypath",2, 4, "writeTest", "writing"));
+        BookmarkController.storeBookmark(testPath, new Bookmark( "writeTestGraph", "dummypath",2, 4, "writeTeest", "writing"));
+        assertNotNull(BookmarkController.loadAllBookmarks(testPath).get("writeTestGraph"));
     }
 
     @Test
