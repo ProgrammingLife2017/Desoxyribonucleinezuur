@@ -9,7 +9,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import programminglife.model.Dummy;
 import programminglife.model.GenomeGraph;
-import programminglife.model.Segment;
 import programminglife.model.drawing.DrawableEdge;
 import programminglife.model.drawing.DrawableNode;
 import programminglife.model.drawing.SubGraph;
@@ -54,8 +53,7 @@ public class GraphController {
      */
     public void draw(int center, int radius) {
         long startTimeProgram = System.nanoTime();
-        Segment centerSegment = new Segment(graph, center);
-        DrawableNode centerNode = new DrawableNode(centerSegment);
+        DrawableNode centerNode = new DrawableNode(center, graph);
         subGraph = new SubGraph(centerNode, radius);
 
         long startLayoutTime = System.nanoTime();
@@ -78,18 +76,18 @@ public class GraphController {
 //        for (Object o : grpDrawArea.getChildren()) {
 //            if (o instanceof DrawableEdge) {
 //                DrawableEdge edge = (DrawableEdge) o;
-//                if (edge.getLink().getEnd() instanceof Dummy) {
-//                    if (edge.getLink().getEnd().getLink(null).getEnd().getIdentifier() % 2 == 0)
+//                if (edge.getLink().getEndID() instanceof Dummy) {
+//                    if (edge.getLink().getEndID().getLink(null).getEndID().getIdentifier() % 2 == 0)
 //                        highlightEdge(edge, Color.GOLDENROD);
 //                }
-//                if ((int) edge.getLink().getEnd().getIdentifier() % 2 == 0)
+//                if ((int) edge.getLink().getEndID().getIdentifier() % 2 == 0)
 //                    highlightEdge(edge, Color.GOLDENROD);
 //            }
 //            if (o instanceof DrawableNode) {
 //                DrawableNode node = (DrawableNode) o;
 //                if (node.getNode() instanceof Dummy) {
 //                    Dummy dummy = (Dummy) node.getNode();
-//                    if ((int) dummy.getLink(null).getEnd().getIdentifier() % 2 == 0)
+//                    if ((int) dummy.getLink(null).getEndID().getIdentifier() % 2 == 0)
 //                        highlightDummyNode(node, Color.GOLDENROD);
 //                }
 //
@@ -139,7 +137,7 @@ public class GraphController {
      * @param color the {@link Color} to highlight with.
      */
     public void highlightNode(int nodeID, Color color) {
-        DrawableNode node = subGraph.getNodes().get(new Segment(graph, nodeID));
+        DrawableNode node = subGraph.getNodes().get(nodeID);
         highlightNode(node, color);
     }
 
@@ -263,7 +261,7 @@ public class GraphController {
      * @param nodeId is the node to center on.
      */
     public void centerOnNodeId(int nodeId) {
-        DrawableNode drawableCenterNode = subGraph.getNodes().get(new Segment(graph, nodeId));
+        DrawableNode drawableCenterNode = subGraph.getNodes().get(nodeId);
         double xCoordinate = drawableCenterNode.getX();
 
         Bounds bounds = grpDrawArea.getParent().getLayoutBounds();

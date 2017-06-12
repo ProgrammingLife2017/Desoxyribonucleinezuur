@@ -4,7 +4,6 @@ import org.junit.*;
 import programminglife.utility.InitFXThread;
 import programminglife.model.GenomeGraph;
 import programminglife.model.GenomeGraphTest;
-import programminglife.model.Segment;
 import programminglife.model.exception.UnknownTypeException;
 
 import java.io.File;

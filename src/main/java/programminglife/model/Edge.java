@@ -15,11 +15,11 @@ public interface Edge {
      * get the start of this edge.
      * @return The start of this edge.
      */
-    Node getStart();
+    int getStartID();
 
     /**
      * get the end of this edge.
      * @return The end of this edge.
      */
-    Node getEnd();
+    int getEndID();
 }

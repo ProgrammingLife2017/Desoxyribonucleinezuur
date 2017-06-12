@@ -2,7 +2,6 @@ package programminglife.model.drawing;
 
 import org.junit.*;
 import programminglife.model.GenomeGraph;
-import programminglife.model.Segment;
 import programminglife.model.XYCoordinate;
 import programminglife.parser.Cache;
 import programminglife.utility.InitFXThread;

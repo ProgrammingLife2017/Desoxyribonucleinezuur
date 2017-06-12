@@ -4,28 +4,36 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import programminglife.model.*;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.NoSuchElementException;
 
 /**
- * A {@link Segment} that also Implements {@link Drawable}.
+ * A Segment that also Implements {@link Drawable}.
  */
 public class DrawableNode extends Rectangle {
-    private Node node;
+    private int nodeID;
+    private GenomeGraph graph;
+
     private boolean drawDimensionsUpToDate = false;
-    private Collection<Node> parents;
-    private Collection<Node> children;
+    private Collection<Integer> parents;
+    private Collection<Integer> children;
 
 
     /**
      * Create a DrawableSegment from a Segment.
-     * @param node The segment to create this DrawableSegment from.
+     * @param nodeID The segment to create this DrawableSegment from.
      */
-    public DrawableNode(Node node) {
-        this.node = node;
-        parents = new LinkedHashSet<>(node.getParents());
-        children = new LinkedHashSet<>(node.getChildren());
+    public DrawableNode(int nodeID, GenomeGraph graph) {
+        this.nodeID = nodeID;
+        this.graph = graph;
+        parents = new LinkedHashSet<>();
+        children = new LinkedHashSet<>();
+
+        Arrays.stream(graph.getParentIDs(nodeID)).forEach(id -> parents.add(id));
+        Arrays.stream(graph.getChildIDs(nodeID)).forEach(id -> children.add(id));
+
         this.setDrawDimensions();
     }
 
@@ -33,7 +41,7 @@ public class DrawableNode extends Rectangle {
      * Get all the children of the node {@link DrawableNode}.
      * @return children {@link Collection} are the direct children of the node {@link DrawableNode}.
      */
-    public Collection<Node> getChildren() {
+    public Collection<Integer> getChildren() {
         return children;
     }
 
@@ -41,7 +49,7 @@ public class DrawableNode extends Rectangle {
      * Get all the parents of the node {@link DrawableNode}.
      * @return parent {@link Collection} are the direct parents of the node {@link DrawableNode}.
      **/
-    Collection<Node> getParents() {
+    Collection<Integer> getParents() {
         return parents;
     }
 
@@ -51,10 +59,10 @@ public class DrawableNode extends Rectangle {
      * @param newChild The {@link DrawableNode} to replace with.
      */
     void replaceChild(DrawableNode oldChild, DrawableNode newChild) {
-        if (!this.children.remove(oldChild.getNode())) {
+        if (!this.children.remove(oldChild.getIdentifier())) {
             throw new NoSuchElementException("The node to be replaced is not a child of this node.");
         }
-        this.children.add(newChild.getNode());
+        this.children.add(newChild.getIdentifier());
     }
 
     /**
@@ -63,12 +71,12 @@ public class DrawableNode extends Rectangle {
      * @param newParent The {@link DrawableNode} to replace with.
      */
     void replaceParent(DrawableNode oldParent, DrawableNode newParent) {
-        if (!this.parents.remove(oldParent.getNode())) {
+        if (!this.parents.remove(oldParent.getIdentifier())) {
             throw new NoSuchElementException(
                     String.format("The node to be replaced (%d) is not a parent of this node (%d).",
-                            oldParent.getNode().getIdentifier(), this.getNode().getIdentifier()));
+                            oldParent.getIdentifier(), this.getIdentifier()));
         }
-        this.parents.add(newParent.getNode());
+        this.parents.add(newParent.getIdentifier());
     }
 
     public int getIntX() {
@@ -88,8 +96,8 @@ public class DrawableNode extends Rectangle {
     }
 
     /**
-     * Get a {@link XYCoordinate} representing the size of the {@link Segment}.
-     * @return The size of the {@link Segment}
+     * Get a {@link XYCoordinate} representing the size of the Segment.
+     * @return The size of the Segment
      */
     public XYCoordinate getSize() {
         if (!drawDimensionsUpToDate) {
@@ -99,7 +107,7 @@ public class DrawableNode extends Rectangle {
     }
 
     /**
-     * Set the size {@link XYCoordinate} of the {@link Segment}.
+     * Set the size {@link XYCoordinate} of the Segment.
      * @param size The {@link XYCoordinate} representing the size
      */
     void setSize(XYCoordinate size) {
@@ -109,7 +117,7 @@ public class DrawableNode extends Rectangle {
     }
 
     /**
-     * Getter for top left corner of a {@link Segment}.
+     * Getter for top left corner of a Segment.
      * @return {@link XYCoordinate} with the values of the top left corner.
      */
     private XYCoordinate getLocation() {
@@ -117,7 +125,7 @@ public class DrawableNode extends Rectangle {
     }
 
     /**
-     * Set an {@link XYCoordinate} representing the location of the {@link Segment}.
+     * Set an {@link XYCoordinate} representing the location of the Segment.
      * @param location The {@link XYCoordinate}
      */
     void setLocation(XYCoordinate location) {
@@ -166,11 +174,11 @@ public class DrawableNode extends Rectangle {
     }
 
     public double getGenomeFraction() {
-        return this.node.getGenomeFraction();
+        return this.graph.getGenomeFraction(this.nodeID);
     }
 
     public int[] getGenomes() {
-        return this.node.getGenomes();
+        return this.graph.getGenomes(this.nodeID);
     }
 
 
@@ -180,7 +188,7 @@ public class DrawableNode extends Rectangle {
      * @return the length of the sequence of this segment
      */
     private int getSequenceLength() {
-        return node.getSequenceLength();
+        return this.graph.getSequenceLength(this.nodeID);
     }
 
     /**
@@ -188,11 +196,7 @@ public class DrawableNode extends Rectangle {
      * @return A string containing all the sequences appended.
      */
     public String getSequence() {
-        return this.node.getSequence();
-    }
-
-    public Node getNode() {
-        return this.node;
+        return this.graph.getSequence(nodeID);
     }
 
     /**
@@ -235,7 +239,7 @@ public class DrawableNode extends Rectangle {
     @Override
     public String toString() {
         return "Segment: "
-                + node.getIdentifier()
+                + nodeID
                 + " "
                 + "Location: "
                 + this.getLocation().getX()
@@ -248,7 +252,7 @@ public class DrawableNode extends Rectangle {
     public boolean equals(Object other) {
         if (other instanceof DrawableNode) {
             DrawableNode that = (DrawableNode) other;
-            if (that.node.equals(this.node)) {
+            if (that.nodeID == this.nodeID) {
                 return true;
             }
         }
@@ -257,7 +261,7 @@ public class DrawableNode extends Rectangle {
 
     @Override
     public int hashCode() {
-        return node.getIdentifier();
+        return nodeID;
     }
 
     /**
@@ -266,7 +270,7 @@ public class DrawableNode extends Rectangle {
      * @return {@link Link} between the two nodes.
      */
     Link getLink(DrawableNode child) {
-        return node.getLink(child.getNode());
+        return graph.getLink(this.nodeID, child.nodeID);
     }
 
     /**
@@ -275,7 +279,7 @@ public class DrawableNode extends Rectangle {
      */
     public void colorize(GenomeGraph graph) {
         if (this.node instanceof Dummy) {
-            DrawableEdge.colorize(this, node.getLink(null), graph);
+            DrawableEdge.colorize(this, graph.getLink(nodeID, -1), graph);
         } else {
             double genomeFraction = this.getGenomeFraction();
             double maxSaturation = 0.8, minSaturation = 0.05;
@@ -290,6 +294,10 @@ public class DrawableNode extends Rectangle {
     }
 
     public int getIdentifier() {
-        return node.getIdentifier();
+        return nodeID;
+    }
+
+    public GenomeGraph getGraph() {
+        return this.graph;
     }
 }

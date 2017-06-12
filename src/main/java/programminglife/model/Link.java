@@ -5,18 +5,18 @@ package programminglife.model;
  */
 public class Link implements Edge {
     private int[] genomes;
-    private Node start;
-    private Node end;
+    private int startID;
+    private int endID;
 
     /**
      * Constructor for Link.
-     * @param start the start (parent) of this Link
-     * @param end the end (child) of this Link
+     * @param startID the startID (parent) of this Link
+     * @param endID the endID (child) of this Link
      * @param genomes The genomes that flow through this Link.
      */
-    public Link(Node start, Node end, int[] genomes) {
-        this.start = start;
-        this.end = end;
+    public Link(int startID, int endID, int[] genomes) {
+        this.startID = startID;
+        this.endID = endID;
         this.genomes = genomes;
     }
 
@@ -32,22 +32,22 @@ public class Link implements Edge {
      * {@inheritDoc}
      */
     @Override
-    public Node getStart() {
-        return start;
+    public int getStartID() {
+        return startID;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Node getEnd() {
-        return end;
+    public int getEndID() {
+        return endID;
     }
 
     @Override
     public String toString() {
         return String.format("Link from [node: %s] to [node: %s]",
-                this.start.toString(),
-                this.end.toString());
+                this.startID,
+                this.endID);
     }
 }

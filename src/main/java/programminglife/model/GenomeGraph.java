@@ -65,38 +65,12 @@ public class GenomeGraph {
         return this.cache.getNumberOfNodes();
     }
 
-    public int[] getChildIDs(Node node) {
-        return this.getChildIDs(node.getIdentifier());
-    }
-
     public int[] getChildIDs(int nodeID) {
         return this.cache.getChildrenAdjacencyMap().get(nodeID);
     }
 
-    public int[] getParentIDs(Node node) {
-        return this.getParentIDs(node.getIdentifier());
-    }
-
-    public Link getLink(Node parent, Node child) {
-        return new Link(parent, child, getGenomes(parent.getIdentifier(), child.getIdentifier()));
-    }
-
-    public Collection<Node> getParents(Node node) {
-        int[] parents = this.getParentIDs(node.getIdentifier());
-        Collection<Node> parentNodes = new LinkedHashSet<>();
-        for (int parent : parents) {
-            parentNodes.add(new Segment(this, parent));
-        }
-        return parentNodes;
-    }
-
-    public Collection<Node> getChildren(Node node) {
-        int[] children = this.getChildIDs(node.getIdentifier());
-        Collection<Node> childNodes = new LinkedHashSet<>();
-        for (int aChildren : children) {
-            childNodes.add(new Segment(this, aChildren));
-        }
-        return childNodes;
+    public Link getLink(int parentID, int childID) {
+        return new Link(parentID, childID, getGenomes(parentID, childID));
     }
 
     /**
@@ -196,15 +170,10 @@ public class GenomeGraph {
     /**
      * {@inheritDoc}
      */
-    public boolean contains(Node node) {
-        return this.contains(node.getIdentifier());
-    }
-    /**
-     * {@inheritDoc}
-     */
     public boolean contains(int nodeID) {
         return this.cache.getChildrenAdjacencyMap().containsKey(nodeID);
     }
+
     /**
      * {@inheritDoc}
      */
@@ -294,8 +263,8 @@ public class GenomeGraph {
     }
 
     /**
-     * Set the sequence for a {@link Segment}.
-     * @param nodeID the ID of the {@link Segment}
+     * Set the sequence for a Segment.
+     * @param nodeID the ID of the Segment
      * @param sequence the sequence {@link String}
      */
     public void setSequence(int nodeID, String sequence) {
@@ -303,8 +272,8 @@ public class GenomeGraph {
     }
 
     /**
-     * Get the sequence of a {@link Segment}.
-     * @param nodeID the ID of the {@link Segment}
+     * Get the sequence of a Segment.
+     * @param nodeID the ID of the Segment
      * @return the sequence {@link String}
      */
     @NotNull
@@ -313,8 +282,8 @@ public class GenomeGraph {
     }
 
     /**
-     * Get the sequence length of a {@link Segment}.
-     * @param nodeID the ID of the {@link Segment}
+     * Get the sequence length of a Segment.
+     * @param nodeID the ID of the Segment
      * @return the sequence length {@link String}
      */
     public int getSequenceLength(int nodeID) {
