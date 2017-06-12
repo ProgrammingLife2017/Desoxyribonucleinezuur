@@ -172,7 +172,7 @@ public class GuiController implements Observer {
 
     /**
      * Set the graph for this GUIController.
-     * @param graph Graph to use.
+     * @param graph {@link GenomeGraph} to use.
      */
     public void setGraph(GenomeGraph graph) {
         this.graphController.setGraph(graph);

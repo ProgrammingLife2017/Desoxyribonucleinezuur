@@ -14,7 +14,7 @@ import javafx.stage.Stage;
 import programminglife.ProgrammingLife;
 import programminglife.controller.BookmarkController;
 import programminglife.model.Bookmark;
-import programminglife.model.Graph;
+import programminglife.model.GenomeGraph;
 import programminglife.parser.GraphParser;
 import programminglife.utility.Alerts;
 import programminglife.utility.Console;
@@ -253,7 +253,7 @@ public class GuiLoadBookmarkController implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         if (o instanceof GraphParser) {
-            if (arg instanceof Graph) {
+            if (arg instanceof GenomeGraph) {
                 Platform.runLater(() -> guiController.draw());
             }
         }

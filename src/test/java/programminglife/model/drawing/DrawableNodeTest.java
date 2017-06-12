@@ -2,7 +2,6 @@ package programminglife.model.drawing;
 
 import org.junit.*;
 import programminglife.model.GenomeGraph;
-import programminglife.model.Segment;
 import programminglife.model.XYCoordinate;
 import programminglife.parser.Cache;
 import programminglife.utility.InitFXThread;
@@ -15,7 +14,7 @@ import static org.junit.Assert.assertEquals;
 public class DrawableNodeTest {
     private static final String GRAPH_NAME = "testGraph";
 
-    DrawableNode node;
+    DrawableSegment node;
     GenomeGraph g;
 
     @BeforeClass
@@ -27,9 +26,9 @@ public class DrawableNodeTest {
     public void setUp() throws Exception {
         Cache.removeDB(GRAPH_NAME);
         g = new GenomeGraph(GRAPH_NAME);
-        Segment segment = new Segment(g, 1, "ATCG");
-        g.addNode(segment.getIdentifier());
-        node = new DrawableNode(segment);
+        g.setSequence(1, "ATCG");
+        g.addNode(1);
+        node = new DrawableSegment(g, 1);
     }
 
     @After
@@ -55,7 +54,7 @@ public class DrawableNodeTest {
 
     @Test
     public void rightBorderCenterTest() {
-        node.setLocation(new XYCoordinate(2, 2));
+        node.setLocation(2, 2);
         node.setSize(new XYCoordinate(4, 2));
 
         assertEquals(6, node.getRightBorderCenter().getX(), 0.0);
@@ -64,7 +63,7 @@ public class DrawableNodeTest {
 
     @Test
     public void leftBorderCenterTest() {
-        node.setLocation(new XYCoordinate(2, 2));
+        node.setLocation(2, 2);
         node.setSize(new XYCoordinate(4, 2));
 
         assertEquals(2, node.getLeftBorderCenter().getX(), 0.0);

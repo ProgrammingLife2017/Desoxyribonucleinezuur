@@ -4,7 +4,6 @@ import org.junit.*;
 import programminglife.utility.InitFXThread;
 import programminglife.model.GenomeGraph;
 import programminglife.model.GenomeGraphTest;
-import programminglife.model.Segment;
 import programminglife.model.exception.UnknownTypeException;
 
 import java.io.File;
@@ -88,7 +87,7 @@ public class GraphParserTest implements Observer {
         GenomeGraph g = graphParser.getGraph();
 
         assertTrue(g.contains(6));
-        assertEquals("C", (new Segment(g, 6)).getSequence());
+        assertEquals("C", g.getSequence(6));
         assertEquals(0, g.getParentIDs(6).length);
         assertEquals(0, g.getChildIDs(6).length);
     }
