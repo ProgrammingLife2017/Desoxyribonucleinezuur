@@ -27,7 +27,7 @@ public class DrawableNodeTest {
         Cache.removeDB(GRAPH_NAME);
         g = new GenomeGraph(GRAPH_NAME);
         g.setSequence(1, "ATCG");
-        g.addNode(1);
+        g.replaceNode(1);
         node = new DrawableSegment(g, 1);
     }
 

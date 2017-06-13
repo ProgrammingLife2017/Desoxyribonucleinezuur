@@ -2,7 +2,6 @@ package programminglife.model;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
-import programminglife.model.exception.NodeExistsException;
 import programminglife.parser.Cache;
 import programminglife.utility.ProgressCounter;
 
@@ -35,28 +34,6 @@ public class GenomeGraph {
         return id;
     }
 
-    /**
-     * Add a node to the graph.
-     * @param nodeID the ID of the node
-     */
-    public void addNode(int nodeID) {
-        this.addNode(nodeID, new int[0], new int[0]);
-    }
-
-    /**
-     * Add a node to the graph.
-     * @param nodeID the ID of the node
-     * @param children the children of this node
-     * @param parents the parents of this node
-     */
-    public void addNode(int nodeID, int[] children, int[] parents) {
-        if (this.contains(nodeID)) {
-            throw new NodeExistsException(String.format("Node<%d> already exists in graph %s",
-                    nodeID, this.getID()));
-        }
-
-        this.replaceNode(nodeID, children, parents);
-    }
 
     /**
      * Replace a node in the graph.
