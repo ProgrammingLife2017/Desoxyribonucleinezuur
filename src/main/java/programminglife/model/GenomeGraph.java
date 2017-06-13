@@ -56,6 +56,8 @@ public class GenomeGraph {
 
     /**
      * Get the number of nodes in the {@link GenomeGraph}.
+     * This is based on the amount of nodes with a sequence in the cache not the amount of nodes
+     * in the GenomeGraph.
      * @return the number of nodes
      */
     public int size() {

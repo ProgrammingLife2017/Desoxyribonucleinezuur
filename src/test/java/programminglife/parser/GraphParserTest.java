@@ -55,14 +55,6 @@ public class GraphParserTest implements Observer {
         faultyGraphParser.getGraph().removeCache();
     }
 
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-        Cache.removeDB(TEST_DB);
-        Cache.removeDB(TEST_FAULTY_DB);
-        Cache.removeDB(TEST_DB2);
-        Cache.removeDB(TEST_FAULTY_DB2);
-    }
-
     @Test(expected = UnknownTypeException.class)
     public void faultyParseTest() throws Exception {
         faultyGraphParser.parse();

@@ -22,7 +22,7 @@ public class SubGraphTest {
     public static void setUpClass() throws Exception {
         InitFXThread.setupClass();
 
-        TEST_PATH = new File(GenomeGraphTest.class.getResource("/test.gfa").toURI()).getAbsolutePath();
+        TEST_PATH = GenomeGraphTest.class.getResource("/test.gfa").getPath();
     }
 
     @Before
@@ -38,11 +38,6 @@ public class SubGraphTest {
     @After
     public void tearDown() throws Exception {
         graph.removeCache();
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-        Cache.removeDB(TEST_PATH);
     }
 
     @Test

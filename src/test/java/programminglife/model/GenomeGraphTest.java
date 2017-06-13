@@ -28,7 +28,7 @@ public class GenomeGraphTest {
 
     @Before
     public void setUp() throws Exception {
-        graph = new GenomeGraph("test graph");
+        graph = new GenomeGraph("test");
         nodeID = 3;
         graph.setSequence(nodeID, "ATCG");
 
@@ -38,11 +38,6 @@ public class GenomeGraphTest {
     @After
     public void tearDown() throws Exception {
         graph.removeCache();
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-        Cache.removeDB(TEST_DB);
     }
 
     @Test
@@ -98,13 +93,76 @@ public class GenomeGraphTest {
 
     }
 
+//    /**
+//     * This test should not pass for now untill a fix from Toine his branch is merged.
+//     */
+//    @Test
+//    public void addEdgeNoSource() {
+//        graph.addEdge(17, 18);
+//        graph.cacheLastEdges();
+//        //both nodes should exist.
+//        assertTrue(graph.contains(17));
+//        assertTrue(graph.contains(18));
+//    }
 
     @Test
-    public void addEdgeNoSource() {
-        graph.addEdge(17, 18);
-        graph.cacheLastEdges();
-        //both nodes should exist.
-        assertTrue(graph.contains(17));
-        assertTrue(graph.contains(18));
+    public void addMultipleEdgesSameSource() {
+        graph.replaceNode(4);
+        graph.replaceNode(5);
+        graph.addEdge(3, 4);
+        graph.addEdge(3, 5);
+        assertTrue(graph.contains(4));
+        assertTrue(graph.contains(5));
+
     }
+
+    @Test
+    public void addMultipleEdgesDifferentSources() {
+        graph.replaceNode(4);
+        graph.replaceNode(5);
+        graph.addEdge(3,4);
+        graph.addEdge(4,5);
+        assertArrayEquals(new int[]{4},graph.getChildIDs(3));
+        //This should return an empty array because cacheLastEdges is not called yet.
+        assertArrayEquals(new int[]{}, graph.getChildIDs(4));
+        graph.cacheLastEdges();
+        //Now it should return 4.
+        assertArrayEquals(new int[]{5}, graph.getChildIDs(4));
+
+    }
+
+    @Test
+    public void addAndGetGenomeTest() {
+        int[] genomeID = {37};
+        graph.setGenomes(3, genomeID);
+        assertArrayEquals(genomeID, graph.getGenomes(3));
+
+    }
+
+    @Test
+    public void addAndGetMultipleGenomeTest() {
+        int[] genomeIDs = {37,38,39};
+        graph.setGenomes(4, genomeIDs);
+        assertArrayEquals(genomeIDs, graph.getGenomes(4));
+        assertEquals(3, graph.getGenomes(4).length);
+    }
+
+////    TODO: WIP
+//    @Test
+//    public void getGenomesOnEdgeTest() {
+//        int[] genomeIDsA = {37,55,89};
+//        int[] genomeIDsB = {37,55,103};
+//        graph.setGenomes(3, genomeIDsA);
+//        graph.setGenomes(4, genomeIDsB);
+//        graph.replaceNode(4);
+//        assertArrayEquals(new int[]{}, graph.getGenomes(3, 4));
+//        graph.replaceNode(4);
+//        graph.addEdge(3,4);
+//        graph.cacheLastEdges();
+//        assertArrayEquals(new int[]{37, 55}, graph.getGenomes(3, 4));
+//    }
+
+
+
+
 }

@@ -24,7 +24,6 @@ public class DrawableNodeTest {
 
     @Before
     public void setUp() throws Exception {
-        Cache.removeDB(GRAPH_NAME);
         g = new GenomeGraph(GRAPH_NAME);
         g.setSequence(1, "ATCG");
         g.replaceNode(1);
@@ -34,11 +33,6 @@ public class DrawableNodeTest {
     @After
     public void tearDown() throws Exception {
         g.removeCache();
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-        Cache.removeDB(GRAPH_NAME);
     }
 
 
