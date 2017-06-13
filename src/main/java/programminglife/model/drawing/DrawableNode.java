@@ -11,163 +11,121 @@ import java.util.Collection;
 /**
  * A segment that also implements {@link Drawable}.
  */
-public abstract class DrawableNode extends Rectangle implements Drawable {
-    public static final int NODE_HEIGHT = 10;
-
-    private final GenomeGraph graph;
-    private final int id;
-
-    private boolean drawDimensionsUpToDate = false;
-
-    /**
-     * Construct a {@link DrawableNode}.
-     * @param graph the {@link GenomeGraph} to draw from
-     * @param id the ID of the {@link DrawableNode}
-     */
-    DrawableNode(GenomeGraph graph, int id) {
-        this.graph = graph;
-        this.id = id;
-    }
+public interface DrawableNode extends Drawable {
 
     /**
      * Get the {@link GenomeGraph}.
      * @return the graph
      */
-    public final GenomeGraph getGraph() {
-        return graph;
-    }
+    GenomeGraph getGraph();
 
     /**
      * Set if the dimensions are up to date.
      * @param upToDate {@link boolean} true if up to date else false
      */
-    final void setDrawDimensionsUpToDate(boolean upToDate) {
-        this.drawDimensionsUpToDate = upToDate;
-    }
+    void setDrawDimensionsUpToDate(boolean upToDate);
 
     /**
      * Get if the dimensions are up to date.
      * @return boolean true if up to date else false
      */
-    final boolean isDrawDimensionsUpToDate() {
-        return drawDimensionsUpToDate;
-    }
+    boolean isDrawDimensionsUpToDate();
 
     /**
      * Get the IDs of children of this.
      * @return IDs of drawable children
      */
-    public abstract Collection<Integer> getChildren();
+    Collection<Integer> getChildren();
 
     /**
      * Get the IDs of parents of this.
      * @return IDs of drawable parents.
      */
-    public abstract Collection<Integer> getParents();
+    Collection<Integer> getParents();
 
     /**
      * Replace a parent with another one.
      * @param oldParent the parent to replace
      * @param newParent the new parent
      */
-    abstract void replaceParent(DrawableNode oldParent, DrawableNode newParent);
+    void replaceParent(DrawableNode oldParent, DrawableNode newParent);
 
     /**
      * Replace child with another one.
      * @param oldChild the child to replace
      * @param newChild the new child
      */
-    abstract void replaceChild(DrawableNode oldChild, DrawableNode newChild);
+    void replaceChild(DrawableNode oldChild, DrawableNode newChild);
 
     /**
      * Information {@link String} about this.
      * @return info
      */
-    public abstract String details();
+    String details();
 
     /**
      * Get the IDs of genomes through this.
      * @return the IDs of genomes
      */
-    public abstract int[] getGenomes();
+    int[] getGenomes();
 
     /**
      * Color this according to contents.
      */
-    public abstract void colorize();
+    void colorize();
 
     /**
      * Set the location to draw this.
      * @param x the x location
      * @param y the y location
      */
-    abstract void setLocation(int x, int y);
+    void setLocation(double x, double y);
 
     /**
      * Get a {@link Link} from this.
      * @param child the {@link DrawableNode} to get the {@link Link} to
      * @return it's link
      */
-    public abstract Link getLink(DrawableNode child);
+    Link getLink(DrawableNode child);
 
     /**
      * Set the size of this drawing.
      */
-    protected abstract void setDrawDimensions();
+    void setDrawDimensions();
 
     /**
-     * Get a {@link XYCoordinate} representing the size of the Segment.
-     * @return The size of the Segment
+     * Get the width of the node
+     * @return The width of the node
      */
-    public XYCoordinate getSize() {
-        if (!drawDimensionsUpToDate) {
-            setDrawDimensions();
-        }
-        return new XYCoordinate((int) this.getWidth(), (int) this.getHeight());
-    }
+    double getWidth();
+
+    /**
+     * Get the height of the node
+     * @return The height of the node
+     */
+    double getHeight();
 
     /**
      * getter for the center of the left border.
      * @return XYCoordinate.
      */
-    public XYCoordinate getLeftBorderCenter() {
-        if (!drawDimensionsUpToDate) {
-            setDrawDimensions();
-        }
-        return this.getCenter().add(-(this.getSize().getX() / 2), 0);
-    }
+    XYCoordinate getLeftBorderCenter();
 
     /**
      * getter for the center.
      * @return XYCoordinate.
      */
-    private XYCoordinate getCenter() {
-        if (!drawDimensionsUpToDate) {
-            setDrawDimensions();
-        }
-        return this.getLocation().add(this.getSize().multiply(0.5));
-    }
+    XYCoordinate getCenter();
 
     /**
      * getter for the center of the right border.
      * @return XYCoordinate.
      */
-    public XYCoordinate getRightBorderCenter() {
-        if (!drawDimensionsUpToDate) {
-            setDrawDimensions();
-        }
-        return this.getCenter().add(this.getSize().getX() / 2, 0);
-    }
+    XYCoordinate getRightBorderCenter();
 
-    public Color getStrokeColor() {
-        return Color.BLACK;
-    }
+    Color getStrokeColor();
 
-    public int getIdentifier() {
-        return id;
-    }
+    int getIdentifier();
 
-    XYCoordinate getLocation() {
-        return new XYCoordinate((int) this.getX(), (int) this.getY());
-    }
+    XYCoordinate getLocation();
 }

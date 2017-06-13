@@ -233,12 +233,12 @@ public class SubGraph {
         sortWithinLayers(layers);
 
 
-        int x = 50;
-        int size = 1;
+        double x = 50;
+        double size = 1;
         for (Layer layer : layers) {
-            int newSize = layer.size();
-            int diff = Math.abs(newSize - size);
-            int y = 50;
+            double newSize = layer.size();
+            double diff = Math.abs(newSize - size);
+            double y = 50;
             x += LAYER_PADDING * 0.1 * newSize;
             x += LAYER_PADDING * 0.6 * diff;
             for (DrawableNode d : layer) {

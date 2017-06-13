@@ -10,7 +10,20 @@ import java.util.*;
 /**
  * A Segment that also Implements {@link Drawable}.
  */
-public class DrawableSegment extends DrawableNode {
+public class DrawableSegment implements DrawableNode {
+    public static final double NODE_HEIGHT = 10;
+
+    private final GenomeGraph graph;
+    private final int id;
+
+    private double strokeWidth;
+    private Color fillColor;
+    private Color strokeColor;
+    private XYCoordinate location;
+    private double width;
+    private double height;
+    private boolean drawDimensionsUpToDate = false;
+
     private Set<Integer> parents;
     private Set<Integer> children;
 
@@ -20,7 +33,8 @@ public class DrawableSegment extends DrawableNode {
      * @param nodeID The segment to create this DrawableSegment from.
      */
     public DrawableSegment(GenomeGraph graph, int nodeID) {
-        super(graph, nodeID);
+        this.graph = graph;
+        this.id = nodeID;
 
         parents = new LinkedHashSet<>();
         children = new LinkedHashSet<>();
@@ -53,7 +67,7 @@ public class DrawableSegment extends DrawableNode {
      * @param oldChild The {@link DrawableSegment} to replace.
      * @param newChild The {@link DrawableSegment} to replace with.
      */
-    void replaceChild(DrawableNode oldChild, DrawableNode newChild) {
+    public void replaceChild(DrawableNode oldChild, DrawableNode newChild) {
         if (!this.children.remove(oldChild.getIdentifier())) {
             throw new NoSuchElementException("The node to be replaced is not a child of this node.");
         }
@@ -71,7 +85,7 @@ public class DrawableSegment extends DrawableNode {
      * @param oldParent The {@link DrawableSegment} to replace.
      * @param newParent The {@link DrawableSegment} to replace with.
      */
-    void replaceParent(DrawableNode oldParent, DrawableNode newParent) {
+    public void replaceParent(DrawableNode oldParent, DrawableNode newParent) {
         if (!this.parents.remove(oldParent.getIdentifier())) {
             throw new NoSuchElementException(
                     String.format("The node to be replaced (%d) is not a parent of this node (%d).",
@@ -80,29 +94,18 @@ public class DrawableSegment extends DrawableNode {
         this.parents.add(newParent.getIdentifier());
     }
 
-    public int getIntX() {
-        return (int) Math.ceil(this.getX());
-    }
-
-    public int getIntY() {
-        return (int) Math.ceil(this.getY());
-    }
-
-    public int getIntWidth() {
-        return (int) Math.ceil(this.getWidth());
-    }
-
-    public int getIntHeight() {
-        return (int) Math.ceil(this.getHeight());
+    public XYCoordinate getLocation() {
+        return this.location;
     }
 
     /**
      * Set the size {@link XYCoordinate} of the Segment.
-     * @param size The {@link XYCoordinate} representing the size
+     * @param width The double representing the width of the DrawableSegment
+     * @param height The double representing the height of the DrawableSegment
      */
-    void setSize(XYCoordinate size) {
-        this.setWidth(size.getX());
-        this.setHeight(size.getY());
+    void setSize(double width, double height) {
+        this.setWidth(width);
+        this.setHeight(height);
         this.setDrawDimensionsUpToDate(true);
     }
 
@@ -111,9 +114,25 @@ public class DrawableSegment extends DrawableNode {
      * @param x the x location
      * @param y the y location
      */
-    void setLocation(int x, int y) {
-        this.setX(x);
-        this.setY(y);
+    @Override
+    public void setLocation(double x, double y) {
+        this.location = new XYCoordinate(x, y);
+    }
+
+    /**
+     * Set the width.
+     * @param width The width to set to
+     */
+    private void setWidth(double width) {
+        this.width = width;
+    }
+
+    /**
+     * Set the height.
+     * @param height The height to set to
+     */
+    private void setHeight(double height) {
+        this.height = height;
     }
 
     /**
@@ -141,14 +160,14 @@ public class DrawableSegment extends DrawableNode {
     /**
      * Setter for the dimension of the node.
      */
-    protected void setDrawDimensions() {
+    public void setDrawDimensions() {
         int segmentLength = this.getSequenceLength();
-        int width, height;
+        double width, height;
 
-        width = 10 + (int) Math.pow(segmentLength, 1.0 / 2);
+        width = 10 + Math.pow(segmentLength, 1.0 / 2);
         height = NODE_HEIGHT;
 
-        this.setSize(new XYCoordinate(width, height));
+        this.setSize(width, height);
         this.setDrawDimensionsUpToDate(true);
     }
 
@@ -235,7 +254,86 @@ public class DrawableSegment extends DrawableNode {
         Color fillColor = Color.hsb(227, saturation, 1.d);
         Color strokeColor = Color.hsb(227, maxSaturation, 1.d);
 
-        this.setFill(fillColor);
-        this.setStroke(strokeColor);
+        this.setColors(fillColor, strokeColor);
+    }
+
+    public void setStrokeColor(Color strokeColor) {
+        this.strokeColor = strokeColor;
+    }
+
+    public void setStrokeWidth(double strokeWidth) {
+        this.strokeWidth = strokeWidth;
+    }
+
+    public void setColors(Color fillColor, Color strokeColor) {
+        this.fillColor = fillColor;
+        this.strokeColor = strokeColor;
+    }
+
+    @Override
+    public GenomeGraph getGraph() {
+        return this.graph;
+    }
+
+    @Override
+    public void setDrawDimensionsUpToDate(boolean upToDate) {
+        this.drawDimensionsUpToDate = upToDate;
+    }
+
+    @Override
+    public boolean isDrawDimensionsUpToDate() {
+        return this.drawDimensionsUpToDate;
+    }
+
+    @Override
+    public double getWidth() {
+        return this.width;
+    }
+
+    public double getHeight() {
+        return this.height;
+    }
+
+    /**
+     * getter for the center of the left border.
+     * @return XYCoordinate.
+     */
+    public XYCoordinate getLeftBorderCenter() {
+        if (!drawDimensionsUpToDate) {
+            setDrawDimensions();
+        }
+        return this.getCenter().add(-(this.getWidth() / 2), 0);
+    }
+
+    /**
+     * getter for the center.
+     * @return XYCoordinate.
+     */
+    public XYCoordinate getCenter() {
+        if (!drawDimensionsUpToDate) {
+            setDrawDimensions();
+        }
+        return this.getLocation().add(this.getWidth() * 0.5, this.getHeight() * 0.5);
+    }
+
+    /**
+     * getter for the center of the right border.
+     * @return XYCoordinate.
+     */
+    public XYCoordinate getRightBorderCenter() {
+        if (!drawDimensionsUpToDate) {
+            setDrawDimensions();
+        }
+        return this.getCenter().add(this.getWidth() / 2, 0);
+    }
+
+    @Override
+    public Color getStrokeColor() {
+        return null;
+    }
+
+    @Override
+    public int getIdentifier() {
+        return this.id;
     }
 }

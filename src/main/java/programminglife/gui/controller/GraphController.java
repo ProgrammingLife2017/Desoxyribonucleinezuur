@@ -8,6 +8,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import programminglife.model.XYCoordinate;
 import programminglife.model.drawing.DrawableDummy;
 import programminglife.model.GenomeGraph;
 import programminglife.model.drawing.DrawableEdge;
@@ -151,9 +152,7 @@ public class GraphController {
      * @param color {@link Color} to color with.
      */
     public void highlightNode(DrawableNode node, Color color) {
-        node.setStroke(color);
-        node.setStrokeWidth(3);
-        node.setStrokeType(OUTSIDE);
+        node.setStrokeColor(color);
     }
 
     /**
@@ -162,7 +161,7 @@ public class GraphController {
      * @param color {@link Color} is the color in which the Link node needs to highlight.
      */
     private void highlightEdge(DrawableEdge edge, Color color) {
-        edge.setStroke(color);
+        edge.setStrokeColor(color);
     }
 
     /**
@@ -171,7 +170,7 @@ public class GraphController {
      * @param color {@link Color} is the color in which the dummy node needs a highlight.
      */
     private void highlightDummyNode(DrawableDummy node, Color color) {
-        node.setStroke(color);
+        node.setStrokeColor(color);
     }
 
     /**
@@ -185,9 +184,11 @@ public class GraphController {
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
         edge.colorize(graph);
-        edge.setStartNode(edge.getStart());
-        edge.setEndNode(edge.getEnd());
 
+        XYCoordinate startLocation = edge.getStartLocation();
+        XYCoordinate endLocation = edge.getEndLocation();
+
+        gc.strokeLine(startLocation.getX(), startLocation.getY(), endLocation.getX(), endLocation.getY());
     }
 
     /**
@@ -198,19 +199,20 @@ public class GraphController {
 
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.setStroke(drawableNode.getStrokeColor());
-        gc.strokeRect(drawableNode.getX(), drawableNode.getY(), drawableNode.getWidth(), drawableNode.getHeight());
+        gc.strokeRect(drawableNode.getLeftBorderCenter().getX(), drawableNode.getLocation().getY(),
+                drawableNode.getWidth(), drawableNode.getHeight());
 
-        if (!(drawableNode instanceof DrawableDummy)) {
-            drawableNode.setOnMouseClicked(event -> Console.println(drawableNode.details()));
-
-            drawableNode.setOnMouseClicked(event -> {
-                if (event.isShiftDown()) {
-                    showInfoNode((DrawableSegment) drawableNode, 250);
-                } else {
-                    showInfoNode((DrawableSegment) drawableNode, 10);
-                }
-            });
-        }
+//        if (!(drawableNode instanceof DrawableDummy)) {
+//            drawableNode.setOnMouseClicked(event -> Console.println(drawableNode.details()));
+//
+//            drawableNode.setOnMouseClicked(event -> {
+//                if (event.isShiftDown()) {
+//                    showInfoNode((DrawableSegment) drawableNode, 250);
+//                } else {
+//                    showInfoNode((DrawableSegment) drawableNode, 10);
+//                }
+//            });
+//        }
 
         drawableNode.colorize();
     }
@@ -253,7 +255,7 @@ public class GraphController {
      */
     public void centerOnNodeId(int nodeId) {
         DrawableNode drawableCenterNode = subGraph.getNodes().get(nodeId);
-        double xCoordinate = drawableCenterNode.getX();
+        double xCoordinate = drawableCenterNode.getCenter().getX();
 
         Bounds bounds = canvas.getParent().getLayoutBounds();
         double boundsHeight = bounds.getHeight();
