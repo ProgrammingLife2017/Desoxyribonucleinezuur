@@ -109,7 +109,15 @@ public final class Cache {
         if (!name.toLowerCase().endsWith(CACHE_EXTENSION)) {
             name += CACHE_EXTENSION;
         }
-        return Paths.get(CACHE_FOLDER, name).toString();
+
+        Path path = Paths.get(name).toAbsolutePath();
+        int fileNameIndex = path.getNameCount() - 1;
+        path = path.subpath(0, fileNameIndex)
+                .resolve(CACHE_FOLDER)
+                .resolve(path.getName(fileNameIndex))
+                .toAbsolutePath();
+
+        return path.toString();
     }
 
     /**
