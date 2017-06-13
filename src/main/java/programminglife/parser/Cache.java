@@ -110,14 +110,15 @@ public final class Cache {
             name += CACHE_EXTENSION;
         }
 
-        Path path = Paths.get(name).toAbsolutePath();
-        int fileNameIndex = path.getNameCount() - 1;
-        path = path.subpath(0, fileNameIndex)
-                .resolve(CACHE_FOLDER)
-                .resolve(path.getName(fileNameIndex))
+        Path givenPath = Paths.get(name).toAbsolutePath();
+        Path fileName = givenPath.getFileName();
+        Path computedPath = givenPath
+                .normalize()
+                .resolveSibling(CACHE_FOLDER)
+                .resolve(fileName)
                 .toAbsolutePath();
 
-        return path.toString();
+        return computedPath.toString();
     }
 
     /**
