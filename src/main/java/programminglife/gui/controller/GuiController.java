@@ -437,12 +437,13 @@ public class GuiController implements Observer {
         anchorCanvasPanel.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
             orgSceneX = event.getSceneX();
             orgSceneY = event.getSceneY();
-            orgTranslateX = canvas.getTranslateX();
-            orgTranslateY = canvas.getTranslateY();
         });
         anchorCanvasPanel.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> {
-            canvas.setTranslateX((orgTranslateX + event.getSceneX() - orgSceneX));
-            canvas.setTranslateY((orgTranslateY + event.getSceneY() - orgSceneY));
+            double xDifference = event.getSceneX() - orgSceneX;
+            double yDifference = event.getSceneY() - orgSceneY;
+            orgSceneX += xDifference;
+            orgSceneY += yDifference;
+            graphController.translate(xDifference, yDifference);
             event.consume();
         });
         anchorCanvasPanel.addEventHandler(ScrollEvent.SCROLL, event ->

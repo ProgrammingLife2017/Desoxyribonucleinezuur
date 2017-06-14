@@ -123,7 +123,7 @@ public class DrawableSegment implements DrawableNode {
      * Set the width.
      * @param width The width to set to
      */
-    private void setWidth(double width) {
+    public void setWidth(double width) {
         this.width = width;
     }
 
@@ -131,7 +131,7 @@ public class DrawableSegment implements DrawableNode {
      * Set the height.
      * @param height The height to set to
      */
-    private void setHeight(double height) {
+    public void setHeight(double height) {
         this.height = height;
     }
 

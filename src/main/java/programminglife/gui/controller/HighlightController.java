@@ -6,6 +6,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import programminglife.gui.AutoCompleteTextField;
 import programminglife.utility.NumbersOnlyListener;
 
 /**

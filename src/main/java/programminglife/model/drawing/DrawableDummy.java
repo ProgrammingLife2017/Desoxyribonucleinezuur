@@ -98,7 +98,7 @@ public class DrawableDummy implements DrawableNode {
 
     @Override
     public void setLocation(double x, double y) {
-        this.location = new XYCoordinate(x, y + DUMMY_HEIGHT);
+        this.location = new XYCoordinate(x, y);
     }
 
     @Override
@@ -126,6 +126,11 @@ public class DrawableDummy implements DrawableNode {
 
     public void setWidth(double width) {
         this.width = width;
+    }
+
+    @Override
+    public void setHeight(double height) {
+        this.height = height;
     }
 
     @Override

@@ -1,10 +1,7 @@
-package programminglife.gui.controller;
+package programminglife.gui;
 
 import javafx.geometry.Side;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.CustomMenuItem;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -89,18 +86,18 @@ public class AutoCompleteTextField extends TextField {
         for (int i = 0; i < count; i++) {
             final String result = searchResult.get(i);
             //label with graphic (text flow) to highlight founded subtext in suggestions
-            Label entryLabel = new Label();
-            entryLabel.setGraphic(buildTextFlow(result, searchRequest));
-            entryLabel.setPrefHeight(10);  //don't sure why it's changed with "graphic"
-            CustomMenuItem item = new CustomMenuItem(entryLabel, true);
+            CheckBox checkBox = new CheckBox();
+            checkBox.setGraphic(buildTextFlow(result, searchRequest));
+            checkBox.setPrefHeight(10);  //don't sure why it's changed with "graphic"
+            CustomMenuItem item = new CustomMenuItem(checkBox, false);
             menuItems.add(item);
 
             //if any suggestion is select set it into text and close popup
-            item.setOnAction(actionEvent -> {
-                setText(result);
-                positionCaret(result.length());
-                entriesPopup.hide();
-            });
+//            item.setOnAction(actionEvent -> {
+//                setText(result);
+//                positionCaret(result.length());
+//                entriesPopup.hide();
+//            });
         }
 
         //"Refresh" context menu

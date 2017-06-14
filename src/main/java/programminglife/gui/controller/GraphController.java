@@ -9,12 +9,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import programminglife.model.XYCoordinate;
-import programminglife.model.drawing.DrawableDummy;
+import programminglife.model.drawing.*;
 import programminglife.model.GenomeGraph;
-import programminglife.model.drawing.DrawableEdge;
-import programminglife.model.drawing.DrawableNode;
-import programminglife.model.drawing.DrawableSegment;
-import programminglife.model.drawing.SubGraph;
 import programminglife.utility.Console;
 
 import java.util.Collection;
@@ -72,6 +68,8 @@ public class GraphController {
         Collection<DrawableNode> dNodes = subGraph.getNodes().values();
         Console.println("Time to get drawable nodes: " + (System.nanoTime() - getNodes) / 1000000 + " ms");
 
+        this.sizeToCanvas(dNodes);
+
         long startDrawing = System.nanoTime();
         for (DrawableNode drawableNode : dNodes) {
             drawNode(gc, drawableNode);
@@ -82,9 +80,23 @@ public class GraphController {
         Console.println("Time to draw: " + (System.nanoTime() - startDrawing) / 1000000 + " ms");
 
         long startHighlight = System.nanoTime();
-        centerOnNodeId(center);
+        //centerOnNodeId(center);
         highlightNode(center, Color.DARKORANGE);
         Console.println("Time to highlight: " + (System.nanoTime() - startHighlight) / 1000000 + " ms");
+    }
+
+    public void sizeToCanvas(Collection<DrawableNode> drawableNodes) {
+        double maxWidth = 0;
+        for (DrawableNode node : drawableNodes) {
+            if (node.getRightBorderCenter().getX() > maxWidth) {
+                maxWidth = node.getRightBorderCenter().getX();
+            }
+        }
+        for (DrawableNode node : drawableNodes) {
+            node.setLocation(node.getLocation().getX()/maxWidth*canvas.getWidth(), node.getLocation().getY());
+            node.setHeight(node.getHeight() / maxWidth * canvas.getHeight());
+            node.setWidth(node.getWidth() / maxWidth * canvas.getHeight());
+        }
     }
 
     /**
@@ -235,6 +247,26 @@ public class GraphController {
 
         canvas.setTranslateX(locationCenterX);
         canvas.setTranslateY(locationCenterY);
+    }
+
+    public void translate(double xDifference, double yDifference) {
+        for (DrawableNode node : subGraph.getNodes().values()) {
+            double oldXLocation = node.getLocation().getX();
+            double oldYLocation = node.getLocation().getY();
+            node.setLocation(oldXLocation + xDifference, oldYLocation + yDifference);
+        }
+        draw();
+    }
+
+    public void draw() {
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        for (DrawableNode drawableNode : subGraph.getNodes().values()) {
+            drawNode(gc, drawableNode);
+            for (DrawableNode child : subGraph.getChildren(drawableNode)) {
+                drawEdge(gc, drawableNode, child);
+            }
+        }
     }
 
     /**

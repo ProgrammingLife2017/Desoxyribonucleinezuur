@@ -128,4 +128,8 @@ public interface DrawableNode extends Drawable {
     int getIdentifier();
 
     XYCoordinate getLocation();
+
+    void setWidth(double width);
+
+    void setHeight(double height);
 }
