@@ -239,8 +239,7 @@ public class SubGraph {
             int newSize = layer.size();
             int diff = Math.abs(newSize - size);
             int y = 50;
-            x += LAYER_PADDING * 0.1 * newSize;
-            x += LAYER_PADDING * 0.6 * diff;
+            x += LAYER_PADDING + 7 * diff;
             for (DrawableNode d : layer) {
                 d.setLocation(x, y);
                 y += LINE_PADDING;
