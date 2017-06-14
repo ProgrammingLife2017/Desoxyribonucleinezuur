@@ -206,17 +206,25 @@ public class GraphParser extends Observable implements Runnable {
      * Parse a {@link String} representing a Link.
      * @param propertyString the {@link String} from a GFA file.
      */
-    synchronized void parseLink(String propertyString) {
+    synchronized void parseLink(String propertyString) throws UnknownTypeException {
         String[] properties = propertyString.split("\\s");
         assert (properties[0].equals("L")); // properties[0] is 'L'
         int sourceID = Integer.parseInt(properties[1]);
         // properties[2] is unused
         int destinationID = Integer.parseInt(properties[3]);
         // properties[4] and further are unused
+
+        if (sourceID == destinationID) {
+            throw new UnknownTypeException("Link cannot have same source as destination.");
+        } else if (sourceID > destinationID) {
+            throw new UnknownTypeException("Graph is not in topological order: source ID > destination ID.");
+        }
+
+        // We can now assume that traversing nodes by ID is in topological order
+
         if (!this.graph.contains(sourceID)) {
             this.graph.replaceNode(sourceID);
         }
-
         if (!this.graph.contains(destinationID)) {
             this.graph.replaceNode(destinationID);
         }

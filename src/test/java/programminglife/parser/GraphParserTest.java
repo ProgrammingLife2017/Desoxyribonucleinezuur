@@ -77,7 +77,7 @@ public class GraphParserTest implements Observer {
     }
 
     @Test
-    public void parseLinkTest() {
+    public void parseLinkTest() throws UnknownTypeException {
          graphParser.parseLink(linkLine);
     }
 
