@@ -114,4 +114,23 @@ public class GraphParserTest implements Observer {
             }
         }
     }
+
+    @Test (expected = AssertionError.class)
+    public void parseSegmentNotStartingS() {
+        try {
+            graphParser.parseSegment("Fiets");
+        } catch (UnknownTypeException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test (expected = AssertionError.class)
+    public void parseLinkNotStartingL(){
+        graphParser.parseLink("Fiets");
+    }
+
+    @Test (expected = AssertionError.class)
+    public void parseHeaderNotStartingH() {
+        graphParser.parseHeader("Fiets");
+    }
 }

@@ -4,10 +4,9 @@ import org.junit.*;
 import programminglife.model.exception.NodeExistsException;
 import programminglife.parser.Cache;
 import programminglife.utility.InitFXThread;
+import programminglife.utility.ProgressCounter;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -147,20 +146,128 @@ public class GenomeGraphTest {
         assertEquals(3, graph.getGenomes(4).length);
     }
 
-////    TODO: WIP
+////    TODO: WIP Cant get this test to work at the moment.
+
 //    @Test
 //    public void getGenomesOnEdgeTest() {
+//        graph.replaceNode(4);
+//
 //        int[] genomeIDsA = {37,55,89};
 //        int[] genomeIDsB = {37,55,103};
+//
 //        graph.setGenomes(3, genomeIDsA);
 //        graph.setGenomes(4, genomeIDsB);
-//        graph.replaceNode(4);
-//        assertArrayEquals(new int[]{}, graph.getGenomes(3, 4));
-//        graph.replaceNode(4);
+//
 //        graph.addEdge(3,4);
 //        graph.cacheLastEdges();
-//        assertArrayEquals(new int[]{37, 55}, graph.getGenomes(3, 4));
+//        graph.loadGenomes(new ProgressCounter("testLoading"));
+//        assertArrayEquals(new int[]{37,55}, graph.getGenomes(3, 4));
+////        graph.replaceNode(4);
+////        graph.addEdge(3,4);
+////        graph.cacheLastEdges();
+////        assertArrayEquals(new int[]{37, 55}, graph.getGenomes(3, 4));
 //    }
+
+    @Test (expected = NoSuchElementException.class)
+    public void getSequenceNotExistingNode() {
+        graph.getSequence(4);
+    }
+
+    @Test (expected = NoSuchElementException.class)
+    public void getSequenceLengthNotExistingNode() {
+        graph.getSequenceLength(4);
+    }
+
+    @Test
+    public void getGenomeNames() {
+        graph.addGenome("Genome1");
+        graph.addGenome("fasta123");
+        HashSet<String> genomes = new HashSet<>();
+        genomes.add("Genome1");
+        genomes.add("fasta123");
+        assertEquals(genomes, graph.getGenomeNames());
+        genomes.add("AnotherGenome");
+        assertEquals(3,genomes.size());
+        assertNotEquals(genomes, graph.getGenomeNames());
+    }
+
+    @Test
+    public void getGenomeFractionNode(){
+        graph.addGenome("Genome1");
+        graph.addGenome("Genome2");
+        graph.addGenome("Genome3");
+        int[] genomeIDs = new int[]{graph.getGenomeID("Genome1"),
+                graph.getGenomeID("Genome2")};
+
+        graph.setGenomes(nodeID, genomeIDs);
+        assertEquals(0.66666,graph.getGenomeFraction(nodeID), 0.001);
+        graph.addGenome("Genome4");
+        assertEquals(0.5, graph.getGenomeFraction(nodeID), 0.001);
+    }
+
+    @Test (expected = NoSuchElementException.class)
+    public void getGenomeNameNoCache() {
+        graph.getGenomeName(1231231);
+    }
+
+    @Test (expected = NoSuchElementException.class)
+    public void getGenomeIDNonExisting() {
+        graph.getGenomeID("ThisGenomeDoesNotExist");
+    }
+
+    @Test
+    public void getGenomeNameCorrect () {
+        graph.addGenome("TestGenome");
+        graph.addGenome("OtherGenome");
+        int testID = graph.getGenomeID("TestGenome");
+        int otherID = graph.getGenomeID("OtherGenome");
+        assertNotEquals(testID, otherID);
+
+        assertEquals("TestGenome", graph.getGenomeName(testID));
+        assertNotEquals("TestGenome", graph.getGenomeName(otherID));
+
+    }
+
+    @Test
+    public void getMultipleGenomeNamesCorrect () {
+        graph.addGenome("TestGenome");
+        graph.addGenome("OtherGenome");
+        int testID = graph.getGenomeID("TestGenome");
+        int otherID = graph.getGenomeID("OtherGenome");
+
+        HashSet<String> genomeNamesExpected = new HashSet<>();
+        genomeNamesExpected.add("TestGenome");
+        genomeNamesExpected.add("OtherGenome");
+        HashSet<String> actual = new HashSet<>(graph.getGenomeNames(new int[]{testID, otherID}));
+        assertEquals(genomeNamesExpected, actual);
+    }
+
+    @Test
+    public void getGenomeNodeIDs() {
+        graph.replaceNode(4);
+        graph.replaceNode(5);
+
+        int[] genomeIDsA = {37,55,89};
+        int[] genomeIDsB = {37,55,103};
+        int[] genomeIDsC = {37,66,89};
+
+        graph.setGenomes(3, genomeIDsA);
+        graph.setGenomes(4, genomeIDsB);
+        graph.setGenomes(5, genomeIDsC);
+
+        HashSet<Integer> expected = new HashSet<Integer>();
+        expected.add(3);
+        expected.add(4);
+
+        HashSet<Integer> actual = new HashSet<>(graph.getNodeIDs(55));
+        assertEquals(expected,actual);
+
+        expected.add(5);
+        actual = new HashSet<>(graph.getNodeIDs(37));
+        assertEquals(expected, actual);
+    }
+
+
 
 
 

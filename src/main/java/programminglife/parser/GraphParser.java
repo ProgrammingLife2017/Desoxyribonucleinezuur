@@ -228,7 +228,7 @@ public class GraphParser extends Observable implements Runnable {
      * Parse a {@link String} representing a header.
      * @param propertyString the {@link String} from a GFA file
      */
-    private void parseHeader(String propertyString) {
+    void parseHeader(String propertyString) {
         String[] properties = propertyString.split("\\s");
         assert (properties[0].equals("H"));
         if (properties[1].startsWith("ORI:Z:")) {
