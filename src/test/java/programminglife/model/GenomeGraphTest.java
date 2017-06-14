@@ -126,7 +126,7 @@ public class GenomeGraphTest {
         //This should return an empty array because cacheLastEdges is not called yet.
         assertArrayEquals(new int[]{}, graph.getChildIDs(4));
         graph.cacheLastEdges();
-        //Now it should return 4.
+        //Now it should return 5.
         assertArrayEquals(new int[]{5}, graph.getChildIDs(4));
 
     }

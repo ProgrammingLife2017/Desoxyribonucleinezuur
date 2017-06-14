@@ -42,5 +42,6 @@ public class NumberOnlyListenerTest {
         assertEquals("121212", tf.getText());
 
         tf.appendText("abc");
-        assertEquals("121212", tf.getText());    }
+        assertEquals("121212", tf.getText());
+    }
 }
