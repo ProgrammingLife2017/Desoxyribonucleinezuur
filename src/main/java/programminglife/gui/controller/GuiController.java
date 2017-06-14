@@ -476,8 +476,8 @@ public class GuiController implements Observer {
         //factor to determine the difference in the scales.
 
         Bounds bounds = canvas.localToScene(canvas.getBoundsInLocal());
-        double dx = (sceneX - (bounds.getWidth() / 2 + bounds.getMinX()));
-        double dy = (sceneY - (bounds.getHeight() / 2 + bounds.getMinY()));
+        double dx = (sceneX - bounds.getMinX());
+        double dy = (sceneY - bounds.getMinY());
 
         graphController.translate(factor * dx, factor * dy);
     }

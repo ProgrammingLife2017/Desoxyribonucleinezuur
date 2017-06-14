@@ -8,6 +8,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import programminglife.gui.ResizableCanvas;
 import programminglife.model.XYCoordinate;
 import programminglife.model.drawing.*;
 import programminglife.model.GenomeGraph;
@@ -32,7 +33,7 @@ public class GraphController {
     private AnchorPane anchorGraphInfo;
     private AnchorPane anchorCanvasPanel;
     private LinkedList<DrawableNode> oldGenomeList = new LinkedList<>();
-    private Canvas canvas;
+    private ResizableCanvas canvas;
 
     /**
      * Initialize controller object.
@@ -40,7 +41,7 @@ public class GraphController {
      * @param canvas the {@link Canvas} to draw in
      * @param anchorGraphInfo the {@link AnchorPane} were to show the info of a node or edge.
      */
-    public GraphController(GenomeGraph graph, Canvas canvas, AnchorPane anchorGraphInfo, AnchorPane anchorCanvasPanel) {
+    public GraphController(GenomeGraph graph, ResizableCanvas canvas, AnchorPane anchorGraphInfo, AnchorPane anchorCanvasPanel) {
         this.graph = graph;
         this.canvas = canvas;
         this.anchorGraphInfo = anchorGraphInfo;
