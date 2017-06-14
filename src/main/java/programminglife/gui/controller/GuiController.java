@@ -78,7 +78,7 @@ public class GuiController implements Observer {
 
     @FXML private Canvas canvas;
     @FXML private AnchorPane anchorLeftControlPanel;
-    @FXML private AnchorPane anchorCanvasPanel;
+    @FXML private AnchorPane anchorGraphPanel;
     @FXML private AnchorPane anchorGraphInfo;
 
     private double orgSceneX, orgSceneY;
@@ -102,7 +102,7 @@ public class GuiController implements Observer {
     @FXML
     @SuppressWarnings("unused")
     private void initialize() {
-        this.graphController = new GraphController(null, this.canvas, this.anchorGraphInfo, this.anchorCanvasPanel);
+        this.graphController = new GraphController(null, this.canvas, this.anchorGraphInfo, this.anchorGraphPanel);
         initRecent();
         initMenuBar();
         initBookmarkMenu();
@@ -434,11 +434,11 @@ public class GuiController implements Observer {
      * Initialises the mouse events.
      */
     private void initMouse() {
-        anchorCanvasPanel.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
+        anchorGraphPanel.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
             orgSceneX = event.getSceneX();
             orgSceneY = event.getSceneY();
         });
-        anchorCanvasPanel.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> {
+        anchorGraphPanel.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> {
             double xDifference = event.getSceneX() - orgSceneX;
             double yDifference = event.getSceneY() - orgSceneY;
             orgSceneX += xDifference;
@@ -446,7 +446,7 @@ public class GuiController implements Observer {
             graphController.translate(xDifference, yDifference);
             event.consume();
         });
-        anchorCanvasPanel.addEventHandler(ScrollEvent.SCROLL, event ->
+        anchorGraphPanel.addEventHandler(ScrollEvent.SCROLL, event ->
                 zoom(event.getDeltaX(), event.getDeltaY(), event.getSceneX(), event.getSceneY(), ZOOM_FACTOR));
     }
 

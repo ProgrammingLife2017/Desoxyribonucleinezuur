@@ -335,7 +335,7 @@ public class GraphController {
                 graph.getGenomeNames(node.getGenomes()).toString());
         TextField seqLength = getTextField("Sequence Length: ", x, 370, Integer.toString(node.getSequence().length()));
 
-        TextArea seq = new TextArea(" Sequence: ");
+        TextArea seq = new TextArea("Sequence: ");
         seq.setEditable(false);
         seq.setLayoutX(x); seq.setLayoutY(420);
         seq.setText(node.getSequence().replaceAll("(.{25})", "$1" + System.getProperty("line.separator")));
