@@ -57,61 +57,34 @@ public class GraphController {
      * @param radius the amount of layers to be drawn.
      */
     public void draw(int center, int radius) {
-        long startTimeProgram = System.nanoTime();
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+
+        long startFindNodes = System.nanoTime();
         DrawableSegment centerNode = new DrawableSegment(graph, center);
         subGraph = new SubGraph(centerNode, radius);
+        Console.println("Time to find nodes: " + (System.nanoTime() - startFindNodes) / 1000000 + " ms");
 
-        long startLayoutTime = System.nanoTime();
-
+        long startLayout = System.nanoTime();
         subGraph.layout();
+        Console.println("Time to layout: " + (System.nanoTime() - startLayout) / 1000000 + " ms");
 
-        long startTimeDrawing = System.nanoTime();
+        long getNodes = System.nanoTime();
+        Collection<DrawableNode> dNodes = subGraph.getNodes().values();
+        Console.println("Time to get drawable nodes: " + (System.nanoTime() - getNodes) / 1000000 + " ms");
 
-        for (DrawableNode drawableNode : subGraph.getNodes().values()) {
-            drawNode(drawableNode);
+        long startDrawing = System.nanoTime();
+        for (DrawableNode drawableNode : dNodes) {
+            drawNode(gc, drawableNode);
             for (DrawableNode child : subGraph.getChildren(drawableNode)) {
-                drawEdge(drawableNode, child);
+                drawEdge(gc, drawableNode, child);
             }
         }
+        Console.println("Time to draw: " + (System.nanoTime() - startDrawing) / 1000000 + " ms");
 
-
-
+        long startHighlight = System.nanoTime();
         centerOnNodeId(center);
         highlightNode(center, Color.DARKORANGE);
-
-//        // An example of how to highlight. This is not very practical atm but it works.
-//        for (Object o : grpDrawArea.getChildren()) {
-//            if (o instanceof DrawableEdge) {
-//                DrawableEdge edge = (DrawableEdge) o;
-//                if (edge.getLink().getEnd() instanceof Dummy) {
-//                    if (edge.getLink().getEnd().getLink(null).getEnd().getIdentifier() % 2 == 0)
-//                        highlightEdge(edge, Color.GOLDENROD);
-//                }
-//                if ((int) edge.getLink().getEnd().getIdentifier() % 2 == 0)
-//                    highlightEdge(edge, Color.GOLDENROD);
-//            }
-//            if (o instanceof DrawableNode) {
-//                DrawableNode node = (DrawableNode) o;
-//                if (node.getNode() instanceof Dummy) {
-//                    Dummy dummy = (Dummy) node.getNode();
-//                    if ((int) dummy.getLink(null).getEnd().getIdentifier() % 2 == 0)
-//                        highlightDummyNode(node, Color.GOLDENROD);
-//                }
-//
-//            }
-//        }
-
-        long finishTime = System.nanoTime();
-        long differenceTimeProgram = finishTime - startTimeProgram;
-        long differenceTimeDrawing = finishTime - startTimeDrawing;
-        long differenceTimeLayout = finishTime - startLayoutTime;
-        long msDifferenceTimeProgram = differenceTimeProgram / 1000000;
-        long millisecondTimeDrawing = differenceTimeDrawing   / 1000000;
-        long msDifferenceTimeLayout = differenceTimeLayout   / 1000000;
-        Console.println("Time of Drawing:  " + millisecondTimeDrawing);
-        Console.println("Time of layout:  " + msDifferenceTimeLayout);
-        Console.println("Time of Total Program:  " + msDifferenceTimeProgram);
-
+        Console.println("Time to highlight: " + (System.nanoTime() - startHighlight) / 1000000 + " ms");
     }
 
     /**
@@ -178,12 +151,10 @@ public class GraphController {
      * @param parent {@link DrawableNode} is the node to be draw from.
      * @param child {@link DrawableNode} is the node to draw to.
      */
-    private void drawEdge(DrawableNode parent, DrawableNode child) {
+    private void drawEdge(GraphicsContext gc, DrawableNode parent, DrawableNode child) {
         DrawableEdge edge = new DrawableEdge(parent, child);
 
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-
-        edge.colorize(graph);
+//        edge.colorize(graph);
 
         XYCoordinate startLocation = edge.getStartLocation();
         XYCoordinate endLocation = edge.getEndLocation();
@@ -195,9 +166,7 @@ public class GraphController {
      * Draws a node on the location it has.
      * @param drawableNode {@link DrawableNode} is the node to be drawn.
      */
-    public void drawNode(DrawableNode drawableNode) {
-
-        GraphicsContext gc = canvas.getGraphicsContext2D();
+    public void drawNode(GraphicsContext gc, DrawableNode drawableNode) {
         gc.setStroke(drawableNode.getStrokeColor());
         gc.strokeRect(drawableNode.getLeftBorderCenter().getX(), drawableNode.getLocation().getY(),
                 drawableNode.getWidth(), drawableNode.getHeight());
@@ -214,7 +183,7 @@ public class GraphController {
 //            });
 //        }
 
-        drawableNode.colorize();
+//        drawableNode.colorize();
     }
 
     /**

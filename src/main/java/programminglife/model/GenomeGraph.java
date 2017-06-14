@@ -101,7 +101,7 @@ public class GenomeGraph {
      * @return the {@link Link} itself
      */
     public Link getLink(int parentID, int childID) {
-        return new Link(parentID, childID, getGenomes(parentID, childID));
+        return new Link(parentID, childID, new int[0]);
     }
 
     /**

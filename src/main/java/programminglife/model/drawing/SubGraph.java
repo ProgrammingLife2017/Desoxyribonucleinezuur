@@ -1,5 +1,6 @@
 package programminglife.model.drawing;
 
+import org.jetbrains.annotations.NotNull;
 import programminglife.model.GenomeGraph;
 import programminglife.model.XYCoordinate;
 import programminglife.utility.Console;
@@ -469,7 +470,7 @@ public class SubGraph {
         // when getting smaller: drop nodes outside new radius.
     }
 
-    public LinkedHashMap<Integer, ? extends DrawableNode> getNodes() {
+    public LinkedHashMap<Integer, DrawableNode> getNodes() {
         return this.nodes;
     }
 
