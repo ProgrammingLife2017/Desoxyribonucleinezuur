@@ -71,12 +71,7 @@ public class GraphController {
         this.sizeToCanvas(dNodes);
 
         long startDrawing = System.nanoTime();
-        for (DrawableNode drawableNode : dNodes) {
-            drawNode(gc, drawableNode);
-            for (DrawableNode child : subGraph.getChildren(drawableNode)) {
-                drawEdge(gc, drawableNode, child);
-            }
-        }
+        draw(gc);
         Console.println("Time to draw: " + (System.nanoTime() - startDrawing) / 1000000 + " ms");
 
         long startHighlight = System.nanoTime();
@@ -93,9 +88,9 @@ public class GraphController {
             }
         }
         for (DrawableNode node : drawableNodes) {
-            node.setLocation(node.getLocation().getX()/maxWidth*canvas.getWidth(), node.getLocation().getY());
+            node.setLocation(node.getLocation().getX()/maxWidth*(canvas.getWidth() - 20), node.getLocation().getY());
             node.setHeight(node.getHeight() / maxWidth * canvas.getHeight());
-            node.setWidth(node.getWidth() / maxWidth * canvas.getHeight());
+            node.setWidth(node.getWidth() / maxWidth * (canvas.getWidth() - 20));
         }
     }
 
@@ -255,11 +250,21 @@ public class GraphController {
             double oldYLocation = node.getLocation().getY();
             node.setLocation(oldXLocation + xDifference, oldYLocation + yDifference);
         }
-        draw();
+        draw(canvas.getGraphicsContext2D());
     }
 
-    public void draw() {
-        GraphicsContext gc = canvas.getGraphicsContext2D();
+    public void zoom(double scale) {
+        for (DrawableNode node : subGraph.getNodes().values()) {
+            double oldXLocation = node.getLocation().getX();
+            double oldYLocation = node.getLocation().getY();
+            node.setHeight(node.getHeight() / scale);
+            node.setWidth(node.getWidth() / scale);
+            node.setLocation(oldXLocation / scale, oldYLocation / scale);
+        }
+        draw(canvas.getGraphicsContext2D());
+    }
+
+    public void draw(GraphicsContext gc) {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
         for (DrawableNode drawableNode : subGraph.getNodes().values()) {
             drawNode(gc, drawableNode);

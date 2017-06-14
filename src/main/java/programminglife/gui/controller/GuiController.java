@@ -26,6 +26,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import jp.uphy.javafx.console.ConsoleView;
 import programminglife.ProgrammingLife;
+import programminglife.gui.ResizableCanvas;
 import programminglife.model.GenomeGraph;
 import programminglife.parser.GraphParser;
 import programminglife.utility.Alerts;
@@ -76,7 +77,7 @@ public class GuiController implements Observer {
     @FXML private TextField txtMaxDrawDepth;
     @FXML private TextField txtCenterNode;
 
-    @FXML private Canvas canvas;
+    @FXML private ResizableCanvas canvas;
     @FXML private AnchorPane anchorLeftControlPanel;
     @FXML private AnchorPane anchorGraphPanel;
     @FXML private AnchorPane anchorGraphInfo;
@@ -103,6 +104,7 @@ public class GuiController implements Observer {
     @SuppressWarnings("unused")
     private void initialize() {
         this.graphController = new GraphController(null, this.canvas, this.anchorGraphInfo, this.anchorGraphPanel);
+        this.scale = 1;
         initRecent();
         initMenuBar();
         initBookmarkMenu();
@@ -459,26 +461,25 @@ public class GuiController implements Observer {
      * @param delta double the factor by which is zoomed.
      */
     private void zoom(double deltaX, double deltaY, double sceneX, double sceneY, double delta) {
-        double oldScale = canvas.getScaleX();
-        scale = oldScale;
+        double oldScale = scale;
 
         if (deltaX < 0 || deltaY < 0) {
-            scale /= delta;
+            scale /= Math.pow(1.01, delta);
         } else {
-            scale *= delta;
+            scale *= Math.pow(1.01, delta);
         }
 
         scale = clamp(scale, MIN_SCALE, MAX_SCALE);
-        canvas.setScaleX(scale);
-        canvas.setScaleY(scale);
-        //factor to determine the difference in the scales.
         double factor = (scale / oldScale) - 1;
+
+        graphController.zoom(factor+1);
+        //factor to determine the difference in the scales.
+
         Bounds bounds = canvas.localToScene(canvas.getBoundsInLocal());
         double dx = (sceneX - (bounds.getWidth() / 2 + bounds.getMinX()));
         double dy = (sceneY - (bounds.getHeight() / 2 + bounds.getMinY()));
 
-        canvas.setTranslateX(canvas.getTranslateX() - factor * dx);
-        canvas.setTranslateY(canvas.getTranslateY() - factor * dy);
+        graphController.translate(factor * dx, factor * dy);
     }
 
     /**

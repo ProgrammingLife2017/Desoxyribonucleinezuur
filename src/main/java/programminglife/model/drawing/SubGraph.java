@@ -234,7 +234,7 @@ public class SubGraph {
         sortWithinLayers(layers);
 
 
-        double x = 1;
+        double x = 0;
         int size = 1;
         for (Layer layer : layers) {
             int newSize = layer.size();
