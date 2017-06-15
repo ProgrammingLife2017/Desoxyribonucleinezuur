@@ -26,7 +26,7 @@
            <Menu fx:id="menuFile" mnemonicParsing="false" text="File">
                <MenuItem fx:id="btnOpenGFA" mnemonicParsing="false" text="Open GFA" />
                <MenuItem fx:id="btnOpenGFF" mnemonicParsing="false" text="Open GFF" />
-               <Menu fx:id="menuRecent" mnemonicParsing="false" text="Open Recent" />
+               <Menu fx:id="menuRecent" mnemonicParsing="false" text="Open Recent GFA" />
                <SeparatorMenuItem mnemonicParsing="false" />
                <RadioMenuItem fx:id="btnToggle" mnemonicParsing="false" text="Toggle Console" />
                <MenuItem fx:id="btnQuit" mnemonicParsing="false" text="Quit" />
@@ -63,7 +63,7 @@
                            <Button fx:id="btnClipboard2" layoutX="255.0" layoutY="15.0" mnemonicParsing="false" text="Copy to clipboard" />
                        </AnchorPane>
                    </Tab>
-                   <Tab fx:id="searchTab" text="Search" />
+                   <Tab fx:id="searchTab" text="Search / Highlight" />
                </TabPane>
            </AnchorPane>
        </SplitPane>
