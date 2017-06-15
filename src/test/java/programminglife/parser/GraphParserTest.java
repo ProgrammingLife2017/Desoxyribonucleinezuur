@@ -1,10 +1,12 @@
 package programminglife.parser;
 
-import org.junit.*;
-import programminglife.utility.InitFXThread;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import programminglife.model.GenomeGraph;
-import programminglife.model.GenomeGraphTest;
 import programminglife.model.exception.UnknownTypeException;
+import programminglife.utility.InitFXThread;
 
 import java.io.File;
 import java.util.Observable;
@@ -16,12 +18,6 @@ import static org.junit.Assert.*;
  * The class that handles the tests for the parser.
  */
 public class GraphParserTest implements Observer {
-
-    private static final String TEST_DB = "test.gfa.db";
-    private static final String TEST_FAULTY_DB = "test-faulty.gfa.db";
-    private static final String TEST_DB2 = "test.db";
-    private static final String TEST_FAULTY_DB2 = "test-faulty.db";
-
     private static String TEST_PATH, TEST_FAULTY_PATH;
 
     private String linkLine, nodeLine;
@@ -30,9 +26,9 @@ public class GraphParserTest implements Observer {
     @BeforeClass
     public static void setUpClass() throws Exception {
         InitFXThread.setupClass();
-        TEST_PATH = new File(GenomeGraphTest.class.getResource("/test.gfa").toURI()).getAbsolutePath();
+        TEST_PATH = new File(GraphParserTest.class.getResource("/test.gfa").toURI()).getAbsolutePath();
         TEST_FAULTY_PATH = new File(
-                GenomeGraphTest.class.getClass().getResource("/test-faulty.gfa").toURI()
+                GraphParserTest.class.getClass().getResource("/test-faulty.gfa").toURI()
         ).getAbsolutePath();
     }
 
@@ -55,14 +51,6 @@ public class GraphParserTest implements Observer {
         faultyGraphParser.getGraph().removeCache();
     }
 
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-        Cache.removeDB(TEST_DB);
-        Cache.removeDB(TEST_FAULTY_DB);
-        Cache.removeDB(TEST_DB2);
-        Cache.removeDB(TEST_FAULTY_DB2);
-    }
-
     @Test(expected = UnknownTypeException.class)
     public void faultyParseTest() throws Exception {
         faultyGraphParser.parse();
@@ -70,10 +58,35 @@ public class GraphParserTest implements Observer {
 
     @Test
     public void parseTest() throws Exception {
-        graphParser.parse();
-        GenomeGraph graph = graphParser.getGraph();
+        GenomeGraph g = graphParser.getGraph();
 
-        assertEquals(8, graph.size());
+        graphParser.parse();
+        for (int i = 1; i <= 8; i++)
+            assertTrue(g.contains(i));
+        assertEquals(8, g.size());
+    }
+
+    @Test
+    public void parseFromCache() throws Exception {
+        GenomeGraph g1 = graphParser.getGraph();
+
+        graphParser.parse();
+        for (int i = 1; i <= 8; i++)
+            assertTrue(g1.contains(i));
+        assertEquals(8, g1.size());
+
+        g1.close();
+
+        GraphParser p = new GraphParser(new File(TEST_PATH));
+        GenomeGraph g2 = p.getGraph();
+        for (int i = 1; i <= 8; i++)
+            assertTrue(g2.contains(i));
+        assertEquals(8, g2.size());
+
+        g2.close();
+
+        // To ensure no problems occur on #tearDown()
+        graphParser = new GraphParser(new File(TEST_PATH));
     }
 
     @Test
@@ -90,6 +103,8 @@ public class GraphParserTest implements Observer {
         assertEquals("C", g.getSequence(6));
         assertEquals(0, g.getParentIDs(6).length);
         assertEquals(0, g.getChildIDs(6).length);
+        assertEquals(1, g.getGenomes(6).length);
+        assertEquals(0, g.getGenomes(6)[0]);
     }
 
     @Test
@@ -120,6 +135,114 @@ public class GraphParserTest implements Observer {
             } else if (arg instanceof Exception) {
                 throw new RuntimeException((Exception) arg);
             }
+        }
+    }
+
+    @Test
+    public void parseSegmentNotStartingS() {
+        try {
+            graphParser.parseSegment("Fiets");
+            fail("This should not be parsed");
+        } catch (Exception e) {
+            assertEquals(UnknownTypeException.class, e.getClass());
+            assertEquals("Line (Fiets) is not a segment", e.getMessage());
+        }
+    }
+
+    @Test
+    public void parseLinkNotStartingL() throws UnknownTypeException {
+        try {
+            graphParser.parseLink("Fiets");
+            fail("This should not be parsed");
+        } catch (Exception e) {
+            assertEquals(UnknownTypeException.class, e.getClass());
+            assertEquals("Line (Fiets) is not a link", e.getMessage());
+        }
+    }
+
+    @Test
+    public void parseHeaderNotStartingH() throws UnknownTypeException {
+        try {
+            graphParser.parseHeader("Fiets");
+            fail("This should not be parsed");
+        } catch (Exception e) {
+            assertEquals(UnknownTypeException.class, e.getClass());
+            assertEquals("Line (Fiets) is not a header", e.getMessage());
+        }
+    }
+
+    @Test
+    public void parseMultipleHeaders() throws Exception {
+        String[] lines = new String[] {"H\tVN:Z:1.0\n", "H\tBUILD:Z:VCF2GRAPH\n", "H\tORI:Z:SZAXPI008746-45"};
+        for (String line : lines) {
+            graphParser.parseHeader(line);
+        }
+        assertTrue(graphParser.getGraph().getGenomeNames().contains("SZAXPI008746-45"));
+    }
+
+    @Test
+    public void parseSegmentIDNotNumber() throws UnknownTypeException {
+        try {
+            graphParser.parseSegment("S\tID\tT\t*\tORI:Z:TKK-01-0066.fasta;TKK_REF.fasta");
+            fail("This should not be parsed");
+        } catch (Exception e) {
+            assertEquals(UnknownTypeException.class, e.getClass());
+            assertEquals("The segment ID (ID) should be a number", e.getMessage());
+        }
+    }
+
+    @Test
+    public void parseSegmentNotEnoughProperties() throws UnknownTypeException {
+        try {
+            graphParser.parseSegment("S\t8\tT\t*");
+            fail("This should not be parsed");
+        } catch (Exception e) {
+            assertEquals(UnknownTypeException.class, e.getClass());
+            assertEquals("Segment has less than 5 properties (4)", e.getMessage());
+        }
+    }
+
+    @Test
+    public void parseSegmentNoGenomes() throws UnknownTypeException {
+        try {
+            graphParser.parseSegment("S\t8\tT\t*\tGenomes:A;B;C");
+            fail("This should not be parsed");
+        } catch (Exception e) {
+            assertEquals(UnknownTypeException.class, e.getClass());
+            assertEquals("Segment has no genomes", e.getMessage());
+        }
+    }
+
+    @Test
+    public void parseSegmentNonexistingGenome() throws Exception {
+        try {
+            graphParser.parseSegment("S\t8\tT\t*\tORI:Z:TKK_NOPE");
+            fail("This should not be parsed");
+        } catch (Exception e) {
+            assertEquals(UnknownTypeException.class, e.getClass());
+            assertEquals("Unknown genome name in segment", e.getMessage());
+        }
+    }
+
+    @Test
+    public void parseLinkFirstIDNotNumber() throws UnknownTypeException {
+        try {
+            graphParser.parseLink("L\tX\t+\t2\t+\t0M");
+            fail("This should not be parsed");
+        } catch (Exception e) {
+            assertEquals(UnknownTypeException.class, e.getClass());
+            assertEquals("The source ID (X) should be a number", e.getMessage());
+        }
+    }
+
+    @Test
+    public void parseLinkSecondIDNotNumber() throws UnknownTypeException {
+        try {
+            graphParser.parseLink("L\t1\t+\tY\t+\t0M");
+            fail("This should not be parsed");
+        } catch (Exception e) {
+            assertEquals(UnknownTypeException.class, e.getClass());
+            assertEquals("The destination ID (Y) should be a number", e.getMessage());
         }
     }
 }

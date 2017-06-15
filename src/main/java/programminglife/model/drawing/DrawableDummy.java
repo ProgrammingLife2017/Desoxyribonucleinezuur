@@ -1,7 +1,6 @@
 package programminglife.model.drawing;
 
 import programminglife.model.GenomeGraph;
-import programminglife.model.Link;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -11,9 +10,8 @@ import java.util.NoSuchElementException;
  * A class that handles the creation and usage of dummy nodes.
  */
 public class DrawableDummy extends DrawableNode {
-    private int parentID;
-    private int childID;
-    private Link link;
+    private DrawableNode parent;
+    private DrawableNode child;
 
     /**
      * Create a dummy node.
@@ -25,29 +23,28 @@ public class DrawableDummy extends DrawableNode {
     public DrawableDummy(int id, DrawableNode parentNode, DrawableNode childNode, GenomeGraph graph) {
         super(graph, id);
 
-        this.parentID = parentNode.getIdentifier();
-        this.childID = childNode.getIdentifier();
-        this.link = parentNode.getLink(childNode);
+        this.parent = parentNode;
+        this.child = childNode;
     }
 
     @Override
     public Collection<Integer> getChildren() {
         Collection<Integer> result = new LinkedHashSet();
-        result.add(childID);
+        result.add(child.getIdentifier());
         return result;
     }
 
     @Override
     public Collection<Integer> getParents() {
         Collection result = new LinkedHashSet();
-        result.add(parentID);
+        result.add(parent.getIdentifier());
         return result;
     }
 
     @Override
     void replaceParent(DrawableNode oldParent, DrawableNode newParent) {
-        if (this.parentID == oldParent.getIdentifier()) {
-            this.parentID = newParent.getIdentifier();
+        if (this.parent.getIdentifier() == oldParent.getIdentifier()) {
+            this.parent = newParent;
         } else {
             throw new NoSuchElementException(
                     String.format("The node to be replaced (%d) is not a parent of this node (%d).",
@@ -57,8 +54,8 @@ public class DrawableDummy extends DrawableNode {
 
     @Override
     void replaceChild(DrawableNode oldChild, DrawableNode newChild) {
-        if (this.childID == oldChild.getIdentifier()) {
-            this.childID = newChild.getIdentifier();
+        if (this.child.getIdentifier() == oldChild.getIdentifier()) {
+            this.child = newChild;
         } else {
             throw new NoSuchElementException(
                     String.format("The node to be replaced (%d) is not a child of this node (%d).",
@@ -66,19 +63,19 @@ public class DrawableDummy extends DrawableNode {
         }
     }
 
+    /**
+     * Information {@link String} about this.
+     *
+     * @return info
+     */
     @Override
     public String details() {
-        return this.link.details();
-    }
-
-    @Override
-    public int[] getGenomes() {
-        return this.link.getGenomes();
+        return toString();
     }
 
     @Override
     public void colorize() {
-        DrawableEdge.colorize(this, this.link, this.getGraph());
+        DrawableEdge.colorize(this, this.getGraph());
     }
 
     @Override
@@ -88,12 +85,12 @@ public class DrawableDummy extends DrawableNode {
     }
 
     @Override
-    public Link getLink(DrawableNode child) {
-        return this.link;
+    protected void setDrawDimensions() {
+
     }
 
     @Override
-    protected void setDrawDimensions() {
-
+    public String toString() {
+        return String.format("Link from %s to %s", this.parent, this.child);
     }
 }

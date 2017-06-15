@@ -156,9 +156,9 @@ public class GraphController {
         DrawableEdge edge = new DrawableEdge(parent, child);
         // If either parent or child are dummy nodes make on click use the link in that dummy.
         if (parent instanceof DrawableDummy) {
-            edge.setOnMouseClicked(event -> Console.println(parent.getLink(null).toString()));
+            edge.setOnMouseClicked(event -> Console.println(parent.toString()));
         } else if (child instanceof DrawableDummy) {
-            edge.setOnMouseClicked(event -> Console.println(child.getLink(null).toString()));
+            edge.setOnMouseClicked(event -> Console.println(child.toString()));
         } else {
             edge.setOnMouseClicked(event -> Console.println(edge.toString()));
         }
@@ -262,9 +262,9 @@ public class GraphController {
         Text parentsText = new Text("Parent: "); parentsText.setLayoutX(x); parentsText.setLayoutY(115);
         Text childrenText = new Text("Child: "); childrenText.setLayoutX(x); childrenText.setLayoutY(165);
 
-        TextField id = getTextField("Genomes: ", x, 70, graph.getGenomeNames(edge.getLink().getGenomes()).toString());
-        TextField parent = getTextField("Parent Node: ", x, 120, Integer.toString(edge.getLink().getStartID()));
-        TextField child = getTextField("Child Node: ", x, 170, Integer.toString(edge.getLink().getEndID()));
+        TextField id = getTextField("Genomes: ", x, 70, graph.getGenomeNames(edge.getGenomes()).toString());
+        TextField parent = getTextField("Parent Node: ", x, 120, Integer.toString(edge.getStart().getIdentifier()));
+        TextField child = getTextField("Child Node: ", x, 170, Integer.toString(edge.getEnd().getIdentifier()));
 
         anchorGraphInfo.getChildren().addAll(idText, parentsText, childrenText, id, parent, child);
     }
@@ -316,7 +316,7 @@ public class GraphController {
                 graph.getGenomeNames(node.getGenomes()).toString());
         TextField seqLength = getTextField("Sequence Length: ", x, 370, Integer.toString(node.getSequence().length()));
 
-        TextArea seq = new TextArea(" Sequence: ");
+        TextArea seq = new TextArea("Sequence: ");
         seq.setEditable(false);
         seq.setLayoutX(x); seq.setLayoutY(420);
         seq.setText(node.getSequence().replaceAll("(.{25})", "$1" + System.getProperty("line.separator")));
@@ -364,7 +364,7 @@ public class GraphController {
         removeHighlight(oldGenomeList);
         for (DrawableNode drawableNode: subGraph.getNodes().values()) {
             if (drawableNode != null && !(drawableNode instanceof DrawableDummy)) {
-                int genomeCount = drawableNode.getGenomes().length;
+                int genomeCount = drawableNode.getGenomes().size();
                 if (genomeCount >= min && genomeCount <= max) {
                     drawNodeList.add(drawableNode);
                 }
@@ -394,7 +394,7 @@ public class GraphController {
         removeHighlight(oldGenomeList);
         removeHighlight(oldMinMaxList);
         for (DrawableNode drawableNode: subGraph.getNodes().values()) {
-            int[] genomes = drawableNode.getGenomes();
+            Collection<Integer> genomes = drawableNode.getGenomes();
             for (int genome : genomes) {
                 if (genome == genomeID && !(drawableNode instanceof DrawableDummy)) {
                     drawNodeList.add(drawableNode);

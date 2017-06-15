@@ -1,5 +1,6 @@
 package programminglife.model.drawing;
 
+import org.eclipse.collections.impl.factory.Sets;
 import programminglife.model.GenomeGraph;
 import programminglife.model.XYCoordinate;
 import programminglife.utility.Console;
@@ -239,8 +240,7 @@ public class SubGraph {
             int newSize = layer.size();
             int diff = Math.abs(newSize - size);
             int y = 50;
-            x += LAYER_PADDING * 0.1 * newSize;
-            x += LAYER_PADDING * 0.6 * diff;
+            x += LAYER_PADDING + 7 * diff;
             for (DrawableNode d : layer) {
                 d.setLocation(x, y);
                 y += LINE_PADDING;
@@ -442,6 +442,51 @@ public class SubGraph {
             }
         }
         result.add(node);
+    }
+
+    /**
+     * Calculate genomes through all outgoing edges of a parent.
+     * @param parent find all genomes through edges from this parent
+     * @return a {@link Map} of  collections of genomes through links
+     */
+    Map<DrawableNode, Collection<Integer>> calculateGenomes(DrawableNode parent) {
+        Map<DrawableNode, Collection<Integer>> outgoingGenomes = new LinkedHashMap<>();
+
+        // Create set of parent genomes
+        Set<Integer> parentGenomes = new LinkedHashSet<>(parent.getGenomes());
+        // Topo sort (= natural order) children
+        TreeSet<Integer> childIDs = new TreeSet<>(parent.getChildren());
+        // For every child (in order); do
+        for (int childID : childIDs) {
+            DrawableNode child = this.nodes.get(childID);
+            Set<Integer> childGenomes = new LinkedHashSet<>(child.getGenomes());
+            // Find mutual genomes between parent and child
+            Set<Integer> mutualGenomes = Sets.intersect(parentGenomes, childGenomes);
+            // Add mutual genomes to edge
+            // TODO add genomes to the DrawableEdge
+            // parent.edgeTo(child).addGenomes(mutualGenomes);
+            outgoingGenomes.put(child, mutualGenomes);
+
+            // Subtract mutual genomes from parent set
+            parentGenomes.removeAll(mutualGenomes);
+        }
+
+        return outgoingGenomes;
+    }
+
+    /**
+     * Calculate genomes through edge, based on topological ordering and node-genome information.
+     * @return a {@link Map} of {@link Map Maps} of collections of genomes through links
+     */
+    Map<DrawableNode, Map<DrawableNode, Collection<Integer>>> calculateGenomes() {
+        Map<DrawableNode, Map<DrawableNode, Collection<Integer>>> genomes = new LinkedHashMap<>();
+        // For every node in the subgraph
+        for (DrawableNode parent : this.nodes.values()) {
+            Map<DrawableNode, Collection<Integer>> parentGenomes = this.calculateGenomes(parent);
+            genomes.put(parent, parentGenomes);
+        }
+
+        return genomes;
     }
 
     /**
