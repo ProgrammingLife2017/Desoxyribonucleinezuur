@@ -37,7 +37,7 @@ public class RecentFileController {
         try {
             findLines(recentFile);
         } catch (IOException e) {
-            Alerts.error("Recent.txt can't be found");
+            Alerts.error("Recent.txt doesn't exist. A new one will be created.");
         }
 
         this.recentFile = recentFile;
