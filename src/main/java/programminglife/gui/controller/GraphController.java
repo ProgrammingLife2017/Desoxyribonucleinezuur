@@ -311,7 +311,7 @@ public class GraphController {
         }
 
         String genomesString = graph.getGenomeNames(node.getGenomes()).toString();
-        String sequenceString = node.getSequence().replaceAll("(.{25})", "$1" + System.getProperty("line.separator"));
+        String sequenceString = node.getSequence().replaceAll("(.{24})", "$1" + System.getProperty("line.separator"));
         TextField inEdges = getTextField("Incoming Edges: ", x, 190, Integer.toString(node.getParents().size()));
         TextField outEdges = getTextField("Outgoing Edges: ", x, 230, Integer.toString(node.getChildren().size()));
         TextField seqLength = getTextField("Sequence Length: ", x, 270, Integer.toString(node.getSequence().length()));
