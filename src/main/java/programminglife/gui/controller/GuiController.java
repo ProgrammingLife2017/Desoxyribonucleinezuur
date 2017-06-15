@@ -25,6 +25,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import jp.uphy.javafx.console.ConsoleView;
 import programminglife.ProgrammingLife;
+import programminglife.controller.RecentFileController;
 import programminglife.model.GenomeGraph;
 import programminglife.parser.GraphParser;
 import programminglife.utility.Alerts;
@@ -37,12 +38,9 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.io.*;
 import java.nio.charset.Charset;
-import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.Files;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Random;
-import java.util.Scanner;
 
 /**
  * The controller for the GUI that is used in the application.
@@ -84,9 +82,9 @@ public class GuiController implements Observer {
     private double orgTranslateX, orgTranslateY;
     private double scale;
     private GraphController graphController;
+    private RecentFileController recentFileController;
     private File file;
     private File recentFile = new File("Recent.txt");
-    private String recentItems = "";
     private Thread parseThread;
 
     private static final double MAX_SCALE = 5.0d;
@@ -102,7 +100,8 @@ public class GuiController implements Observer {
     @SuppressWarnings("unused")
     private void initialize() {
         this.graphController = new GraphController(null, this.grpDrawArea, this.anchorGraphInfo);
-        initRecent();
+        this.recentFileController = new RecentFileController(this.recentFile, this.menuRecent);
+        this.recentFileController.setGuiController(this);
         initMenuBar();
         initBookmarkMenu();
         initLeftControlpanelScreenModifiers();
@@ -199,41 +198,6 @@ public class GuiController implements Observer {
         }
     }
 
-    /**
-     * Read out the file which contains all the recently opened files.
-     */
-    private void initRecent() {
-        try {
-            Files.createFile(recentFile.toPath());
-        } catch (FileAlreadyExistsException e) {
-            //This will always happen if a user has used the program before.
-            //Therefore it is unnecessary to handle further.
-        } catch (IOException e) {
-            Alerts.error("Recent.txt can't be opened");
-            return;
-        }
-        if (recentFile != null) {
-            try (Scanner sc = new Scanner(recentFile)) {
-                menuRecent.getItems().clear();
-                while (sc.hasNextLine()) {
-                    String next = sc.nextLine();
-                    MenuItem mi = new MenuItem(next);
-                    mi.setOnAction(event -> {
-                        try {
-                            file = new File(mi.getText());
-                            openFile(file);
-                        } catch (IOException e) {
-                            Alerts.error("Recent.txt can't be opened");
-                        }
-                    });
-                    menuRecent.getItems().add(mi);
-                    recentItems = recentItems.concat(next + System.getProperty("line.separator"));
-                }
-            } catch (FileNotFoundException e) {
-                Alerts.error("Recent.txt can't be found.");
-            }
-        }
-    }
 
     /**
      * Initializes the open button so that the user can decide which file to open.
@@ -253,7 +217,7 @@ public class GuiController implements Observer {
                 file = fileChooser.showOpenDialog(ProgrammingLife.getStage());
                 if (file != null) {
                     this.openFile(file);
-                    updateRecent();
+                    Platform.runLater(() -> recentFileController.updateRecent(recentFile, file));
                 }
             } catch (FileNotFoundException e) {
                 Alerts.error("This GFA file can't be found");
@@ -274,7 +238,6 @@ public class GuiController implements Observer {
                 file = fileChooser.showOpenDialog(ProgrammingLife.getStage());
                 if (file != null) {
                     this.openAnnotationFile(file);
-                    updateRecent();
                 }
             } catch (FileNotFoundException e) {
                 Alerts.error("This GFF file can't be found");
@@ -292,21 +255,6 @@ public class GuiController implements Observer {
         btnInstructions.setAccelerator(new KeyCodeCombination(KeyCode.H, KeyCodeCombination.CONTROL_DOWN));
     }
 
-    /**
-     * Updates the recent files file after opening a file.
-     */
-    private void updateRecent() {
-        try (BufferedWriter recentWriter = new BufferedWriter(new FileWriter(recentFile, true))) {
-            if (!recentItems.contains(file.getAbsolutePath())) {
-                recentWriter.write(file.getAbsolutePath() + System.getProperty("line.separator"));
-                recentWriter.flush();
-                recentWriter.close();
-                initRecent();
-            }
-        } catch (IOException e) {
-            Alerts.error("Recent.txt cannot be updated");
-        }
-    }
 
     /**
      * Initializes the bookmark buttons in the menu.
