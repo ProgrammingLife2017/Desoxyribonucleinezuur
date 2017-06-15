@@ -312,13 +312,11 @@ public class GraphController {
 
         String genomesString = graph.getGenomeNames(node.getGenomes()).toString();
         String sequenceString = node.getSequence().replaceAll("(.{25})", "$1" + System.getProperty("line.separator"));
-
         TextField inEdges = getTextField("Incoming Edges: ", x, 190, Integer.toString(node.getParents().size()));
         TextField outEdges = getTextField("Outgoing Edges: ", x, 230, Integer.toString(node.getChildren().size()));
         TextField seqLength = getTextField("Sequence Length: ", x, 270, Integer.toString(node.getSequence().length()));
         TextArea genome = getTextArea("Genome: ", x, 310, genomesString.substring(1, genomesString.length() - 1), 40);
         TextArea seq = getTextArea("Sequence: ", x, 375, sequenceString, 250);
-
         anchorGraphInfo.getChildren().addAll(idText, parentText, childText, inEdgeText,
                 outEdgeText, genomeText, seqLengthText, seqText);
         anchorGraphInfo.getChildren().addAll(idTextField, parents, children, inEdges, outEdges, genome, seqLength, seq);

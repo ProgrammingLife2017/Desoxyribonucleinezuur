@@ -69,8 +69,8 @@ public class GuiController implements Observer {
     @FXML private Button btnBookmark;
     @FXML private Button btnClipboard;
     @FXML private Button btnClipboard2;
-    @FXML private Button btnHighlight;
     @FXML private ProgressBar progressBar;
+    @FXML private Tab searchTab;
 
     @FXML private TextField txtMaxDrawDepth;
     @FXML private TextField txtCenterNode;
@@ -110,7 +110,7 @@ public class GuiController implements Observer {
         initMouse();
         initShowInfoTab();
         initConsole();
-        initLeftControlpanelHighlight();
+        initRightSearchTab();
     }
 
     /**
@@ -187,6 +187,7 @@ public class GuiController implements Observer {
     public void setGraph(GenomeGraph graph) {
         this.graphController.setGraph(graph);
         disableGraphUIElements(graph == null);
+        searchTab.setDisable(graph == null);
         Platform.runLater(() -> {
             assert graph != null;
             ProgrammingLife.getStage().setTitle(graph.getID());
@@ -386,32 +387,6 @@ public class GuiController implements Observer {
     }
 
     /**
-     * Initializes the buttons and textFields that are used to highlight.
-     */
-    private void initLeftControlpanelHighlight() {
-
-        btnHighlight.setOnAction(event -> {
-            try {
-                FXMLLoader loader = new FXMLLoader(ProgrammingLife.class.getResource("/HighlightWindow.fxml"));
-                AnchorPane page = loader.load();
-                HighlightController gc = loader.getController();
-                gc.setGraphController(this.getGraphController());
-                gc.initMinMax();
-                gc.initGenome();
-                Scene scene = new Scene(page);
-                Stage highlightDialogStage = new Stage();
-                highlightDialogStage.setResizable(false);
-                highlightDialogStage.setScene(scene);
-                highlightDialogStage.setTitle("Highlights");
-                highlightDialogStage.initOwner(ProgrammingLife.getStage());
-                highlightDialogStage.showAndWait();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-    }
-
-    /**
      * Draw the current graph with current center node and depth settings.
      */
     void draw() {
@@ -556,6 +531,27 @@ public class GuiController implements Observer {
         root.visibleProperty().bind(btnToggle.selectedProperty());
 
         Console.setOut(console.getOut());
+    }
+
+    /**
+     * Initializes the search tab in the left panel.
+     * Button to be disabled without a graph loaded.
+     */
+    private void initRightSearchTab() {
+        try {
+            FXMLLoader loader = new FXMLLoader(ProgrammingLife.class.getResource("/HighlightWindow.fxml"));
+            AnchorPane page = loader.load();
+            final HighlightController highlightController = loader.getController();
+            highlightController.setGraphController(this.getGraphController());
+            searchTab.setContent(page);
+            searchTab.setDisable(true);
+            searchTab.setOnSelectionChanged(event -> {
+                highlightController.initGenome();
+                highlightController.initMinMax();
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private ProgressBar getProgressBar() {

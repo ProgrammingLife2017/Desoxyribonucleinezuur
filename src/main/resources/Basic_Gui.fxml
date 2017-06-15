@@ -21,9 +21,7 @@
 
 <!--suppress ALL -->
 
-
 <AnchorPane prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="programminglife.gui.controller.GuiController">
-   <children>
        <MenuBar AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
            <Menu fx:id="menuFile" mnemonicParsing="false" text="File">
                <MenuItem fx:id="btnOpenGFA" mnemonicParsing="false" text="Open GFA" />
@@ -52,7 +50,6 @@
                <Button fx:id="btnDraw" layoutX="27.0" layoutY="180.0" minWidth="100.0" mnemonicParsing="false" text="Draw" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
                <Button fx:id="btnDrawRandom" layoutX="20.0" layoutY="210.0" minWidth="100.0" mnemonicParsing="false" text="Surprise me!" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
                <Button fx:id="btnBookmark" layoutX="20.0" layoutY="240.0" minWidth="100.0" mnemonicParsing="false" text="Bookmark" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
-               <Button fx:id="btnHighlight" layoutX="20.0" layoutY="270.0" minWidth="100.0" mnemonicParsing="false" text="Highlight" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
            </AnchorPane>
            <AnchorPane fx:id="anchorGraphPanel" minHeight="200" minWidth="200" prefHeight="Infinity" prefWidth="Infinity">
                <Group fx:id="grpDrawArea" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
@@ -66,11 +63,8 @@
                            <Button fx:id="btnClipboard2" layoutX="255.0" layoutY="15.0" mnemonicParsing="false" text="Copy to clipboard" />
                        </AnchorPane>
                    </Tab>
-                   <Tab text="Search">
-                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="140.0" />
-                   </Tab>
+                   <Tab fx:id="searchTab" text="Search" />
                </TabPane>
            </AnchorPane>
        </SplitPane>
-   </children>
 </AnchorPane>
