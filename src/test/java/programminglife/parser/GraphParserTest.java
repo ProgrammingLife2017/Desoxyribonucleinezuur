@@ -61,7 +61,7 @@ public class GraphParserTest implements Observer {
         GenomeGraph g = graphParser.getGraph();
 
         graphParser.parse();
-        for (int i = 1; i < 9; i++)
+        for (int i = 1; i <= 8; i++)
             assertTrue(g.contains(i));
         assertEquals(8, g.size());
     }
@@ -71,7 +71,7 @@ public class GraphParserTest implements Observer {
         GenomeGraph g1 = graphParser.getGraph();
 
         graphParser.parse();
-        for (int i = 1; i < 9; i++)
+        for (int i = 1; i <= 8; i++)
             assertTrue(g1.contains(i));
         assertEquals(8, g1.size());
 
@@ -79,7 +79,7 @@ public class GraphParserTest implements Observer {
 
         GraphParser p = new GraphParser(new File(TEST_PATH));
         GenomeGraph g2 = p.getGraph();
-        for (int i = 1; i < 9; i++)
+        for (int i = 1; i <= 8; i++)
             assertTrue(g2.contains(i));
         assertEquals(8, g2.size());
 
