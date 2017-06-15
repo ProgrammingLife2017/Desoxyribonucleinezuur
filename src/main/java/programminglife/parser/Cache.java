@@ -21,7 +21,7 @@ import java.util.*;
  * A class for managing persistent data. It can open one cache, which contains the information for one gfa file.
  */
 public final class Cache {
-    private static final String CACHE_FOLDER = "caches/";
+    private static final String CACHE_FOLDER = "caches";
     private static final String CACHE_EXTENSION = ".db.desoxyribonucleinezuur";
 
     private static final String SEQUENCE_MAP_NAME = "sequenceMap";
