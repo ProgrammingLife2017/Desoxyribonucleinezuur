@@ -25,6 +25,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import jp.uphy.javafx.console.ConsoleView;
 import programminglife.ProgrammingLife;
+import programminglife.controller.RecentFileController;
 import programminglife.model.GenomeGraph;
 import programminglife.parser.GraphParser;
 import programminglife.utility.Alerts;
@@ -37,12 +38,9 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.io.*;
 import java.nio.charset.Charset;
-import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.Files;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Random;
-import java.util.Scanner;
 
 /**
  * The controller for the GUI that is used in the application.
@@ -54,7 +52,8 @@ public class GuiController implements Observer {
     private static final String INITIAL_MAX_DRAW_DEPTH = "10";
 
     //FXML imports.
-    @FXML private MenuItem btnOpen;
+    @FXML private MenuItem btnOpenGFA;
+    @FXML private MenuItem btnOpenGFF;
     @FXML private MenuItem btnQuit;
     @FXML private MenuItem btnBookmarks;
     @FXML private MenuItem btnAbout;
@@ -68,8 +67,8 @@ public class GuiController implements Observer {
     @FXML private Button btnBookmark;
     @FXML private Button btnClipboard;
     @FXML private Button btnClipboard2;
-    @FXML private Button btnHighlight;
     @FXML private ProgressBar progressBar;
+    @FXML private Tab searchTab;
 
     @FXML private TextField txtMaxDrawDepth;
     @FXML private TextField txtCenterNode;
@@ -83,9 +82,9 @@ public class GuiController implements Observer {
     private double orgTranslateX, orgTranslateY;
     private double scale;
     private GraphController graphController;
+    private RecentFileController recentFileController;
     private File file;
     private File recentFile = new File("Recent.txt");
-    private String recentItems = "";
     private Thread parseThread;
 
     private static final double MAX_SCALE = 5.0d;
@@ -101,7 +100,8 @@ public class GuiController implements Observer {
     @SuppressWarnings("unused")
     private void initialize() {
         this.graphController = new GraphController(null, this.grpDrawArea, this.anchorGraphInfo);
-        initRecent();
+        this.recentFileController = new RecentFileController(this.recentFile, this.menuRecent);
+        this.recentFileController.setGuiController(this);
         initMenuBar();
         initBookmarkMenu();
         initLeftControlpanelScreenModifiers();
@@ -109,11 +109,11 @@ public class GuiController implements Observer {
         initMouse();
         initShowInfoTab();
         initConsole();
-        initLeftControlpanelHighlight();
+        initRightSearchTab();
     }
 
     /**
-     * Open and parse a file.
+     * Open and parse a GFA file.
      * @param file The {@link File} to open.
      * @throws IOException if the {@link File} is not found.
      * @return the parser to be notified when it is finished
@@ -142,6 +142,17 @@ public class GuiController implements Observer {
         }
 
         return null;
+    }
+
+    /**
+     * Open and parse a GFF file.
+     * @param file The {@link File} to open.
+     * @throws IOException if the {@link File} is not found.
+     */
+    public void openAnnotationFile(File file) throws IOException {
+        if (file != null) {
+
+        }
     }
 
     @Override
@@ -175,6 +186,7 @@ public class GuiController implements Observer {
     public void setGraph(GenomeGraph graph) {
         this.graphController.setGraph(graph);
         disableGraphUIElements(graph == null);
+        searchTab.setDisable(graph == null);
         Platform.runLater(() -> {
             assert graph != null;
             ProgrammingLife.getStage().setTitle(graph.getID());
@@ -186,41 +198,6 @@ public class GuiController implements Observer {
         }
     }
 
-    /**
-     * Read out the file which contains all the recently opened files.
-     */
-    private void initRecent() {
-        try {
-            Files.createFile(recentFile.toPath());
-        } catch (FileAlreadyExistsException e) {
-            //This will always happen if a user has used the program before.
-            //Therefore it is unnecessary to handle further.
-        } catch (IOException e) {
-            Alerts.error("This file can't be opened");
-            return;
-        }
-        if (recentFile != null) {
-            try (Scanner sc = new Scanner(recentFile)) {
-                menuRecent.getItems().clear();
-                while (sc.hasNextLine()) {
-                    String next = sc.nextLine();
-                    MenuItem mi = new MenuItem(next);
-                    mi.setOnAction(event -> {
-                        try {
-                            file = new File(mi.getText());
-                            openFile(file);
-                        } catch (IOException e) {
-                            Alerts.error("This file can't be opened");
-                        }
-                    });
-                    menuRecent.getItems().add(mi);
-                    recentItems = recentItems.concat(next + System.getProperty("line.separator"));
-                }
-            } catch (FileNotFoundException e) {
-                Alerts.error("This file can't be found");
-            }
-        }
-    }
 
     /**
      * Initializes the open button so that the user can decide which file to open.
@@ -228,7 +205,7 @@ public class GuiController implements Observer {
      * Sets the event for the quit MenuItem.
      */
     private void initMenuBar() {
-        btnOpen.setOnAction((ActionEvent event) -> {
+        btnOpenGFA.setOnAction((ActionEvent event) -> {
             FileChooser fileChooser = new FileChooser();
             final ExtensionFilter extFilterGFA = new ExtensionFilter("GFA files (*.gfa)", "*.GFA");
             fileChooser.getExtensionFilters().add(extFilterGFA);
@@ -240,16 +217,36 @@ public class GuiController implements Observer {
                 file = fileChooser.showOpenDialog(ProgrammingLife.getStage());
                 if (file != null) {
                     this.openFile(file);
-                    updateRecent();
+                    Platform.runLater(() -> recentFileController.updateRecent(recentFile, file));
                 }
             } catch (FileNotFoundException e) {
-                Alerts.error("This file can't be found");
+                Alerts.error("This GFA file can't be found");
             } catch (IOException e) {
-                Alerts.error("This file can't be opened");
+                Alerts.error("This GFA file can't be opened");
             }
         });
 
-        btnOpen.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCodeCombination.CONTROL_DOWN));
+        btnOpenGFF.setOnAction((ActionEvent event) -> {
+            FileChooser fileChooser = new FileChooser();
+            final ExtensionFilter extFilterGFF = new ExtensionFilter("GFF files (*.gff)", "*.GFF");
+            fileChooser.getExtensionFilters().add(extFilterGFF);
+            if (file != null) {
+                File existDirectory = file.getParentFile();
+                fileChooser.setInitialDirectory(existDirectory);
+            }
+            try {
+                file = fileChooser.showOpenDialog(ProgrammingLife.getStage());
+                if (file != null) {
+                    this.openAnnotationFile(file);
+                }
+            } catch (FileNotFoundException e) {
+                Alerts.error("This GFF file can't be found");
+            } catch (IOException e) {
+                Alerts.error("This GFF file can't be opened");
+            }
+        });
+
+        btnOpenGFA.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCodeCombination.CONTROL_DOWN));
         btnQuit.setOnAction(event -> Alerts.quitAlert());
         btnQuit.setAccelerator(new KeyCodeCombination(KeyCode.E, KeyCodeCombination.CONTROL_DOWN));
         btnAbout.setOnAction(event -> Alerts.infoAboutAlert());
@@ -258,21 +255,6 @@ public class GuiController implements Observer {
         btnInstructions.setAccelerator(new KeyCodeCombination(KeyCode.H, KeyCodeCombination.CONTROL_DOWN));
     }
 
-    /**
-     * Updates the recent files file after opening a file.
-     */
-    private void updateRecent() {
-        try (BufferedWriter recentWriter = new BufferedWriter(new FileWriter(recentFile, true))) {
-            if (!recentItems.contains(file.getAbsolutePath())) {
-                recentWriter.write(file.getAbsolutePath() + System.getProperty("line.separator"));
-                recentWriter.flush();
-                recentWriter.close();
-                initRecent();
-            }
-        } catch (IOException e) {
-            Alerts.error("This file can't be updated");
-        }
-    }
 
     /**
      * Initializes the bookmark buttons in the menu.
@@ -353,32 +335,6 @@ public class GuiController implements Observer {
     }
 
     /**
-     * Initializes the buttons and textFields that are used to highlight.
-     */
-    private void initLeftControlpanelHighlight() {
-
-        btnHighlight.setOnAction(event -> {
-            try {
-                FXMLLoader loader = new FXMLLoader(ProgrammingLife.class.getResource("/HighlightWindow.fxml"));
-                AnchorPane page = loader.load();
-                HighlightController gc = loader.getController();
-                gc.setGraphController(this.getGraphController());
-                gc.initMinMax();
-                gc.initGenome();
-                Scene scene = new Scene(page);
-                Stage highlightDialogStage = new Stage();
-                highlightDialogStage.setResizable(false);
-                highlightDialogStage.setScene(scene);
-                highlightDialogStage.setTitle("Highlights");
-                highlightDialogStage.initOwner(ProgrammingLife.getStage());
-                highlightDialogStage.showAndWait();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-    }
-
-    /**
      * Draw the current graph with current center node and depth settings.
      */
     void draw() {
@@ -401,8 +357,7 @@ public class GuiController implements Observer {
             this.graphController.draw(centerNode, maxDepth);
             Console.println("[%s] Graph drawn.", Thread.currentThread().getName());
         } else {
-            Alerts.warning("The centernode is not a existing node, "
-                    + "try again with a number that exists as a node.");
+            Alerts.warning("The centernode is not a existing node, try again with a number that exists as a node.");
         }
     }
 
@@ -524,6 +479,27 @@ public class GuiController implements Observer {
         root.visibleProperty().bind(btnToggle.selectedProperty());
 
         Console.setOut(console.getOut());
+    }
+
+    /**
+     * Initializes the search tab in the left panel.
+     * Button to be disabled without a graph loaded.
+     */
+    private void initRightSearchTab() {
+        try {
+            FXMLLoader loader = new FXMLLoader(ProgrammingLife.class.getResource("/HighlightWindow.fxml"));
+            AnchorPane page = loader.load();
+            final HighlightController highlightController = loader.getController();
+            highlightController.setGraphController(this.getGraphController());
+            searchTab.setContent(page);
+            searchTab.setDisable(true);
+            searchTab.setOnSelectionChanged(event -> {
+                highlightController.initGenome();
+                highlightController.initMinMax();
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private ProgressBar getProgressBar() {
