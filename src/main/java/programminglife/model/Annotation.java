@@ -3,6 +3,7 @@ package programminglife.model;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * An Annotation for a genome.
@@ -90,11 +91,68 @@ public class Annotation {
 
         Annotation that = (Annotation) o;
 
-        return id.equals(that.id) && file.equals(that.file);
+        return id.equals(that.id)
+                && file.equals(that.file)
+                && startCoordinate == that.startCoordinate
+                && endCoordinate == that.endCoordinate
+                && (
+                        genomeIndex == that.genomeIndex && genomeIndex != -1 // they have the same genomeIndex
+                        || originalGenomeID.equals(that.originalGenomeID) // or the original names were equal
+                )
+                && textFields.equals(that.textFields);
     }
 
     @Override
     public int hashCode() {
         return id.hashCode() + 31 * file.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Annotations {ID: %s; file: %s; genomeIndex: %d; "
+                        + "originalGenomeID: %s; start: %d; end: %d; textFields: %s}",
+                id,
+                file,
+                genomeIndex,
+                originalGenomeID,
+                startCoordinate,
+                endCoordinate,
+                textFields.entrySet().stream().map(entry ->
+                    String.format("{%s: {%s}}", entry.getKey(),
+                            entry.getValue().stream().collect(Collectors.joining(", ")))
+                ).collect(Collectors.joining(", "))
+        );
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getFileName() {
+        return file;
+    }
+
+    public int getGenomeIndex() {
+        return genomeIndex;
+    }
+
+    public void setGenomeIndex(int genomeIndex) {
+        this.genomeIndex = genomeIndex;
+    }
+
+    public String getOriginalGenomeID() {
+        return originalGenomeID;
+    }
+
+    public int getStartCoordinate() {
+        return startCoordinate;
+    }
+
+    public int getEndCoordinate() {
+        return endCoordinate;
+    }
+
+    public Map<String, Set<String>> getTextFields() {
+        return textFields;
     }
 }

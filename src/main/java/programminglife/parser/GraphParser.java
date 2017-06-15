@@ -102,7 +102,7 @@ public class GraphParser extends Observable implements Runnable {
         }
 
         Console.print("[%s] Calculating number of lines in file... ", Thread.currentThread().getName());
-        int lineCount = countLines(this.graphFile.getPath());
+        int lineCount = countLines(this.graphFile);
         Console.println("done (%d lines)", lineCount);
         this.progressCounter.setTotal(lineCount);
 
@@ -149,14 +149,14 @@ public class GraphParser extends Observable implements Runnable {
      *
      * This method does not handle files with/without final newline differently,
      * but as it is just for optimisation purposes, this does not matter.
-     * @param filename The file to count the number of lines of
+     * @param file The file to count the number of lines of
      * @return The number of lines in the file
      * @throws IOException if the file cannot be found or another problem occurs opening the file.
      */
-    private int countLines(String filename) throws IOException {
-        try (InputStream is = new BufferedInputStream(new FileInputStream(filename))) {
+    static int countLines(File file) throws IOException {
+        try (InputStream is = new BufferedInputStream(new FileInputStream(file))) {
             byte[] c = new byte[1024];
-            int count = 0;
+            int count = 1;
             int readChars;
             while ((readChars = is.read(c)) != -1) {
                 for (int i = 0; i < readChars; ++i) {
@@ -165,7 +165,7 @@ public class GraphParser extends Observable implements Runnable {
                     }
                 }
             }
-            return count + 1;
+            return count;
         }
     }
 

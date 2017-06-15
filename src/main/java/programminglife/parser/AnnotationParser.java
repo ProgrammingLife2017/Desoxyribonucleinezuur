@@ -1,17 +1,22 @@
 package programminglife.parser;
 
+import com.diffplug.common.base.Errors;
 import org.jetbrains.annotations.NotNull;
 import programminglife.model.Annotation;
+import programminglife.model.Feature;
 import programminglife.model.exception.UnknownTypeException;
+import programminglife.utility.ProgressCounter;
 
-import java.io.File;
-import java.util.EnumSet;
+import java.io.*;
+import java.util.*;
 
 /**
  * A Parser for {@link Annotation Annotations}.
  */
-public class AnnotationParser implements Runnable {
+public class AnnotationParser extends Observable implements Runnable {
     private File file;
+    private Map<String, Feature> features;
+    private ProgressCounter progressCounter;
 
     /**
      * Constructor for an AnnotationParser.
@@ -19,23 +24,62 @@ public class AnnotationParser implements Runnable {
      */
     public AnnotationParser(File file) {
         this.file = file;
+        this.features = null;
+        progressCounter = null;
     }
 
     @Override
     public void run() {
-        parseFile();
+        try {
+            parseFile(file);
+            this.setChanged();
+            this.notifyObservers(features);
+        } catch (UnknownTypeException | IOException e) {
+            this.setChanged();
+            this.notifyObservers(e);
+        }
     }
 
     /**
-     * Parse the file.
+     * Parse the file. This changes this AnnotationParser,
+     * but it is the responsibility of the caller to notify the observers.
+     * @param file The file to parse.
+     * @throws IOException If there is an issue opening / closing the file.
+     * @throws UnknownTypeException If the file is malformed.
      */
-    private void parseFile() {
-        // TODO: implement
+    private void parseFile(File file) throws IOException, UnknownTypeException {
+        int numberOfLines = GraphParser.countLines(file);
+        progressCounter = new ProgressCounter(numberOfLines, "Parsed (%d lines)");
 
-        // keep a set of annotations (important: make sure previous values are not replaced!)
-        // parse all lines with parseLine()
-        // merge annotations with the same id.
-        throw new Error("Not yet implemented");
+        this.features = new LinkedHashMap<>();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            reader.lines().forEach(Errors.rethrow().wrap(line -> {
+                Annotation annotation = parseLine(line);
+
+                features.computeIfAbsent(annotation.getId(), name -> new Feature(annotation)).add(annotation);
+
+                progressCounter.count();
+            }));
+
+            features.values().forEach(System.out::println);
+        } catch (Errors.WrappedAsRuntimeException e) {
+            this.features = null;
+            if (e.getCause() instanceof UnknownTypeException) {
+                throw new UnknownTypeException(
+                        String.format("An error occurred while parsing line %d", progressCounter.getProgress()),
+                        e.getCause()
+                );
+            } else {
+                throw e;
+            }
+        } catch (FileNotFoundException e) {
+            features = null;
+            throw e;
+        } catch (OutOfMemoryError e) {
+            System.out.println("line: " + progressCounter.getProgress());
+            throw e;
+        }
     }
 
     /**
@@ -44,7 +88,7 @@ public class AnnotationParser implements Runnable {
      * @return The parsed Annotation. If this line is empty or a comment (starts with #), this returns null.
      * @throws UnknownTypeException If the line is malformed.
      */
-    Annotation parseLine(String line) throws UnknownTypeException {
+    private Annotation parseLine(String line) throws UnknownTypeException {
         // check that line is not a comment or is empty.
         if (line.length() == 0 || line.charAt(0) == '#') {
             return null;
@@ -69,12 +113,12 @@ public class AnnotationParser implements Runnable {
             start = Integer.parseInt(columns[3]);
             end   = Integer.parseInt(columns[4]);
 
-            String afterID = columns[8].substring(columns[8].indexOf("ID="));
+            String afterID = columns[8].substring(columns[8].indexOf("ID=") + 3);
             int index = afterID.indexOf(';');
             if (index == -1) {
                 index = afterID.length();
             }
-            id = afterID.substring(0, index);
+            id = decode(afterID.substring(0, index), Encoding.EXTENDED);
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
             throw new UnknownTypeException(
                     "One of the columns of this Annotation could not be parsed.",
@@ -197,5 +241,21 @@ public class AnnotationParser implements Runnable {
         SPACE,
         WHITESPACE,
         KEY_VALUE
+    }
+
+    public Map<String, Feature> getFeatures() {
+        return features;
+    }
+
+    public ProgressCounter getProgressCounter() {
+        return progressCounter;
+    }
+
+    public static void main(String... ignored) throws IOException, UnknownTypeException {
+//        File file = new File("C:\\Users\\Ivo\\Google Drive local\\university\\Context project" +
+//                "\\project\\ProgrammingLife\\data\\annotations\\intervalAnnotation.txt");
+        File file = new File("C:\\Users\\Ivo\\Google Drive local\\university\\Context project" +
+                "\\project\\ProgrammingLife\\data\\annotations\\GRCh38.chr19.gff");
+        new AnnotationParser(file).parseFile(file);
     }
 }
