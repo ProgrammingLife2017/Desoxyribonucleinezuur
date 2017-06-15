@@ -17,7 +17,7 @@
 
 <!--suppress ALL -->
 
-<VBox prefHeight="800.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="programminglife.gui.controller.GuiController">
+<VBox prefHeight="800.0" prefWidth="1000.0" minHeight="600.0" minWidth="700.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="programminglife.gui.controller.GuiController">
     <MenuBar VBox.vgrow="NEVER">
         <Menu fx:id="menuFile" mnemonicParsing="false" text="File">
             <MenuItem fx:id="btnOpen" mnemonicParsing="false" text="Open" />
