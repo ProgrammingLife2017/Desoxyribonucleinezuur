@@ -54,7 +54,8 @@ public class GuiController implements Observer {
     private static final String INITIAL_MAX_DRAW_DEPTH = "10";
 
     //FXML imports.
-    @FXML private MenuItem btnOpen;
+    @FXML private MenuItem btnOpenGFA;
+    @FXML private MenuItem btnOpenGFF;
     @FXML private MenuItem btnQuit;
     @FXML private MenuItem btnBookmarks;
     @FXML private MenuItem btnAbout;
@@ -113,7 +114,7 @@ public class GuiController implements Observer {
     }
 
     /**
-     * Open and parse a file.
+     * Open and parse a GFA file.
      * @param file The {@link File} to open.
      * @throws IOException if the {@link File} is not found.
      * @return the parser to be notified when it is finished
@@ -142,6 +143,17 @@ public class GuiController implements Observer {
         }
 
         return null;
+    }
+
+    /**
+     * Open and parse a GFF file.
+     * @param file The {@link File} to open.
+     * @throws IOException if the {@link File} is not found.
+     */
+    public void openAnnotationFile(File file) throws IOException {
+        if (file != null) {
+
+        }
     }
 
     @Override
@@ -196,7 +208,7 @@ public class GuiController implements Observer {
             //This will always happen if a user has used the program before.
             //Therefore it is unnecessary to handle further.
         } catch (IOException e) {
-            Alerts.error("This file can't be opened");
+            Alerts.error("Recent.txt can't be opened");
             return;
         }
         if (recentFile != null) {
@@ -210,14 +222,14 @@ public class GuiController implements Observer {
                             file = new File(mi.getText());
                             openFile(file);
                         } catch (IOException e) {
-                            Alerts.error("This file can't be opened");
+                            Alerts.error("Recent.txt can't be opened");
                         }
                     });
                     menuRecent.getItems().add(mi);
                     recentItems = recentItems.concat(next + System.getProperty("line.separator"));
                 }
             } catch (FileNotFoundException e) {
-                Alerts.error("This file can't be found");
+                Alerts.error("Recent.txt can't be found.");
             }
         }
     }
@@ -228,7 +240,7 @@ public class GuiController implements Observer {
      * Sets the event for the quit MenuItem.
      */
     private void initMenuBar() {
-        btnOpen.setOnAction((ActionEvent event) -> {
+        btnOpenGFA.setOnAction((ActionEvent event) -> {
             FileChooser fileChooser = new FileChooser();
             final ExtensionFilter extFilterGFA = new ExtensionFilter("GFA files (*.gfa)", "*.GFA");
             fileChooser.getExtensionFilters().add(extFilterGFA);
@@ -243,13 +255,34 @@ public class GuiController implements Observer {
                     updateRecent();
                 }
             } catch (FileNotFoundException e) {
-                Alerts.error("This file can't be found");
+                Alerts.error("This GFA file can't be found");
             } catch (IOException e) {
-                Alerts.error("This file can't be opened");
+                Alerts.error("This GFA file can't be opened");
             }
         });
 
-        btnOpen.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCodeCombination.CONTROL_DOWN));
+        btnOpenGFF.setOnAction((ActionEvent event) -> {
+            FileChooser fileChooser = new FileChooser();
+            final ExtensionFilter extFilterGFF = new ExtensionFilter("GFF files (*.gff)", "*.GFF");
+            fileChooser.getExtensionFilters().add(extFilterGFF);
+            if (file != null) {
+                File existDirectory = file.getParentFile();
+                fileChooser.setInitialDirectory(existDirectory);
+            }
+            try {
+                file = fileChooser.showOpenDialog(ProgrammingLife.getStage());
+                if (file != null) {
+                    this.openAnnotationFile(file);
+                    updateRecent();
+                }
+            } catch (FileNotFoundException e) {
+                Alerts.error("This GFF file can't be found");
+            } catch (IOException e) {
+                Alerts.error("This GFF file can't be opened");
+            }
+        });
+
+        btnOpenGFA.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCodeCombination.CONTROL_DOWN));
         btnQuit.setOnAction(event -> Alerts.quitAlert());
         btnQuit.setAccelerator(new KeyCodeCombination(KeyCode.E, KeyCodeCombination.CONTROL_DOWN));
         btnAbout.setOnAction(event -> Alerts.infoAboutAlert());
@@ -270,7 +303,7 @@ public class GuiController implements Observer {
                 initRecent();
             }
         } catch (IOException e) {
-            Alerts.error("This file can't be updated");
+            Alerts.error("Recent.txt cannot be updated");
         }
     }
 
@@ -401,8 +434,7 @@ public class GuiController implements Observer {
             this.graphController.draw(centerNode, maxDepth);
             Console.println("[%s] Graph drawn.", Thread.currentThread().getName());
         } else {
-            Alerts.warning("The centernode is not a existing node, "
-                    + "try again with a number that exists as a node.");
+            Alerts.warning("The centernode is not a existing node, try again with a number that exists as a node.");
         }
     }
 

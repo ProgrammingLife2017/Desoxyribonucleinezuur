@@ -72,8 +72,8 @@ public final class Cache {
                     .make();
             this.initialize();
         } catch (IOException e) {
-            Alerts.error("Cache file cannot be created at this time. " +
-                    "Please run the application from a folder you have write permissions to.");
+            Alerts.error("Cache file cannot be created at this time. "
+                    + "Please run the application from a folder you have write permissions to.");
         }
     }
 
