@@ -2,10 +2,10 @@ package programminglife.model.drawing;
 
 import javafx.scene.paint.Color;
 import programminglife.model.GenomeGraph;
-import programminglife.model.Link;
 import programminglife.model.XYCoordinate;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * A Segment that also Implements {@link Drawable}.
@@ -13,6 +13,7 @@ import java.util.*;
 public class DrawableSegment extends DrawableNode {
     private Set<Integer> parents;
     private Set<Integer> children;
+    private Set<Integer> genomes;
 
     /**
      * Create a DrawableSegment from a Segment.
@@ -22,11 +23,9 @@ public class DrawableSegment extends DrawableNode {
     public DrawableSegment(GenomeGraph graph, int nodeID) {
         super(graph, nodeID);
 
-        parents = new LinkedHashSet<>();
-        children = new LinkedHashSet<>();
-
-        Arrays.stream(graph.getParentIDs(nodeID)).forEach(id -> parents.add(id));
-        Arrays.stream(graph.getChildIDs(nodeID)).forEach(id -> children.add(id));
+        parents = Arrays.stream(graph.getParentIDs(nodeID)).boxed().collect(Collectors.toSet());
+        children = Arrays.stream(graph.getChildIDs(nodeID)).boxed().collect(Collectors.toSet());
+        genomes = Arrays.stream(graph.getGenomes(nodeID)).boxed().collect(Collectors.toSet());
 
         this.setDrawDimensions();
     }
@@ -157,8 +156,8 @@ public class DrawableSegment extends DrawableNode {
     }
 
     @Override
-    public int[] getGenomes() {
-        return this.getGraph().getGenomes(this.getIdentifier());
+    public Collection<Integer> getGenomes() {
+        return this.genomes;
     }
 
     /**
@@ -207,20 +206,6 @@ public class DrawableSegment extends DrawableNode {
     @Override
     public int hashCode() {
         return getIdentifier();
-    }
-
-    /**
-     * Get the {@link Link} between this node and the child drawable node.
-     * @param child The {@link DrawableSegment} that the link goes to.
-     * @return {@link Link} between the two nodes.
-     */
-    @Override
-    public Link getLink(DrawableNode child) {
-        if (child instanceof DrawableDummy) {
-            return child.getLink(null);
-        } else {
-            return getGraph().getLink(this.getIdentifier(), child.getIdentifier());
-        }
     }
 
     /**

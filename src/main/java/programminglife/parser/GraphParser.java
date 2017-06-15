@@ -53,7 +53,6 @@ public class GraphParser extends Observable implements Runnable {
             }
 
             Platform.runLater(() -> ProgrammingLife.getStage().setTitle("Loading genomes..."));
-            this.graph.loadGenomes(this.progressCounter);
 
             int secondsElapsed = (int) ((System.nanoTime() - startTime) / 1000000000.d);
             Console.println("[%s] Parsing took %d seconds", Thread.currentThread().getName(), secondsElapsed);

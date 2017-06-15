@@ -2,7 +2,6 @@ package programminglife.model.drawing;
 
 import javafx.scene.shape.Rectangle;
 import programminglife.model.GenomeGraph;
-import programminglife.model.Link;
 import programminglife.model.XYCoordinate;
 
 import java.util.Collection;
@@ -17,6 +16,7 @@ public abstract class DrawableNode extends Rectangle implements Drawable {
     private final int id;
 
     private boolean drawDimensionsUpToDate = false;
+    Collection<Integer> genomes;
 
     /**
      * Construct a {@link DrawableNode}.
@@ -93,12 +93,6 @@ public abstract class DrawableNode extends Rectangle implements Drawable {
     public abstract String details();
 
     /**
-     * Get the IDs of genomes through this.
-     * @return the IDs of genomes
-     */
-    public abstract int[] getGenomes();
-
-    /**
      * Color this according to contents.
      */
     public abstract void colorize();
@@ -109,13 +103,6 @@ public abstract class DrawableNode extends Rectangle implements Drawable {
      * @param y the y location
      */
     abstract void setLocation(int x, int y);
-
-    /**
-     * Get a {@link Link} from this.
-     * @param child the {@link DrawableNode} to get the {@link Link} to
-     * @return it's link
-     */
-    public abstract Link getLink(DrawableNode child);
 
     /**
      * Set the size of this drawing.

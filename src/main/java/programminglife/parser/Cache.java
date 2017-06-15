@@ -376,29 +376,4 @@ public final class Cache {
         }
         return nodeIDs;
     }
-
-    /**
-     * Get Node IDs belonging to a Genome.
-     * @param progressCounter ProgressCounter keeps track of the progress.
-     * @param genomeIDs the IDs of the Genomes to look up
-     * @return a {@link Map} mapping Genome names to {@link Collection}s of Node IDs
-     */
-    public Map<Integer, Collection<Integer>> getGenomeNodeIDs(ProgressCounter progressCounter, int... genomeIDs) {
-        Map<Integer, Collection<Integer>> genomes = new HashMap<>();
-        progressCounter.reset();
-        progressCounter.setTotal(this.getNodeIdGenomesMap().size());
-        for (Map.Entry<Integer, int[]> entry : this.getNodeIdGenomesMap().entrySet()) {
-            progressCounter.count();
-            for (int genomeID : genomeIDs) {
-                if (ArrayUtils.contains(entry.getValue(), genomeID)) {
-                    if (!genomes.containsKey(genomeID)) {
-                        genomes.put(genomeID, new TreeSet<>());
-                    }
-                    genomes.get(genomeID).add(entry.getKey());
-                }
-            }
-        }
-        progressCounter.finished();
-        return genomes;
-    }
 }

@@ -4,16 +4,18 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Shape;
 import programminglife.model.GenomeGraph;
-import programminglife.model.Link;
 import programminglife.model.XYCoordinate;
 
+import java.util.Collection;
+import java.util.LinkedHashSet;
+
 /**
- * A {@link programminglife.model.Link} that also Implements {@link Drawable}.
+ * A link that also Implements {@link Drawable}.
  */
 public class DrawableEdge extends Line implements Drawable {
-    private Link link;
     private DrawableNode parent;
     private DrawableNode child;
+    private Collection<Integer> genomes;
 
     /**
      * Create a Drawable edge.
@@ -23,7 +25,7 @@ public class DrawableEdge extends Line implements Drawable {
     public DrawableEdge(DrawableNode parent, DrawableNode child) {
         this.parent = parent;
         this.child = child;
-        this.link = parent.getLink(child);
+        this.genomes = new LinkedHashSet<>();
     }
 
     public DrawableNode getStart() {
@@ -54,23 +56,18 @@ public class DrawableEdge extends Line implements Drawable {
         this.setEndY(leftBorderCenter.getY());
     }
 
-    public Link getLink() {
-        return link;
-    }
-
     @Override
     public String toString() {
-        return this.link.toString();
+        return String.format("Link from %s to %s", this.parent, this.child);
     }
 
     /**
      * Color a {@link Shape} depending on its properties.
      * @param shape the {@link Shape} to color
-     * @param link the {@link Link} belonging to the {@link DrawableSegment} or {@link DrawableEdge}
      * @param graph the {@link GenomeGraph} belonging to the {@link DrawableSegment} or {@link DrawableEdge}
      */
-    public static void colorize(Shape shape, Link link, GenomeGraph graph) {
-        double genomeFraction = graph.getGenomeFraction(link);
+    public static void colorize(Shape shape, GenomeGraph graph) {
+        double genomeFraction = 1.d;
 
         double minStrokeWidth = 1.d, maxStrokeWidth = 6.5;
         double strokeWidth = minStrokeWidth + genomeFraction * (maxStrokeWidth - minStrokeWidth);
@@ -89,10 +86,11 @@ public class DrawableEdge extends Line implements Drawable {
      * @param graph the {@link GenomeGraph} belonging to the {@link DrawableEdge}
      */
     public void colorize(GenomeGraph graph) {
-        colorize(this, link, graph);
+        colorize(this, graph);
     }
 
-    public int[] getGenomes() {
-        return this.getLink().getGenomes();
+    @Override
+    public Collection<Integer> getGenomes() {
+        return this.genomes;
     }
 }

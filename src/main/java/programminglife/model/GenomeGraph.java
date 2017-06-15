@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 public class GenomeGraph {
     private String id;
     private Cache cache;
-    private Map<Integer, Collection<Integer>> parentGenomesNodes;
 
     /**
      * Create a genomeGraph with id.
@@ -74,16 +73,6 @@ public class GenomeGraph {
     }
 
     /**
-     * Get a {@link Link} from this graph.
-     * @param parentID the node to find the link from
-     * @param childID the node to find the link to
-     * @return the {@link Link} itself
-     */
-    public Link getLink(int parentID, int childID) {
-        return new Link(parentID, childID, getGenomes(parentID, childID));
-    }
-
-    /**
      * Getter for the ID's of the parents of a node.
      * @param nodeID node for which the parents are to be found.
      * @return int[] list of the parents.
@@ -102,39 +91,15 @@ public class GenomeGraph {
     }
 
     /**
-     * Get for the genomes of a parent and child.
-     * @param parentID Node of the parent.
-     * @param childID Node of the child.
-     * @return int[] list the genomes.
+     * Return a collection of names.
+     * @param genomes the IDs of the genomes to identify
+     * @return their names
      */
-    public int[] getGenomes(int parentID, int childID) {
-        Collection<Integer> mutualGenomes = new LinkedHashSet<>();
-        int[] parentGenomes = getGenomes(parentID);
-
-        // For every genome of the parent
-        for (int parentGenome : parentGenomes) {
-            Collection<Integer> genome = parentGenomesNodes.get(parentGenome);
-            // set this flag to false
-            boolean parentFound = false;
-
-            // for every node of this genome
-            for (int nodeID : genome) {
-                if (nodeID == parentID) {
-                    // if it is the parent, set the flag
-                    parentFound = true;
-                } else if (parentFound && nodeID == childID) {
-                    // the child is a direct successor of the parent,
-                    // so the genome does go through this edge
-                    mutualGenomes.add(parentGenome);
-                    break;
-                } else if (parentFound) {
-                    // the child is not a direct successor of the parent,
-                    // so the genome does not go through this edge
-                    break;
-                }
-            }
-        }
-        return mutualGenomes.stream().mapToInt(x -> x).toArray();
+    public Collection<String> getGenomeNames(int[] genomes) {
+        return Arrays.stream(genomes)
+                .boxed()
+                .map(this::getGenomeName)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -142,9 +107,9 @@ public class GenomeGraph {
      * @param genomes the IDs of the genomes to identify
      * @return their names
      */
-    public Collection<String> getGenomeNames(int[] genomes) {
-        return Arrays.stream(genomes)
-                .mapToObj(this::getGenomeName)
+    public Collection<String> getGenomeNames(Collection<Integer> genomes) {
+        return genomes.stream()
+                .map(this::getGenomeName)
                 .collect(Collectors.toList());
     }
 
@@ -155,26 +120,6 @@ public class GenomeGraph {
      */
     Collection<Integer> getNodeIDs(int genomeID) {
         return this.cache.getGenomeNodeIDs(genomeID);
-    }
-
-    /**
-     * Get Nodes through several Genomes.
-     * @param progressCounter ProgressCounter keep track of the progress.
-     * @param genomeIDs the Genomes to look up
-     * @return a {@link Map} mapping Genome names to {@link Collection}s of Node IDs
-     */
-    private Map<Integer, Collection<Integer>> getNodeIDs(ProgressCounter progressCounter, int... genomeIDs) {
-        return this.cache.getGenomeNodeIDs(progressCounter, genomeIDs);
-    }
-
-    /**
-     * Get nodes from a collection.
-     * @param pc ProgressCounter keep track of the progress.
-     * @param genomeIDs Collection of the genome id's.
-     * @return the mapped genome id's.
-     */
-    private Map<Integer, Collection<Integer>> getNodeIDs(ProgressCounter pc, Collection<Integer> genomeIDs) {
-        return this.getNodeIDs(pc, genomeIDs.stream().mapToInt(x -> x).toArray());
     }
 
     /**
@@ -375,15 +320,6 @@ public class GenomeGraph {
     }
 
     /**
-     * The fraction of genomes through a link.
-     * @param link the link
-     * @return the fraction
-     */
-    public double getGenomeFraction(Link link) {
-        return link.getGenomes().length / (double) this.cache.getGenomeNamesIdMap().size();
-    }
-
-    /**
      * The number of genomes through a node.
      * @param nodeID the ID of the node
      * @return the number
@@ -394,13 +330,5 @@ public class GenomeGraph {
 
     public int getTotalGenomeNumber() {
         return this.cache.getGenomeNamesIdMap().size();
-    }
-
-    /**
-     * Load the genomes from a map.
-     * @param progressCounter ProgressCounter keeps track of the progress.
-     */
-    public void loadGenomes(ProgressCounter progressCounter) {
-        this.parentGenomesNodes = getNodeIDs(progressCounter, this.cache.getGenomeIdNamesMap().keySet());
     }
 }
