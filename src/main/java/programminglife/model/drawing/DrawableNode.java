@@ -2,19 +2,20 @@ package programminglife.model.drawing;
 
 import javafx.scene.shape.Rectangle;
 import programminglife.model.GenomeGraph;
-import programminglife.model.Link;
 import programminglife.model.XYCoordinate;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
 
 /**
  * A segment that also implements {@link Drawable}.
  */
 public abstract class DrawableNode extends Rectangle implements Drawable {
-    public static final int NODE_HEIGHT = 10;
+    static final int NODE_HEIGHT = 10;
 
     private final GenomeGraph graph;
     private final int id;
+    private final Collection<Integer> genomes;
 
     private boolean drawDimensionsUpToDate = false;
 
@@ -26,6 +27,7 @@ public abstract class DrawableNode extends Rectangle implements Drawable {
     DrawableNode(GenomeGraph graph, int id) {
         this.graph = graph;
         this.id = id;
+        this.genomes = new LinkedHashSet<>();
     }
 
     /**
@@ -93,12 +95,6 @@ public abstract class DrawableNode extends Rectangle implements Drawable {
     public abstract String details();
 
     /**
-     * Get the IDs of genomes through this.
-     * @return the IDs of genomes
-     */
-    public abstract int[] getGenomes();
-
-    /**
      * Color this according to contents.
      */
     public abstract void colorize();
@@ -109,13 +105,6 @@ public abstract class DrawableNode extends Rectangle implements Drawable {
      * @param y the y location
      */
     abstract void setLocation(int x, int y);
-
-    /**
-     * Get a {@link Link} from this.
-     * @param child the {@link DrawableNode} to get the {@link Link} to
-     * @return it's link
-     */
-    public abstract Link getLink(DrawableNode child);
 
     /**
      * Set the size of this drawing.
@@ -172,5 +161,12 @@ public abstract class DrawableNode extends Rectangle implements Drawable {
      */
     XYCoordinate getLocation() {
         return new XYCoordinate((int) this.getX(), (int) this.getY());
+    }
+
+    public final Collection<Integer> getGenomes() {
+        return this.genomes;
+    }
+    public final void addGenomes(Collection<Integer> genomes) {
+        this.genomes.addAll(genomes);
     }
 }

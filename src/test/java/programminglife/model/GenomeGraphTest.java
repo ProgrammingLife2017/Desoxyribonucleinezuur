@@ -92,18 +92,6 @@ public class GenomeGraphTest {
 
     }
 
-//    /**
-//     * This test should not pass for now untill a fix from Toine his branch is merged.
-//     */
-//    @Test
-//    public void addEdgeNoSource() {
-//        graph.addEdge(17, 18);
-//        graph.cacheLastEdges();
-//        //both nodes should exist.
-//        assertTrue(graph.contains(17));
-//        assertTrue(graph.contains(18));
-//    }
-
     @Test
     public void addMultipleEdgesSameSource() {
         graph.replaceNode(4);
@@ -145,28 +133,6 @@ public class GenomeGraphTest {
         assertArrayEquals(genomeIDs, graph.getGenomes(4));
         assertEquals(3, graph.getGenomes(4).length);
     }
-
-////    TODO: WIP Cant get this test to work at the moment.
-
-//    @Test
-//    public void getGenomesOnEdgeTest() {
-//        graph.replaceNode(4);
-//
-//        int[] genomeIDsA = {37,55,89};
-//        int[] genomeIDsB = {37,55,103};
-//
-//        graph.setGenomes(3, genomeIDsA);
-//        graph.setGenomes(4, genomeIDsB);
-//
-//        graph.addEdge(3,4);
-//        graph.cacheLastEdges();
-//        graph.loadGenomes(new ProgressCounter("testLoading"));
-//        assertArrayEquals(new int[]{37,55}, graph.getGenomes(3, 4));
-////        graph.replaceNode(4);
-////        graph.addEdge(3,4);
-////        graph.cacheLastEdges();
-////        assertArrayEquals(new int[]{37, 55}, graph.getGenomes(3, 4));
-//    }
 
     @Test (expected = NoSuchElementException.class)
     public void getSequenceNotExistingNode() {

@@ -1,5 +1,6 @@
 package programminglife.gui;
 
+import javafx.application.Platform;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
@@ -10,6 +11,7 @@ import org.testfx.util.WaitForAsyncUtils;
 import programminglife.ProgrammingLife;
 import programminglife.parser.Cache;
 import programminglife.utility.Console;
+import programminglife.utility.InitFXThread;
 
 import java.io.File;
 import java.io.PrintStream;
@@ -93,19 +95,37 @@ public class GuiControllerTest extends FxRobot {
         clickOn("#btnZoomReset");
         clickOn("#btnDrawRandom");
         sleep(500);
+        openWindows();
+    }
+
+    private void openWindows() {
+        press(KeyCode.CONTROL).type(KeyCode.H);
+        release(KeyCode.CONTROL);
+        sleep(500);
+        type(KeyCode.ENTER);
+        sleep(500);
+
         clickOn("#menuHelp");
         clickOn("#btnAbout");
         sleep(500);
         type(KeyCode.ENTER);
+
+        press(KeyCode.CONTROL).type(KeyCode.I);
+        release(KeyCode.CONTROL);
+        sleep(500);
+        type(KeyCode.ENTER);
+        sleep(500);
+
         clickOn("#menuHelp");
         clickOn("#btnInstructions");
         sleep(500);
         type(KeyCode.ENTER);
+        sleep(500);
     }
 
     private void openAndParseFile(String fileName) {
-        clickOn("#menuFile");
-        clickOn("#btnOpen");
+        press(KeyCode.CONTROL).type(KeyCode.O);
+        release(KeyCode.CONTROL);
         sleep(1, TimeUnit.SECONDS);
 
         typeString(fileName);

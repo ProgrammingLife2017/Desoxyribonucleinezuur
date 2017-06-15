@@ -8,7 +8,6 @@ import org.mapdb.DBMaker;
 import org.mapdb.Serializer;
 import programminglife.utility.Alerts;
 import programminglife.utility.Console;
-import programminglife.utility.ProgressCounter;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,7 +20,7 @@ import java.util.*;
  * A class for managing persistent data. It can open one cache, which contains the information for one gfa file.
  */
 public final class Cache {
-    private static final String CACHE_FOLDER = "caches/";
+    private static final String CACHE_FOLDER = "caches";
     private static final String CACHE_EXTENSION = ".db.desoxyribonucleinezuur";
 
     private static final String SEQUENCE_MAP_NAME = "sequenceMap";
@@ -375,30 +374,5 @@ public final class Cache {
             }
         }
         return nodeIDs;
-    }
-
-    /**
-     * Get Node IDs belonging to a Genome.
-     * @param progressCounter ProgressCounter keeps track of the progress.
-     * @param genomeIDs the IDs of the Genomes to look up
-     * @return a {@link Map} mapping Genome names to {@link Collection}s of Node IDs
-     */
-    public Map<Integer, Collection<Integer>> getGenomeNodeIDs(ProgressCounter progressCounter, int... genomeIDs) {
-        Map<Integer, Collection<Integer>> genomes = new HashMap<>();
-        progressCounter.reset();
-        progressCounter.setTotal(this.getNodeIdGenomesMap().size());
-        for (Map.Entry<Integer, int[]> entry : this.getNodeIdGenomesMap().entrySet()) {
-            progressCounter.count();
-            for (int genomeID : genomeIDs) {
-                if (ArrayUtils.contains(entry.getValue(), genomeID)) {
-                    if (!genomes.containsKey(genomeID)) {
-                        genomes.put(genomeID, new TreeSet<>());
-                    }
-                    genomes.get(genomeID).add(entry.getKey());
-                }
-            }
-        }
-        progressCounter.finished();
-        return genomes;
     }
 }
