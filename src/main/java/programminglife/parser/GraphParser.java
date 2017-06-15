@@ -230,10 +230,18 @@ public class GraphParser extends Observable implements Runnable {
                     properties[3]), nfe);
         }
         // properties[4] and further are unused
+
+        if (sourceID == destinationID) {
+            throw new UnknownTypeException("Link cannot have same source as destination.");
+        } else if (sourceID > destinationID) {
+            throw new UnknownTypeException("Graph is not in topological order: source ID > destination ID.");
+        }
+
+        // We can now assume that traversing nodes by ID is in topological order
+
         if (!this.graph.contains(sourceID)) {
             this.graph.replaceNode(sourceID);
         }
-
         if (!this.graph.contains(destinationID)) {
             this.graph.replaceNode(destinationID);
         }
