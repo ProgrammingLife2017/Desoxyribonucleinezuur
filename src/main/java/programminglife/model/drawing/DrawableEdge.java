@@ -93,4 +93,14 @@ public class DrawableEdge extends Line implements Drawable {
     public Collection<Integer> getGenomes() {
         return this.genomes;
     }
+
+    /**
+     * Add genomes in/through this {@link Drawable}.
+     *
+     * @param genomes a {@link Collection} of genome IDs
+     */
+    @Override
+    public void addGenomes(Collection<Integer> genomes) {
+        this.genomes.addAll(genomes);
+    }
 }

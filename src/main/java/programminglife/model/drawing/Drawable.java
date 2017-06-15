@@ -12,4 +12,10 @@ public interface Drawable {
      * @return a {@link Collection} of genome IDs
      */
     Collection<Integer> getGenomes();
+
+    /**
+     * Add genomes in/through this {@link Drawable}.
+     * @param genomes a {@link Collection} of genome IDs
+     */
+    void addGenomes(Collection<Integer> genomes);
 }

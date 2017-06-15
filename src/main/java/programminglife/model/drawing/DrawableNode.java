@@ -5,6 +5,7 @@ import programminglife.model.GenomeGraph;
 import programminglife.model.XYCoordinate;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
 
 /**
  * A segment that also implements {@link Drawable}.
@@ -14,9 +15,9 @@ public abstract class DrawableNode extends Rectangle implements Drawable {
 
     private final GenomeGraph graph;
     private final int id;
+    private final Collection<Integer> genomes;
 
     private boolean drawDimensionsUpToDate = false;
-    private Collection<Integer> genomes;
 
     /**
      * Construct a {@link DrawableNode}.
@@ -26,6 +27,7 @@ public abstract class DrawableNode extends Rectangle implements Drawable {
     DrawableNode(GenomeGraph graph, int id) {
         this.graph = graph;
         this.id = id;
+        this.genomes = new LinkedHashSet<>();
     }
 
     /**
@@ -161,8 +163,10 @@ public abstract class DrawableNode extends Rectangle implements Drawable {
         return new XYCoordinate((int) this.getX(), (int) this.getY());
     }
 
-    @Override
     public final Collection<Integer> getGenomes() {
-        return genomes;
+        return this.genomes;
+    }
+    public final void addGenomes(Collection<Integer> genomes) {
+        this.genomes.addAll(genomes);
     }
 }

@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 public class DrawableSegment extends DrawableNode {
     private Set<Integer> parents;
     private Set<Integer> children;
-    private Set<Integer> genomes;
 
     /**
      * Create a DrawableSegment from a Segment.
@@ -25,7 +24,7 @@ public class DrawableSegment extends DrawableNode {
 
         parents = Arrays.stream(graph.getParentIDs(nodeID)).boxed().collect(Collectors.toSet());
         children = Arrays.stream(graph.getChildIDs(nodeID)).boxed().collect(Collectors.toSet());
-        genomes = Arrays.stream(graph.getGenomes(nodeID)).boxed().collect(Collectors.toSet());
+        this.addGenomes(Arrays.stream(graph.getGenomes(nodeID)).boxed().collect(Collectors.toSet()));
 
         this.setDrawDimensions();
     }
@@ -153,11 +152,6 @@ public class DrawableSegment extends DrawableNode {
 
     public double getGenomeFraction() {
         return this.getGraph().getGenomeFraction(this.getIdentifier());
-    }
-
-    @Override
-    public Collection<Integer> getGenomes() {
-        return this.genomes;
     }
 
     /**
