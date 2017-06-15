@@ -92,18 +92,6 @@ public class GenomeGraphTest {
 
     }
 
-//    /**
-//     * This test should not pass for now untill a fix from Toine his branch is merged.
-//     */
-//    @Test
-//    public void addEdgeNoSource() {
-//        graph.addEdge(17, 18);
-//        graph.cacheLastEdges();
-//        //both nodes should exist.
-//        assertTrue(graph.contains(17));
-//        assertTrue(graph.contains(18));
-//    }
-
     @Test
     public void addMultipleEdgesSameSource() {
         graph.replaceNode(4);
@@ -146,27 +134,112 @@ public class GenomeGraphTest {
         assertEquals(3, graph.getGenomes(4).length);
     }
 
-////    TODO: WIP Cant get this test to work at the moment.
+    @Test
+    public void genomesOnSimpleInsertion() {
+        // [3]--- 0 2 3 ---[5]
+        //   \            /
+        //   1 4         /
+        //     \        /
+        //     [4]-- 1 4
 
-//    @Test
-//    public void getGenomesOnEdgeTest() {
-//        graph.replaceNode(4);
-//
-//        int[] genomeIDsA = {37,55,89};
-//        int[] genomeIDsB = {37,55,103};
-//
-//        graph.setGenomes(3, genomeIDsA);
-//        graph.setGenomes(4, genomeIDsB);
-//
-//        graph.addEdge(3,4);
-//        graph.cacheLastEdges();
-//        graph.loadGenomes(new ProgressCounter("testLoading"));
-//        assertArrayEquals(new int[]{37,55}, graph.getGenomes(3, 4));
-////        graph.replaceNode(4);
-////        graph.addEdge(3,4);
-////        graph.cacheLastEdges();
-////        assertArrayEquals(new int[]{37, 55}, graph.getGenomes(3, 4));
-//    }
+        int[] genomeIDs3 = {0, 1, 2, 3, 4};
+        int[] genomeIDs4 = {1, 4};
+        int[] genomeIDs5 = {0, 1, 2, 3, 4};
+
+        for (int i = 0; i <= 4; i++) {
+            graph.addGenome("GENOME" + i);
+        }
+
+        graph.replaceNode(3);
+        graph.replaceNode(4);
+        graph.replaceNode(5);
+
+        graph.setGenomes(3, genomeIDs3);
+        graph.setGenomes(4, genomeIDs4);
+        graph.setGenomes(5, genomeIDs5);
+
+        graph.addEdge(3,4);
+        graph.addEdge(4,5);
+        graph.addEdge(3,5);
+
+        graph.cacheLastEdges();
+        graph.loadGenomes(new ProgressCounter("testLoading"));
+
+        assertArrayEquals(new int[]{1, 4}, graph.getGenomes(3, 4));
+        assertArrayEquals(new int[]{0, 2, 3}, graph.getGenomes(3, 5));
+        assertArrayEquals(new int[]{1, 4}, graph.getGenomes(4, 5));
+    }
+
+    @Test
+    public void genomesOnComplexInsertion() {
+        int[] genomeIDs3 = {0, 1, 2, 3, 4, 5};
+        int[] genomeIDs4 = {2, 5};
+        int[] genomeIDs5 = {0, 1, 5};
+        int[] genomeIDs6 = {0, 1, 2, 3, 4, 5};
+
+        for (int i = 0; i <= 5; i++) {
+            graph.addGenome("GENOME" + i);
+        }
+
+        graph.replaceNode(3);
+        graph.replaceNode(4);
+        graph.replaceNode(5);
+        graph.replaceNode(6);
+
+        graph.setGenomes(3, genomeIDs3);
+        graph.setGenomes(4, genomeIDs4);
+        graph.setGenomes(5, genomeIDs5);
+        graph.setGenomes(6, genomeIDs6);
+
+        for (int[] edge : new int[][] {{3, 4}, {3, 5}, {3, 6}, {4, 5}, {4, 6}, {5, 6}}) {
+            graph.addEdge(edge[0], edge[1]);
+        }
+
+        graph.cacheLastEdges();
+        graph.loadGenomes(new ProgressCounter("testLoading"));
+
+        assertArrayEquals(new int[]{2, 5}, graph.getGenomes(3, 4));
+        assertArrayEquals(new int[]{0, 1}, graph.getGenomes(3, 5));
+        assertArrayEquals(new int[]{3, 4}, graph.getGenomes(3, 6));
+        assertArrayEquals(new int[]{2}, graph.getGenomes(4, 6));
+        assertArrayEquals(new int[]{5}, graph.getGenomes(4, 5));
+        assertArrayEquals(new int[]{0, 1, 5}, graph.getGenomes(5, 6));
+    }
+
+    @Test
+    public void genomesOnStoppingGenome() {
+        int[] genomeIDs3 = {0, 1, 2, 3};
+        int[] genomeIDs4 = {0, 1, 2};
+        int[] genomeIDs5 = {0, 3};
+        int[] genomeIDs6 = {0, 2, 3};
+
+        for (int i = 0; i <= 3; i++) {
+            graph.addGenome("GENOME" + i);
+        }
+
+        graph.replaceNode(3);
+        graph.replaceNode(4);
+        graph.replaceNode(5);
+        graph.replaceNode(6);
+
+        graph.setGenomes(3, genomeIDs3);
+        graph.setGenomes(4, genomeIDs4);
+        graph.setGenomes(5, genomeIDs5);
+        graph.setGenomes(6, genomeIDs6);
+
+        for (int[] edge : new int[][] {{3, 4}, {3, 5}, {4, 5}, {4, 6}, {5, 6}}) {
+            graph.addEdge(edge[0], edge[1]);
+        }
+
+        graph.cacheLastEdges();
+        graph.loadGenomes(new ProgressCounter("testLoading"));
+
+        assertArrayEquals(new int[]{0, 1, 2}, graph.getGenomes(3, 4));
+        assertArrayEquals(new int[]{3}, graph.getGenomes(3, 5));
+        assertArrayEquals(new int[]{2}, graph.getGenomes(4, 6));
+        assertArrayEquals(new int[]{0}, graph.getGenomes(4, 5));
+        assertArrayEquals(new int[]{0, 3}, graph.getGenomes(5, 6));
+    }
 
     @Test (expected = NoSuchElementException.class)
     public void getSequenceNotExistingNode() {
