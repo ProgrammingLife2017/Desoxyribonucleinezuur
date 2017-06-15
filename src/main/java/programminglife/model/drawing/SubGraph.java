@@ -6,7 +6,6 @@ import programminglife.model.XYCoordinate;
 import programminglife.utility.Console;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * A part of a {@link programminglife.model.GenomeGraph}. It uses a centerNode and a radius.
@@ -446,8 +445,9 @@ public class SubGraph {
     }
 
     /**
-     * Calculate genomes through all outgoing edges of a parent
-     * @param parent
+     * Calculate genomes through all outgoing edges of a parent.
+     * @param parent find all genomes through edges from this parent
+     * @return a {@link Map} of  collections of genomes through links
      */
     Map<DrawableNode, Collection<Integer>> calculateGenomes(DrawableNode parent) {
         Map<DrawableNode, Collection<Integer>> outgoingGenomes = new LinkedHashMap<>();
@@ -476,6 +476,7 @@ public class SubGraph {
 
     /**
      * Calculate genomes through edge, based on topological ordering and node-genome information.
+     * @return a {@link Map} of {@link Map Maps} of collections of genomes through links
      */
     Map<DrawableNode, Map<DrawableNode, Collection<Integer>>> calculateGenomes() {
         Map<DrawableNode, Map<DrawableNode, Collection<Integer>>> genomes = new LinkedHashMap<>();

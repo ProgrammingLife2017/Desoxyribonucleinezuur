@@ -7,5 +7,9 @@ import java.util.Collection;
  * A Drawable has a location, which is in the top left of the Drawable
  */
 public interface Drawable {
+    /**
+     * Get the genomes in/through this {@link Drawable}.
+     * @return a {@link Collection} of genome IDs
+     */
     Collection<Integer> getGenomes();
 }

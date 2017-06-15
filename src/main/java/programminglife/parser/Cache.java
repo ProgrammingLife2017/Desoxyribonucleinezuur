@@ -8,7 +8,6 @@ import org.mapdb.DBMaker;
 import org.mapdb.Serializer;
 import programminglife.utility.Alerts;
 import programminglife.utility.Console;
-import programminglife.utility.ProgressCounter;
 
 import java.io.File;
 import java.io.IOException;

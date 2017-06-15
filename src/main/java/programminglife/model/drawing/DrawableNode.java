@@ -10,13 +10,13 @@ import java.util.Collection;
  * A segment that also implements {@link Drawable}.
  */
 public abstract class DrawableNode extends Rectangle implements Drawable {
-    public static final int NODE_HEIGHT = 10;
+    static final int NODE_HEIGHT = 10;
 
     private final GenomeGraph graph;
     private final int id;
 
     private boolean drawDimensionsUpToDate = false;
-    Collection<Integer> genomes;
+    private Collection<Integer> genomes;
 
     /**
      * Construct a {@link DrawableNode}.
@@ -159,5 +159,10 @@ public abstract class DrawableNode extends Rectangle implements Drawable {
      */
     XYCoordinate getLocation() {
         return new XYCoordinate((int) this.getX(), (int) this.getY());
+    }
+
+    @Override
+    public final Collection<Integer> getGenomes() {
+        return genomes;
     }
 }

@@ -73,16 +73,6 @@ public class DrawableDummy extends DrawableNode {
         return toString();
     }
 
-    /**
-     * Get the IDs of genomes through this.
-     *
-     * @return the IDs of genomes
-     */
-    @Override
-    public Collection<Integer> getGenomes() {
-        return this.genomes;
-    }
-
     @Override
     public void colorize() {
         DrawableEdge.colorize(this, this.getGraph());
