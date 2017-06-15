@@ -173,7 +173,7 @@ public class GraphParser extends Observable implements Runnable {
         try {
             segmentID = Integer.parseInt(properties[1]);
         } catch (NumberFormatException nfe) {
-            throw new UnknownTypeException(String.format("The segment ID (%s) should be a number", properties[1]));
+            throw new UnknownTypeException(String.format("The segment ID (%s) should be a number", properties[1]), nfe);
         }
 
         if (!properties[4].startsWith("ORI:Z:")) {
@@ -189,7 +189,7 @@ public class GraphParser extends Observable implements Runnable {
             try {
                 genomeIDs = Arrays.stream(genomeNames).mapToInt(Integer::parseInt).toArray();
             } catch (NumberFormatException nfe) {
-                throw new UnknownTypeException("Unknown genome name in segment");
+                throw new UnknownTypeException("Unknown genome name in segment", nfe);
             }
         }
 
@@ -221,13 +221,14 @@ public class GraphParser extends Observable implements Runnable {
         try {
             sourceID = Integer.parseInt(properties[1]);
         } catch (NumberFormatException nfe) {
-            throw new UnknownTypeException(String.format("The source ID (%s) should be a number", properties[1]));
+            throw new UnknownTypeException(String.format("The source ID (%s) should be a number", properties[1]), nfe);
         }
         // properties[2] is unused
         try {
             destinationID = Integer.parseInt(properties[3]);
         } catch (NumberFormatException nfe) {
-            throw new UnknownTypeException(String.format("The destination ID (%s) should be a number", properties[3]));
+            throw new UnknownTypeException(String.format("The destination ID (%s) should be a number",
+                    properties[3]), nfe);
         }
         // properties[4] and further are unused
         if (!this.graph.contains(sourceID)) {
