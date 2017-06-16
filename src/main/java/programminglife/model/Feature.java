@@ -81,4 +81,8 @@ public class Feature {
         return String.format("Feature {ID: %s; file %s; Annotations [%s]}", id, fileName,
                 annotations.stream().map(Annotation::toString).collect(Collectors.joining(", ")));
     }
+
+    public Set<Annotation> getAnnotations() {
+        return annotations;
+    }
 }

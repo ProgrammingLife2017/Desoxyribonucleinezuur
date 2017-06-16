@@ -515,10 +515,12 @@ public class GuiController implements Observer {
             AnchorPane page = loader.load();
             final HighlightController highlightController = loader.getController();
             highlightController.setGraphController(this.getGraphController());
+            highlightController.setGUIController(this);
             searchTab.setContent(page);
             searchTab.setDisable(true);
             searchTab.setOnSelectionChanged(event -> {
                 highlightController.initGenome();
+                highlightController.initAnnotations();
                 highlightController.initMinMax();
             });
         } catch (IOException e) {
@@ -575,6 +577,10 @@ public class GuiController implements Observer {
 
     private void setFeatures(Map<String, Feature> features) {
         this.features = features;
+    }
+
+    public Map<String, Feature> getFeatures() {
+        return this.features;
     }
 
     GraphController getGraphController() {
