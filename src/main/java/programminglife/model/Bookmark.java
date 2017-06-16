@@ -40,10 +40,6 @@ public class Bookmark {
         return new SimpleStringProperty(this.description);
     }
 
-    public StringProperty getFileProperty() {
-        return new SimpleStringProperty(this.graphName);
-    }
-
     public String getBookmarkName() {
         return bookmarkName;
     }
@@ -116,7 +112,7 @@ public class Bookmark {
     public String toString() {
         return ("{file: " + this.graphName + ", name: " + this.bookmarkName
                 + ", description: " + this.description
-                + ", ID " + this.nodeID
+                + ", ID: " + this.nodeID
                 + ", radius: " + this.radius + "}");
     }
 }
