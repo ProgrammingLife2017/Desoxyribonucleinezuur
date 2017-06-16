@@ -6,7 +6,7 @@ import javafx.scene.paint.Color;
 import programminglife.gui.controller.GuiController;
 
 /**
- * Controller that shows a miniMap in the gui.
+ * Controller that shows a MiniMap in the gui.
  */
 public class MiniMapController {
 
