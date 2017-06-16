@@ -558,7 +558,10 @@ public class SubGraph {
         //take the child of all the end nodes and add these to a layer.
         for (DrawableNode drawableNode : endLayer) {
             for (Integer child : drawableNode.getChildren()) {
-                newEndLayer.add(new DrawableSegment(graph, child));
+                DrawableSegment segment = new DrawableSegment(graph, child);
+                if (!newEndLayer.contains(segment)) {
+                    newEndLayer.add(segment);
+                }
             }
         }
 //        TODO: check if there is no parent within the new layer.
@@ -583,6 +586,7 @@ public class SubGraph {
         double x = endLayerX;
         int size = oldEndLayer.size();
         int newSize = newEndLayer.size();
+        System.out.println(newEndLayer.size());
         int diff = Math.abs(newSize - size);
         double y = 50;
         x += LAYER_PADDING + 7 * diff;
