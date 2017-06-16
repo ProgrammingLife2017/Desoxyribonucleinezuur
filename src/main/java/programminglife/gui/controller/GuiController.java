@@ -25,6 +25,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import jp.uphy.javafx.console.ConsoleView;
 import programminglife.ProgrammingLife;
+import programminglife.controller.MiniMapController;
 import programminglife.controller.RecentFileController;
 import programminglife.model.GenomeGraph;
 import programminglife.parser.GraphParser;
@@ -36,7 +37,9 @@ import programminglife.utility.ProgressCounter;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Observable;
 import java.util.Observer;
@@ -60,6 +63,7 @@ public class GuiController implements Observer {
     @FXML private MenuItem btnInstructions;
     @FXML private Menu menuRecent;
     @FXML private RadioMenuItem btnToggle;
+    @FXML private RadioMenuItem btnMiniMap;
     @FXML private Button btnZoomReset;
     @FXML private Button btnTranslateReset;
     @FXML private Button btnDraw;
@@ -77,12 +81,14 @@ public class GuiController implements Observer {
     @FXML private AnchorPane anchorLeftControlPanel;
     @FXML private AnchorPane anchorGraphPanel;
     @FXML private AnchorPane anchorGraphInfo;
+    @FXML private javafx.scene.canvas.Canvas miniMap;
 
     private double orgSceneX, orgSceneY;
     private double orgTranslateX, orgTranslateY;
     private double scale;
     private GraphController graphController;
     private RecentFileController recentFileController;
+    private MiniMapController miniMapController;
     private File file;
     private File recentFile = new File("Recent.txt");
     private Thread parseThread;
@@ -196,6 +202,10 @@ public class GuiController implements Observer {
         });
 
         if (graph != null) {
+            this.miniMapController = new MiniMapController(this.miniMap, graph.size());
+            this.miniMapController.setGuiController(this);
+            miniMap.setWidth(anchorGraphPanel.getWidth());
+            miniMap.setHeight(50.d);
             Console.println("[%s] Graph was set to %s.", Thread.currentThread().getName(), graph.getID());
             Console.println("[%s] The graph has %d nodes", Thread.currentThread().getName(), graph.size());
         }
@@ -248,8 +258,10 @@ public class GuiController implements Observer {
                 Alerts.error("This GFF file can't be opened");
             }
         });
-
         btnOpenGFA.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCodeCombination.CONTROL_DOWN));
+
+        btnMiniMap.setOnAction(event -> miniMapController.toggleVisibility());
+        btnMiniMap.setAccelerator(new KeyCodeCombination(KeyCode.M, KeyCodeCombination.CONTROL_DOWN));
         btnQuit.setOnAction(event -> Alerts.quitAlert());
         btnQuit.setAccelerator(new KeyCodeCombination(KeyCode.E, KeyCodeCombination.CONTROL_DOWN));
         btnAbout.setOnAction(event -> Alerts.infoAboutAlert());
@@ -358,6 +370,7 @@ public class GuiController implements Observer {
         if (graphController.getGraph().contains(centerNode)) {
             this.graphController.clear();
             this.graphController.draw(centerNode, maxDepth);
+            this.miniMapController.showPosition(centerNode);
             Console.println("[%s] Graph drawn.", Thread.currentThread().getName());
         } else {
             Alerts.warning("The centernode is not a existing node, try again with a number that exists as a node.");

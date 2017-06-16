@@ -7,12 +7,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import programminglife.model.drawing.DrawableDummy;
 import programminglife.model.GenomeGraph;
-import programminglife.model.drawing.DrawableEdge;
-import programminglife.model.drawing.DrawableNode;
-import programminglife.model.drawing.DrawableSegment;
-import programminglife.model.drawing.SubGraph;
+import programminglife.model.drawing.*;
 import programminglife.utility.Console;
 
 import java.util.Collection;
@@ -34,6 +30,7 @@ public class GraphController {
     private SubGraph subGraph;
     private AnchorPane anchorGraphInfo;
     private LinkedList<DrawableNode> oldGenomeList = new LinkedList<>();
+    private int centerNodeInt;
 
     /**
      * Initialize controller object.
@@ -47,6 +44,10 @@ public class GraphController {
         this.anchorGraphInfo = anchorGraphInfo;
     }
 
+    public int getCenterNodeInt() {
+        return this.centerNodeInt;
+    }
+
     /**
      * Method to draw the subGraph decided by a center node and radius.
      * @param center the node of which the radius starts.
@@ -55,6 +56,7 @@ public class GraphController {
     public void draw(int center, int radius) {
         long startTimeProgram = System.nanoTime();
         DrawableSegment centerNode = new DrawableSegment(graph, center);
+        centerNodeInt = centerNode.getIdentifier();
         subGraph = new SubGraph(centerNode, radius);
 
         long startLayoutTime = System.nanoTime();
