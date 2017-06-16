@@ -43,22 +43,23 @@ public class GraphParser extends Observable implements Runnable {
     @Override
     public void run() {
         try {
+            this.setChanged();
+            this.notifyObservers("Parsing " + this.graphFile.getPath());
             long startTime = System.nanoTime();
             if (!this.isCached) {
                 Console.println("[%s] Parsing %s on separate Thread", Thread.currentThread().getName(), this.name);
-                Platform.runLater(() -> ProgrammingLife.getStage().setTitle("Parsing " + this.graphFile.getPath()));
                 parse();
             } else {
                 Console.println("[%s] Loaded %s from cache", Thread.currentThread().getName(), this.name);
             }
 
-            Platform.runLater(() -> ProgrammingLife.getStage().setTitle("Loading genomes..."));
-
             int secondsElapsed = (int) ((System.nanoTime() - startTime) / 1000000000.d);
             Console.println("[%s] Parsing took %d seconds", Thread.currentThread().getName(), secondsElapsed);
-            this.progressCounter.finished();
+            this.setChanged();
+            this.notifyObservers(this.graph.getID());
             this.setChanged();
             this.notifyObservers(this.graph);
+            this.progressCounter.finished();
         } catch (Exception e) {
             try {
                 this.getGraph().rollback();

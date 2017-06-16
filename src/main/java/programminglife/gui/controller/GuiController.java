@@ -168,6 +168,9 @@ public class GuiController implements Observer {
                 Exception e = (Exception) arg;
                 e.printStackTrace();
                 Alerts.error(e.getMessage());
+            } else if (arg instanceof String) {
+                String msg = (String) arg;
+                Platform.runLater(() -> ProgrammingLife.getStage().setTitle(msg));
             }
         } else if (o instanceof ProgressCounter) {
             progressBar.setVisible(true);
