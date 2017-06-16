@@ -27,8 +27,10 @@ public class SubGraph {
     private LinkedHashMap<Integer, DrawableNode> nodes;
     private LinkedHashMap<Integer, DrawableNode> rootNodes;
     private Layer rootLayer;
+    private double rootLayerX;
     private LinkedHashMap<Integer, DrawableNode> endNodes;
     private Layer endLayer;
+    private double endLayerX;
 
     private DrawableNode centerNode;
 
@@ -49,8 +51,9 @@ public class SubGraph {
      * Create a SubGraph using a centerNode and a radius around that centerNode.
      * This SubGraph will include all Nodes within radius steps to a parent,
      * and then another 2radius steps to a child, and symmetrically the same with children / parents reversed.
+     *
      * @param centerNode The centerNode
-     * @param radius The radius
+     * @param radius     The radius
      */
     public SubGraph(DrawableSegment centerNode, int radius) {
         // TODO
@@ -76,7 +79,8 @@ public class SubGraph {
     /**
      * Find the parents for a single {@link DrawableNode} up to radius.
      * This method returns a set with all nodes with a shortest path of at most radius.
-     * @param node The node to start from.
+     *
+     * @param node   The node to start from.
      * @param radius Number indicating the number of steps to take.
      * @return A set of all ancestors within radius steps.
      */
@@ -90,7 +94,8 @@ public class SubGraph {
      * Find the parents for a set of {@link DrawableNode DrawableNodes} up to radius.
      * This method returns a set with all nodes with a shortest
      * path of at most radius to at least one of the nodes in the set.
-     * @param nodes The set of nodes to start from.
+     *
+     * @param nodes  The set of nodes to start from.
      * @param radius Number indicating the number of steps to take.
      * @return A set of all ancestors within radius steps.
      */
@@ -105,8 +110,9 @@ public class SubGraph {
     /**
      * Find the parents for a single {@link DrawableNode} up to radius.
      * This method returns a set with all nodes with a shortest path of at most radius.
-     * @param found The Set of nodes that have been found. Nodes found by this method will be added to the set.
-     * @param node The node to start from.
+     *
+     * @param found  The Set of nodes that have been found. Nodes found by this method will be added to the set.
+     * @param node   The node to start from.
      * @param radius Number indicating the number of steps to take.
      */
     private void findParents(LinkedHashMap<Integer, DrawableNode> found, DrawableNode node, int radius) {
@@ -142,7 +148,8 @@ public class SubGraph {
     /**
      * Find the parents for a single {@link DrawableNode} up to radius.
      * This method returns a set with all nodes with a shortest path of at most radius.
-     * @param node The node to start from.
+     *
+     * @param node   The node to start from.
      * @param radius Number indicating the number of steps to take.
      * @return A set of all ancestors within radius steps.
      */
@@ -156,7 +163,8 @@ public class SubGraph {
      * Find the parents for a set of {@link DrawableNode DrawableNodes} up to radius.
      * This method returns a set with all nodes with a shortest
      * path of at most radius to at least one of the nodes in the set.
-     * @param nodes The set of nodes to start from.
+     *
+     * @param nodes  The set of nodes to start from.
      * @param radius Number indicating the number of steps to take.
      * @return A set of all ancestors within radius steps.
      */
@@ -164,8 +172,8 @@ public class SubGraph {
         LinkedHashMap<Integer, DrawableNode> found = new LinkedHashMap<>();
 
         //Put all node that are already found by findParents into the find.
-        for (DrawableNode node: nodes) {
-           found.put(node.getIdentifier(), node);
+        for (DrawableNode node : nodes) {
+            found.put(node.getIdentifier(), node);
         }
         for (DrawableNode node : nodes) {
             findChildren(found, node, radius);
@@ -176,8 +184,9 @@ public class SubGraph {
     /**
      * Find the parents for a single {@link DrawableNode} up to radius.
      * This method returns a set with all nodes with a shortest path of at most radius.
-     * @param found The Set of nodes that have been found. Nodes found by this method will be added to the set.
-     * @param node The node to start from.
+     *
+     * @param found  The Set of nodes that have been found. Nodes found by this method will be added to the set.
+     * @param node   The node to start from.
      * @param radius Number indicating the number of steps to take.
      */
     private void findChildren(LinkedHashMap<Integer, DrawableNode> found, DrawableNode node, int radius) {
@@ -212,6 +221,7 @@ public class SubGraph {
 
     /**
      * Find out which {@link Drawable} is at the given location.
+     *
      * @param loc The location to search for Drawables.
      * @return The {@link Drawable} that is on top at the given location.
      */
@@ -221,6 +231,7 @@ public class SubGraph {
 
     /**
      * Find out which {@link Drawable} is at the given location.
+     *
      * @param x The x coordinate
      * @param y The y coordinate
      * @return The {@link Drawable} that is on top at the given location.
@@ -245,6 +256,7 @@ public class SubGraph {
 
 
         double x = 0;
+        rootLayerX = x;
         int size = 1;
         for (Layer layer : layers) {
             int newSize = layer.size();
@@ -258,12 +270,15 @@ public class SubGraph {
             x += layer.getWidth() + LAYER_PADDING * 0.1 * newSize;
             size = newSize;
         }
+        endLayerX = x;
+
         layout = true;
         // TODO: translate so that the centerNode is at 0,0;
     }
 
     /**
      * Create {@link DrawableDummy} nodes for layers to avoid more crossing edges.
+     *
      * @param layers {@link List} representing all layers to be drawn.
      */
     private void createDummyNodes(List<Layer> layers) {
@@ -290,6 +305,7 @@ public class SubGraph {
     /**
      * Put all nodes in {@link Layer Layers}. This method is used when {@link #layout() laying out} the graph.
      * This will put each node in a Layer one higher than each of its parents.
+     *
      * @return A {@link List} of Layers with all the nodes (all nodes are divided over the Layers).
      */
     private List<Layer> findLayers() {
@@ -324,6 +340,7 @@ public class SubGraph {
 
     /**
      * Get the parents of {@link DrawableNode} node.
+     *
      * @param node The {@link DrawableNode} to get
      * @return A {@link Collection} of {@link DrawableNode}
      */
@@ -339,6 +356,7 @@ public class SubGraph {
 
     /**
      * Get the children of {@link DrawableNode} node.
+     *
      * @param node The {@link DrawableNode} to get
      * @return A {@link Collection} of {@link DrawableNode}
      */
@@ -354,6 +372,7 @@ public class SubGraph {
 
     /**
      * Sort each Layer to minimize edge crossings between the Layers.
+     *
      * @param layers The layers to sort.
      */
     private void sortWithinLayers(List<Layer> layers) {
@@ -393,8 +412,9 @@ public class SubGraph {
 
     /**
      * Topologically sort the nodes from this graph.
-     *
+     * <p>
      * Assumption: graph is a DAG.
+     *
      * @return a topologically sorted list of nodes
      */
     public List<DrawableNode> topoSort() {
@@ -439,9 +459,10 @@ public class SubGraph {
 
     /**
      * Toposort all ancestors of a node.
+     *
      * @param result The result list to which these nodes will be added,
-     * @param found The nodes that have already been found,
-     * @param node The node to start searching from.
+     * @param found  The nodes that have already been found,
+     * @param node   The node to start searching from.
      */
     private void topoSortFromNode(ArrayList<DrawableNode> result,
                                   LinkedHashSet<DrawableNode> found, DrawableNode node) {
@@ -458,8 +479,8 @@ public class SubGraph {
         // Create a new rootLayer
         Layer newRootLayer = new Layer();
         //take the parent of all the root nodes and add these to a layer.
-        for (DrawableNode drawableNode: rootLayer){
-            for (Integer parent: drawableNode.getParents()){
+        for (DrawableNode drawableNode : rootLayer) {
+            for (Integer parent : drawableNode.getParents()) {
                 newRootLayer.add(new DrawableSegment(graph, parent));
             }
         }
@@ -477,15 +498,20 @@ public class SubGraph {
 
     public void rootLayerLayout(Layer oldRootLayer, Layer newRootLayer) {
         createDummyNodesRoot(newRootLayer);
-        sortWithinRootLayer(newRootLayer);
+//        sortWithinRootLayer(newRootLayer);
+        newRootLayer.sort(this, oldRootLayer, true);
+    }
+
+    private void createDummyNodesRoot(Layer newRootLayer) {
+        // TODO: Implement :D
     }
 
     private void addFromEndNodes() {
         // Create a new endLayer
         Layer newEndLayer = new Layer();
         //take the child of all the end nodes and add these to a layer.
-        for (DrawableNode drawableNode: endLayer){
-            for (Integer child: drawableNode.getChildren()){
+        for (DrawableNode drawableNode : endLayer) {
+            for (Integer child : drawableNode.getChildren()) {
                 newEndLayer.add(new DrawableSegment(graph, child));
             }
         }
@@ -502,14 +528,51 @@ public class SubGraph {
     }
 
     public void endLayerLayout(Layer oldEndLayer, Layer newEndLayer) {
-        createDummyNodesEnd(newEndLayer);
-        sortWithinEndLayer(newEndLayer);
+        createDummyNodesEnd(oldEndLayer, newEndLayer);
+        // sortWithinEndLayer(newEndLayer); Is not implemented but I believe method below does the same job.
+        newEndLayer.sort(this, oldEndLayer, true);
+
+        double x = endLayerX;
+        int size = oldEndLayer.size();
+        int newSize = newEndLayer.size();
+        int diff = Math.abs(newSize - size);
+        double y = 50;
+        x += LAYER_PADDING + 7 * diff;
+        for (DrawableNode d : newEndLayer) {
+            d.setLocation(x, y);
+            y += LINE_PADDING;
+        }
+        x += newEndLayer.getWidth() + LAYER_PADDING * 0.1 * newSize;
+        endLayerX = x;
+    }
+
+
+
+
+    private void createDummyNodesEnd(Layer oldEndLayer, Layer newEndLayer) {
+        int dummyId = -1;
+        Layer current = oldEndLayer;
+        Layer next = newEndLayer;
+        for (DrawableNode node : current) {
+            for (DrawableNode child : this.getChildren(node)) {
+                if (!next.contains(child)) {
+                    DrawableDummy dummy = new DrawableDummy(dummyId, node, child, this.getGraph());
+                    dummyId--;
+                    node.replaceChild(child, dummy);
+                    child.replaceParent(node, dummy);
+                    dummy.setWidth(next.getWidth());
+                    this.nodes.put(dummy.getIdentifier(), dummy);
+                    next.add(dummy);
+                }
+            }
+        }
     }
 
     /**
      * Set the centerNode of this SubGraph.
      * Nodes that are now outside the radius of this SubGraph will be removed,
      * and Nodes that are now inside will be added.
+     *
      * @param nodeID The new centerNode.
      */
     public void setCenterNode(int nodeID) {
@@ -523,6 +586,7 @@ public class SubGraph {
      * Set the radius of this SubGraph.
      * Nodes that are now outside the radius of this SubGraph will be removed,
      * and Nodes that are now inside will be added.
+     *
      * @param radius The new radius.
      */
     public void setRadius(int radius) {
