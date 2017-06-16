@@ -69,7 +69,7 @@ public class GraphController {
         Collection<DrawableNode> dNodes = subGraph.getNodes().values();
         Console.println("Time to get drawable nodes: " + (System.nanoTime() - getNodes) / 1000000 + " ms");
 
-        this.sizeToCanvas(dNodes);
+        // this.sizeToCanvas(dNodes);
 
         long startDrawing = System.nanoTime();
         draw(gc);

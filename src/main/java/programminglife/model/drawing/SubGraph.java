@@ -25,6 +25,13 @@ public class SubGraph {
 
     private GenomeGraph graph;
     private LinkedHashMap<Integer, DrawableNode> nodes;
+    private LinkedHashMap<Integer, DrawableNode> rootNodes;
+    private Layer rootLayer;
+    private LinkedHashMap<Integer, DrawableNode> endNodes;
+    private Layer endLayer;
+
+    private DrawableNode centerNode;
+
     private boolean layout;
     /**
      * The radius around the center node. Eventually,
@@ -51,6 +58,7 @@ public class SubGraph {
         this.graph = centerNode.getGraph();
         this.radius = radius;
         this.layout = false;
+        this.centerNode = centerNode;
 
         // TODO: also go from all parents to children within 2*radius + 1; and vice-versa from children.
         this.nodes = findParents(centerNode, radius);
@@ -230,6 +238,8 @@ public class SubGraph {
             return;
         }
         List<Layer> layers = findLayers();
+        rootLayer = layers.get(0);
+        endLayer = layers.get(layers.size() - 1);
         createDummyNodes(layers);
         sortWithinLayers(layers);
 
@@ -442,6 +452,58 @@ public class SubGraph {
             }
         }
         result.add(node);
+    }
+
+    private void addFromRootNodes() {
+        // Create a new rootLayer
+        Layer newRootLayer = new Layer();
+        //take the parent of all the root nodes and add these to a layer.
+        for (DrawableNode drawableNode: rootLayer){
+            for (Integer parent: drawableNode.getParents()){
+                newRootLayer.add(new DrawableSegment(graph, parent));
+            }
+        }
+//        TODO: check if there is no parent within the new layer.
+//        for (DrawableNode newRoots: newRootLayer){
+//            for (Integer children: newRoots.getChildren()){
+//                if(newRootLayer.contains())
+//            }
+//        }
+        rootLayerLayout(rootLayer, newRootLayer);
+        rootLayer = newRootLayer;
+
+
+    }
+
+    public void rootLayerLayout(Layer oldRootLayer, Layer newRootLayer) {
+        createDummyNodesRoot(newRootLayer);
+        sortWithinRootLayer(newRootLayer);
+    }
+
+    private void addFromEndNodes() {
+        // Create a new endLayer
+        Layer newEndLayer = new Layer();
+        //take the child of all the end nodes and add these to a layer.
+        for (DrawableNode drawableNode: endLayer){
+            for (Integer child: drawableNode.getChildren()){
+                newEndLayer.add(new DrawableSegment(graph, child));
+            }
+        }
+//        TODO: check if there is no parent within the new layer.
+//        for (DrawableNode newRoots: newRootLayer){
+//            for (Integer children: newRoots.getChildren()){
+//                if(newRootLayer.contains())
+//            }
+//        }
+        rootLayerLayout(endLayer, newEndLayer);
+        rootLayer = newEndLayer;
+
+
+    }
+
+    public void endLayerLayout(Layer oldEndLayer, Layer newEndLayer) {
+        createDummyNodesEnd(newEndLayer);
+        sortWithinEndLayer(newEndLayer);
     }
 
     /**
