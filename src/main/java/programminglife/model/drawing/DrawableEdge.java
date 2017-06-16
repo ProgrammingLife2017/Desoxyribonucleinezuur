@@ -3,40 +3,30 @@ package programminglife.model.drawing;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Shape;
-import programminglife.model.Dummy;
 import programminglife.model.GenomeGraph;
-import programminglife.model.Link;
 import programminglife.model.XYCoordinate;
 
+import java.util.Collection;
+import java.util.LinkedHashSet;
+
 /**
- * A {@link programminglife.model.Edge} that also Implements {@link Drawable}.
+ * A link that also Implements {@link Drawable}.
  */
-public class DrawableEdge extends Line {
-    private Link link; // TODO: change to Edge?
+public class DrawableEdge extends Line implements Drawable {
     private DrawableNode parent;
     private DrawableNode child;
+    private Collection<Integer> genomes;
 
     /**
      * Create a Drawable edge.
-     * @param parent The {@link DrawableNode} parent of this edge
-     * @param child The {@link DrawableNode} child of this edge
+     * @param parent The {@link DrawableSegment} parent of this edge
+     * @param child The {@link DrawableSegment} child of this edge
      */
     public DrawableEdge(DrawableNode parent, DrawableNode child) {
         this.parent = parent;
         this.child = child;
-        this.link = parent.getLink(child);
-        if (parent.getNode() instanceof Dummy) {
-            this.link = parent.getNode().getLink(null);
-        } else if (child.getNode() instanceof Dummy) {
-            this.link = child.getNode().getLink(null);
-        } else {
-            this.link = parent.getLink(child);
-        }
+        this.genomes = new LinkedHashSet<>();
     }
-
-//    public Collection<Genome> getGenomes() {
-//        return this.link.getGenomes();
-//    }
 
     public DrawableNode getStart() {
         return parent;
@@ -48,39 +38,36 @@ public class DrawableEdge extends Line {
 
     /**
      * Set the starting location of this edge.
-     * @param startLocation The {@link XYCoordinate} to start drawing from.
+     * @param startNode The {@link XYCoordinate} to start drawing from.
      */
-    public void setStartLocation(XYCoordinate startLocation) {
-        this.setStartX(startLocation.getX());
-        this.setStartY(startLocation.getY());
+    public void setStartNode(DrawableNode startNode) {
+        XYCoordinate rightBorderCenter = startNode.getRightBorderCenter();
+        this.setStartX(rightBorderCenter.getX());
+        this.setStartY(rightBorderCenter.getY());
     }
 
     /**
      * Set the end location of this edge.
-     * @param endLocation The {@link XYCoordinate} to end the drawing at.
+     * @param endNode The {@link XYCoordinate} to end the drawing at.
      */
-    public void setEndLocation(XYCoordinate endLocation) {
-        this.setEndX(endLocation.getX());
-        this.setEndY(endLocation.getY());
-    }
-
-    public Link getLink() {
-        return link;
+    public void setEndNode(DrawableNode endNode) {
+        XYCoordinate leftBorderCenter = endNode.getLeftBorderCenter();
+        this.setEndX(leftBorderCenter.getX());
+        this.setEndY(leftBorderCenter.getY());
     }
 
     @Override
     public String toString() {
-        return this.link.toString();
+        return String.format("Link from %s to %s", this.parent, this.child);
     }
 
     /**
      * Color a {@link Shape} depending on its properties.
      * @param shape the {@link Shape} to color
-     * @param link the {@link Link} belonging to the {@link DrawableNode} or {@link DrawableEdge}
-     * @param graph the {@link GenomeGraph} belonging to the {@link DrawableNode} or {@link DrawableEdge}
+     * @param graph the {@link GenomeGraph} belonging to the {@link DrawableSegment} or {@link DrawableEdge}
      */
-    public static void colorize(Shape shape, Link link, GenomeGraph graph) {
-        double genomeFraction = graph.getGenomeFraction(link);
+    public static void colorize(Shape shape, GenomeGraph graph) {
+        double genomeFraction = 1.d;
 
         double minStrokeWidth = 1.d, maxStrokeWidth = 6.5;
         double strokeWidth = minStrokeWidth + genomeFraction * (maxStrokeWidth - minStrokeWidth);
@@ -99,10 +86,21 @@ public class DrawableEdge extends Line {
      * @param graph the {@link GenomeGraph} belonging to the {@link DrawableEdge}
      */
     public void colorize(GenomeGraph graph) {
-        colorize(this, link, graph);
+        colorize(this, graph);
     }
 
-    public int[] getGenomes() {
-        return this.getLink().getGenomes();
+    @Override
+    public Collection<Integer> getGenomes() {
+        return this.genomes;
+    }
+
+    /**
+     * Add genomes in/through this {@link Drawable}.
+     *
+     * @param genomes a {@link Collection} of genome IDs
+     */
+    @Override
+    public void addGenomes(Collection<Integer> genomes) {
+        this.genomes.addAll(genomes);
     }
 }

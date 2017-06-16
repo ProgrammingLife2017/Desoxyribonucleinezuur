@@ -8,7 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -17,7 +17,6 @@ import programminglife.parser.Cache;
 import programminglife.utility.Alerts;
 import programminglife.utility.Console;
 
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
@@ -29,7 +28,6 @@ import java.util.Optional;
 public final class ProgrammingLife extends Application {
 
     private static Stage primaryStage;
-    private static VBox vbox;
 
     /**
      * Main method for the application.
@@ -41,23 +39,21 @@ public final class ProgrammingLife extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-        int screenWidth = gd.getDisplayMode().getWidth();
-        int screenHeight = gd.getDisplayMode().getHeight();
-
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/Basic_Gui.fxml"));
-
-        vbox = loader.load();
+        AnchorPane root = loader.load();
         primaryStage = stage;
         primaryStage.setTitle("Programming Life");
-        primaryStage.setScene(new Scene(vbox, 0.8 * screenWidth, 0.8 * screenHeight));
+        primaryStage.setScene(new Scene(root));
         primaryStage.setOnCloseRequest(confirmCloseEventHandler);
         Button close = new Button("Close Application");
         close.setOnAction(event -> primaryStage.fireEvent(
                 new WindowEvent(primaryStage, WindowEvent.WINDOW_CLOSE_REQUEST))
         );
+        primaryStage.setMinWidth(600);
+        primaryStage.setMinHeight(400);
         primaryStage.sizeToScene();
         primaryStage.show();
+        primaryStage.setMaximized(true);
 
         GuiController ctrl = loader.getController();
         try {
@@ -107,14 +103,6 @@ public final class ProgrammingLife extends Application {
             }
         });
     };
-
-    /**
-     * Returns the VBox if called upon.
-     * @return VBox
-     */
-    public static VBox getVBox() {
-        return vbox;
-    }
 
     /**
      * Returns the Stage if called upon.

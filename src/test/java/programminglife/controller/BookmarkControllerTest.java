@@ -4,15 +4,14 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import programminglife.utility.InitFXThread;
 import programminglife.model.Bookmark;
+import programminglife.utility.InitFXThread;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 /**
  * Tests for the bookmark controller.
@@ -20,6 +19,8 @@ import static org.junit.Assert.assertNotNull;
 public class BookmarkControllerTest {
     private Bookmark bookmark;
     private String testPath;
+    private File file = new File("src/test/resources/checkFile.xml");
+
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -38,18 +39,26 @@ public class BookmarkControllerTest {
         BookmarkController.deleteBookmark(testPath, "writeTestGraph", "writeTest");
         BookmarkController.deleteBookmark(testPath, "writeTestGraph", "writeTeest");
         BookmarkController.deleteBookmark(testPath, "test", "testbm2");
+        file.delete();
     }
 
     @Test
     public void readTest() {
-        List<Bookmark> newBookmark = BookmarkController.loadAllGraphBookmarks(testPath,"test");
+        List<Bookmark> newBookmark = BookmarkController.loadAllBookmarks(testPath).get("test");
         assertEquals(newBookmark.get(0), bookmark);
+    }
+
+    @Test
+    public void checkFileCreationTest(){
+        assertFalse(file.exists());
+        BookmarkController.storeBookmark("src/test/resources/checkFile.xml" , bookmark);
+        assertTrue(file.exists());
     }
 
     @Test
     public void readAllGraphTest() {
         BookmarkController.storeBookmark(testPath, bookmark);
-        List<Bookmark> actual = BookmarkController.loadAllGraphBookmarks(testPath, "test");
+        List<Bookmark> actual = BookmarkController.loadAllBookmarks(testPath).get(bookmark.getGraphName());
         List<Bookmark> expected = new ArrayList<>();
         expected.add(bookmark);
         assertEquals(expected, actual);
@@ -57,15 +66,16 @@ public class BookmarkControllerTest {
 
     @Test
     public void writeTest() {
-        BookmarkController.storeBookmark(testPath, new Bookmark("dummypath", "writeTestGraph",2, 4, "writeTest", "writing"));
-        BookmarkController.storeBookmark(testPath, new Bookmark("dummypath", "writeTestGraph", 2, 4, "writeTeest", "writing"));
-        assertNotNull(BookmarkController.loadAllGraphBookmarks(testPath, "writeTestGraph"));
+        BookmarkController.storeBookmark(testPath, new Bookmark("writeTestGraph","dummypath",2, 4, "writeTest", "writing"));
+        BookmarkController.storeBookmark(testPath, new Bookmark( "writeTestGraph", "dummypath",2, 4, "writeTeest", "writing"));
+        assertNotNull(BookmarkController.loadAllBookmarks(testPath).get("writeTestGraph"));
     }
 
     @Test
     public void deleteTest() {
-        BookmarkController.storeBookmark(testPath, new Bookmark("dummypath", "deleteTestGraph", 3, 5, "deleteTest", "deleting"));
+        BookmarkController.storeBookmark(testPath, new Bookmark("deleteTestGraph","dummypath", 3, 5, "deleteTest", "deleting"));
+        assertNotEquals(new ArrayList<>(), BookmarkController.loadAllBookmarks(testPath).get("deleteTestGraph"));
         BookmarkController.deleteBookmark(testPath, "deleteTestGraph", "deleteTest");
-        assertEquals(new ArrayList<>(), BookmarkController.loadAllGraphBookmarks(testPath, "deleteTestGraph"));
+        assertEquals(new ArrayList<>(), BookmarkController.loadAllBookmarks(testPath).get("deleteTestGraph"));
     }
 }
