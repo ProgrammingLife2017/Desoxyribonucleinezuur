@@ -1,12 +1,13 @@
 package programminglife.model;
 
-import org.junit.*;
-import programminglife.model.exception.NodeExistsException;
-import programminglife.parser.Cache;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import programminglife.utility.InitFXThread;
-import programminglife.utility.ProgressCounter;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.NoSuchElementException;
 
 import static org.junit.Assert.*;
 
@@ -221,7 +222,7 @@ public class GenomeGraphTest {
         graph.setGenomes(4, genomeIDsB);
         graph.setGenomes(5, genomeIDsC);
 
-        HashSet<Integer> expected = new HashSet<Integer>();
+        HashSet<Integer> expected = new HashSet<>();
         expected.add(3);
         expected.add(4);
 

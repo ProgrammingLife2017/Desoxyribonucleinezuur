@@ -166,6 +166,11 @@ public abstract class DrawableNode extends Rectangle implements Drawable {
     public final Collection<Integer> getGenomes() {
         return this.genomes;
     }
+
+    /**
+     * Add genomes to the collection.
+     * @param genomes a {@link Collection} of genome IDs
+     */
     public final void addGenomes(Collection<Integer> genomes) {
         this.genomes.addAll(genomes);
     }

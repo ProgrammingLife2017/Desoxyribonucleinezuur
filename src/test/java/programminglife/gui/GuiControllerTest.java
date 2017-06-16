@@ -1,6 +1,5 @@
 package programminglife.gui;
 
-import javafx.application.Platform;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
@@ -11,7 +10,6 @@ import org.testfx.util.WaitForAsyncUtils;
 import programminglife.ProgrammingLife;
 import programminglife.parser.Cache;
 import programminglife.utility.Console;
-import programminglife.utility.InitFXThread;
 
 import java.io.File;
 import java.io.PrintStream;

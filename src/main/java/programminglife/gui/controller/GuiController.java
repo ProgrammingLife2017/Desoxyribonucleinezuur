@@ -165,11 +165,12 @@ public class GuiController implements Observer {
      * Open and parse a GFF file.
      * @param file The {@link File} to open.
      * @throws IOException if the {@link File} is not found.
+     * @return AnnotationParser to be notified when finished.
      */
     private AnnotationParser openAnnotationFile(File file) throws IOException {
         AnnotationParser annotationParser = null;
         if (file != null) {
-            System.out.println("Opening annotation " + file);
+            Console.println("Opening annotation " + file);
             annotationParser = new AnnotationParser(file);
             annotationParser.addObserver(this);
             annotationParser.getProgressCounter().addObserver(this);
@@ -230,7 +231,6 @@ public class GuiController implements Observer {
 
         if (graph != null) {
             this.miniMapController = new MiniMapController(this.miniMap, graph.size());
-            this.miniMapController.setGuiController(this);
             miniMap.setWidth(anchorGraphPanel.getWidth());
             miniMap.setHeight(50.d);
             Console.println("[%s] Graph was set to %s.", Thread.currentThread().getName(), graph.getID());
@@ -590,7 +590,7 @@ public class GuiController implements Observer {
         this.features = features;
     }
 
-    public Map<String, Feature> getFeatures() {
+    Map<String, Feature> getFeatures() {
         return this.features;
     }
 

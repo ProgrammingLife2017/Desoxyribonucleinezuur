@@ -9,9 +9,7 @@ import programminglife.model.Annotation;
 import programminglife.model.Feature;
 import programminglife.utility.NumbersOnlyListener;
 
-import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -69,6 +67,9 @@ public class HighlightController {
         txtGenome.getEntries().addAll(graphController.getGraph().getGenomeNames());
     }
 
+    /**
+     * Initializes the annotations.
+     */
     public void initAnnotations() {
         txtAnnotations.getEntries().clear();
         if (guiController.getFeatures() != null) {
@@ -82,9 +83,9 @@ public class HighlightController {
 
             Set<String> search = new LinkedHashSet<>();
 
-            c.forEach(setOfAnno -> setOfAnno.forEach(anno -> anno.getTextFields().entrySet().forEach(entry -> {
-                search.add(entry.getKey());
-                search.addAll(entry.getValue());
+            c.forEach(setOfAnno -> setOfAnno.forEach(anno -> anno.getTextFields().forEach((key, value) -> {
+                search.add(key);
+                search.addAll(value);
             })));
 
             txtAnnotations.getEntries().addAll(search);

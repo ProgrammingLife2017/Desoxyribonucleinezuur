@@ -3,14 +3,12 @@ package programminglife.controller;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import programminglife.gui.controller.GuiController;
 
 /**
  * Controller that shows a MiniMap in the gui.
  */
 public class MiniMapController {
 
-    private GuiController guiController;
     private Canvas miniMap;
     private int size;
 
@@ -65,13 +63,5 @@ public class MiniMapController {
         System.out.println(size);
         System.out.println(miniMap.getWidth());
         gc.fillOval((centerNode / (double) size) * miniMap.getWidth(), 20, 10, 10);
-    }
-
-    /**
-     * Sets the guicontroller for controlling the menu.
-     * @param guiController The gui controller
-     */
-    public void setGuiController(GuiController guiController) {
-        this.guiController = guiController;
     }
 }

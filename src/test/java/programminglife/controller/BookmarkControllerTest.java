@@ -1,20 +1,15 @@
 package programminglife.controller;
 
-import com.sun.org.apache.bcel.internal.generic.ARRAYLENGTH;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import programminglife.utility.InitFXThread;
 import programminglife.model.Bookmark;
+import programminglife.utility.InitFXThread;
 
-import java.awt.print.Book;
 import java.io.File;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 

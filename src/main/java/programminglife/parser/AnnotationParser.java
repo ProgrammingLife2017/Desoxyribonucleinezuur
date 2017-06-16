@@ -25,7 +25,7 @@ public class AnnotationParser extends Observable implements Runnable {
     public AnnotationParser(File file) {
         this.file = file;
         this.features = null;
-        progressCounter = new ProgressCounter("Lines read");;
+        progressCounter = new ProgressCounter("Lines read");
     }
 
     @Override
@@ -251,11 +251,17 @@ public class AnnotationParser extends Observable implements Runnable {
         return progressCounter;
     }
 
+    /**
+     * Main method for parsing the annotations.
+     * @param ignored String to be received.
+     * @throws IOException If file is not found
+     * @throws UnknownTypeException If file is not of the correct type.
+     */
     public static void main(String... ignored) throws IOException, UnknownTypeException {
 //        File file = new File("C:\\Users\\Ivo\\Google Drive local\\university\\Context project" +
 //                "\\project\\ProgrammingLife\\data\\annotations\\intervalAnnotation.txt");
-        File file = new File("C:\\Users\\Ivo\\Google Drive local\\university\\Context project" +
-                "\\project\\ProgrammingLife\\data\\annotations\\GRCh38.chr19.gff");
+        File file = new File("C:\\Users\\Ivo\\Google Drive local\\university\\Context project"
+                + "\\project\\ProgrammingLife\\data\\annotations\\GRCh38.chr19.gff");
         new AnnotationParser(file).parseFile(file);
     }
 }
