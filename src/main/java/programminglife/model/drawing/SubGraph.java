@@ -480,7 +480,7 @@ public class SubGraph {
      */
     Map<DrawableNode, Map<DrawableNode, Collection<Integer>>> calculateGenomes() {
         Map<DrawableNode, Map<DrawableNode, Collection<Integer>>> genomes = new LinkedHashMap<>();
-        // For every node in the subgraph
+        // For every node in the subGraph
         for (DrawableNode parent : this.nodes.values()) {
             Map<DrawableNode, Collection<Integer>> parentGenomes = this.calculateGenomes(parent);
             genomes.put(parent, parentGenomes);

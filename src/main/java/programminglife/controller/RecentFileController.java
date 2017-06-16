@@ -37,7 +37,7 @@ public class RecentFileController {
         try {
             findLines(recentFile);
         } catch (IOException e) {
-            Alerts.error("Recent.txt doesn't exist. A new one will be created.");
+            programminglife.utility.Console.println("Recent.txt doesn't exist. A new one will be created.");
         }
 
         this.recentFile = recentFile;
@@ -127,28 +127,7 @@ public class RecentFileController {
     public void updateRecent(File recentFile, File file) {
         if (checkDuplicate(file)) {
             moveFiles(file);
-            try (BufferedWriter recentWriter = new BufferedWriter(new FileWriter(recentFile))) {
-                if (file1 != null) {
-                    recentWriter.write(file1 + System.getProperty("line.separator"));
-                }
-                if (file2 != null) {
-                    recentWriter.write(file2 + System.getProperty("line.separator"));
-                }
-                if (file3 != null) {
-                    recentWriter.write(file3 + System.getProperty("line.separator"));
-                }
-                if (file4 != null) {
-                    recentWriter.write(file4 + System.getProperty("line.separator"));
-                }
-                if (file5 != null) {
-                    recentWriter.write(file5 + System.getProperty("line.separator"));
-                }
-                recentWriter.flush();
-                recentWriter.close();
-                initRecent();
-            } catch (IOException e) {
-                Alerts.error("Recent.txt cannot be updated");
-            }
+            updateRecent(recentFile);
         }
     }
 

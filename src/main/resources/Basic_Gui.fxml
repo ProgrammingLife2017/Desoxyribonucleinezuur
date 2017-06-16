@@ -2,13 +2,10 @@
 
 <!--suppress ALL -->
 
-<?import java.lang.*?>
-<?import javafx.scene.*?>
+<?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.Group?>
 <?import javafx.scene.layout.*?>
-
-<?import javafx.scene.canvas.Canvas?>
 <AnchorPane prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="programminglife.gui.controller.GuiController">
    <children>
           <MenuBar AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -17,7 +14,8 @@
                     <items>
                         <MenuItem fx:id="btnOpenGFA" mnemonicParsing="false" text="Open GFA" />
                         <MenuItem fx:id="btnOpenGFF" mnemonicParsing="false" text="Open GFF" />
-                        <Menu fx:id="menuRecent" mnemonicParsing="false" text="Open Recent GFA" />
+                        <Menu fx:id="menuRecentGFA" mnemonicParsing="false" text="Open Recent GFA" />
+                        <Menu fx:id="menuRecentGFF" mnemonicParsing="false" text="Open Recent GFF" />
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <RadioMenuItem fx:id="btnToggle" mnemonicParsing="false" text="Toggle Console" />
                         <RadioMenuItem fx:id="btnMiniMap" mnemonicParsing="false" text="Toggle MiniMap" />

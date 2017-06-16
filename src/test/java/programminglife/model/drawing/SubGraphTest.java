@@ -1,16 +1,16 @@
 package programminglife.model.drawing;
 
-import org.junit.*;
-import programminglife.model.*;
-import programminglife.parser.Cache;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import programminglife.model.GenomeGraph;
 import programminglife.parser.GraphParser;
 import programminglife.utility.InitFXThread;
-import programminglife.utility.ProgressCounter;
 
 import java.io.File;
 import java.util.*;
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 

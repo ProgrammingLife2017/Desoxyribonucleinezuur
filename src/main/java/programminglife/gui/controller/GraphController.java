@@ -184,9 +184,7 @@ public class GraphController {
      */
     public void drawNode(DrawableNode drawableNode) {
         if (!(drawableNode instanceof DrawableDummy)) {
-            drawableNode.setOnMouseClicked(event -> {
-                Console.println(drawableNode.details());
-            });
+            drawableNode.setOnMouseClicked(event -> Console.println(drawableNode.details()));
 
             drawableNode.setOnMouseClicked(event -> {
                 if (event.isShiftDown()) {

@@ -1,6 +1,5 @@
 package programminglife.gui;
 
-import javafx.application.Platform;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
@@ -11,7 +10,6 @@ import org.testfx.util.WaitForAsyncUtils;
 import programminglife.ProgrammingLife;
 import programminglife.parser.Cache;
 import programminglife.utility.Console;
-import programminglife.utility.InitFXThread;
 
 import java.io.File;
 import java.io.PrintStream;
@@ -89,7 +87,11 @@ public class GuiControllerTest extends FxRobot {
         clickOn("#txtMaxDrawDepth").type(KeyCode.DIGIT4);
         clickOn("#txtCenterNode").type(KeyCode.BACK_SPACE);
         clickOn("#txtCenterNode").type(KeyCode.DIGIT2);
+        press(KeyCode.CONTROL).type(KeyCode.M);
+        release(KeyCode.CONTROL);
         clickOn("#btnDraw");
+
+
         assertEquals("2", ((TextField) lookup("#txtCenterNode").query()).getCharacters().toString());
         assertEquals("4", ((TextField) lookup("#txtMaxDrawDepth").query()).getCharacters().toString());
         clickOn("#btnZoomReset");

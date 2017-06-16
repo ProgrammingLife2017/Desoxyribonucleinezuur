@@ -1,9 +1,11 @@
 package programminglife.model.drawing;
 
-import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import programminglife.model.GenomeGraph;
 import programminglife.model.XYCoordinate;
-import programminglife.parser.Cache;
 import programminglife.utility.InitFXThread;
 
 import static org.junit.Assert.assertEquals;

@@ -2,7 +2,6 @@ package programminglife.parser;
 
 import com.diffplug.common.base.Errors;
 import javafx.application.Platform;
-import programminglife.ProgrammingLife;
 import programminglife.model.GenomeGraph;
 import programminglife.model.exception.UnknownTypeException;
 import programminglife.utility.Alerts;

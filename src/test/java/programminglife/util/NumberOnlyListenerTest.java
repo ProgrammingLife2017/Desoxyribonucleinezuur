@@ -1,7 +1,6 @@
 package programminglife.util;
 
 import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -11,7 +10,7 @@ import programminglife.utility.NumbersOnlyListener;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Created by iwanh on 14/06/2017.
+ * Test class for the NumberOnlyListener.
  */
 public class NumberOnlyListenerTest {
 
