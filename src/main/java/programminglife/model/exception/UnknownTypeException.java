@@ -20,13 +20,4 @@ public class UnknownTypeException extends Exception {
     public UnknownTypeException(String message, Throwable cause) {
         super(message, cause);
     }
-
-    /**
-     * Constructor for {@link UnknownTypeException} containing a message and cause.
-     * @param message the message about the unknown identifier
-     * @param cause the cause of this {@link Exception}
-     */
-    public UnknownTypeException(String message, Throwable cause) {
-        super(message, cause);
-    }
 }

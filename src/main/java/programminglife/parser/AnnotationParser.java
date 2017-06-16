@@ -25,7 +25,7 @@ public class AnnotationParser extends Observable implements Runnable {
     public AnnotationParser(File file) {
         this.file = file;
         this.features = null;
-        progressCounter = null;
+        progressCounter = new ProgressCounter("Lines read");;
     }
 
     @Override
@@ -49,7 +49,7 @@ public class AnnotationParser extends Observable implements Runnable {
      */
     private void parseFile(File file) throws IOException, UnknownTypeException {
         int numberOfLines = GraphParser.countLines(file);
-        progressCounter = new ProgressCounter(numberOfLines, "Parsed (%d lines)");
+        progressCounter.setTotal(numberOfLines);
 
         this.features = new LinkedHashMap<>();
 
@@ -61,8 +61,6 @@ public class AnnotationParser extends Observable implements Runnable {
 
                 progressCounter.count();
             }));
-
-            features.values().forEach(System.out::println);
         } catch (Errors.WrappedAsRuntimeException e) {
             this.features = null;
             if (e.getCause() instanceof UnknownTypeException) {
@@ -79,6 +77,8 @@ public class AnnotationParser extends Observable implements Runnable {
         } catch (OutOfMemoryError e) {
             System.out.println("line: " + progressCounter.getProgress());
             throw e;
+        } finally {
+            progressCounter.finished();
         }
     }
 
