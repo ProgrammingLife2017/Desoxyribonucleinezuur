@@ -27,7 +27,9 @@ import jp.uphy.javafx.console.ConsoleView;
 import programminglife.ProgrammingLife;
 import programminglife.controller.MiniMapController;
 import programminglife.controller.RecentFileController;
+import programminglife.model.Feature;
 import programminglife.model.GenomeGraph;
+import programminglife.parser.AnnotationParser;
 import programminglife.parser.GraphParser;
 import programminglife.utility.Alerts;
 import programminglife.utility.Console;
@@ -41,6 +43,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Random;
@@ -90,13 +93,13 @@ public class GuiController implements Observer {
     private RecentFileController recentFileController;
     private MiniMapController miniMapController;
     private File file;
+    private Map<String, Feature> features;
     private File recentFile = new File("Recent.txt");
     private Thread parseThread;
 
     private static final double MAX_SCALE = 5.0d;
     private static final double MIN_SCALE = .02d;
     private static final double ZOOM_FACTOR = 1.05d;
-
 
 
     /**
@@ -155,10 +158,21 @@ public class GuiController implements Observer {
      * @param file The {@link File} to open.
      * @throws IOException if the {@link File} is not found.
      */
-    public void openAnnotationFile(File file) throws IOException {
+    public AnnotationParser openAnnotationFile(File file) throws IOException {
+        AnnotationParser annotationParser = null;
         if (file != null) {
+            System.out.println("Opening annotation " + file);
+            annotationParser = new AnnotationParser(file);
+            annotationParser.addObserver(this);
+            annotationParser.getProgressCounter().addObserver(this);
 
+            if (this.parseThread != null) {
+                this.parseThread.interrupt();
+            }
+            this.parseThread = new Thread(annotationParser);
+            this.parseThread.start();
         }
+        return annotationParser;
     }
 
     @Override
@@ -177,6 +191,11 @@ public class GuiController implements Observer {
             } else if (arg instanceof String) {
                 String msg = (String) arg;
                 Platform.runLater(() -> ProgrammingLife.getStage().setTitle(msg));
+            }
+        } else if (o instanceof AnnotationParser) {
+            if (arg instanceof Map) {
+                Console.println("[%s] Annotations parsed.", Thread.currentThread().getName());
+                this.setFeatures(((AnnotationParser) o).getFeatures());
             }
         } else if (o instanceof ProgressCounter) {
             progressBar.setVisible(true);
@@ -507,10 +526,12 @@ public class GuiController implements Observer {
             AnchorPane page = loader.load();
             final HighlightController highlightController = loader.getController();
             highlightController.setGraphController(this.getGraphController());
+            highlightController.setGUIController(this);
             searchTab.setContent(page);
             searchTab.setDisable(true);
             searchTab.setOnSelectionChanged(event -> {
                 highlightController.initGenome();
+                highlightController.initAnnotations();
                 highlightController.initMinMax();
             });
         } catch (IOException e) {
@@ -563,6 +584,14 @@ public class GuiController implements Observer {
 
     public void setFile(File file) {
         this.file = file;
+    }
+
+    private void setFeatures(Map<String, Feature> features) {
+        this.features = features;
+    }
+
+    public Map<String, Feature> getFeatures() {
+        return this.features;
     }
 
     GraphController getGraphController() {
