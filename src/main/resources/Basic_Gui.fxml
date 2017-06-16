@@ -17,7 +17,8 @@
                     <items>
                         <MenuItem fx:id="btnOpenGFA" mnemonicParsing="false" text="Open GFA" />
                         <MenuItem fx:id="btnOpenGFF" mnemonicParsing="false" text="Open GFF" />
-                        <Menu fx:id="menuRecent" mnemonicParsing="false" text="Open Recent GFA" />
+                        <Menu fx:id="menuRecentGFA" mnemonicParsing="false" text="Open Recent GFA" />
+                        <Menu fx:id="menuRecentGFF" mnemonicParsing="false" text="Open Recent GFF" />
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <RadioMenuItem fx:id="btnToggle" mnemonicParsing="false" text="Toggle Console" />
                         <RadioMenuItem fx:id="btnMiniMap" mnemonicParsing="false" text="Toggle MiniMap" />

@@ -61,7 +61,8 @@ public class GuiController implements Observer {
     @FXML private MenuItem btnBookmarks;
     @FXML private MenuItem btnAbout;
     @FXML private MenuItem btnInstructions;
-    @FXML private Menu menuRecent;
+    @FXML private Menu menuRecentGFA;
+    @FXML private Menu menuRecentGFF;
     @FXML private RadioMenuItem btnToggle;
     @FXML private RadioMenuItem btnMiniMap;
     @FXML private Button btnZoomReset;
@@ -87,11 +88,16 @@ public class GuiController implements Observer {
     private double orgTranslateX, orgTranslateY;
     private double scale;
     private GraphController graphController;
-    private RecentFileController recentFileController;
+    private RecentFileController recentFileControllerGFA;
+    private RecentFileController recentFileControllerGFF;
     private MiniMapController miniMapController;
     private File file;
-    private File recentFile = new File("Recent.txt");
+    private File recentFileGFA = new File("RecentGFA.txt");
+    private File recentFileGFF = new File("RecentGFF.txt");
     private Thread parseThread;
+
+    private final ExtensionFilter extFilterGFF = new ExtensionFilter("GFF files (*.gff)", "*.GFF");
+    private final ExtensionFilter extFilterGFA = new ExtensionFilter("GFA files (*.gfa)", "*.GFA");
 
     private static final double MAX_SCALE = 5.0d;
     private static final double MIN_SCALE = .02d;
@@ -106,8 +112,10 @@ public class GuiController implements Observer {
     @SuppressWarnings("unused")
     private void initialize() {
         this.graphController = new GraphController(null, this.grpDrawArea, this.anchorGraphInfo);
-        this.recentFileController = new RecentFileController(this.recentFile, this.menuRecent);
-        this.recentFileController.setGuiController(this);
+        this.recentFileControllerGFA = new RecentFileController(this.recentFileGFA, this.menuRecentGFA);
+        this.recentFileControllerGFA.setGuiController(this);
+        this.recentFileControllerGFF = new RecentFileController(this.recentFileGFF, this.menuRecentGFF);
+        this.recentFileControllerGFF.setGuiController(this);
         initMenuBar();
         initBookmarkMenu();
         initLeftControlpanelScreenModifiers();
@@ -211,6 +219,35 @@ public class GuiController implements Observer {
         }
     }
 
+    /**
+     * Handles the fileChooser when open a file.
+     * @param filter ExtensionFilter of which file type to open.
+     * @param isGFA boolean to check if it is a GFA file.
+     */
+    private void fileChooser(ExtensionFilter filter, boolean isGFA) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().add(filter);
+        if (file != null) {
+            File existDirectory = file.getParentFile();
+            fileChooser.setInitialDirectory(existDirectory);
+        }
+        try {
+            file = fileChooser.showOpenDialog(ProgrammingLife.getStage());
+            if (file != null) {
+                if (isGFA) {
+                    this.openFile(file);
+                    Platform.runLater(() -> recentFileControllerGFA.updateRecent(recentFileGFA, file));
+                } else {
+                    this.openAnnotationFile(file);
+                    Platform.runLater(() -> recentFileControllerGFF.updateRecent(recentFileGFF, file));
+                }
+            }
+        } catch (FileNotFoundException e) {
+            Alerts.error("This GFA file can't be found");
+        } catch (IOException e) {
+            Alerts.error("This GFA file can't be opened");
+        }
+    }
 
     /**
      * Initializes the open button so that the user can decide which file to open.
@@ -218,46 +255,9 @@ public class GuiController implements Observer {
      * Sets the event for the quit MenuItem.
      */
     private void initMenuBar() {
-        btnOpenGFA.setOnAction((ActionEvent event) -> {
-            FileChooser fileChooser = new FileChooser();
-            final ExtensionFilter extFilterGFA = new ExtensionFilter("GFA files (*.gfa)", "*.GFA");
-            fileChooser.getExtensionFilters().add(extFilterGFA);
-            if (file != null) {
-                File existDirectory = file.getParentFile();
-                fileChooser.setInitialDirectory(existDirectory);
-            }
-            try {
-                file = fileChooser.showOpenDialog(ProgrammingLife.getStage());
-                if (file != null) {
-                    this.openFile(file);
-                    Platform.runLater(() -> recentFileController.updateRecent(recentFile, file));
-                }
-            } catch (FileNotFoundException e) {
-                Alerts.error("This GFA file can't be found");
-            } catch (IOException e) {
-                Alerts.error("This GFA file can't be opened");
-            }
-        });
+        btnOpenGFA.setOnAction((ActionEvent event) -> fileChooser(extFilterGFA, true));
+        btnOpenGFF.setOnAction((ActionEvent event) -> fileChooser(extFilterGFF, false));
 
-        btnOpenGFF.setOnAction((ActionEvent event) -> {
-            FileChooser fileChooser = new FileChooser();
-            final ExtensionFilter extFilterGFF = new ExtensionFilter("GFF files (*.gff)", "*.GFF");
-            fileChooser.getExtensionFilters().add(extFilterGFF);
-            if (file != null) {
-                File existDirectory = file.getParentFile();
-                fileChooser.setInitialDirectory(existDirectory);
-            }
-            try {
-                file = fileChooser.showOpenDialog(ProgrammingLife.getStage());
-                if (file != null) {
-                    this.openAnnotationFile(file);
-                }
-            } catch (FileNotFoundException e) {
-                Alerts.error("This GFF file can't be found");
-            } catch (IOException e) {
-                Alerts.error("This GFF file can't be opened");
-            }
-        });
         btnOpenGFA.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCodeCombination.CONTROL_DOWN));
 
         btnMiniMap.setOnAction(event -> miniMapController.toggleVisibility());
