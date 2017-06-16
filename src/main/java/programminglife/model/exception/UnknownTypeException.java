@@ -9,13 +9,13 @@ public class UnknownTypeException extends Exception {
      * @param message the message about the unknown identifier.
      */
     public UnknownTypeException(String message) {
-        super(message);
+                super(message);
     }
 
     /**
-     * Constructor for {@link UnknownTypeException} containing a message and cause.
-     * @param message the message about the unknown identifier
-     * @param cause the cause of this {@link Exception}
+     * Constructor for {@link UnknownTypeException} containing a message and a cause.
+     * @param message the message about the unknown identifier.
+     * @param cause The cause of this Exception.
      */
     public UnknownTypeException(String message, Throwable cause) {
         super(message, cause);
