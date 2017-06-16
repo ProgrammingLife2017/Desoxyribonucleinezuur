@@ -31,6 +31,7 @@ public class SubGraph {
     private LinkedHashMap<Integer, DrawableNode> endNodes;
     private Layer endLayer;
     private double endLayerX;
+    private List<Layer> layers;
 
     private DrawableNode centerNode;
 
@@ -62,6 +63,7 @@ public class SubGraph {
         this.radius = radius;
         this.layout = false;
         this.centerNode = centerNode;
+        this.layers = new LinkedList<>();
 
         // TODO: also go from all parents to children within 2*radius + 1; and vice-versa from children.
         this.nodes = findParents(centerNode, radius);
@@ -248,7 +250,7 @@ public class SubGraph {
         if (layout) {
             return;
         }
-        List<Layer> layers = findLayers();
+        this.layers = findLayers();
         rootLayer = layers.get(0);
         endLayer = layers.get(layers.size() - 1);
         createDummyNodes(layers);
@@ -274,6 +276,50 @@ public class SubGraph {
 
         layout = true;
         // TODO: translate so that the centerNode is at 0,0;
+    }
+
+    private int findCenterLayerIndex() {
+        for (Layer layer : this.layers) {
+            if (layer.contains(centerNode)) {
+                return layers.indexOf(layer);
+            }
+        }
+        return layers.size() / 2;
+    }
+
+    private Layer getRightCenterLayer() {
+        return this.layers.get(findCenterLayerIndex() + 1);
+    }
+
+    private Layer getLeftCenterLayer() {
+        return this.layers.get(findCenterLayerIndex() - 1);
+    }
+
+    public double getRightCenterLayerX() {
+        return getRightCenterLayer().getNodes().get(0).getCenter().getX();
+    }
+
+    public double getLeftCenterLayerX() {
+        return getLeftCenterLayer().getNodes().get(0).getCenter().getX();
+    }
+
+    private int firstSegment(Layer layer) {
+        for (DrawableNode node : layer.getNodes()) {
+            if (node instanceof DrawableSegment) {
+                return node.getIdentifier();
+            }
+        }
+        return 0;
+    }
+
+    public void incrementCenterNode() {
+        Layer newCenterLayer = getRightCenterLayer();
+        this.setCenterNode(firstSegment(newCenterLayer));
+    }
+
+    public void decrementCenterNode() {
+        Layer newCenterLayer = getLeftCenterLayer();
+        this.setCenterNode(firstSegment(newCenterLayer));
     }
 
     /**
@@ -506,7 +552,7 @@ public class SubGraph {
         // TODO: Implement :D
     }
 
-    private void addFromEndNodes() {
+    public void addFromEndNodes() {
         // Create a new endLayer
         Layer newEndLayer = new Layer();
         //take the child of all the end nodes and add these to a layer.
@@ -521,9 +567,11 @@ public class SubGraph {
 //                if(newRootLayer.contains())
 //            }
 //        }
-        rootLayerLayout(endLayer, newEndLayer);
-        rootLayer = newEndLayer;
-
+        endLayerLayout(endLayer, newEndLayer);
+        endLayer = newEndLayer;
+        for (DrawableNode node : endLayer) {
+            this.nodes.put(node.getIdentifier(), node);
+        }
 
     }
 

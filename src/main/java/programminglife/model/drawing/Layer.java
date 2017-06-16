@@ -140,4 +140,8 @@ public class Layer implements Iterable<DrawableNode> {
         }
         return stringBuilder.delete(stringBuilder.length() - 2, stringBuilder.length()).append("]").toString();
     }
+
+    public List<DrawableNode> getNodes() {
+        return this.nodes;
+    }
 }

@@ -251,6 +251,9 @@ public class GraphController {
             double oldYLocation = node.getLocation().getY();
             node.setLocation(oldXLocation + xDifference, oldYLocation + yDifference);
         }
+        if (this.subGraph.getRightCenterLayerX() < canvas.getWidth() / 2) {
+            this.subGraph.addFromEndNodes();
+        }
         draw(canvas.getGraphicsContext2D());
     }
 
