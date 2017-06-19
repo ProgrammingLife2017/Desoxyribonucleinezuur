@@ -10,8 +10,9 @@ import java.util.*;
  * @see SubGraph#layout()
  * @see SubGraph#findLayers()
  */
-public class Layer implements Iterable<DrawableNode> {
+public class Layer implements Iterable<DrawableNode>, Comparable<Double> {
     private double width;
+    private double x;
     private List<DrawableNode> nodes;
 
     /**
@@ -19,6 +20,7 @@ public class Layer implements Iterable<DrawableNode> {
      */
     public Layer() {
         this.width = 0;
+        this.x = 0;
         this.nodes = new ArrayList<>();
     }
 
@@ -98,7 +100,6 @@ public class Layer implements Iterable<DrawableNode> {
                 return -1;
             } else {
                 return o2.getIdentifier() - o1.getIdentifier();
-
             }
         });
     }
@@ -143,5 +144,18 @@ public class Layer implements Iterable<DrawableNode> {
 
     public List<DrawableNode> getNodes() {
         return this.nodes;
+    }
+
+    public double getX() {
+        return x;
+    }
+
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    @Override
+    public int compareTo(@NotNull Double o) {
+        return Double.compare(this.x, o);
     }
 }

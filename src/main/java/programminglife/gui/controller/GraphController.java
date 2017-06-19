@@ -61,10 +61,6 @@ public class GraphController {
         subGraph = new SubGraph(centerNode, radius);
         Console.println("Time to find nodes: " + (System.nanoTime() - startFindNodes) / 1000000 + " ms");
 
-        long startLayout = System.nanoTime();
-        subGraph.layout();
-        Console.println("Time to layout: " + (System.nanoTime() - startLayout) / 1000000 + " ms");
-
         long getNodes = System.nanoTime();
         Collection<DrawableNode> dNodes = subGraph.getNodes().values();
         Console.println("Time to get drawable nodes: " + (System.nanoTime() - getNodes) / 1000000 + " ms");
@@ -250,7 +246,7 @@ public class GraphController {
             double oldXLocation = node.getLocation().getX();
             node.setLocation(oldXLocation + xDifference, node.getLocation().getY());
         }
-        if (this.subGraph.getRightCenterLayerX() < canvas.getWidth() / 2) {
+        if (this.subGraph.getRightCenterLayer().getX() < canvas.getWidth() / 2) {
             this.subGraph.addFromEndNodes();
         }
         draw(canvas.getGraphicsContext2D());
@@ -260,7 +256,6 @@ public class GraphController {
         for (DrawableNode node : subGraph.getNodes().values()) {
             double oldXLocation = node.getLocation().getX();
             double oldYLocation = node.getLocation().getY();
-            node.setHeight(node.getHeight() / scale);
             node.setWidth(node.getWidth() / scale);
             node.setLocation(oldXLocation / scale, oldYLocation);
             subGraph.scaleLayerPadding(scale);

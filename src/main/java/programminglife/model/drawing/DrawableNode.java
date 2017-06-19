@@ -15,6 +15,7 @@ public abstract class DrawableNode implements Drawable {
     private final GenomeGraph graph;
     private final int id;
 
+    private Layer layer;
     private XYCoordinate location;
     private XYCoordinate dimensions;
 
@@ -177,5 +178,13 @@ public abstract class DrawableNode implements Drawable {
 
     public void setHeight(double height) {
         this.dimensions = new XYCoordinate(getWidth(), height);
+    }
+
+    public Layer getLayer() {
+        return layer;
+    }
+
+    public void setLayer(Layer layer) {
+        this.layer = layer;
     }
 }

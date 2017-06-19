@@ -12,40 +12,41 @@ import java.util.*;
  * When updating the centerNode or the radius, it also updates the Nodes within this SubGraph.
  */
 public class SubGraph {
+    private static final int DEFAULT_DYNAMIC_RADIUS = 50;
+    private static final int MIN_RADIUS_DEFAULT = 200;
     /**
      * The amount of padding between layers (horizontal padding).
      */
     private double layerPadding = 20;
 
+    private double diffLayerPadding = 7;
+
     /**
      * The amount of padding between nodes within a Layer (vertical padding).
      */
     private static final int LINE_PADDING = 30;
-
     private GenomeGraph graph;
     private LinkedHashMap<Integer, DrawableNode> nodes;
     private LinkedHashMap<Integer, DrawableNode> rootNodes;
-    private Layer rootLayer;
-    private double rootLayerX;
     private LinkedHashMap<Integer, DrawableNode> endNodes;
-    private Layer endLayer;
-    private double endLayerX;
-    private List<Layer> layers;
 
-    private DrawableNode centerNode;
-
-    private boolean layout;
-    /**
-     * The radius around the center node. Eventually,
-     * this SubGraph should only include nodes with a *longest* path of at most radius.
-     * Radius is zero-based, i.e. a radius of 0 is only the centerNode,
-     * radius of 1 is centerNode plus all its children and parents, etc.
-     */
-    private int radius;
+    private ArrayList<Layer> layers;
 
     // TODO: cache topological sorting (inside topoSort(), only recalculate when adding / removing nodes)
     // important: directly invalidate cache (set to null), because otherwise removed nodes
     // can't be garbage collected until next call to topoSort()
+
+    private SubGraph(GenomeGraph graph) {
+        this(graph, new LinkedHashMap<>(), new LinkedHashMap<>(), new LinkedHashMap<>());
+    }
+
+    private SubGraph(GenomeGraph graph, LinkedHashMap<Integer, DrawableNode> nodes,
+                     LinkedHashMap<Integer, DrawableNode> rootNodes, LinkedHashMap<Integer, DrawableNode> endNodes) {
+        this.graph = graph;
+        this.nodes = nodes;
+        this.rootNodes = rootNodes;
+        this.endNodes = endNodes;
+    }
 
     /**
      * Create a SubGraph using a centerNode and a radius around that centerNode.
@@ -56,21 +57,27 @@ public class SubGraph {
      * @param radius     The radius
      */
     public SubGraph(DrawableSegment centerNode, int radius) {
-        // TODO
-        // tactic: first go to all parents at exactly radius, then find all children of those parents
+        this(centerNode, MIN_RADIUS_DEFAULT, Math.max(radius, MIN_RADIUS_DEFAULT));
+    }
+
+    /**
+     * Create a SubGraph using a centerNode and a radius around that centerNode.
+     * This SubGraph will include all Nodes within radius steps to a parent,
+     * and then another 2radius steps to a child, and symmetrically the same with children / parents reversed.
+     *
+     * @param centerNode The centerNode
+     * @param minRadius  The minimum radius.
+     * @param radius     The radius
+     */
+    public SubGraph(DrawableSegment centerNode, int minRadius, int radius) {
+        assert (minRadius <= radius);
+
         this.graph = centerNode.getGraph();
-        this.radius = radius;
-        this.layout = false;
-        this.centerNode = centerNode;
-        this.layers = new LinkedList<>();
+        this.layers = null;
 
-        // TODO: also go from all parents to children within 2*radius + 1; and vice-versa from children.
-        this.nodes = findParents(centerNode, radius);
+        findNodes(this, Collections.singleton(centerNode), new LinkedHashMap<>(), radius);
 
-        this.nodes.putAll(findChildren(centerNode, radius));
-        if (!this.nodes.containsKey(centerNode.getIdentifier())) {
-            this.nodes.put(centerNode.getIdentifier(), centerNode);
-        }
+        layout();
     }
 
     // TODO: change findParents and findChildren to reliably only find nodes with a *longest* path of at most radius.
@@ -78,146 +85,108 @@ public class SubGraph {
     // boolean flag for using longest or shortest path as determining factor for the radius)
 
     /**
-     * Find the parents for a single {@link DrawableNode} up to radius.
-     * This method returns a set with all nodes with a shortest path of at most radius.
-     *
-     * @param node   The node to start from.
-     * @param radius Number indicating the number of steps to take.
-     * @return A set of all ancestors within radius steps.
+     * Find nodes within radius steps from centerNode.
+     * This resets the {@link #nodes}, {@link #rootNodes} and {@link #endNodes}
+     * @param startNodes The Nodes to start searching from.
+     * @param radius The number of steps to search.
+     * @return A graphPart.
      */
-    private LinkedHashMap<Integer, DrawableNode> findParents(DrawableNode node, int radius) {
-        Set<DrawableNode> nodeSet = new HashSet<>();
-        nodeSet.add(node);
-        return findParents(nodeSet, radius);
-    }
+    private static void findNodes(SubGraph subGraph, Collection<DrawableNode> startNodes,
+                                  LinkedHashMap<Integer, DrawableNode> excludedNodes, int radius) {
+        long startTime = System.nanoTime();
 
-    /**
-     * Find the parents for a set of {@link DrawableNode DrawableNodes} up to radius.
-     * This method returns a set with all nodes with a shortest
-     * path of at most radius to at least one of the nodes in the set.
-     *
-     * @param nodes  The set of nodes to start from.
-     * @param radius Number indicating the number of steps to take.
-     * @return A set of all ancestors within radius steps.
-     */
-    private LinkedHashMap<Integer, DrawableNode> findParents(Set<DrawableNode> nodes, int radius) {
-        LinkedHashMap<Integer, DrawableNode> found = new LinkedHashMap<>();
-        for (DrawableNode node : nodes) {
-            findParents(found, node, radius);
-        }
-        return found;
-    }
+        subGraph.nodes = new LinkedHashMap<>();
+        subGraph.rootNodes = new LinkedHashMap<>();
+        subGraph.endNodes = new LinkedHashMap<>();
 
-    /**
-     * Find the parents for a single {@link DrawableNode} up to radius.
-     * This method returns a set with all nodes with a shortest path of at most radius.
-     *
-     * @param found  The Set of nodes that have been found. Nodes found by this method will be added to the set.
-     * @param node   The node to start from.
-     * @param radius Number indicating the number of steps to take.
-     */
-    private void findParents(LinkedHashMap<Integer, DrawableNode> found, DrawableNode node, int radius) {
-        // TODO: improve dataStructure so that parents can be safely skipped if already found
-        // it can currently not safely be skipped: 0-1-2-3-4
-        //                                            \_/
-        // assuming radius 3, if you find the nodes in the order 0, 1, 2, 3,
-        // you cannot skip 3 as that would then miss 4 (which is also within radius 3, via 0-1-3-4)
-        //Also check the children if one of the nodes has not been added yet.
-        if (this.radius <= 0) {
-            return;
-        }
-        for (int childID : node.getChildren()) {
-            if (!found.containsKey(childID)) {
-                found.put(childID, new DrawableSegment(node.getGraph(), childID));
-                findChildren(found, found.get(childID), 2 * this.radius - radius - 1);
-            }
-        }
-        if (radius <= 0) {
-            return;
-        }
-        radius--; // decrease radius once instead of multiple times within the loop;
-        for (int parentID : node.getParents()) {
-            if (!found.containsKey(parentID)) {
-                found.put(parentID, new DrawableSegment(node.getGraph(), parentID));
-                findParents(found, found.get(parentID), radius);
+        /*
+         * The queue for the BFS. This Queue uses null as separators between radii.
+         * Example: A B null C D: first A, then B, then null, so we go to the next layer, then C, then D
+         * layer 1:  A B
+         * layer 2:  C D
+         */
+        Queue<FoundNode> queue = new LinkedList<>();
+        startNodes.forEach(node -> queue.add(new FoundNode(node, null)));
+        queue.add(null);
+
+        boolean lastRow = radius == 0;
+        while (!queue.isEmpty()) {
+            FoundNode current = queue.poll(); // Note: may still be null if the actual element is null!
+
+            if (current == null) {
+                radius--;
+
+                if (radius == 0) {
+                    lastRow = true;
+                } else if (radius < 0) {
+                    break;
+                }
+
+                queue.add(null);
+                continue;
             }
 
-        }
-
-    }
-
-    /**
-     * Find the parents for a single {@link DrawableNode} up to radius.
-     * This method returns a set with all nodes with a shortest path of at most radius.
-     *
-     * @param node   The node to start from.
-     * @param radius Number indicating the number of steps to take.
-     * @return A set of all ancestors within radius steps.
-     */
-    private LinkedHashMap<Integer, DrawableNode> findChildren(DrawableNode node, int radius) {
-        Set<DrawableNode> nodeSet = new HashSet<>();
-        nodeSet.add(node);
-        return findChildren(nodeSet, radius);
-    }
-
-    /**
-     * Find the parents for a set of {@link DrawableNode DrawableNodes} up to radius.
-     * This method returns a set with all nodes with a shortest
-     * path of at most radius to at least one of the nodes in the set.
-     *
-     * @param nodes  The set of nodes to start from.
-     * @param radius Number indicating the number of steps to take.
-     * @return A set of all ancestors within radius steps.
-     */
-    private LinkedHashMap<Integer, DrawableNode> findChildren(Set<DrawableNode> nodes, int radius) {
-        LinkedHashMap<Integer, DrawableNode> found = new LinkedHashMap<>();
-
-        //Put all node that are already found by findParents into the find.
-        for (DrawableNode node : nodes) {
-            found.put(node.getIdentifier(), node);
-        }
-        for (DrawableNode node : nodes) {
-            findChildren(found, node, radius);
-        }
-        return found;
-    }
-
-    /**
-     * Find the parents for a single {@link DrawableNode} up to radius.
-     * This method returns a set with all nodes with a shortest path of at most radius.
-     *
-     * @param found  The Set of nodes that have been found. Nodes found by this method will be added to the set.
-     * @param node   The node to start from.
-     * @param radius Number indicating the number of steps to take.
-     */
-    private void findChildren(LinkedHashMap<Integer, DrawableNode> found, DrawableNode node, int radius) {
-        // TODO: improve dataStructure so that parents can be safely skipped if already found
-        // it can currently not safely be skipped: 0-1-2-3-4
-        //                                            \_/
-        // assuming radius 3, if you find the nodes in the order 0, 1, 2, 3,
-        // you cannot skip 3 as that would then miss 4 (which is also within radius 3, via 0-1-3-4)
-        if (this.radius <= 0) {
-            return;
-        }
-        for (int parentID : node.getParents()) {
-            if (!found.containsKey(parentID)) {
-                found.put(parentID, new DrawableSegment(node.getGraph(), parentID));
-                findParents(found, found.get(parentID), 2 * this.radius - radius - 1);
+            if (excludedNodes.containsKey(current.node.getIdentifier())) {
+                continue;
             }
 
-        }
-        if (radius <= 0) {
-            return;
-        }
-        radius--; // decrease radius once instead of multiple times within the loop;
-        for (int childID : node.getChildren()) {
-            if (!found.containsKey(childID)) {
-                found.put(childID, new DrawableSegment(node.getGraph(), childID));
-                findChildren(found, found.get(childID), radius);
+            subGraph.nodes.put(current.node.getIdentifier(), current.node);
+
+            // save this node, save the result to check whether we had found it earlier.
+            DrawableNode previous = subGraph.nodes.put(current.node.getIdentifier(), current.node);
+
+            if (lastRow) {
+                // last row, add this node to rootNodes / endNodes even if we already found this node
+                // (for when a node is both a root and an end node)
+                if (current.foundFrom == FoundNode.FoundFrom.CHILD) {
+                    subGraph.rootNodes.put(current.node.getIdentifier(), current.node);
+                } else if (current.foundFrom == FoundNode.FoundFrom.PARENT) {
+                    subGraph.endNodes.put(current.node.getIdentifier(), current.node);
+                }
+                // else: current.foundFrom == null, true for the centerNode.
+                // Note: since radius is always at least MIN_RADIUS, we could else instead of else if.
+                // But that would be premature optimization.
+            } else if (previous != null) {
+                // we already found this node, continue to next node.
+                assert (previous.equals(current.node));
+            } else {
+                // this is not the last row, and this node was not added yet
+                Collection<Integer> children = current.node.getChildren();
+                Collection<Integer> parents = current.node.getParents();
+
+                children.forEach(node -> queue.add(
+                        new FoundNode(new DrawableSegment(subGraph.graph, node), FoundNode.FoundFrom.PARENT)));
+                parents.forEach(node -> queue.add(
+                        new FoundNode(new DrawableSegment(subGraph.graph, node), FoundNode.FoundFrom.CHILD)));
             }
         }
 
+        long endTime = System.nanoTime();
+        long difference = endTime - startTime;
+        double difInSeconds = difference / 1000000000.0;
+        Console.println("Time for finding nodes: %f s", difInSeconds);
+    }
 
+    /**
+     * A class for keeping track of how a Node was found. Only used within {@link SubGraph#findNodes}.
+     */
+    private static final class FoundNode {
+        /**
+         * Whether a node was found from a parent or a child.
+         */
+        private enum FoundFrom { PARENT, CHILD }
+        private DrawableNode node;
+        private FoundFrom foundFrom;
+
+        /**
+         * simple constructor for a FoundNode.
+         * @param node The node that was found.
+         * @param foundFrom Whether it was found from a parent or a child.
+         */
+        private FoundNode(DrawableNode node, FoundFrom foundFrom) {
+            this.node = node;
+            this.foundFrom = foundFrom;
+        }
     }
 
     /**
@@ -238,6 +207,8 @@ public class SubGraph {
      * @return The {@link Drawable} that is on top at the given location.
      */
     public Drawable atLocation(double x, double y) {
+        Collections.binarySearch(layers, x);
+
         // TODO: implement;
         throw new Error("Not implemented yet");
     }
@@ -246,79 +217,57 @@ public class SubGraph {
      * Lay out the {@link Drawable Drawables} in this SubGraph.
      */
     public void layout() {
-        if (layout) {
-            return;
-        }
         this.layers = findLayers();
-        rootLayer = layers.get(0);
-        endLayer = layers.get(layers.size() - 1);
+
         createDummyNodes(layers);
         sortWithinLayers(layers);
+    }
 
+    public void setRightDrawLocations(int setLayerIndex) {
+        ListIterator<Layer> layerIterator = layers.listIterator(setLayerIndex);
+        Layer setLayer = layerIterator.next();
+        double x = setLayer.getX();
+        int size = setLayer.size();
 
-        double x = 0;
-        rootLayerX = x;
-        int size = 1;
-        for (Layer layer : layers) {
+        while (layerIterator.hasNext()) {
+            Layer layer = layerIterator.next();
+
             int newSize = layer.size();
             int diff = Math.abs(newSize - size);
+            x += layerPadding * 1.1 * newSize + diffLayerPadding * diff;
+
+            layer.setX(x);
             double y = 50;
-            x += layerPadding + 7 * diff;
             for (DrawableNode d : layer) {
                 d.setLocation(x, y);
                 y += LINE_PADDING;
             }
-            x += layer.getWidth() + layerPadding * 0.1 * newSize;
+            x += layer.getWidth();
             size = newSize;
         }
-        endLayerX = x;
-
-        layout = true;
-        // TODO: translate so that the centerNode is at 0,0;
     }
 
-    private int findCenterLayerIndex() {
-        for (Layer layer : this.layers) {
-            if (layer.contains(centerNode)) {
-                return layers.indexOf(layer);
+    public void setLeftDrawLocations(int setLayerIndex) {
+        ListIterator<Layer> layerIterator = layers.listIterator(setLayerIndex + 1);
+        Layer setLayer = layerIterator.previous();
+        double x = setLayer.getX();
+        int size = setLayer.size();
+
+        while (layerIterator.hasPrevious()) {
+            Layer layer = layerIterator.previous();
+
+            int newSize = layer.size();
+            int diff = Math.abs(newSize - size);
+            x -= (layer.getWidth() + layerPadding * 1.1 * newSize + diffLayerPadding * diff);
+
+            layer.setX(x);
+            double y = 50;
+            for (DrawableNode d : layer) {
+                d.setLocation(x, y);
+                y += LINE_PADDING;
             }
+            size = newSize;
         }
-        return layers.size() / 2;
-    }
-
-    private Layer getRightCenterLayer() {
-        return this.layers.get(findCenterLayerIndex() + 1);
-    }
-
-    private Layer getLeftCenterLayer() {
-        return this.layers.get(findCenterLayerIndex() - 1);
-    }
-
-    public double getRightCenterLayerX() {
-        return getRightCenterLayer().getNodes().get(0).getCenter().getX();
-    }
-
-    public double getLeftCenterLayerX() {
-        return getLeftCenterLayer().getNodes().get(0).getCenter().getX();
-    }
-
-    private int firstSegment(Layer layer) {
-        for (DrawableNode node : layer.getNodes()) {
-            if (node instanceof DrawableSegment) {
-                return node.getIdentifier();
-            }
-        }
-        return 0;
-    }
-
-    public void incrementCenterNode() {
-        Layer newCenterLayer = getRightCenterLayer();
-        this.setCenterNode(firstSegment(newCenterLayer));
-    }
-
-    public void decrementCenterNode() {
-        Layer newCenterLayer = getLeftCenterLayer();
-        this.setCenterNode(firstSegment(newCenterLayer));
     }
 
     /**
@@ -348,12 +297,12 @@ public class SubGraph {
     }
 
     /**
-     * Put all nodes in {@link Layer Layers}. This method is used when {@link #layout() laying out} the graph.
+     * Put all nodes in {@link Layer Layers}. This method is used when {@link #layout laying out} the graph.
      * This will put each node in a Layer one higher than each of its parents.
      *
      * @return A {@link List} of Layers with all the nodes (all nodes are divided over the Layers).
      */
-    private List<Layer> findLayers() {
+    private ArrayList<Layer> findLayers() {
         long startTime = System.nanoTime();
         List<DrawableNode> sorted = topoSort();
         long finishTime = System.nanoTime();
@@ -362,7 +311,7 @@ public class SubGraph {
         Console.println("TIME OF TOPOSORT:  " + millisecondTime);
         Console.println("Amount of nodes: " + sorted.size());
         Map<DrawableNode, Integer> nodeLevel = new HashMap<>();
-        List<Layer> layerList = new ArrayList<>();
+        ArrayList<Layer> layerList = new ArrayList<>();
 
         for (DrawableNode node : sorted) {
             int maxParentLevel = -1;
@@ -521,24 +470,38 @@ public class SubGraph {
     }
 
     private void addFromRootNodes() {
-        // Create a new rootLayer
-        Layer newRootLayer = new Layer();
-        //take the parent of all the root nodes and add these to a layer.
-        for (DrawableNode drawableNode : rootLayer) {
-            for (Integer parent : drawableNode.getParents()) {
-                newRootLayer.add(new DrawableSegment(graph, parent));
+        SubGraph subGraph = new SubGraph(graph);
+
+        findNodes(subGraph, layers.get(0).getNodes(), this.nodes, DEFAULT_DYNAMIC_RADIUS);
+
+        this.mergeLeftSubGraphIntoThisSubGraph(subGraph);
+    }
+
+    private void mergeLeftSubGraphIntoThisSubGraph(SubGraph leftSubGraph) {
+        this.nodes.putAll(leftSubGraph.nodes);
+        this.rootNodes = leftSubGraph.rootNodes;
+        leftSubGraph.endNodes.forEach((id, node) -> {
+            boolean addToRootNodes = false;
+            for (Integer childId : node.getChildren()) {
+                if (this.nodes.containsKey(childId)) {
+                    addToRootNodes = true;
+                    break;
+                }
             }
-        }
-//        TODO: check if there is no parent within the new layer.
-//        for (DrawableNode newRoots: newRootLayer){
-//            for (Integer children: newRoots.getChildren()){
-//                if(newRootLayer.contains())
-//            }
-//        }
-        rootLayerLayout(rootLayer, newRootLayer);
-        rootLayer = newRootLayer;
+            if (!addToRootNodes) {
+                for (Integer parentId : node.getParents()) {
+                    if (this.nodes.containsKey(parentId)) {
+                        addToRootNodes = true;
+                        break;
+                    }
+                }
+            }
+            if (addToRootNodes) {
+                this.rootNodes.put(id, node);
+            }
+        });
 
-
+        // TODO: find DummyNodes between subgraphs. Just use findDummyNodes on full graph?
     }
 
     public void rootLayerLayout(Layer oldRootLayer, Layer newRootLayer) {
@@ -549,32 +512,15 @@ public class SubGraph {
 
     private void createDummyNodesRoot(Layer newRootLayer) {
         // TODO: Implement :D
+
     }
 
     public void addFromEndNodes() {
-        // Create a new endLayer
-        Layer newEndLayer = new Layer();
-        //take the child of all the end nodes and add these to a layer.
-        for (DrawableNode drawableNode : endLayer) {
-            for (Integer child : drawableNode.getChildren()) {
-                DrawableSegment segment = new DrawableSegment(graph, child);
-                if (!newEndLayer.contains(segment)) {
-                    newEndLayer.add(segment);
-                }
-            }
-        }
-//        TODO: check if there is no parent within the new layer.
-//        for (DrawableNode newRoots: newRootLayer){
-//            for (Integer children: newRoots.getChildren()){
-//                if(newRootLayer.contains())
-//            }
-//        }
-        endLayerLayout(endLayer, newEndLayer);
-        endLayer = newEndLayer;
-        for (DrawableNode node : endLayer) {
-            this.nodes.put(node.getIdentifier(), node);
-        }
+        GraphPart graphPart = findNodes(layers.get(layers.size() - 1).getNodes(), DEFAULT_DYNAMIC_RADIUS);
 
+        layers.get(layers.size() - 1).getNodes().forEach(node -> graphPart.getNodes().put(node.getIdentifier(), node));
+
+        layout(graphPart);
     }
 
     public void endLayerLayout(Layer oldEndLayer, Layer newEndLayer) {
@@ -588,7 +534,7 @@ public class SubGraph {
         System.out.println(newEndLayer.size());
         int diff = Math.abs(newSize - size);
         double y = 50;
-        x += layerPadding + 7 * diff;
+        x += layerPadding + diffLayerPadding * diff;
         for (DrawableNode d : newEndLayer) {
             d.setLocation(x, y);
             y += LINE_PADDING;
@@ -656,5 +602,6 @@ public class SubGraph {
 
     public void scaleLayerPadding(double zoom) {
         this.layerPadding /= zoom;
+        this.diffLayerPadding /= zoom;
     }
 }
