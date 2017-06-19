@@ -1,7 +1,6 @@
 package programminglife.model.drawing;
 
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import programminglife.model.GenomeGraph;
 import programminglife.model.Link;
 import programminglife.model.XYCoordinate;
@@ -11,125 +10,172 @@ import java.util.Collection;
 /**
  * A segment that also implements {@link Drawable}.
  */
-public interface DrawableNode extends Drawable {
+public abstract class DrawableNode implements Drawable {
+
+    private final GenomeGraph graph;
+    private final int id;
+
+    private XYCoordinate location;
+    private XYCoordinate dimensions;
+
+    /**
+     * Constructor for a DrawableNode.
+     * @param graph The {@link GenomeGraph} that this DrawableNode is part of.
+     * @param id The id for this DrawableNode. These should be non-negative for Nodes actually in the
+     *           graph ({@link DrawableSegment}), and negative for Nodes that are not in the
+     *           graph ({@link DrawableDummy}).
+     */
+    public DrawableNode(GenomeGraph graph, int id) {
+        this.graph = graph;
+        this.id = id;
+
+        this.dimensions = new XYCoordinate(0, 0);
+        this.location = new XYCoordinate(0, 0);
+    }
 
     /**
      * Get the {@link GenomeGraph}.
      * @return the graph
      */
-    GenomeGraph getGraph();
+    GenomeGraph getGraph() {
+        return graph;
+    }
 
     /**
      * Set if the dimensions are up to date.
      * @param upToDate {@link boolean} true if up to date else false
      */
-    void setDrawDimensionsUpToDate(boolean upToDate);
+    abstract void setDrawDimensionsUpToDate(boolean upToDate);
 
     /**
      * Get if the dimensions are up to date.
      * @return boolean true if up to date else false
      */
-    boolean isDrawDimensionsUpToDate();
+    abstract boolean isDrawDimensionsUpToDate();
 
     /**
      * Get the IDs of children of this.
      * @return IDs of drawable children
      */
-    Collection<Integer> getChildren();
+    abstract Collection<Integer> getChildren();
 
     /**
      * Get the IDs of parents of this.
      * @return IDs of drawable parents.
      */
-    Collection<Integer> getParents();
+    abstract Collection<Integer> getParents();
 
     /**
      * Replace a parent with another one.
      * @param oldParent the parent to replace
      * @param newParent the new parent
      */
-    void replaceParent(DrawableNode oldParent, DrawableNode newParent);
+    abstract void replaceParent(DrawableNode oldParent, DrawableNode newParent);
 
     /**
      * Replace child with another one.
      * @param oldChild the child to replace
      * @param newChild the new child
      */
-    void replaceChild(DrawableNode oldChild, DrawableNode newChild);
+    abstract void replaceChild(DrawableNode oldChild, DrawableNode newChild);
 
     /**
      * Information {@link String} about this.
      * @return info
      */
-    String details();
+    public abstract String details();
 
     /**
      * Get the IDs of genomes through this.
      * @return the IDs of genomes
      */
-    int[] getGenomes();
+    public abstract int[] getGenomes();
 
     /**
      * Color this according to contents.
      */
-    void colorize();
+    public abstract void colorize();
 
     /**
      * Set the location to draw this.
      * @param x the x location
      * @param y the y location
      */
-    void setLocation(double x, double y);
+    public void setLocation(double x, double y) {
+        this.location = new XYCoordinate(x, y);
+    }
 
     /**
      * Get a {@link Link} from this.
      * @param child the {@link DrawableNode} to get the {@link Link} to
      * @return it's link
      */
-    Link getLink(DrawableNode child);
+    public abstract Link getLink(DrawableNode child);
 
     /**
      * Set the size of this drawing.
      */
-    void setDrawDimensions();
+    public abstract void updateDrawDimensions();
 
     /**
-     * Get the width of the node
-     * @return The width of the node
+     * Get the width of the node.
+     * @return The width of the node.
      */
-    double getWidth();
+    public double getWidth() {
+        return dimensions.getX();
+    }
 
     /**
-     * Get the height of the node
-     * @return The height of the node
+     * Get the height of the node.
+     * @return The height of the node.
      */
-    double getHeight();
+    public double getHeight() {
+        return dimensions.getY();
+    }
 
     /**
      * getter for the center of the left border.
      * @return XYCoordinate.
      */
-    XYCoordinate getLeftBorderCenter();
+    public XYCoordinate getLeftBorderCenter() {
+        return new XYCoordinate(location.getX(), location.getY() + 0.5 * getHeight());
+    }
 
     /**
      * getter for the center.
      * @return XYCoordinate.
      */
-    XYCoordinate getCenter();
+    public XYCoordinate getCenter() {
+        return new XYCoordinate(location.getX() + 0.5 * getWidth(), location.getY() + 0.5 * getHeight());
+    }
 
     /**
      * getter for the center of the right border.
      * @return XYCoordinate.
      */
-    XYCoordinate getRightBorderCenter();
+    public XYCoordinate getRightBorderCenter() {
+        return new XYCoordinate(location.getX() + getWidth(), location.getY() + 0.5 * getHeight());
+    }
 
-    Color getStrokeColor();
+    /**
+     * Returns the {@link Color} of this DrawableNode.
+     * @return the {@link Color} of this DrawableNode.
+     */
+    public abstract Color getStrokeColor();
 
-    int getIdentifier();
+    public final int getIdentifier() {
+        return id;
+    }
 
-    XYCoordinate getLocation();
+    public XYCoordinate getLocation() {
+        return location;
+    }
 
-    void setWidth(double width);
+    public void setWidth(double width) {
+        this.dimensions = new XYCoordinate(width, getHeight());
+    }
 
-    void setHeight(double height);
+    public void setHeight(double height) {
+        this.dimensions = new XYCoordinate(getWidth(), height);
+    }
 }
