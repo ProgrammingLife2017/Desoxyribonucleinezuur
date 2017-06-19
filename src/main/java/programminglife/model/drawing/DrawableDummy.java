@@ -18,9 +18,6 @@ public class DrawableDummy extends DrawableNode {
     private double height;
     private boolean drawDimensionsUpToDate = false;
 
-    private int parentID;
-    private int childID;
-
     private DrawableNode parent;
     private DrawableNode child;
 
@@ -54,8 +51,8 @@ public class DrawableDummy extends DrawableNode {
 
     @Override
     public void replaceParent(DrawableNode oldParent, DrawableNode newParent) {
-        if (this.parentID == oldParent.getIdentifier()) {
-            this.parentID = newParent.getIdentifier();
+        if (this.parent.getIdentifier() == oldParent.getIdentifier()) {
+            this.parent = newParent;
         } else {
             throw new NoSuchElementException(
                     String.format("The node to be replaced (%d) is not a parent of this node (%d).",
@@ -65,8 +62,8 @@ public class DrawableDummy extends DrawableNode {
 
     @Override
     public void replaceChild(DrawableNode oldChild, DrawableNode newChild) {
-        if (this.childID == oldChild.getIdentifier()) {
-            this.childID = newChild.getIdentifier();
+        if (this.child.getIdentifier() == oldChild.getIdentifier()) {
+            this.child = newChild;
 
         } else {
             throw new NoSuchElementException(

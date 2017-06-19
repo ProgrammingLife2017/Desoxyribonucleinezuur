@@ -59,9 +59,6 @@ public class MiniMapController {
         gc.clearRect(0, 0, miniMap.getWidth(), miniMap.getHeight());
         drawMiniMap();
         gc.setFill(Color.RED);
-        System.out.println(centerNode);
-        System.out.println(size);
-        System.out.println(miniMap.getWidth());
         gc.fillOval((centerNode / (double) size) * miniMap.getWidth(), 20, 10, 10);
     }
 }
