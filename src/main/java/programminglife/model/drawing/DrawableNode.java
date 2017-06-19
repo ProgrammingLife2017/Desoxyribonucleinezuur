@@ -3,15 +3,16 @@ package programminglife.model.drawing;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import programminglife.model.GenomeGraph;
-import programminglife.model.Link;
 import programminglife.model.XYCoordinate;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
 
 /**
  * A segment that also implements {@link Drawable}.
  */
-public interface DrawableNode extends Drawable {
+public abstract DrawableNode extends Drawable {
+
 
     /**
      * Get the {@link GenomeGraph}.
@@ -71,8 +72,10 @@ public interface DrawableNode extends Drawable {
 
     /**
      * Color this according to contents.
+     * @param sg the {@link SubGraph} this {@link DrawableNode} is in
      */
-    void colorize();
+    public abstract void colorize(SubGraph sg);
+
 
     /**
      * Set the location to draw this.
@@ -80,13 +83,6 @@ public interface DrawableNode extends Drawable {
      * @param y the y location
      */
     void setLocation(double x, double y);
-
-    /**
-     * Get a {@link Link} from this.
-     * @param child the {@link DrawableNode} to get the {@link Link} to
-     * @return it's link
-     */
-    Link getLink(DrawableNode child);
 
     /**
      * Set the size of this drawing.
@@ -123,13 +119,31 @@ public interface DrawableNode extends Drawable {
      */
     XYCoordinate getRightBorderCenter();
 
-    Color getStrokeColor();
+    /**
+     * Getter for top left corner of a Segment.
+     * @return {@link XYCoordinate} with the values of the top left corner.
+     */
+    XYCoordinate getLocation() {
+        return new XYCoordinate((int) this.getX(), (int) this.getY());
+    }
 
-    int getIdentifier();
+    public Collection<Integer> getGenomes();
 
-    XYCoordinate getLocation();
+    /**
+     * Add genomes to the collection.
+     * @param genomes a {@link Collection} of genome IDs
+     */
+    public final void addGenomes(Collection<Integer> genomes);
 
-    void setWidth(double width);
+    /**
+     * Return this {@link DrawableNode} if it is a {@link DrawableSegment}, else return its parent.
+     * @return the 'closest' parent {@link DrawableSegment}
+     */
+    public abstract DrawableNode getParentSegment();
 
-    void setHeight(double height);
+    /**
+     * Return this {@link DrawableNode} if it is a {@link DrawableSegment}, else return its child.
+     * @return the 'closest' child {@link DrawableSegment}
+     */
+    public abstract DrawableNode getChildSegment();
 }

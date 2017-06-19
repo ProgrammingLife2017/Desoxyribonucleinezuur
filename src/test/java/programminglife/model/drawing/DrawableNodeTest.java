@@ -1,9 +1,11 @@
 package programminglife.model.drawing;
 
-import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import programminglife.model.GenomeGraph;
 import programminglife.model.XYCoordinate;
-import programminglife.parser.Cache;
 import programminglife.utility.InitFXThread;
 
 import static org.junit.Assert.assertEquals;
@@ -24,21 +26,16 @@ public class DrawableNodeTest {
 
     @Before
     public void setUp() throws Exception {
-        Cache.removeDB(GRAPH_NAME);
         g = new GenomeGraph(GRAPH_NAME);
         g.setSequence(1, "ATCG");
-        g.addNode(1);
+        g.replaceNode(1);
+        g.setGenomes(1, new int[0]);
         node = new DrawableSegment(g, 1);
     }
 
     @After
     public void tearDown() throws Exception {
         g.removeCache();
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-        Cache.removeDB(GRAPH_NAME);
     }
 
 

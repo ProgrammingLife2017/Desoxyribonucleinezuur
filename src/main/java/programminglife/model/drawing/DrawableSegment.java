@@ -2,10 +2,10 @@ package programminglife.model.drawing;
 
 import javafx.scene.paint.Color;
 import programminglife.model.GenomeGraph;
-import programminglife.model.Link;
 import programminglife.model.XYCoordinate;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * A Segment that also Implements {@link Drawable}.
@@ -36,11 +36,9 @@ public class DrawableSegment implements DrawableNode {
         this.graph = graph;
         this.id = nodeID;
 
-        parents = new LinkedHashSet<>();
-        children = new LinkedHashSet<>();
-
-        Arrays.stream(graph.getParentIDs(nodeID)).forEach(id -> parents.add(id));
-        Arrays.stream(graph.getChildIDs(nodeID)).forEach(id -> children.add(id));
+        parents = Arrays.stream(graph.getParentIDs(nodeID)).boxed().collect(Collectors.toSet());
+        children = Arrays.stream(graph.getChildIDs(nodeID)).boxed().collect(Collectors.toSet());
+        this.addGenomes(Arrays.stream(graph.getGenomes(nodeID)).boxed().collect(Collectors.toSet()));
 
         this.setDrawDimensions();
     }
@@ -171,13 +169,18 @@ public class DrawableSegment implements DrawableNode {
         this.setDrawDimensionsUpToDate(true);
     }
 
-    public double getGenomeFraction() {
-        return this.getGraph().getGenomeFraction(this.getIdentifier());
+    @Override
+    public DrawableNode getParentSegment() {
+        return this; // Don't ask!
     }
 
     @Override
-    public int[] getGenomes() {
-        return this.getGraph().getGenomes(this.getIdentifier());
+    public DrawableNode getChildSegment() {
+        return this; // Don't ask!
+    }
+
+    public double getGenomeFraction() {
+        return this.getGraph().getGenomeFraction(this.getIdentifier());
     }
 
     /**
@@ -229,24 +232,10 @@ public class DrawableSegment implements DrawableNode {
     }
 
     /**
-     * Get the {@link Link} between this node and the child drawable node.
-     * @param child The {@link DrawableSegment} that the link goes to.
-     * @return {@link Link} between the two nodes.
-     */
-    @Override
-    public Link getLink(DrawableNode child) {
-        if (child instanceof DrawableDummy) {
-            return child.getLink(null);
-        } else {
-            return getGraph().getLink(this.getIdentifier(), child.getIdentifier());
-        }
-    }
-
-    /**
      * Color a {@link DrawableSegment} depending on its properties.
      */
     @Override
-    public void colorize() {
+    public void colorize(SubGraph sg) {
         double genomeFraction = this.getGenomeFraction();
         double maxSaturation = 0.8, minSaturation = 0.05;
         double saturation = minSaturation + genomeFraction * (maxSaturation - minSaturation);

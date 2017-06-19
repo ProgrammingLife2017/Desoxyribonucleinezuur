@@ -1,7 +1,9 @@
 package programminglife.model.drawing;
 
-import org.jetbrains.annotations.NotNull;
 import programminglife.model.GenomeGraph;
+
+import java.util.LinkedHashMap;
+import org.eclipse.collections.impl.factory.Sets;
 import programminglife.model.XYCoordinate;
 import programminglife.utility.Console;
 
@@ -26,6 +28,9 @@ public class SubGraph {
     private GenomeGraph graph;
     private LinkedHashMap<Integer, DrawableNode> nodes;
     private boolean layout;
+    private Map<DrawableNode, Map<DrawableNode, Collection<Integer>>> genomes;
+    private int numberOfGenomes;
+
     /**
      * The radius around the center node. Eventually,
      * this SubGraph should only include nodes with a *longest* path of at most radius.
@@ -52,6 +57,8 @@ public class SubGraph {
         this.radius = radius;
         this.layout = false;
 
+        this.numberOfGenomes = graph.getTotalGenomeNumber();
+
         // TODO: also go from all parents to children within 2*radius + 1; and vice-versa from children.
         this.nodes = findParents(centerNode, radius);
 
@@ -59,6 +66,10 @@ public class SubGraph {
         if (!this.nodes.containsKey(centerNode.getIdentifier())) {
             this.nodes.put(centerNode.getIdentifier(), centerNode);
         }
+
+        long genomeTime = System.nanoTime();
+        this.calculateGenomes();
+        Console.println("Time to find genomes through edge: " + (System.nanoTime() - genomeTime) / 1000000);
     }
 
     // TODO: change findParents and findChildren to reliably only find nodes with a *longest* path of at most radius.
@@ -445,6 +456,51 @@ public class SubGraph {
     }
 
     /**
+     * Calculate genomes through all outgoing edges of a parent.
+     * @param parent find all genomes through edges from this parent
+     * @return a {@link Map} of  collections of genomes through links
+     */
+    Map<DrawableNode, Collection<Integer>> calculateGenomes(DrawableNode parent) {
+        Map<DrawableNode, Collection<Integer>> outgoingGenomes = new LinkedHashMap<>();
+
+        // Create set of parent genomes
+        Set<Integer> parentGenomes = new LinkedHashSet<>(parent.getGenomes());
+        // Topo sort (= natural order) children
+        Collection<DrawableNode> children = this.getChildren(parent);
+        // For every child (in order); do
+        children.stream()
+                .sorted(Comparator.comparingInt(DrawableNode::getIdentifier))
+                .forEach(child -> {
+                    Set<Integer> childGenomes = new LinkedHashSet<>(child.getGenomes());
+                    // Find mutual genomes between parent and child
+                    Set<Integer> mutualGenomes = Sets.intersect(parentGenomes, childGenomes);
+                    // Add mutual genomes to edge
+                    outgoingGenomes.put(child, mutualGenomes);
+
+                    // Subtract mutual genomes from parent set
+                    parentGenomes.removeAll(mutualGenomes);
+                });
+
+        return outgoingGenomes;
+    }
+
+    /**
+     * Calculate genomes through edge, based on topological ordering and node-genome information.
+     * @return a {@link Map} of {@link Map Maps} of collections of genomes through links
+     */
+    Map<DrawableNode, Map<DrawableNode, Collection<Integer>>> calculateGenomes() {
+        Map<DrawableNode, Map<DrawableNode, Collection<Integer>>> genomes = new LinkedHashMap<>();
+        // For every node in the subGraph
+        for (DrawableNode parent : this.nodes.values()) {
+            Map<DrawableNode, Collection<Integer>> parentGenomes = this.calculateGenomes(parent);
+            genomes.put(parent, parentGenomes);
+        }
+
+        this.genomes = genomes;
+        return this.genomes;
+    }
+
+    /**
      * Set the centerNode of this SubGraph.
      * Nodes that are now outside the radius of this SubGraph will be removed,
      * and Nodes that are now inside will be added.
@@ -475,5 +531,13 @@ public class SubGraph {
 
     public GenomeGraph getGraph() {
         return graph;
+    }
+
+    public Map<DrawableNode, Map<DrawableNode, Collection<Integer>>> getGenomes() {
+        return genomes;
+    }
+
+    public int getNumberOfGenomes() {
+        return numberOfGenomes;
     }
 }

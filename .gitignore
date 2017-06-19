@@ -14,7 +14,8 @@ buildNumber.properties
 # Application data files
 data/
 bookmarks.xml
-Recent.txt
+RecentGFA.txt
+RecentGFF.txt
 
 # Database/cache files
 *.db

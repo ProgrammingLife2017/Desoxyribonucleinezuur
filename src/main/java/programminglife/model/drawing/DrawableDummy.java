@@ -2,17 +2,13 @@ package programminglife.model.drawing;
 
 import javafx.scene.paint.Color;
 import programminglife.model.GenomeGraph;
-import programminglife.model.Link;
 import programminglife.model.XYCoordinate;
-
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 /**
  * A class that handles the creation and usage of dummy nodes.
  */
-public class DrawableDummy implements DrawableNode {
+public class DrawableDummy extends DrawableNode {
     public static final int DUMMY_HEIGHT = 5;
 
     private final GenomeGraph graph;
@@ -27,7 +23,9 @@ public class DrawableDummy implements DrawableNode {
 
     private int parentID;
     private int childID;
-    private Link link;
+
+    private DrawableNode parent;
+    private DrawableNode child;
 
     /**
      * Create a dummy node.
@@ -40,22 +38,21 @@ public class DrawableDummy implements DrawableNode {
         this.graph = graph;
         this.id = id;
 
-        this.parentID = parentNode.getIdentifier();
-        this.childID = childNode.getIdentifier();
-        this.link = parentNode.getLink(childNode);
+        this.parent = parentNode;
+        this.child = childNode;
     }
 
     @Override
     public Collection<Integer> getChildren() {
         Collection<Integer> result = new LinkedHashSet();
-        result.add(childID);
+        result.add(child.getIdentifier());
         return result;
     }
 
     @Override
     public Collection<Integer> getParents() {
         Collection result = new LinkedHashSet();
-        result.add(parentID);
+        result.add(parent.getIdentifier());
         return result;
     }
 
@@ -74,6 +71,7 @@ public class DrawableDummy implements DrawableNode {
     public void replaceChild(DrawableNode oldChild, DrawableNode newChild) {
         if (this.childID == oldChild.getIdentifier()) {
             this.childID = newChild.getIdentifier();
+
         } else {
             throw new NoSuchElementException(
                     String.format("The node to be replaced (%d) is not a child of this node (%d).",
@@ -81,19 +79,37 @@ public class DrawableDummy implements DrawableNode {
         }
     }
 
+    /**
+     * Information {@link String} about this.
+     *
+     * @return info
+     */
     @Override
     public String details() {
-        return this.link.details();
+        return toString();
     }
 
     @Override
-    public int[] getGenomes() {
-        return this.link.getGenomes();
-    }
+    public void colorize(SubGraph sg) {
+        double genomeFraction = 0.d;
+        Map<DrawableNode, Collection<Integer>> from = sg.getGenomes().get(this.getParentSegment());
+        if (from != null) {
+            Collection<Integer> genomes = from.get(this.getChildSegment());
+            if (genomes != null) {
+                genomeFraction = genomes.size() / (double) sg.getNumberOfGenomes();
+            }
+        }
 
-    @Override
-    public void colorize() {
-        DrawableEdge.colorize(this, this.link, this.getGraph());
+        double minStrokeWidth = 1.d, maxStrokeWidth = 6.5;
+        double strokeWidth = minStrokeWidth + genomeFraction * (maxStrokeWidth - minStrokeWidth);
+
+        double minBrightness = 0.6, maxBrightness = 0.25;
+        double brightness = minBrightness + genomeFraction * (maxBrightness - minBrightness);
+
+        Color strokeColor = Color.hsb(0.d, 0.d, brightness);
+
+        this.setStrokeWidth(strokeWidth);
+        this.setStroke(strokeColor);
     }
 
     @Override
@@ -102,12 +118,9 @@ public class DrawableDummy implements DrawableNode {
     }
 
     @Override
-    public Link getLink(DrawableNode child) {
-        return this.link;
-    }
+    protected void setDrawDimensions() {
 
-    @Override
-    public void setDrawDimensions() { }
+    }
 
     @Override
     public void setStrokeColor(Color color) {
@@ -199,5 +212,19 @@ public class DrawableDummy implements DrawableNode {
     @Override
     public XYCoordinate getLocation() {
         return this.location;
+    }
+
+    public String toString() {
+        return String.format("Link from %s to %s", this.parent, this.child);
+    }
+
+    @Override
+    public DrawableNode getParentSegment() {
+        return this.parent.getParentSegment();
+    }
+
+    @Override
+    public DrawableNode getChildSegment() {
+        return this.child.getChildSegment();
     }
 }
