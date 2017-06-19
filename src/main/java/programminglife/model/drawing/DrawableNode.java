@@ -96,8 +96,9 @@ public abstract class DrawableNode extends Rectangle implements Drawable {
 
     /**
      * Color this according to contents.
+     * @param sg the {@link SubGraph} this {@link DrawableNode} is in
      */
-    public abstract void colorize();
+    public abstract void colorize(SubGraph sg);
 
     /**
      * Set the location to draw this.
@@ -163,7 +164,7 @@ public abstract class DrawableNode extends Rectangle implements Drawable {
         return new XYCoordinate((int) this.getX(), (int) this.getY());
     }
 
-    public final Collection<Integer> getGenomes() {
+    public Collection<Integer> getGenomes() {
         return this.genomes;
     }
 
@@ -174,4 +175,16 @@ public abstract class DrawableNode extends Rectangle implements Drawable {
     public final void addGenomes(Collection<Integer> genomes) {
         this.genomes.addAll(genomes);
     }
+
+    /**
+     * Return this {@link DrawableNode} if it is a {@link DrawableSegment}, else return its parent.
+     * @return the 'closest' parent {@link DrawableSegment}
+     */
+    public abstract DrawableNode getParentSegment();
+
+    /**
+     * Return this {@link DrawableNode} if it is a {@link DrawableSegment}, else return its child.
+     * @return the 'closest' child {@link DrawableSegment}
+     */
+    public abstract DrawableNode getChildSegment();
 }

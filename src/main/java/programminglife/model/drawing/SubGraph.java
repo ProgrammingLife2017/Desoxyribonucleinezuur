@@ -26,6 +26,9 @@ public class SubGraph {
     private GenomeGraph graph;
     private LinkedHashMap<Integer, DrawableNode> nodes;
     private boolean layout;
+    private Map<DrawableNode, Map<DrawableNode, Collection<Integer>>> genomes;
+    private int numberOfGenomes;
+
     /**
      * The radius around the center node. Eventually,
      * this SubGraph should only include nodes with a *longest* path of at most radius.
@@ -52,6 +55,8 @@ public class SubGraph {
         this.radius = radius;
         this.layout = false;
 
+        this.numberOfGenomes = graph.getTotalGenomeNumber();
+
         // TODO: also go from all parents to children within 2*radius + 1; and vice-versa from children.
         this.nodes = findParents(centerNode, radius);
 
@@ -59,6 +64,10 @@ public class SubGraph {
         if (!this.nodes.containsKey(centerNode.getIdentifier())) {
             this.nodes.put(centerNode.getIdentifier(), centerNode);
         }
+
+        long genomeTime = System.nanoTime();
+        this.calculateGenomes();
+        Console.println("Time to find genomes through edge: " + (System.nanoTime() - genomeTime) / 1000000);
     }
 
     // TODO: change findParents and findChildren to reliably only find nodes with a *longest* path of at most radius.
@@ -455,21 +464,20 @@ public class SubGraph {
         // Create set of parent genomes
         Set<Integer> parentGenomes = new LinkedHashSet<>(parent.getGenomes());
         // Topo sort (= natural order) children
-        TreeSet<Integer> childIDs = new TreeSet<>(parent.getChildren());
+        Collection<DrawableNode> children = this.getChildren(parent);
         // For every child (in order); do
-        for (int childID : childIDs) {
-            DrawableNode child = this.nodes.get(childID);
-            Set<Integer> childGenomes = new LinkedHashSet<>(child.getGenomes());
-            // Find mutual genomes between parent and child
-            Set<Integer> mutualGenomes = Sets.intersect(parentGenomes, childGenomes);
-            // Add mutual genomes to edge
-            // TODO add genomes to the DrawableEdge
-            // parent.edgeTo(child).addGenomes(mutualGenomes);
-            outgoingGenomes.put(child, mutualGenomes);
+        children.stream()
+                .sorted(Comparator.comparingInt(DrawableNode::getIdentifier))
+                .forEach(child -> {
+                    Set<Integer> childGenomes = new LinkedHashSet<>(child.getGenomes());
+                    // Find mutual genomes between parent and child
+                    Set<Integer> mutualGenomes = Sets.intersect(parentGenomes, childGenomes);
+                    // Add mutual genomes to edge
+                    outgoingGenomes.put(child, mutualGenomes);
 
-            // Subtract mutual genomes from parent set
-            parentGenomes.removeAll(mutualGenomes);
-        }
+                    // Subtract mutual genomes from parent set
+                    parentGenomes.removeAll(mutualGenomes);
+                });
 
         return outgoingGenomes;
     }
@@ -486,7 +494,8 @@ public class SubGraph {
             genomes.put(parent, parentGenomes);
         }
 
-        return genomes;
+        this.genomes = genomes;
+        return this.genomes;
     }
 
     /**
@@ -520,5 +529,13 @@ public class SubGraph {
 
     public GenomeGraph getGraph() {
         return graph;
+    }
+
+    public Map<DrawableNode, Map<DrawableNode, Collection<Integer>>> getGenomes() {
+        return genomes;
+    }
+
+    public int getNumberOfGenomes() {
+        return numberOfGenomes;
     }
 }
