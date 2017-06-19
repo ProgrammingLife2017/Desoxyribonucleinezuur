@@ -171,7 +171,7 @@ public class GraphController {
                 showInfoEdge(edge, 10);
             }
         });
-        edge.colorize(graph);
+        edge.colorize(subGraph);
         edge.setStartNode(edge.getStart());
         edge.setEndNode(edge.getEnd());
         this.grpDrawArea.getChildren().add(edge);
@@ -195,7 +195,7 @@ public class GraphController {
             });
         }
 
-        drawableNode.colorize();
+        drawableNode.colorize(subGraph);
         this.grpDrawArea.getChildren().add(drawableNode);
     }
 
@@ -399,7 +399,7 @@ public class GraphController {
      */
     private void removeHighlight(Collection<DrawableNode> nodes) {
         for (DrawableNode node: nodes) {
-            node.colorize();
+            node.colorize(subGraph);
         }
     }
 

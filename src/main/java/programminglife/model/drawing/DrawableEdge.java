@@ -2,12 +2,11 @@ package programminglife.model.drawing;
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.Shape;
-import programminglife.model.GenomeGraph;
 import programminglife.model.XYCoordinate;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.Map;
 
 /**
  * A link that also Implements {@link Drawable}.
@@ -62,12 +61,18 @@ public class DrawableEdge extends Line implements Drawable {
     }
 
     /**
-     * Color a {@link Shape} depending on its properties.
-     * @param shape the {@link Shape} to color
-     * @param graph the {@link GenomeGraph} belonging to the {@link DrawableSegment} or {@link DrawableEdge}
+     * Color a {@link DrawableEdge} depending on its properties.
+     * @param sg the {@link SubGraph} belonging to the {@link DrawableEdge}
      */
-    public static void colorize(Shape shape, GenomeGraph graph) {
-        double genomeFraction = 1.d;
+    public void colorize(SubGraph sg) {
+        double genomeFraction = 0.d;
+        Map<DrawableNode, Collection<Integer>> from = sg.getGenomes().get(this.getStart().getParentSegment());
+        if (from != null) {
+            Collection<Integer> genomes = from.get(this.getEnd().getChildSegment());
+            if (genomes != null) {
+                genomeFraction = genomes.size() / (double) sg.getNumberOfGenomes();
+            }
+        }
 
         double minStrokeWidth = 1.d, maxStrokeWidth = 6.5;
         double strokeWidth = minStrokeWidth + genomeFraction * (maxStrokeWidth - minStrokeWidth);
@@ -77,16 +82,8 @@ public class DrawableEdge extends Line implements Drawable {
 
         Color strokeColor = Color.hsb(0.d, 0.d, brightness);
 
-        shape.setStrokeWidth(strokeWidth);
-        shape.setStroke(strokeColor);
-    }
-
-    /**
-     * Color a {@link DrawableEdge} depending on its properties.
-     * @param graph the {@link GenomeGraph} belonging to the {@link DrawableEdge}
-     */
-    public void colorize(GenomeGraph graph) {
-        colorize(this, graph);
+        this.setStrokeWidth(strokeWidth);
+        this.setStroke(strokeColor);
     }
 
     @Override

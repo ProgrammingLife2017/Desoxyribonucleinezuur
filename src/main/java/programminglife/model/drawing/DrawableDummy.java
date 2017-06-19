@@ -1,10 +1,9 @@
 package programminglife.model.drawing;
 
+import javafx.scene.paint.Color;
 import programminglife.model.GenomeGraph;
 
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 /**
  * A class that handles the creation and usage of dummy nodes.
@@ -74,8 +73,26 @@ public class DrawableDummy extends DrawableNode {
     }
 
     @Override
-    public void colorize() {
-        DrawableEdge.colorize(this, this.getGraph());
+    public void colorize(SubGraph sg) {
+        double genomeFraction = 0.d;
+        Map<DrawableNode, Collection<Integer>> from = sg.getGenomes().get(this.getParentSegment());
+        if (from != null) {
+            Collection<Integer> genomes = from.get(this.getChildSegment());
+            if (genomes != null) {
+                genomeFraction = genomes.size() / (double) sg.getNumberOfGenomes();
+            }
+        }
+
+        double minStrokeWidth = 1.d, maxStrokeWidth = 6.5;
+        double strokeWidth = minStrokeWidth + genomeFraction * (maxStrokeWidth - minStrokeWidth);
+
+        double minBrightness = 0.6, maxBrightness = 0.25;
+        double brightness = minBrightness + genomeFraction * (maxBrightness - minBrightness);
+
+        Color strokeColor = Color.hsb(0.d, 0.d, brightness);
+
+        this.setStrokeWidth(strokeWidth);
+        this.setStroke(strokeColor);
     }
 
     @Override
@@ -92,5 +109,15 @@ public class DrawableDummy extends DrawableNode {
     @Override
     public String toString() {
         return String.format("Link from %s to %s", this.parent, this.child);
+    }
+
+    @Override
+    public DrawableNode getParentSegment() {
+        return this.parent.getParentSegment();
+    }
+
+    @Override
+    public DrawableNode getChildSegment() {
+        return this.child.getChildSegment();
     }
 }

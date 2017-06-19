@@ -150,6 +150,16 @@ public class DrawableSegment extends DrawableNode {
         this.setDrawDimensionsUpToDate(true);
     }
 
+    @Override
+    public DrawableNode getParentSegment() {
+        return this; // Don't ask!
+    }
+
+    @Override
+    public DrawableNode getChildSegment() {
+        return this; // Don't ask!
+    }
+
     public double getGenomeFraction() {
         return this.getGraph().getGenomeFraction(this.getIdentifier());
     }
@@ -206,7 +216,7 @@ public class DrawableSegment extends DrawableNode {
      * Color a {@link DrawableSegment} depending on its properties.
      */
     @Override
-    public void colorize() {
+    public void colorize(SubGraph sg) {
         double genomeFraction = this.getGenomeFraction();
         double maxSaturation = 0.8, minSaturation = 0.05;
         double saturation = minSaturation + genomeFraction * (maxSaturation - minSaturation);
