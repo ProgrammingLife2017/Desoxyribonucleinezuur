@@ -442,25 +442,21 @@ public class GuiController implements Observer {
         });
         anchorGraphPanel.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> {
             double xDifference = event.getSceneX() - orgSceneX;
-            double yDifference = event.getSceneY() - orgSceneY;
             orgSceneX += xDifference;
-            orgSceneY += yDifference;
-            graphController.translate(xDifference, yDifference);
+            graphController.translate(xDifference);
             event.consume();
         });
         anchorGraphPanel.addEventHandler(ScrollEvent.SCROLL, event ->
-                zoom(event.getDeltaX(), event.getDeltaY(), event.getSceneX(), event.getSceneY(), ZOOM_FACTOR));
+                zoom(event.getDeltaX(), event.getDeltaY(), event.getSceneX(), ZOOM_FACTOR));
     }
 
     /**
      * Handles the zooming in and out of the group.
      * @param deltaX The scroll amount in the X direction. See {@link ScrollEvent#getDeltaX()}
-     * @param deltaY The scroll amount in the Y direction. See {@link ScrollEvent#getDeltaY()}
      * @param sceneX double for the x location.
-     * @param sceneY double for the y location.
      * @param delta double the factor by which is zoomed.
      */
-    private void zoom(double deltaX, double deltaY, double sceneX, double sceneY, double delta) {
+    private void zoom(double deltaX, double deltaY, double sceneX, double delta) {
         double oldScale = scale;
 
         if (deltaX < 0 || deltaY < 0) {
@@ -477,9 +473,8 @@ public class GuiController implements Observer {
 
         Bounds bounds = canvas.localToScene(canvas.getBoundsInLocal());
         double dx = (sceneX - bounds.getMinX());
-        double dy = (sceneY - bounds.getMinY());
 
-        graphController.translate(factor * dx, factor * dy);
+        graphController.translate(factor * dx);
     }
 
     /**

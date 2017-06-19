@@ -15,7 +15,7 @@ public class SubGraph {
     /**
      * The amount of padding between layers (horizontal padding).
      */
-    private static final int LAYER_PADDING = 20;
+    private double layerPadding = 20;
 
     /**
      * The amount of padding between nodes within a Layer (vertical padding).
@@ -263,12 +263,12 @@ public class SubGraph {
             int newSize = layer.size();
             int diff = Math.abs(newSize - size);
             double y = 50;
-            x += LAYER_PADDING + 7 * diff;
+            x += layerPadding + 7 * diff;
             for (DrawableNode d : layer) {
                 d.setLocation(x, y);
                 y += LINE_PADDING;
             }
-            x += layer.getWidth() + LAYER_PADDING * 0.1 * newSize;
+            x += layer.getWidth() + layerPadding * 0.1 * newSize;
             size = newSize;
         }
         endLayerX = x;
@@ -588,12 +588,12 @@ public class SubGraph {
         System.out.println(newEndLayer.size());
         int diff = Math.abs(newSize - size);
         double y = 50;
-        x += LAYER_PADDING + 7 * diff;
+        x += layerPadding + 7 * diff;
         for (DrawableNode d : newEndLayer) {
             d.setLocation(x, y);
             y += LINE_PADDING;
         }
-        x += newEndLayer.getWidth() + LAYER_PADDING * 0.1 * newSize;
+        x += newEndLayer.getWidth() + layerPadding * 0.1 * newSize;
         endLayerX = x;
     }
 
@@ -652,5 +652,9 @@ public class SubGraph {
 
     public GenomeGraph getGraph() {
         return graph;
+    }
+
+    public void scaleLayerPadding(double zoom) {
+        this.layerPadding /= zoom;
     }
 }

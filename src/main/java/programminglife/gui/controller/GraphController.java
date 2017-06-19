@@ -245,11 +245,10 @@ public class GraphController {
         canvas.setTranslateY(locationCenterY);
     }
 
-    public void translate(double xDifference, double yDifference) {
+    public void translate(double xDifference) {
         for (DrawableNode node : subGraph.getNodes().values()) {
             double oldXLocation = node.getLocation().getX();
-            double oldYLocation = node.getLocation().getY();
-            node.setLocation(oldXLocation + xDifference, oldYLocation + yDifference);
+            node.setLocation(oldXLocation + xDifference, node.getLocation().getY());
         }
         if (this.subGraph.getRightCenterLayerX() < canvas.getWidth() / 2) {
             this.subGraph.addFromEndNodes();
@@ -263,7 +262,8 @@ public class GraphController {
             double oldYLocation = node.getLocation().getY();
             node.setHeight(node.getHeight() / scale);
             node.setWidth(node.getWidth() / scale);
-            node.setLocation(oldXLocation / scale, oldYLocation / scale);
+            node.setLocation(oldXLocation / scale, oldYLocation);
+            subGraph.scaleLayerPadding(scale);
         }
         draw(canvas.getGraphicsContext2D());
     }
