@@ -57,11 +57,14 @@ public class GraphController {
         long startTimeProgram = System.nanoTime();
         DrawableSegment centerNode = new DrawableSegment(graph, center);
         centerNodeInt = centerNode.getIdentifier();
+        long startTimeSubGraph = System.nanoTime();
         subGraph = new SubGraph(centerNode, radius);
 
-        long startLayoutTime = System.nanoTime();
+        long finishTimeSubGraph = System.nanoTime();
 
+        long startLayoutTime = System.nanoTime();
         subGraph.layout();
+        long finishTimeLayout = System.nanoTime();
 
         long startTimeDrawing = System.nanoTime();
 
@@ -71,17 +74,21 @@ public class GraphController {
                 drawEdge(drawableNode, child);
             }
         }
+        long finishTimeDrawing = System.nanoTime();
 
         centerOnNodeId(center);
         highlightNode(center, Color.DARKORANGE);
 
         long finishTime = System.nanoTime();
         long differenceTimeProgram = finishTime - startTimeProgram;
-        long differenceTimeDrawing = finishTime - startTimeDrawing;
-        long differenceTimeLayout = finishTime - startLayoutTime;
+        long differenceTimeDrawing = finishTimeDrawing - startTimeDrawing;
+        long differenceTimeLayout = finishTimeLayout - startLayoutTime;
+        long differenceTimeSubGraph = finishTimeSubGraph - startTimeSubGraph;
         long msDifferenceTimeProgram = differenceTimeProgram / 1000000;
         long millisecondTimeDrawing = differenceTimeDrawing   / 1000000;
         long msDifferenceTimeLayout = differenceTimeLayout   / 1000000;
+        long msDifferenceTimeSubGraph = differenceTimeSubGraph / 1000000;
+        Console.println("time of SubGraph: " + msDifferenceTimeSubGraph);
         Console.println("Time of Drawing:  " + millisecondTimeDrawing);
         Console.println("Time of layout:  " + msDifferenceTimeLayout);
         Console.println("Time of Total Program:  " + msDifferenceTimeProgram);
