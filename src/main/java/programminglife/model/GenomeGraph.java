@@ -75,19 +75,6 @@ public class GenomeGraph {
     }
 
     /**
-<<<<<<< HEAD
-     * Get a {@link Link} from this graph.
-     * @param parentID the node to find the link from
-     * @param childID the node to find the link to
-     * @return the {@link Link} itself
-     */
-    public Link getLink(int parentID, int childID) {
-        return new Link(parentID, childID, new int[0]);
-    }
-
-    /**
-=======
->>>>>>> origin/develop
      * Getter for the ID's of the parents of a node.
      * @param nodeID node for which the parents are to be found.
      * @return int[] list of the parents.

@@ -11,9 +11,6 @@ import java.util.*;
 public class DrawableDummy extends DrawableNode {
     public static final int DUMMY_HEIGHT = 5;
 
-    private final GenomeGraph graph;
-    private final int id;
-
     private Color strokeColor;
     private double strokeWidth;
     private XYCoordinate location;
@@ -35,8 +32,7 @@ public class DrawableDummy extends DrawableNode {
      * @param graph the GenomeGraph currently drawn
      */
     public DrawableDummy(int id, DrawableNode parentNode, DrawableNode childNode, GenomeGraph graph) {
-        this.graph = graph;
-        this.id = id;
+        super(graph, id);
 
         this.parent = parentNode;
         this.child = childNode;
@@ -109,7 +105,7 @@ public class DrawableDummy extends DrawableNode {
         Color strokeColor = Color.hsb(0.d, 0.d, brightness);
 
         this.setStrokeWidth(strokeWidth);
-        this.setStroke(strokeColor);
+        this.setStrokeColor(strokeColor);
     }
 
     @Override
@@ -118,7 +114,7 @@ public class DrawableDummy extends DrawableNode {
     }
 
     @Override
-    protected void setDrawDimensions() {
+        protected void setDrawDimensions() {
 
     }
 
@@ -149,11 +145,6 @@ public class DrawableDummy extends DrawableNode {
     @Override
     public double getHeight() {
         return this.height;
-    }
-
-    @Override
-    public GenomeGraph getGraph() {
-        return this.graph;
     }
 
     @Override
@@ -202,11 +193,6 @@ public class DrawableDummy extends DrawableNode {
     @Override
     public Color getStrokeColor() {
         return this.strokeColor;
-    }
-
-    @Override
-    public int getIdentifier() {
-        return this.id;
     }
 
     @Override

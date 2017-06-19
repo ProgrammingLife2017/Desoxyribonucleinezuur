@@ -23,12 +23,7 @@ public class SubGraphTest {
     @BeforeClass
     public static void setUpClass() throws Exception {
         InitFXThread.setupClass();
-
-<<<<<<< HEAD
-        TEST_PATH = GenomeGraphTest.class.getResource("/test.gfa").toURI().getPath();
-=======
         TEST_PATH = new File(SubGraphTest.class.getResource("/test.gfa").toURI()).getAbsolutePath();
->>>>>>> origin/develop
     }
 
     @Before

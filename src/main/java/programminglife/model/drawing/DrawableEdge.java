@@ -98,16 +98,6 @@ public class DrawableEdge implements Drawable {
         return this.genomes;
     }
 
-    /**
-     * Add genomes in/through this {@link Drawable}.
-     *
-     * @param genomes a {@link Collection} of genome IDs
-     */
-    @Override
-    public void addGenomes(Collection<Integer> genomes) {
-        this.genomes.addAll(genomes);
-    }
-
     public double getStrokeWidth() {
         return this.strokeWidth;
     }

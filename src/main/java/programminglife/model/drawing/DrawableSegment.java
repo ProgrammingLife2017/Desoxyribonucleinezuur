@@ -10,11 +10,8 @@ import java.util.stream.Collectors;
 /**
  * A Segment that also Implements {@link Drawable}.
  */
-public class DrawableSegment implements DrawableNode {
+public class DrawableSegment extends DrawableNode {
     public static final double NODE_HEIGHT = 10;
-
-    private final GenomeGraph graph;
-    private final int id;
 
     private double strokeWidth;
     private Color fillColor;
@@ -33,8 +30,7 @@ public class DrawableSegment implements DrawableNode {
      * @param nodeID The segment to create this DrawableSegment from.
      */
     public DrawableSegment(GenomeGraph graph, int nodeID) {
-        this.graph = graph;
-        this.id = nodeID;
+        super(graph, nodeID);
 
         parents = Arrays.stream(graph.getParentIDs(nodeID)).boxed().collect(Collectors.toSet());
         children = Arrays.stream(graph.getChildIDs(nodeID)).boxed().collect(Collectors.toSet());
@@ -231,6 +227,11 @@ public class DrawableSegment implements DrawableNode {
         return getIdentifier();
     }
 
+    @Override
+    public Collection<Integer> getGenomes() {
+        return Arrays.stream(this.getGraph().getGenomes(this.getIdentifier())).boxed().collect(Collectors.toSet());
+    }
+
     /**
      * Color a {@link DrawableSegment} depending on its properties.
      */
@@ -257,11 +258,6 @@ public class DrawableSegment implements DrawableNode {
     public void setColors(Color fillColor, Color strokeColor) {
         this.fillColor = fillColor;
         this.strokeColor = strokeColor;
-    }
-
-    @Override
-    public GenomeGraph getGraph() {
-        return this.graph;
     }
 
     @Override
@@ -321,8 +317,5 @@ public class DrawableSegment implements DrawableNode {
         return null;
     }
 
-    @Override
-    public int getIdentifier() {
-        return this.id;
-    }
+
 }
