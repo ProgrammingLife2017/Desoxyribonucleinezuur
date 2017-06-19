@@ -197,6 +197,10 @@ public class DrawableDummy extends DrawableNode {
         return this.location;
     }
 
+    /**
+     * To string method of a dummy.
+     * @return Dummy representation of a string.
+     */
     public String toString() {
         return String.format("Link from %s to %s", this.parent, this.child);
     }

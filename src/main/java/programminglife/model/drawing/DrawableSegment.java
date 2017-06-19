@@ -255,6 +255,11 @@ public class DrawableSegment extends DrawableNode {
         this.strokeWidth = strokeWidth;
     }
 
+    /**
+     * Method to set the fill and stroke color of a {@link DrawableSegment}.
+     * @param fillColor {@link Color} is the color to fill the segment with.
+     * @param strokeColor {@link Color} is the color of the stroke.
+     */
     public void setColors(Color fillColor, Color strokeColor) {
         this.fillColor = fillColor;
         this.strokeColor = strokeColor;

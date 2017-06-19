@@ -10,8 +10,16 @@ import java.util.Collection;
  */
 public interface Drawable {
 
+    /**
+     * Sets the stroke color of a Drawable.
+     * @param color {@link Color} to set the stroke color to.
+     */
     void setStrokeColor(Color color);
 
+    /**
+     * Sets the stroke width of a Drawable.
+     * @param width double value of the width.
+     */
     void setStrokeWidth(double width);
 
     /**

@@ -5,10 +5,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
-
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
@@ -26,9 +24,9 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import jp.uphy.javafx.console.ConsoleView;
 import programminglife.ProgrammingLife;
-import programminglife.gui.ResizableCanvas;
 import programminglife.controller.MiniMapController;
 import programminglife.controller.RecentFileController;
+import programminglife.gui.ResizableCanvas;
 import programminglife.model.Feature;
 import programminglife.model.GenomeGraph;
 import programminglife.parser.AnnotationParser;
@@ -343,11 +341,16 @@ public class GuiController implements Observer {
             canvas.setTranslateY(graphController.getLocationCenterY());
         });
 
-        btnZoomReset.setOnAction(event -> {
+        btnZoomReset.setOnAction(event -> this.resetZoom());
+    }
+
+    /**
+     * Method to reset the zoom levels.
+     */
+    private void resetZoom() {
             scale = 1;
             canvas.setScaleX(1);
             canvas.setScaleY(1);
-        });
     }
 
     /**
@@ -391,6 +394,7 @@ public class GuiController implements Observer {
             Alerts.warning("Center node ID is not a number, try again with a number as input.");
         }
 
+        resetZoom();
         if (graphController.getGraph().contains(centerNode)) {
             this.graphController.clear();
             this.graphController.draw(centerNode, maxDepth);
@@ -463,7 +467,7 @@ public class GuiController implements Observer {
         scale = clamp(scale, MIN_SCALE, MAX_SCALE);
         double factor = (scale / oldScale) - 1;
 
-        graphController.zoom(factor+ 1);
+        graphController.zoom(factor + 1);
         //factor to determine the difference in the scales.
 
         Bounds bounds = canvas.localToScene(canvas.getBoundsInLocal());

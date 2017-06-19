@@ -156,6 +156,7 @@ public class GraphController {
 
     /**
      * Draws a edge on the location it has.
+     * @param gc {@link GraphicsContext} is the GraphicsContext required to draw.
      * @param parent {@link DrawableNode} is the node to be draw from.
      * @param child {@link DrawableNode} is the node to draw to.
      */
@@ -172,6 +173,7 @@ public class GraphController {
 
     /**
      * Draws a node on the location it has.
+     * @param gc {@link GraphicsContext} is the GraphicsContext required to draw.
      * @param drawableNode {@link DrawableNode} is the node to be drawn.
      */
     public void drawNode(GraphicsContext gc, DrawableNode drawableNode) {
@@ -245,6 +247,11 @@ public class GraphController {
         canvas.setTranslateY(locationCenterY);
     }
 
+    /**
+     * Translate function for the nodes. Used to change the location of nodes instead of mocing the canvas.
+     * @param xDifference double with the value of the change in the X (horizontal) direction.
+     * @param yDifference double with the value of the change in the Y (vertical) direction.
+     */
     public void translate(double xDifference, double yDifference) {
         for (DrawableNode node : subGraph.getNodes().values()) {
             double oldXLocation = node.getLocation().getX();
@@ -254,6 +261,11 @@ public class GraphController {
         draw(canvas.getGraphicsContext2D());
     }
 
+    /**
+     * Zoom function for the nodes. Used to increase the size of the nodes instead of zooming in on the canvas itself.
+     * @param scale double with the value of the increase of the nodes. Value higher than 1 means that the node size
+     * decreases, value below 1 means that the node size increases.
+     */
     public void zoom(double scale) {
         for (DrawableNode node : subGraph.getNodes().values()) {
             double oldXLocation = node.getLocation().getX();
@@ -265,6 +277,10 @@ public class GraphController {
         draw(canvas.getGraphicsContext2D());
     }
 
+    /**
+     * Draw method for the whole subgraph. Calls draw node and draw Edge for every node and edge.
+     * @param gc is the {@link GraphicsContext} required to draw.
+     */
     public void draw(GraphicsContext gc) {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
         for (DrawableNode drawableNode : subGraph.getNodes().values()) {
@@ -294,59 +310,59 @@ public class GraphController {
         anchorGraphInfo.getChildren().addAll(idText, parentsText, childrenText, id, parent, child);
     }
 
-//    /**
-//     * Method to show the information of a node.
-//     * @param node DrawableSegment the node which has been clicked on.
-//     * @param x int the x location of the TextField.
-//     */
-//    private void showInfoNode(DrawableSegment node, int x) {
-//        Text idText = new Text("ID: "); idText.setLayoutX(x); idText.setLayoutY(65);
-//        Text parentText = new Text("Parents: "); parentText.setLayoutX(x); parentText.setLayoutY(105);
-//        Text childText = new Text("Children: "); childText.setLayoutX(x); childText.setLayoutY(145);
-//        Text inEdgeText = new Text("Incoming Edges: "); inEdgeText.setLayoutX(x); inEdgeText.setLayoutY(185);
-//        Text outEdgeText = new Text("Outgoing Edges: "); outEdgeText.setLayoutX(x); outEdgeText.setLayoutY(225);
-//        Text seqLengthText = new Text("Sequence Length: "); seqLengthText.setLayoutX(x); seqLengthText.setLayoutY(265);
-//        Text genomeText = new Text("Genomes: "); genomeText.setLayoutX(x); genomeText.setLayoutY(305);
-//        Text seqText = new Text("Sequence: "); seqText.setLayoutX(x); seqText.setLayoutY(370);
-//
-//        anchorGraphInfo.getChildren().removeIf(node1 -> node1.getLayoutX() == x);
-//
-//        TextField idTextField = getTextField("ID: ", x, 70, Integer.toString(node.getIdentifier()));
-//
-//        StringBuilder parentSB = new StringBuilder();
-//        node.getParents().forEach(id -> parentSB.append(id).append(", "));
-//        TextField parents;
-//        if (parentSB.length() > 2) {
-//            parentSB.setLength(parentSB.length() - 2);
-//            parents = getTextField("Parents: ", x, 110, parentSB.toString());
-//        } else {
-//            parentSB.replace(0, parentSB.length(), "This node has no parent(s)");
-//            parents = getTextField("Parents: ", x, 110, parentSB.toString());
-//        }
-//
-//        StringBuilder childSB = new StringBuilder();
-//        node.getChildren().forEach(id -> childSB.append(id).append(", "));
-//        TextField children;
-//        if (childSB.length() > 2) {
-//            childSB.setLength(childSB.length() - 2);
-//            children = getTextField("Children: ", x, 150, childSB.toString());
-//        } else {
-//            childSB.replace(0, childSB.length(), "This node has no child(ren)");
-//            children = getTextField("Children: ", x, 150, childSB.toString());
-//        }
-//
-//        String genomesString = graph.getGenomeNames(node.getGenomes()).toString();
-//        String sequenceString = node.getSequence().replaceAll("(.{24})", "$1" + System.getProperty("line.separator"));
-//        TextField inEdges = getTextField("Incoming Edges: ", x, 190, Integer.toString(node.getParents().size()));
-//        TextField outEdges = getTextField("Outgoing Edges: ", x, 230, Integer.toString(node.getChildren().size()));
-//        TextField seqLength = getTextField("Sequence Length: ", x, 270, Integer.toString(node.getSequence().length()));
-//        TextArea genome = getTextArea("Genome: ", x, 310, genomesString.substring(1, genomesString.length() - 1), 40);
-//        genome.setWrapText(true);
-//        TextArea seq = getTextArea("Sequence: ", x, 375, sequenceString, 250);
-//        anchorGraphInfo.getChildren().addAll(idText, parentText, childText, inEdgeText,
-//                outEdgeText, genomeText, seqLengthText, seqText);
-//        anchorGraphInfo.getChildren().addAll(idTextField, parents, children, inEdges, outEdges, genome, seqLength, seq);
-//    }
+    /**
+     * Method to show the information of a node.
+     * @param node DrawableSegment the node which has been clicked on.
+     * @param x int the x location of the TextField.
+     */
+    private void showInfoNode(DrawableSegment node, int x) {
+        Text idText = new Text("ID: "); idText.setLayoutX(x); idText.setLayoutY(65);
+        Text parentText = new Text("Parents: "); parentText.setLayoutX(x); parentText.setLayoutY(105);
+        Text childText = new Text("Children: "); childText.setLayoutX(x); childText.setLayoutY(145);
+        Text inEdgeText = new Text("Incoming Edges: "); inEdgeText.setLayoutX(x); inEdgeText.setLayoutY(185);
+        Text outEdgeText = new Text("Outgoing Edges: "); outEdgeText.setLayoutX(x); outEdgeText.setLayoutY(225);
+        Text seqLengthText = new Text("Sequence Length: "); seqLengthText.setLayoutX(x); seqLengthText.setLayoutY(265);
+        Text genomeText = new Text("Genomes: "); genomeText.setLayoutX(x); genomeText.setLayoutY(305);
+        Text seqText = new Text("Sequence: "); seqText.setLayoutX(x); seqText.setLayoutY(370);
+
+        anchorGraphInfo.getChildren().removeIf(node1 -> node1.getLayoutX() == x);
+
+        TextField idTextField = getTextField("ID: ", x, 70, Integer.toString(node.getIdentifier()));
+
+        StringBuilder parentSB = new StringBuilder();
+        node.getParents().forEach(id -> parentSB.append(id).append(", "));
+        TextField parents;
+        if (parentSB.length() > 2) {
+            parentSB.setLength(parentSB.length() - 2);
+            parents = getTextField("Parents: ", x, 110, parentSB.toString());
+        } else {
+            parentSB.replace(0, parentSB.length(), "This node has no parent(s)");
+            parents = getTextField("Parents: ", x, 110, parentSB.toString());
+        }
+
+        StringBuilder childSB = new StringBuilder();
+        node.getChildren().forEach(id -> childSB.append(id).append(", "));
+        TextField children;
+        if (childSB.length() > 2) {
+            childSB.setLength(childSB.length() - 2);
+            children = getTextField("Children: ", x, 150, childSB.toString());
+        } else {
+            childSB.replace(0, childSB.length(), "This node has no child(ren)");
+            children = getTextField("Children: ", x, 150, childSB.toString());
+        }
+
+        String genomesString = graph.getGenomeNames(node.getGenomes()).toString();
+        String sequenceString = node.getSequence().replaceAll("(.{24})", "$1" + System.getProperty("line.separator"));
+        TextField inEdges = getTextField("Incoming Edges: ", x, 190, Integer.toString(node.getParents().size()));
+        TextField outEdges = getTextField("Outgoing Edges: ", x, 230, Integer.toString(node.getChildren().size()));
+        TextField seqLength = getTextField("Sequence Length: ", x, 270, Integer.toString(node.getSequence().length()));
+        TextArea genome = getTextArea("Genome: ", x, 310, genomesString.substring(1, genomesString.length() - 1), 40);
+        genome.setWrapText(true);
+        TextArea seq = getTextArea("Sequence: ", x, 375, sequenceString, 250);
+        anchorGraphInfo.getChildren().addAll(idText, parentText, childText, inEdgeText,
+                outEdgeText, genomeText, seqLengthText, seqText);
+        anchorGraphInfo.getChildren().addAll(idTextField, parents, children, inEdges, outEdges, genome, seqLength, seq);
+    }
 
     /**
      * Returns a textField to be used by the edge and node information show panel.

@@ -96,6 +96,7 @@ public abstract class DrawableNode implements Drawable {
 
     /**
      * Color this according to contents.
+     * @param subGraph {@link SubGraph} to colorize.
      */
     public abstract void colorize(SubGraph subGraph);
 
@@ -174,6 +175,10 @@ public abstract class DrawableNode implements Drawable {
         this.dimensions = new XYCoordinate(getWidth(), height);
     }
 
+    /**
+     * Method to add genomes to a Drawable node.
+     * @param genomes is a Set of Integers representing the genomeIDs.
+     */
     public final void addGenomes(Set<Integer> genomes) {
         this.genomes.addAll(genomes);
     }
