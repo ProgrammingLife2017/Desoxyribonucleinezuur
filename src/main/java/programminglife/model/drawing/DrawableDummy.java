@@ -95,8 +95,8 @@ public class DrawableDummy extends DrawableNode {
         this.setStroke(strokeColor);
     }
 
-    public boolean hasSNPChildren(SubGraph subGraph) {
-        return false;
+    public DrawableSegment hasSNPChildren(SubGraph subGraph) {
+        return null;
     }
 
     @Override

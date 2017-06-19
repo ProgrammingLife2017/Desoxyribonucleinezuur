@@ -7,8 +7,8 @@ import org.junit.Test;
 import programminglife.model.GenomeGraph;
 import programminglife.utility.InitFXThread;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /**
  * Created by toinehartman on 19/06/2017.
@@ -60,10 +60,10 @@ public class SubGraphSNPTest {
         DrawableNode seg2 = sg.getNodes().get(2);
         DrawableNode seg3 = sg.getNodes().get(3);
 
-        assertTrue(seg0.hasSNPChildren(sg));
-        assertFalse(seg1.hasSNPChildren(sg));
-        assertFalse(seg2.hasSNPChildren(sg));
-        assertFalse(seg3.hasSNPChildren(sg));
+        assertNotNull(seg0.hasSNPChildren(sg));
+        assertNull(seg1.hasSNPChildren(sg));
+        assertNull(seg2.hasSNPChildren(sg));
+        assertNull(seg3.hasSNPChildren(sg));
 
         g.removeCache();
     }
@@ -107,12 +107,12 @@ public class SubGraphSNPTest {
         DrawableNode seg4 = sg.getNodes().get(4);
         DrawableNode seg5 = sg.getNodes().get(5);
 
-        assertTrue(seg0.hasSNPChildren(sg));
-        assertFalse(seg1.hasSNPChildren(sg));
-        assertFalse(seg2.hasSNPChildren(sg));
-        assertFalse(seg3.hasSNPChildren(sg));
-        assertFalse(seg4.hasSNPChildren(sg));
-        assertFalse(seg5.hasSNPChildren(sg));
+        assertNotNull(seg0.hasSNPChildren(sg));
+        assertNull(seg1.hasSNPChildren(sg));
+        assertNull(seg2.hasSNPChildren(sg));
+        assertNull(seg3.hasSNPChildren(sg));
+        assertNull(seg4.hasSNPChildren(sg));
+        assertNull(seg5.hasSNPChildren(sg));
 
         g.removeCache();
     }
@@ -161,13 +161,13 @@ public class SubGraphSNPTest {
         DrawableNode seg5 = sg.getNodes().get(5);
         DrawableNode seg6 = sg.getNodes().get(6);
 
-        assertFalse(seg0.hasSNPChildren(sg));
-        assertFalse(seg1.hasSNPChildren(sg));
-        assertFalse(seg2.hasSNPChildren(sg));
-        assertFalse(seg3.hasSNPChildren(sg));
-        assertFalse(seg4.hasSNPChildren(sg));
-        assertFalse(seg5.hasSNPChildren(sg));
-        assertFalse(seg6.hasSNPChildren(sg));
+        assertNull(seg0.hasSNPChildren(sg));
+        assertNull(seg1.hasSNPChildren(sg));
+        assertNull(seg2.hasSNPChildren(sg));
+        assertNull(seg3.hasSNPChildren(sg));
+        assertNull(seg4.hasSNPChildren(sg));
+        assertNull(seg5.hasSNPChildren(sg));
+        assertNull(seg6.hasSNPChildren(sg));
 
         g.removeCache();
     }
@@ -196,9 +196,9 @@ public class SubGraphSNPTest {
         DrawableNode seg1 = sg.getNodes().get(1);
         DrawableNode seg2 = sg.getNodes().get(2);
 
-        assertFalse(seg0.hasSNPChildren(sg));
-        assertFalse(seg1.hasSNPChildren(sg));
-        assertFalse(seg2.hasSNPChildren(sg));
+        assertNull(seg0.hasSNPChildren(sg));
+        assertNull(seg1.hasSNPChildren(sg));
+        assertNull(seg2.hasSNPChildren(sg));
 
         g.removeCache();
     }
@@ -232,10 +232,10 @@ public class SubGraphSNPTest {
         DrawableNode seg2 = sg.getNodes().get(2);
         DrawableNode seg3 = sg.getNodes().get(3);
 
-        assertFalse(seg0.hasSNPChildren(sg));
-        assertFalse(seg1.hasSNPChildren(sg));
-        assertFalse(seg2.hasSNPChildren(sg));
-        assertFalse(seg3.hasSNPChildren(sg));
+        assertNull(seg0.hasSNPChildren(sg));
+        assertNull(seg1.hasSNPChildren(sg));
+        assertNull(seg2.hasSNPChildren(sg));
+        assertNull(seg3.hasSNPChildren(sg));
 
         g.removeCache();
     }
@@ -273,11 +273,11 @@ public class SubGraphSNPTest {
         DrawableNode seg3 = sg.getNodes().get(3);
         DrawableNode seg4 = sg.getNodes().get(4);
 
-        assertFalse(seg0.hasSNPChildren(sg));
-        assertFalse(seg1.hasSNPChildren(sg));
-        assertFalse(seg2.hasSNPChildren(sg));
-        assertFalse(seg3.hasSNPChildren(sg));
-        assertFalse(seg4.hasSNPChildren(sg));
+        assertNull(seg0.hasSNPChildren(sg));
+        assertNull(seg1.hasSNPChildren(sg));
+        assertNull(seg2.hasSNPChildren(sg));
+        assertNull(seg3.hasSNPChildren(sg));
+        assertNull(seg4.hasSNPChildren(sg));
 
         g.removeCache();
     }
@@ -315,11 +315,11 @@ public class SubGraphSNPTest {
         DrawableNode seg3 = sg.getNodes().get(3);
         DrawableNode seg4 = sg.getNodes().get(4);
 
-        assertFalse(seg0.hasSNPChildren(sg));
-        assertFalse(seg1.hasSNPChildren(sg));
-        assertFalse(seg2.hasSNPChildren(sg));
-        assertFalse(seg3.hasSNPChildren(sg));
-        assertFalse(seg4.hasSNPChildren(sg));
+        assertNull(seg0.hasSNPChildren(sg));
+        assertNull(seg1.hasSNPChildren(sg));
+        assertNull(seg2.hasSNPChildren(sg));
+        assertNull(seg3.hasSNPChildren(sg));
+        assertNull(seg4.hasSNPChildren(sg));
 
         g.removeCache();
     }

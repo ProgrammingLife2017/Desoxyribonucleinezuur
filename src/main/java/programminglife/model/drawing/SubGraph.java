@@ -64,6 +64,26 @@ public class SubGraph {
         if (!this.nodes.containsKey(centerNode.getIdentifier())) {
             this.nodes.put(centerNode.getIdentifier(), centerNode);
         }
+
+        this.replaceSNPs();
+    }
+
+    private void replaceSNPs() {
+        DrawableSegment child;
+        Map<Integer, DrawableNode> nodesCopy = new LinkedHashMap<>(this.nodes);
+        for (Map.Entry<Integer, DrawableNode> entry : nodesCopy.entrySet()) {
+            DrawableNode parent = entry.getValue();
+            if ((child = parent.hasSNPChildren(this)) != null) {
+                System.out.println("Can be SNP'ed: " + parent);
+                DrawableSNP snp = new DrawableSNP(parent, child, this.getChildren(parent));
+                this.nodes.remove(entry.getKey());
+                this.nodes.put(snp.getIdentifier(), snp);
+                parent.getChildren().clear();
+                parent.getChildren().add(snp.getIdentifier());
+                child.getParents().clear();
+                child.getParents().add(snp.getIdentifier());
+            }
+        }
     }
 
     // TODO: change findParents and findChildren to reliably only find nodes with a *longest* path of at most radius.

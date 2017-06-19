@@ -80,14 +80,6 @@ public class GraphController {
         }
         long finishTimeDrawing = System.nanoTime();
 
-        long startTimeSNP = System.nanoTime();
-        for (DrawableNode d : subGraph.getNodes().values()) {
-            if (d.hasSNPChildren(subGraph)) {
-                highlightNodesByID(d.getChildren(), Color.GOLD);
-            }
-        }
-        long finishTimeSNP = System.nanoTime();
-
         centerOnNodeId(center);
         highlightNode(center, Color.DARKORANGE);
 
@@ -96,19 +88,16 @@ public class GraphController {
         long differenceTimeDrawing = finishTimeDrawing - startTimeDrawing;
         long differenceTimeLayout = finishTimeLayout - startLayoutTime;
         long differenceTimeSubGraph = finishTimeSubGraph - startTimeSubGraph;
-        long differenceTimeSNP = finishTimeSNP - startTimeSNP;
         long differenceTimeGenomes = finishTimeGenome - startTimeGenome;
         long msDifferenceTimeProgram = differenceTimeProgram / 1000000;
         long millisecondTimeDrawing = differenceTimeDrawing   / 1000000;
         long msDifferenceTimeLayout = differenceTimeLayout   / 1000000;
         long msDifferenceTimeSubGraph = differenceTimeSubGraph / 1000000;
-        long msDifferenceTimeSNP = differenceTimeSNP / 1000000;
         long msDifferenceTimeGenomes = differenceTimeGenomes / 1000000;
         Console.println("time of SubGraph: " + msDifferenceTimeSubGraph);
         Console.println("Time of layout:  " + msDifferenceTimeLayout);
         Console.println("Time to find genomes: " + msDifferenceTimeGenomes);
         Console.println("Time of drawing:  " + millisecondTimeDrawing);
-        Console.println("Time to find SNPs: " + msDifferenceTimeSNP);
         Console.println("Time of Total Program:  " + msDifferenceTimeProgram);
 
 
