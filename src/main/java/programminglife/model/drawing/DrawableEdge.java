@@ -1,7 +1,6 @@
 package programminglife.model.drawing;
 
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
 import programminglife.model.XYCoordinate;
 
 import java.util.Collection;
@@ -50,7 +49,7 @@ public class DrawableEdge implements Drawable {
      */
     public void setStartNode(DrawableNode startNode) {
         XYCoordinate rightBorderCenter = startNode.getRightBorderCenter();
-        this.startLocation= new XYCoordinate(rightBorderCenter.getX(), rightBorderCenter.getY());
+        this.startLocation = new XYCoordinate(rightBorderCenter.getX(), rightBorderCenter.getY());
     }
 
     /**

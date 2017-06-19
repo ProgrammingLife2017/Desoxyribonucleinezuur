@@ -116,7 +116,7 @@ public class GuiController implements Observer {
     @FXML
     @SuppressWarnings("unused")
     private void initialize() {
-        this.graphController = new GraphController(null, this.canvas, this.anchorGraphInfo, this.anchorGraphPanel);
+        this.graphController = new GraphController(null, this.canvas, this.anchorGraphInfo);
         this.scale = 1;
         // initRecent();
 
@@ -455,9 +455,9 @@ public class GuiController implements Observer {
         double oldScale = scale;
 
         if (deltaX < 0 || deltaY < 0) {
-            scale /= Math.pow(1.01, delta);
+            scale *= Math.pow(1.03, delta);
         } else {
-            scale *= Math.pow(1.01, delta);
+            scale /= Math.pow(1.03, delta);
         }
 
         scale = clamp(scale, MIN_SCALE, MAX_SCALE);

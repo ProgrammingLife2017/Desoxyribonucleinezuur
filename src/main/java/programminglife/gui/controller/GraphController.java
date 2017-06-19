@@ -41,11 +41,10 @@ public class GraphController {
      * @param canvas the {@link Canvas} to draw in
      * @param anchorGraphInfo the {@link AnchorPane} were to show the info of a node or edge.
      */
-    public GraphController(GenomeGraph graph, ResizableCanvas canvas, AnchorPane anchorGraphInfo, AnchorPane anchorCanvasPanel) {
+    public GraphController(GenomeGraph graph, ResizableCanvas canvas, AnchorPane anchorGraphInfo) {
         this.graph = graph;
         this.canvas = canvas;
         this.anchorGraphInfo = anchorGraphInfo;
-        this.anchorCanvasPanel = anchorCanvasPanel;
     }
 
     public int getCenterNodeInt() {
