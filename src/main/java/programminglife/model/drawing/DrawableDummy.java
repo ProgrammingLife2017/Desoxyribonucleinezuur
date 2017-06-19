@@ -12,17 +12,11 @@ import java.util.NoSuchElementException;
 /**
  * A class that handles the creation and usage of dummy nodes.
  */
-public class DrawableDummy implements DrawableNode {
+public class DrawableDummy extends DrawableNode {
     public static final int DUMMY_HEIGHT = 5;
-
-    private final GenomeGraph graph;
-    private final int id;
 
     private Color strokeColor;
     private double strokeWidth;
-    private XYCoordinate location;
-    private double width;
-    private double height;
     private boolean drawDimensionsUpToDate = false;
 
     private int parentID;
@@ -37,8 +31,7 @@ public class DrawableDummy implements DrawableNode {
      * @param graph the GenomeGraph currently drawn
      */
     public DrawableDummy(int id, DrawableNode parentNode, DrawableNode childNode, GenomeGraph graph) {
-        this.graph = graph;
-        this.id = id;
+        super(graph, id);
 
         this.parentID = parentNode.getIdentifier();
         this.childID = childNode.getIdentifier();
@@ -97,17 +90,12 @@ public class DrawableDummy implements DrawableNode {
     }
 
     @Override
-    public void setLocation(double x, double y) {
-        this.location = new XYCoordinate(x, y);
-    }
-
-    @Override
     public Link getLink(DrawableNode child) {
         return this.link;
     }
 
     @Override
-    public void setDrawDimensions() { }
+    public void updateDrawDimensions() { }
 
     @Override
     public void setStrokeColor(Color color) {
@@ -117,30 +105,6 @@ public class DrawableDummy implements DrawableNode {
     @Override
     public void setStrokeWidth(double width) {
         this.strokeWidth = width;
-    }
-
-    @Override
-    public double getWidth() {
-        return this.width;
-    }
-
-    public void setWidth(double width) {
-        this.width = width;
-    }
-
-    @Override
-    public void setHeight(double height) {
-        this.height = height;
-    }
-
-    @Override
-    public double getHeight() {
-        return this.height;
-    }
-
-    @Override
-    public GenomeGraph getGraph() {
-        return this.graph;
     }
 
     @Override
@@ -157,11 +121,12 @@ public class DrawableDummy implements DrawableNode {
      * getter for the center of the left border.
      * @return XYCoordinate.
      */
+    @Override
     public XYCoordinate getLeftBorderCenter() {
         if (!drawDimensionsUpToDate) {
-            setDrawDimensions();
+            updateDrawDimensions();
         }
-        return this.getLocation().add(0, -(this.getHeight() / 2));
+        return super.getLeftBorderCenter();
     }
 
     /**
@@ -170,9 +135,9 @@ public class DrawableDummy implements DrawableNode {
      */
     public XYCoordinate getCenter() {
         if (!drawDimensionsUpToDate) {
-            setDrawDimensions();
+            updateDrawDimensions();
         }
-        return this.getLocation().add(this.width * 0.5, this.height * 0.5);
+        return super.getCenter();
     }
 
     /**
@@ -181,23 +146,13 @@ public class DrawableDummy implements DrawableNode {
      */
     public XYCoordinate getRightBorderCenter() {
         if (!drawDimensionsUpToDate) {
-            setDrawDimensions();
+            updateDrawDimensions();
         }
-        return this.getCenter().add(this.width / 2, 0);
+        return super.getRightBorderCenter();
     }
 
     @Override
     public Color getStrokeColor() {
         return this.strokeColor;
-    }
-
-    @Override
-    public int getIdentifier() {
-        return this.id;
-    }
-
-    @Override
-    public XYCoordinate getLocation() {
-        return this.location;
     }
 }

@@ -1,6 +1,5 @@
 package programminglife.model.drawing;
 
-import org.jetbrains.annotations.NotNull;
 import programminglife.model.GenomeGraph;
 import programminglife.model.XYCoordinate;
 import programminglife.utility.Console;
