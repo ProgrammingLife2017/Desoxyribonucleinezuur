@@ -72,6 +72,10 @@ public class GraphController {
         subGraph.layout();
         long finishTimeLayout = System.nanoTime();
 
+        colorize();
+
+
+
         long startTimeDrawing = System.nanoTime();
         draw(gc);
         long finishTimeDrawing = System.nanoTime();
@@ -93,6 +97,16 @@ public class GraphController {
         Console.println("Time of Drawing:  " + millisecondTimeDrawing);
         Console.println("Time of layout:  " + msDifferenceTimeLayout);
         Console.println("Time of Total Program:  " + msDifferenceTimeProgram);
+    }
+
+    /**
+     * Method to do the coloring of the to be drawn graph.
+     */
+    private void colorize() {
+        canvas.getGraphicsContext2D().setLineWidth(5.0);
+        for (DrawableNode drawableNode : subGraph.getNodes().values()) {
+            drawableNode.colorize(subGraph);
+        }
     }
 
     /**
@@ -178,8 +192,13 @@ public class GraphController {
      */
     public void drawNode(GraphicsContext gc, DrawableNode drawableNode) {
         gc.setStroke(drawableNode.getStrokeColor());
+        System.out.println(drawableNode.getFillColor());
+        gc.setFill(drawableNode.getFillColor());
         gc.strokeRect(drawableNode.getLeftBorderCenter().getX(), drawableNode.getLocation().getY(),
                 drawableNode.getWidth(), drawableNode.getHeight());
+        gc.fillRect(drawableNode.getLeftBorderCenter().getX(), drawableNode.getLocation().getY(),
+                drawableNode.getWidth(), drawableNode.getHeight());
+
 
 //        if (!(drawableNode instanceof DrawableDummy)) {
 //            drawableNode.setOnMouseClicked(event -> Console.println(drawableNode.details()));
@@ -193,7 +212,7 @@ public class GraphController {
 //            });
 //        }
 
-//        drawableNode.colorize();
+
     }
 
     /**
@@ -442,6 +461,7 @@ public class GraphController {
         for (DrawableNode node: nodes) {
             node.colorize(subGraph);
         }
+        this.draw(canvas.getGraphicsContext2D());
     }
 
 

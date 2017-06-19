@@ -319,7 +319,12 @@ public class DrawableSegment extends DrawableNode {
 
     @Override
     public Color getStrokeColor() {
-        return null;
+        return this.strokeColor;
+    }
+
+    @Override
+    public Color getFillColor() {
+        return this.fillColor;
     }
 
 

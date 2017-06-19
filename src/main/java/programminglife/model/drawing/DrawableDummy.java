@@ -193,6 +193,9 @@ public class DrawableDummy extends DrawableNode {
     }
 
     @Override
+    public Color getFillColor() { return null;}
+
+    @Override
     public XYCoordinate getLocation() {
         return this.location;
     }

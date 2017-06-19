@@ -155,6 +155,12 @@ public abstract class DrawableNode implements Drawable {
      */
     public abstract Color getStrokeColor();
 
+    /**
+     * Returns the {@link Color} of this DrawableNode.
+     * @return the {@link Color} of this DrawableNode.
+     */
+    public abstract Color getFillColor();
+
     public final int getIdentifier() {
         return id;
     }
