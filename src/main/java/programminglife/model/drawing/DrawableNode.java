@@ -94,6 +94,8 @@ public abstract class DrawableNode extends Rectangle implements Drawable {
      */
     public abstract String details();
 
+    public abstract boolean hasSNPChildren(SubGraph subGraph);
+
     /**
      * Color this according to contents.
      * @param sg the {@link SubGraph} this {@link DrawableNode} is in

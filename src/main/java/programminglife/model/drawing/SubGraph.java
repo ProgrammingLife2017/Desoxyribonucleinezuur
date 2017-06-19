@@ -64,10 +64,6 @@ public class SubGraph {
         if (!this.nodes.containsKey(centerNode.getIdentifier())) {
             this.nodes.put(centerNode.getIdentifier(), centerNode);
         }
-
-        long genomeTime = System.nanoTime();
-        this.calculateGenomes();
-        Console.println("Time to find genomes through edge: " + (System.nanoTime() - genomeTime) / 1000000);
     }
 
     // TODO: change findParents and findChildren to reliably only find nodes with a *longest* path of at most radius.
@@ -486,7 +482,7 @@ public class SubGraph {
      * Calculate genomes through edge, based on topological ordering and node-genome information.
      * @return a {@link Map} of {@link Map Maps} of collections of genomes through links
      */
-    Map<DrawableNode, Map<DrawableNode, Collection<Integer>>> calculateGenomes() {
+    public Map<DrawableNode, Map<DrawableNode, Collection<Integer>>> calculateGenomes() {
         Map<DrawableNode, Map<DrawableNode, Collection<Integer>>> genomes = new LinkedHashMap<>();
         // For every node in the subGraph
         for (DrawableNode parent : this.nodes.values()) {
@@ -523,7 +519,7 @@ public class SubGraph {
         // when getting smaller: drop nodes outside new radius.
     }
 
-    public LinkedHashMap<Integer, ? extends DrawableNode> getNodes() {
+    public LinkedHashMap<Integer, DrawableNode> getNodes() {
         return this.nodes;
     }
 

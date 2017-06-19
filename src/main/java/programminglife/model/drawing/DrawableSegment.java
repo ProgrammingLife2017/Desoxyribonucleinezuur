@@ -4,7 +4,10 @@ import javafx.scene.paint.Color;
 import programminglife.model.GenomeGraph;
 import programminglife.model.XYCoordinate;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -158,6 +161,36 @@ public class DrawableSegment extends DrawableNode {
     @Override
     public DrawableNode getChildSegment() {
         return this; // Don't ask!
+    }
+
+    @Override
+    public boolean hasSNPChildren(SubGraph subGraph) {
+        // A SNP-able node has:
+        if (children.size() < 2) { // - at least 2 children
+            return false;
+        } else if (children.size() > 4) { // - at most 4 children
+            return false;
+        } else if (children.stream().anyMatch(id -> id < 1)) { // - no dummy children
+            return false;
+        } else if (children.stream().anyMatch(id -> getGraph().getSequenceLength(id) != 1)) { // - only children of length 1
+            return false;
+        } else  {
+            Collection<DrawableNode> childNodes = subGraph.getChildren(this);
+            Collection<DrawableNode> childParents = childNodes.stream()
+                    .map(subGraph::getParents)
+                    .flatMap(Collection::stream)
+                    .collect(Collectors.toSet());
+            Collection<DrawableNode> childChildren = childNodes.stream()
+                    .map(subGraph::getChildren)
+                    .flatMap(Collection::stream)
+                    .collect(Collectors.toSet());
+            if (childChildren.size() != 1) { // - all children have 1 and the same child
+                return false;
+            } else if (childParents.size() != 1) { // - all children have 1 and the same parent
+                return false;
+            }
+        }
+        return true;
     }
 
     public double getGenomeFraction() {

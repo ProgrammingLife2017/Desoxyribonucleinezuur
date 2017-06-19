@@ -95,6 +95,10 @@ public class DrawableDummy extends DrawableNode {
         this.setStroke(strokeColor);
     }
 
+    public boolean hasSNPChildren(SubGraph subGraph) {
+        return false;
+    }
+
     @Override
     public void setLocation(int x, int y) {
         this.setX(x);
