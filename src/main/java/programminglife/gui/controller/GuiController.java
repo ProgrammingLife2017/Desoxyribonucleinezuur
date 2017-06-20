@@ -346,6 +346,7 @@ public class GuiController implements Observer {
      * Method to reset the zoom levels.
      */
     private void resetZoom() {
+            graphController.setZoomLevel(1);
             scale = 1;
             canvas.setScaleX(1);
             canvas.setScaleY(1);

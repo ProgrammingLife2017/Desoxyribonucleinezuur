@@ -522,4 +522,8 @@ public class GraphController {
         return nodeClicked;
 
     }
+
+    public void setZoomLevel(double zoomLevel) {
+        this.zoomLevel = zoomLevel;
+    }
 }
