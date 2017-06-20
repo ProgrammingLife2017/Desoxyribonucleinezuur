@@ -361,14 +361,13 @@ public class SubGraph {
      * @param layers {@link List} representing all layers to be drawn.
      */
     private void createDummyNodes(List<Layer> layers) {
-        int dummyId = -1;
         Layer current = new Layer();
         for (Layer next : layers) {
             for (DrawableNode node : current) {
                 for (DrawableNode child : this.getChildren(node)) {
                     if (!next.contains(child)) {
-                        DrawableDummy dummy = new DrawableDummy(dummyId, node, child, this.getGraph());
-                        dummyId--;
+                        DrawableDummy dummy = new DrawableDummy(
+                                DrawableNode.getUniqueId(), node, child, this.getGraph());
                         node.replaceChild(child, dummy);
                         child.replaceParent(node, dummy);
                         dummy.setWidth(next.getWidth());
@@ -579,6 +578,7 @@ public class SubGraph {
      * @param radius The number of steps to take from the rootNodes before stopping the search.
      */
     private void addFromRootNodes(int radius) {
+        Console.println("Increasing graph with radius %d", radius);
         SubGraph subGraph = new SubGraph(graph);
 
         findNodes(subGraph, layers.get(0).getNodes(), this.nodes, radius);
