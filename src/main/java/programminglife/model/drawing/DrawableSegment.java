@@ -219,23 +219,6 @@ public class DrawableSegment extends DrawableNode {
                 + this.getLocation().getY();
     }
 
-
-    @Override
-    public boolean equals(Object other) {
-        if (other instanceof DrawableSegment) {
-            DrawableSegment that = (DrawableSegment) other;
-            if (that.getIdentifier() == this.getIdentifier()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        return getIdentifier();
-    }
-
     /**
      * Color a {@link DrawableSegment} depending on its properties.
      */

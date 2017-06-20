@@ -30,6 +30,23 @@ public abstract class DrawableNode extends Rectangle implements Drawable {
         this.genomes = new LinkedHashSet<>();
     }
 
+    @Override
+    public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DrawableNode)) return false;
+
+        DrawableNode that = (DrawableNode) o;
+        if (!this.getClass().equals(that.getClass())) return false;
+        return this.getIdentifier() != that.getIdentifier();
+    }
+
+    @Override
+    public final int hashCode() {
+        int result = getGraph().hashCode();
+        result = 31 * result + getIdentifier();
+        return result;
+    }
+
     /**
      * Get the ID.
      * @return the ID
