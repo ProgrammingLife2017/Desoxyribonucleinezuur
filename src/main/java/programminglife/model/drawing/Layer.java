@@ -15,6 +15,8 @@ public class Layer implements Iterable<DrawableNode>, Comparable<Double> {
     private double x;
     private List<DrawableNode> nodes;
 
+    private static final int LINE_PADDING = 30;
+
     /**
      * Default empty constructor.
      */
@@ -128,6 +130,13 @@ public class Layer implements Iterable<DrawableNode>, Comparable<Double> {
      */
     public int indexOf(DrawableNode node) {
         return nodes.indexOf(node);
+    }
+
+    public void setDrawLocations(double y) {
+        for (DrawableNode d : nodes) {
+            d.setLocation(x, y);
+            y += LINE_PADDING;
+        }
     }
 
     /**

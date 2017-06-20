@@ -13,18 +13,19 @@ import java.util.*;
  */
 public class SubGraph {
     private static final int DEFAULT_DYNAMIC_RADIUS = 50;
+    private static final int DEFAULT_NODE_Y = 50;
+
     private static final int MIN_RADIUS_DEFAULT = 200;
     /**
      * The amount of padding between layers (horizontal padding).
      */
     private double layerPadding = 20;
 
-    private double diffLayerPadding = 7;
+    private double diffLayerPadding = 3;
 
     /**
      * The amount of padding between nodes within a Layer (vertical padding).
      */
-    private static final int LINE_PADDING = 30;
     private GenomeGraph graph;
     private LinkedHashMap<Integer, DrawableNode> nodes;
     private LinkedHashMap<Integer, DrawableNode> rootNodes;
@@ -36,10 +37,21 @@ public class SubGraph {
     // important: directly invalidate cache (set to null), because otherwise removed nodes
     // can't be garbage collected until next call to topoSort()
 
+    /**
+     * Create a SubGraph from a graph, without any nodes initially.
+     * @param graph The {@link GenomeGraph} that this SubGraph is based on.
+     */
     private SubGraph(GenomeGraph graph) {
         this(graph, new LinkedHashMap<>(), new LinkedHashMap<>(), new LinkedHashMap<>());
     }
 
+    /**
+     * Create a SubGraph with the specified nodes, rootNodes and endNodes.
+     * @param graph The {@link GenomeGraph} that this SubGraph is based on.
+     * @param nodes The nodes of this SubGraph.
+     * @param rootNodes The rootNodes of this SubGraph.
+     * @param endNodes The endNodes of this SubGraph.
+     */
     private SubGraph(GenomeGraph graph, LinkedHashMap<Integer, DrawableNode> nodes,
                      LinkedHashMap<Integer, DrawableNode> rootNodes, LinkedHashMap<Integer, DrawableNode> endNodes) {
         this.graph = graph;
@@ -58,6 +70,13 @@ public class SubGraph {
      */
     public SubGraph(DrawableSegment centerNode, int radius) {
         this(centerNode, MIN_RADIUS_DEFAULT, Math.max(radius, MIN_RADIUS_DEFAULT));
+
+        Layer firstLayer = layers.get(0);
+        assert (firstLayer != null);
+
+        firstLayer.setX(0);
+        firstLayer.setDrawLocations(DEFAULT_NODE_Y);
+        this.setRightDrawLocations(this.layers, 0);
     }
 
     /**
@@ -87,9 +106,11 @@ public class SubGraph {
     /**
      * Find nodes within radius steps from centerNode.
      * This resets the {@link #nodes}, {@link #rootNodes} and {@link #endNodes}
+     *
+     * @param subGraph The SubGraph to find these nodes for.
      * @param startNodes The Nodes to start searching from.
+     * @param excludedNodes The nodes that will not be added to this graph, even if they are found.
      * @param radius The number of steps to search.
-     * @return A graphPart.
      */
     private static void findNodes(SubGraph subGraph, Collection<DrawableNode> startNodes,
                                   LinkedHashMap<Integer, DrawableNode> excludedNodes, int radius) {
@@ -254,19 +275,30 @@ public class SubGraph {
     public void layout() {
         createLayers();
 
-        // TODO: sort within layers: how?
+        int minimumLayerIndex = findMinimumNodesLayerIndex(this.layers);
+        sortLayersLeftFrom(minimumLayerIndex);
+        sortLayersRightFrom(minimumLayerIndex);
     }
 
+    /**
+     * Assign nodes to {@link Layer layers} and create dummyNodes for edges that span multiple layers.
+     */
     private void createLayers() {
         this.layers = findLayers();
 
         createDummyNodes(layers);
     }
 
-    public void setRightDrawLocations(int setLayerIndex) {
+    /**
+     * Set the coordinates for all {@link Layer layers} to the right of the given Layer.
+     * @param layers The Layers to set the coordinates for.
+     * @param setLayerIndex The index of the Layer to start from (exclusive,
+     *                      so coordinates are not set for this layer).
+     */
+    public void setRightDrawLocations(ArrayList<Layer> layers, int setLayerIndex) {
         ListIterator<Layer> layerIterator = layers.listIterator(setLayerIndex);
         Layer setLayer = layerIterator.next();
-        double x = setLayer.getX();
+        double x = setLayer.getX() + setLayer.getWidth();
         int size = setLayer.size();
 
         while (layerIterator.hasNext()) {
@@ -274,20 +306,22 @@ public class SubGraph {
 
             int newSize = layer.size();
             int diff = Math.abs(newSize - size);
-            x += layerPadding * 1.1 * newSize + diffLayerPadding * diff;
+            x += layerPadding + diffLayerPadding * diff;
 
             layer.setX(x);
-            double y = 50;
-            for (DrawableNode d : layer) {
-                d.setLocation(x, y);
-                y += LINE_PADDING;
-            }
-            x += layer.getWidth();
+            layer.setDrawLocations(DEFAULT_NODE_Y);
+            x += layer.getWidth() + layerPadding * 0.1 + newSize;
             size = newSize;
         }
     }
 
-    public void setLeftDrawLocations(int setLayerIndex) {
+    /**
+     * Set the coordinates for all {@link Layer layers} to the left of the given Layer.
+     * @param layers The Layers to set the coordinates for.
+     * @param setLayerIndex The index of the Layer to start from (exclusive,
+     *                      so coordinates are not set for this layer).
+     */
+    public void setLeftDrawLocations(ArrayList<Layer> layers, int setLayerIndex) {
         ListIterator<Layer> layerIterator = layers.listIterator(setLayerIndex + 1);
         Layer setLayer = layerIterator.previous();
         double x = setLayer.getX();
@@ -301,11 +335,7 @@ public class SubGraph {
             x -= (layer.getWidth() + layerPadding * 1.1 * newSize + diffLayerPadding * diff);
 
             layer.setX(x);
-            double y = 50;
-            for (DrawableNode d : layer) {
-                d.setLocation(x, y);
-                y += LINE_PADDING;
-            }
+            layer.setDrawLocations(DEFAULT_NODE_Y);
             size = newSize;
         }
     }
@@ -406,7 +436,8 @@ public class SubGraph {
 
     /**
      * Find the Layer with the least number of nodes.
-     * @param layers The layers to sort.
+     * @param layers The {@link Layer Layers} to search through.
+     * @return The index of the Layer with the minimum number of nodes, or -1 if the list of layers is empty.
      */
     private int findMinimumNodesLayerIndex(List<Layer> layers) {
         // find a layer with a single node
@@ -433,6 +464,10 @@ public class SubGraph {
         return index;
     }
 
+    /**
+     * Sort all {@link Layer Layers} right from a given layer.
+     * @param layerIndex The index of the layer to start sorting from (exclusive, so that layer is not sorted).
+     */
     private void sortLayersRightFrom(int layerIndex) {
         ListIterator<Layer> iterator = layers.listIterator(layerIndex);
         Layer prev = iterator.next();
@@ -444,6 +479,10 @@ public class SubGraph {
         }
     }
 
+    /**
+     * Sort all {@link Layer Layers} left from a given layer.
+     * @param layerIndex The index of the layer to start sorting from (exclusive, so that layer is not sorted).
+     */
     private void sortLayersLeftFrom(int layerIndex) {
         ListIterator<Layer> iterator = layers.listIterator(layerIndex + 1);
         Layer prev = iterator.previous();
@@ -456,8 +495,8 @@ public class SubGraph {
     }
 
     /**
-     * Topologically sort the nodes from this graph.
-     * <p>
+     * Topologically sort the nodes from this graph. <br />
+     *
      * Assumption: graph is a DAG.
      *
      * @return a topologically sorted list of nodes
@@ -520,14 +559,32 @@ public class SubGraph {
         result.add(node);
     }
 
-    private void addFromRootNodes() {
+    /**
+     * Add nodes from the {@link #rootNodes}.
+     * @param radius The number of steps to take from the rootNodes before stopping the search.
+     */
+    private void addFromRootNodes(int radius) {
         SubGraph subGraph = new SubGraph(graph);
 
-        findNodes(subGraph, layers.get(0).getNodes(), this.nodes, DEFAULT_DYNAMIC_RADIUS);
+        findNodes(subGraph, layers.get(0).getNodes(), this.nodes, radius);
 
         this.mergeLeftSubGraphIntoThisSubGraph(subGraph);
     }
 
+    /**
+     * Add nodes from the {@link #endNodes}.
+     * @param radius The number of steps to take from the endNodes before stopping the search.
+     */
+    public void addFromEndNodes(int radius) {
+        // TODO: copy from addFromRootNodes
+        throw new Error("Not implemented yet");
+    }
+
+    /**
+     * Merge another {@link SubGraph} into this SubGraph, by putting it on the left of this SubGraph,
+     * and then drawing connecting edges between nodes that should have them.
+     * @param leftSubGraph The other SubGraph that will be merged into this one.
+     */
     private void mergeLeftSubGraphIntoThisSubGraph(SubGraph leftSubGraph) {
         this.nodes.putAll(leftSubGraph.nodes);
         this.rootNodes = leftSubGraph.rootNodes;
@@ -556,11 +613,6 @@ public class SubGraph {
 
 
         // TODO: find DummyNodes between subgraphs. Just use findDummyNodes on full graph?
-        throw new Error("Not implemented yet");
-    }
-
-    public void addFromEndNodes() {
-        // TODO: copy from addFromRootNodes
         throw new Error("Not implemented yet");
     }
 
