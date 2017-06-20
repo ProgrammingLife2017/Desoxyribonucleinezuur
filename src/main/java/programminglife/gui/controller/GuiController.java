@@ -23,6 +23,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
+import javafx.scene.canvas.Canvas;
 import jp.uphy.javafx.console.ConsoleView;
 import programminglife.ProgrammingLife;
 import programminglife.controller.MiniMapController;
@@ -66,8 +67,11 @@ public class GuiController implements Observer {
     @FXML private MenuItem btnInstructions;
     @FXML private Menu menuRecentGFA;
     @FXML private Menu menuRecentGFF;
-    @FXML private RadioMenuItem btnToggle;
+
+    @FXML private RadioMenuItem btnSNP;
+    @FXML private RadioMenuItem btnConsole;
     @FXML private RadioMenuItem btnMiniMap;
+
     @FXML private Button btnZoomReset;
     @FXML private Button btnTranslateReset;
     @FXML private Button btnDraw;
@@ -85,7 +89,7 @@ public class GuiController implements Observer {
     @FXML private AnchorPane anchorLeftControlPanel;
     @FXML private AnchorPane anchorGraphPanel;
     @FXML private AnchorPane anchorGraphInfo;
-    @FXML private javafx.scene.canvas.Canvas miniMap;
+    @FXML private Canvas miniMap;
 
     private double orgSceneX, orgSceneY;
     private double orgTranslateX, orgTranslateY;
@@ -275,18 +279,24 @@ public class GuiController implements Observer {
      */
     private void initMenuBar() {
         btnOpenGFA.setOnAction((ActionEvent event) -> fileChooser(extFilterGFA, true));
+        btnOpenGFA.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCodeCombination.CONTROL_DOWN));
         btnOpenGFF.setOnAction((ActionEvent event) -> fileChooser(extFilterGFF, false));
 
-        btnOpenGFA.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCodeCombination.CONTROL_DOWN));
-
-        btnMiniMap.setOnAction(event -> miniMapController.toggleVisibility());
-        btnMiniMap.setAccelerator(new KeyCodeCombination(KeyCode.M, KeyCodeCombination.CONTROL_DOWN));
         btnQuit.setOnAction(event -> Alerts.quitAlert());
         btnQuit.setAccelerator(new KeyCodeCombination(KeyCode.E, KeyCodeCombination.CONTROL_DOWN));
+
         btnAbout.setOnAction(event -> Alerts.infoAboutAlert());
         btnAbout.setAccelerator(new KeyCodeCombination(KeyCode.I, KeyCodeCombination.CONTROL_DOWN));
         btnInstructions.setOnAction(event -> Alerts.infoInstructionAlert());
         btnInstructions.setAccelerator(new KeyCodeCombination(KeyCode.H, KeyCodeCombination.CONTROL_DOWN));
+
+        btnMiniMap.setOnAction(event -> miniMapController.toggleVisibility());
+        btnMiniMap.setAccelerator(new KeyCodeCombination(KeyCode.M, KeyCodeCombination.CONTROL_DOWN));
+        btnSNP.setOnAction(event -> {
+            graphController.setSNP();
+            Platform.runLater(this::draw);
+        });
+        btnSNP.setAccelerator(new KeyCodeCombination(KeyCode.G, KeyCodeCombination.CONTROL_DOWN));
     }
 
 
@@ -501,8 +511,8 @@ public class GuiController implements Observer {
         AnchorPane.setRightAnchor(console, 0.d);
         AnchorPane.setLeftAnchor(console, 0.d);
 
-        btnToggle.setOnAction(event -> {
-            if (btnToggle.isSelected()) {
+        btnConsole.setOnAction(event -> {
+            if (btnConsole.isSelected()) {
                 st.show();
             } else {
                 st.close();
@@ -510,8 +520,8 @@ public class GuiController implements Observer {
         });
 
         st.show();
-        btnToggle.setSelected(true);
-        root.visibleProperty().bind(btnToggle.selectedProperty());
+        btnConsole.setSelected(true);
+        root.visibleProperty().bind(btnConsole.selectedProperty());
 
         Console.setOut(console.getOut());
     }

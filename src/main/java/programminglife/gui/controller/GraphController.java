@@ -17,7 +17,6 @@ import java.util.LinkedList;
 import static javafx.scene.shape.StrokeType.OUTSIDE;
 
 /**
- * Created by Martijn van Meerten on 8-5-2017.
  * Controller for drawing the graph.
  */
 public class GraphController {
@@ -31,6 +30,7 @@ public class GraphController {
     private AnchorPane anchorGraphInfo;
     private LinkedList<DrawableNode> oldGenomeList = new LinkedList<>();
     private int centerNodeInt;
+    private boolean drawSNP = false;
 
     /**
      * Initialize controller object.
@@ -65,7 +65,9 @@ public class GraphController {
             centerNodeInt = centerNode.getIdentifier();
 
             time("Find subgraph", () -> subGraph = new SubGraph(centerNode, radius));
-            time("Replace SNPs", subGraph::replaceSNPs);
+            if (drawSNP) {
+                time("Replace SNPs", subGraph::replaceSNPs);
+            }
             time("Layout subgraph", subGraph::layout);
             time("Calculate genomes through edges", subGraph::calculateGenomes);
             time("Drawing", () -> {
@@ -416,5 +418,12 @@ public class GraphController {
         }
         oldGenomeList = drawNodeList;
         highlightNodes(drawNodeList, Color.YELLOW);
+    }
+
+    /**
+     * Sets if the glyph  snippets will be drawn or not.
+     */
+    void setSNP() {
+        drawSNP = !drawSNP;
     }
 }
