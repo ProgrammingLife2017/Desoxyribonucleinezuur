@@ -82,7 +82,7 @@ public class GraphController {
         long finishTimeDrawing = System.nanoTime();
 
 //        long startHighlight = System.nanoTime();
-//        highlightNode(center, Color.DARKORANGE);
+        highlightNode(center, Color.DARKORANGE);
 //        Console.println("Time to highlight: " + (System.nanoTime() - startHighlight) / 1000000 + " ms");
 
         long finishTime = System.nanoTime();
@@ -152,6 +152,8 @@ public class GraphController {
      */
     public void highlightNode(DrawableNode node, Color color) {
         node.setStrokeColor(color);
+        node.setStrokeWidth(5.0);
+        drawNode(canvas.getGraphicsContext2D(), node);
     }
 
     /**
