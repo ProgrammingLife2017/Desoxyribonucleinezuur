@@ -72,8 +72,9 @@ public class GraphController {
         subGraph.layout();
         long finishTimeLayout = System.nanoTime();
 
+        long startTimeColorize = System.nanoTime();
         colorize();
-
+        long finishTimeColorize = System.nanoTime();
 
 
         long startTimeDrawing = System.nanoTime();
@@ -89,13 +90,16 @@ public class GraphController {
         long differenceTimeDrawing = finishTimeDrawing - startTimeDrawing;
         long differenceTimeLayout = finishTimeLayout - startLayoutTime;
         long differenceTimeSubGraph = finishTimeSubGraph - startTimeSubGraph;
+        long differenceTimeColorize = finishTimeColorize - startTimeColorize;
         long msDifferenceTimeProgram = differenceTimeProgram / 1000000;
         long millisecondTimeDrawing = differenceTimeDrawing / 1000000;
         long msDifferenceTimeLayout = differenceTimeLayout / 1000000;
         long msDifferenceTimeSubGraph = differenceTimeSubGraph / 1000000;
+        long msDifferenceTimeColorize = differenceTimeColorize / 1000000;
         Console.println("time of SubGraph: " + msDifferenceTimeSubGraph);
-        Console.println("Time of Drawing:  " + millisecondTimeDrawing);
         Console.println("Time of layout:  " + msDifferenceTimeLayout);
+        Console.println("Time of Colorize:  " + msDifferenceTimeColorize);
+        Console.println("Time of Drawing:  " + millisecondTimeDrawing);
         Console.println("Time of Total Program:  " + msDifferenceTimeProgram);
     }
 
@@ -103,7 +107,7 @@ public class GraphController {
      * Method to do the coloring of the to be drawn graph.
      */
     private void colorize() {
-        canvas.getGraphicsContext2D().setLineWidth(5.0);
+        canvas.getGraphicsContext2D().setLineWidth(3.0);
         for (DrawableNode drawableNode : subGraph.getNodes().values()) {
             drawableNode.colorize(subGraph);
         }
@@ -177,7 +181,10 @@ public class GraphController {
     private void drawEdge(GraphicsContext gc, DrawableNode parent, DrawableNode child) {
         DrawableEdge edge = new DrawableEdge(parent, child);
 
-//        edge.colorize(graph);
+        edge.colorize(subGraph);
+
+        gc.setLineWidth(edge.getStrokeWidth());
+        gc.setStroke(edge.getStrokeColor());
 
         XYCoordinate startLocation = edge.getStartLocation();
         XYCoordinate endLocation = edge.getEndLocation();
@@ -192,8 +199,9 @@ public class GraphController {
      */
     public void drawNode(GraphicsContext gc, DrawableNode drawableNode) {
         gc.setStroke(drawableNode.getStrokeColor());
-        System.out.println(drawableNode.getFillColor());
         gc.setFill(drawableNode.getFillColor());
+        gc.setLineWidth(drawableNode.getStrokeWidth());
+
         gc.strokeRect(drawableNode.getLeftBorderCenter().getX(), drawableNode.getLocation().getY(),
                 drawableNode.getWidth(), drawableNode.getHeight());
         gc.fillRect(drawableNode.getLeftBorderCenter().getX(), drawableNode.getLocation().getY(),

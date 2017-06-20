@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
  */
 public class DrawableSegment extends DrawableNode {
     public static final double NODE_HEIGHT = 10;
+    private static final double DRAWABLE_SEGMENT_STROKE_WIDTH = 3.0;
 
     private double strokeWidth;
     private Color fillColor;
@@ -243,6 +244,7 @@ public class DrawableSegment extends DrawableNode {
 
         Color fillColor = Color.hsb(227, saturation, 1.d);
         Color strokeColor = Color.hsb(227, maxSaturation, 1.d);
+        this.setStrokeWidth(DRAWABLE_SEGMENT_STROKE_WIDTH);
 
         this.setColors(fillColor, strokeColor);
     }
@@ -325,6 +327,11 @@ public class DrawableSegment extends DrawableNode {
     @Override
     public Color getFillColor() {
         return this.fillColor;
+    }
+
+    @Override
+    public double getStrokeWidth() {
+        return this.strokeWidth;
     }
 
 

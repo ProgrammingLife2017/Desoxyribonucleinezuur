@@ -105,6 +105,10 @@ public class DrawableEdge implements Drawable {
         this.strokeColor = strokeColor;
     }
 
+    public Color getStrokeColor() {
+        return this.strokeColor;
+    }
+
     public void setStrokeWidth(double strokeWidth) {
         this.strokeWidth = strokeWidth;
     }

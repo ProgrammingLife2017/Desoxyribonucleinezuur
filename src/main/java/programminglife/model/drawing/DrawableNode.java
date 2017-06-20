@@ -200,4 +200,10 @@ public abstract class DrawableNode implements Drawable {
      * @return the 'closest' child {@link DrawableSegment}
      */
     public abstract DrawableNode getChildSegment();
+
+    /**
+     * Retun the {@link DrawableNode}s strokeWidth.
+     * @return strokeWidth is a double with the value of the width of the stroke.
+     */
+    public abstract double getStrokeWidth();
 }
