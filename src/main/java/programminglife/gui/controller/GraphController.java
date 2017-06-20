@@ -85,6 +85,8 @@ public class GraphController {
 //        long startHighlight = System.nanoTime();
         highlightNode(center, Color.DARKORANGE);
         centerOnNodeId(center);
+        System.out.println(this.subGraph.getNodes().get(center).getLocation());
+
 //        Console.println("Time to highlight: " + (System.nanoTime() - startHighlight) / 1000000 + " ms");
 
         long finishTime = System.nanoTime();
@@ -496,5 +498,28 @@ public class GraphController {
         }
         oldGenomeList = drawNodeList;
         highlightNodes(drawNodeList, Color.YELLOW);
+    }
+
+    /**
+     * Returns the node clicked on else returns null.
+     * @param x
+     * @param y
+     */
+    public DrawableNode onClick(double x, double y) {
+        System.out.println("Canvas clicked " + x + ", " + y);
+        //TODO implement this with a tree instead of iterating.
+        DrawableNode nodeClicked = null;
+        for (DrawableNode drawableNode : subGraph.getNodes().values()) {
+            if (x >= drawableNode.getLocation().getX()
+                    && x <= drawableNode.getLocation().getX() + drawableNode.getWidth()) {
+                if (y >= drawableNode.getLocation().getY()
+                        && y <= drawableNode.getLocation().getY() + drawableNode.getHeight()) {
+                    nodeClicked = drawableNode;
+                }
+
+            }
+        }
+        return nodeClicked;
+
     }
 }

@@ -434,6 +434,9 @@ public class GuiController implements Observer {
             orgSceneX = event.getSceneX();
             orgSceneY = event.getSceneY();
         });
+        canvas.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+            graphController.onClick(event.getX(), event.getY());
+        });
         anchorGraphPanel.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> {
             double xDifference = event.getSceneX() - orgSceneX;
             double yDifference = event.getSceneY() - orgSceneY;
