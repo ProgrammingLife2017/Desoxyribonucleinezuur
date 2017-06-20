@@ -6,26 +6,42 @@ import programminglife.model.XYCoordinate;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 /**
  * Created by toinehartman on 19/06/2017.
  */
 public class DrawableSNP extends DrawableNode {
-    private DrawableNode parent;
-    private DrawableNode child;
-    final private Collection<DrawableNode> mutations;
+    private DrawableSegment parent;
+    private DrawableSegment child;
+    final private Collection<DrawableSegment> mutations;
 
     /**
      * Construct a {@link DrawableNode}.
      *
-     * @param segments the Segments in this bubble
+     * @param mutations the Segments in this bubble
      */
-    DrawableSNP(DrawableNode parent, DrawableNode child, Collection<DrawableNode> segments) {
-        super(segments.iterator().next().getGraph(), -segments.hashCode());
+    DrawableSNP(DrawableNode parent, DrawableNode child, Collection<DrawableNode> mutations) {
+        super(mutations.iterator().next().getGraph(), -mutations.hashCode());
 
-        this.parent = parent;
-        this.child = child;
-        this.mutations = segments;
+        if (!(parent instanceof DrawableSegment)) {
+            throw new IllegalArgumentException("Parent of SNP must be a Segment!");
+        } else if (!(child instanceof DrawableSegment)) {
+            throw new IllegalArgumentException("Child of SNP must be a Segment!");
+        } else if (!mutations.stream().allMatch(DrawableSegment.class::isInstance)) {
+            throw new IllegalArgumentException("Mutations of SNP must be Segments!");
+        }
+
+        this.parent = (DrawableSegment) parent;
+        this.child = (DrawableSegment) child;
+        this.mutations = mutations.stream().map(DrawableSegment.class::cast).collect(Collectors.toSet());
+
+        this.parent.getChildren().clear();
+        this.parent.getChildren().add(this.getIdentifier());
+        this.child.getParents().clear();
+        this.child.getParents().add(this.getIdentifier());
+
+        this.setDrawDimensions();
     }
 
     /**
@@ -56,8 +72,8 @@ public class DrawableSNP extends DrawableNode {
      */
     @Override
     void replaceParent(DrawableNode oldParent, DrawableNode newParent) {
-        if (this.parent.getIdentifier() == oldParent.getIdentifier()) {
-            this.parent = newParent;
+        if (this.parent.getIdentifier() == oldParent.getIdentifier() && newParent instanceof DrawableSegment) {
+            this.parent = (DrawableSegment) newParent;
         } else {
             throw new NoSuchElementException(
                     String.format("The node to be replaced (%d) is not the parent of this SNP (%d).",
@@ -73,8 +89,8 @@ public class DrawableSNP extends DrawableNode {
      */
     @Override
     void replaceChild(DrawableNode oldChild, DrawableNode newChild) {
-        if (this.child.getIdentifier() == oldChild.getIdentifier()) {
-            this.child = newChild;
+        if (this.child.getIdentifier() == oldChild.getIdentifier() && newChild instanceof DrawableSegment) {
+            this.child = (DrawableSegment) newChild;
         } else {
             throw new NoSuchElementException(
                     String.format("The node to be replaced (%d) is not the parent of this SNP (%d).",
@@ -104,19 +120,9 @@ public class DrawableSNP extends DrawableNode {
      */
     @Override
     public void colorize(SubGraph sg) {
-        this.setStroke(Color.RED);
-        this.setStrokeWidth(4.d);
-    }
-
-    /**
-     * Set the location to draw this.
-     *
-     * @param x the x location
-     * @param y the y location
-     */
-    @Override
-    void setLocation(int x, int y) {
-
+        this.setFill(Color.BLANCHEDALMOND);
+        this.setStroke(Color.DARKRED);
+        this.setStrokeWidth(3.5);
     }
 
     /**
@@ -142,11 +148,19 @@ public class DrawableSNP extends DrawableNode {
 
     @Override
     public DrawableNode getParentSegment() {
-        return parent;
+        return this;
     }
 
     @Override
     public DrawableNode getChildSegment() {
-        return child;
+        return this;
+    }
+
+    @Override
+    public Collection<Integer> getGenomes() {
+        return this.mutations.stream()
+                            .map(DrawableSegment::getGenomes)
+                            .flatMap(Collection::stream)
+                            .collect(Collectors.toSet());
     }
 }

@@ -74,14 +74,10 @@ public class SubGraph {
         for (Map.Entry<Integer, DrawableNode> entry : nodesCopy.entrySet()) {
             DrawableNode parent = entry.getValue();
             if ((child = parent.hasSNPChildren(this)) != null) {
-                System.out.println("Can be SNP'ed: " + parent);
-                DrawableSNP snp = new DrawableSNP(parent, child, this.getChildren(parent));
-                this.nodes.remove(entry.getKey());
+                Collection<DrawableNode> children = this.getChildren(parent);
+                DrawableSNP snp = new DrawableSNP(parent, child, children);
+                children.stream().map(DrawableNode::getIdentifier).forEach(this.nodes::remove);
                 this.nodes.put(snp.getIdentifier(), snp);
-                parent.getChildren().clear();
-                parent.getChildren().add(snp.getIdentifier());
-                child.getParents().clear();
-                child.getParents().add(snp.getIdentifier());
             }
         }
     }

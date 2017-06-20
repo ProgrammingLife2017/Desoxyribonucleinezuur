@@ -108,16 +108,6 @@ public class DrawableSegment extends DrawableNode {
     }
 
     /**
-     * Set the location of the Segment.
-     * @param x the x location
-     * @param y the y location
-     */
-    void setLocation(int x, int y) {
-        this.setX(x);
-        this.setY(y);
-    }
-
-    /**
      * getter for the width coordinate.
      * @return XYCoordinate.
      */
@@ -165,8 +155,6 @@ public class DrawableSegment extends DrawableNode {
 
     @Override
     public DrawableSegment hasSNPChildren(SubGraph subGraph) {
-        Collection<DrawableNode> childChildren;
-
         // A SNP-able node has:
         if (children.size() < 2) { // - at least 2 children
             return null;
@@ -182,7 +170,7 @@ public class DrawableSegment extends DrawableNode {
                     .map(subGraph::getParents)
                     .flatMap(Collection::stream)
                     .collect(Collectors.toSet());
-            childChildren = childNodes.stream()
+            Collection<DrawableNode> childChildren = childNodes.stream()
                     .map(subGraph::getChildren)
                     .flatMap(Collection::stream)
                     .collect(Collectors.toSet());
@@ -191,8 +179,9 @@ public class DrawableSegment extends DrawableNode {
             } else if (childParents.size() != 1) { // - all children have 1 and the same parent
                 return null;
             }
+
+            return (DrawableSegment) childChildren.iterator().next();
         }
-        return (DrawableSegment) childChildren.iterator().next();
     }
 
     public double getGenomeFraction() {

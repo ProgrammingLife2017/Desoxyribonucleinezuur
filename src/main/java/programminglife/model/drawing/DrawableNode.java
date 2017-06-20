@@ -112,7 +112,10 @@ public abstract class DrawableNode extends Rectangle implements Drawable {
      * @param x the x location
      * @param y the y location
      */
-    abstract void setLocation(int x, int y);
+    protected void setLocation(int x, int y) {
+        this.setX(x);
+        this.setY(y);
+    }
 
     /**
      * Set the size of this drawing.
