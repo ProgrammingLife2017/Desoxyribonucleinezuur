@@ -29,9 +29,9 @@ public class GraphController {
     private LinkedList<DrawableNode> oldMinMaxList = new LinkedList<>();
     private SubGraph subGraph;
     private AnchorPane anchorGraphInfo;
-    private AnchorPane anchorCanvasPanel;
     private LinkedList<DrawableNode> oldGenomeList = new LinkedList<>();
     private ResizableCanvas canvas;
+
 
     private int centerNodeInt;
 
@@ -83,6 +83,7 @@ public class GraphController {
 
 //        long startHighlight = System.nanoTime();
         highlightNode(center, Color.DARKORANGE);
+        centerOnNodeId(center);
 //        Console.println("Time to highlight: " + (System.nanoTime() - startHighlight) / 1000000 + " ms");
 
         long finishTime = System.nanoTime();
@@ -272,8 +273,7 @@ public class GraphController {
         locationCenterY = boundsHeight / 4;
         locationCenterX = boundsWidth / 2 - xCoordinate;
 
-        canvas.setTranslateX(locationCenterX);
-        canvas.setTranslateY(locationCenterY);
+        translate(locationCenterX, locationCenterY);
     }
 
     /**

@@ -336,12 +336,10 @@ public class GuiController implements Observer {
     private void initLeftControlpanelScreenModifiers() {
         disableGraphUIElements(true);
 
-        btnTranslateReset.setOnAction(event -> {
-            canvas.setTranslateX(graphController.getLocationCenterX());
-            canvas.setTranslateY(graphController.getLocationCenterY());
-        });
+        btnTranslateReset.setOnAction(event -> this.draw());
 
-        btnZoomReset.setOnAction(event -> this.resetZoom());
+
+        btnZoomReset.setOnAction(event -> this.draw());
     }
 
     /**
@@ -395,6 +393,7 @@ public class GuiController implements Observer {
         }
 
         resetZoom();
+
         if (graphController.getGraph().contains(centerNode)) {
             this.graphController.clear();
             this.graphController.draw(centerNode, maxDepth);
