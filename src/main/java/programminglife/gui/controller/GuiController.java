@@ -13,10 +13,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.*;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.ScrollEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
@@ -435,7 +432,11 @@ public class GuiController implements Observer {
             orgSceneY = event.getSceneY();
         });
         canvas.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-            graphController.onClick(event.getX(), event.getY());
+            if (event.isShiftDown()) {
+                graphController.onClick(event.getX(), event.getY(), 240);
+            } else {
+                graphController.onClick(event.getX(), event.getY(), 10);
+            }
         });
         anchorGraphPanel.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> {
             double xDifference = event.getSceneX() - orgSceneX;

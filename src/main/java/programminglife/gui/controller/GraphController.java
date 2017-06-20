@@ -497,19 +497,20 @@ public class GraphController {
      * @param x position horizontally where clicked
      * @param y position vertically where clicked
      */
-    void onClick(double x, double y) {
+    void onClick(double x, double y, int location) {
         System.out.println("Canvas clicked " + x + ", " + y);
         //TODO implement this with a tree instead of iterating.
         for (DrawableNode drawableNode : subGraph.getNodes().values()) {
             if (x >= drawableNode.getLocation().getX() && y >= drawableNode.getLocation().getY()
                     && x <= drawableNode.getLocation().getX() + drawableNode.getWidth()
                     && y <= drawableNode.getLocation().getY() + drawableNode.getHeight()) {
-                showInfoNode((DrawableSegment) drawableNode, 10);
+                showInfoNode((DrawableSegment) drawableNode, location);
+                return;
             }
         }
         this.edgeLocation.forEach((drawableEdge, line) -> {
             if (line.contains(x, y)) {
-                showInfoEdge(drawableEdge, 10);
+                showInfoEdge(drawableEdge, location);
             }
         });
     }
