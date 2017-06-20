@@ -205,16 +205,59 @@ public class SubGraph {
      * @return The {@link Drawable} that is on top at the given location.
      */
     public Drawable atLocation(double x, double y) {
-        Collections.binarySearch(layers, x);
+        int layerIndex = getLayerIndex(this.layers, x);
 
         // TODO: implement;
+        // 1: check that x is actually within the layer.
+        // 2: check nodes in layer for y coordinate.
         throw new Error("Not implemented yet");
+    }
+
+    /**
+     * Get the index of the {@link Layer} closest to an x coordinate.
+     * If two layers are equally close (x is exactly in the middle of end
+     * of left layer and start of the right layer), the right Layer is returned, as this
+     * one is likely to have nodes closer (nodes in the left layer do not necessarily extend to the end)
+     * @param x The coordinate
+     * @param layers The list of layers to look through.
+     * @return The index of the closest layer.
+     */
+    private int getLayerIndex(List<Layer> layers, double x) {
+        int resultIndex = Collections.binarySearch(layers, x);
+        if (resultIndex >= layers.size()) {
+            // x is right outside list, last layer is closest.
+            return layers.size() - 1;
+        } else if (resultIndex >= 0) {
+            // x is exactly at the start of a layer, that layer is closest.
+            return resultIndex;
+        } else {
+            // x < 0, -x is the closest layer on the right, -x - 1 is the closest
+            // layer on the left. (see binarySearch documentation)
+            // check which of the two layers is closest.
+            int rightLayerIndex = -resultIndex;
+            int leftLayerIndex = -resultIndex - 1;
+            Layer rightLayer = layers.get(rightLayerIndex);
+            Layer leftLayer = layers.get(leftLayerIndex);
+
+            if (rightLayer.getX() - x > x - (leftLayer.getX() + leftLayer.getWidth())) {
+                // distance from right layer is greater, so left layer is closer
+                return leftLayerIndex;
+            } else {
+                return rightLayerIndex;
+            }
+        }
     }
 
     /**
      * Lay out the {@link Drawable Drawables} in this SubGraph.
      */
     public void layout() {
+        createLayers();
+
+        // TODO: sort within layers: how?
+    }
+
+    private void createLayers() {
         this.layers = findLayers();
 
         createDummyNodes(layers);
