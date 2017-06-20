@@ -246,9 +246,7 @@ public class GraphController {
             double oldXLocation = node.getLocation().getX();
             node.setLocation(oldXLocation + xDifference, node.getLocation().getY());
         }
-        if (this.subGraph.getRightCenterLayer().getX() < canvas.getWidth() / 2) {
-            this.subGraph.addFromEndNodes();
-        }
+        // TODO: dynamically load if too much left or right.
         draw(canvas.getGraphicsContext2D());
     }
 

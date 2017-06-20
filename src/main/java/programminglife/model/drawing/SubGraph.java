@@ -69,7 +69,7 @@ public class SubGraph {
      * @param minRadius  The minimum radius.
      * @param radius     The radius
      */
-    public SubGraph(DrawableSegment centerNode, int minRadius, int radius) {
+    SubGraph(DrawableSegment centerNode, int minRadius, int radius) {
         assert (minRadius <= radius);
 
         this.graph = centerNode.getGraph();
@@ -129,8 +129,6 @@ public class SubGraph {
             if (excludedNodes.containsKey(current.node.getIdentifier())) {
                 continue;
             }
-
-            subGraph.nodes.put(current.node.getIdentifier(), current.node);
 
             // save this node, save the result to check whether we had found it earlier.
             DrawableNode previous = subGraph.nodes.put(current.node.getIdentifier(), current.node);
@@ -220,7 +218,6 @@ public class SubGraph {
         this.layers = findLayers();
 
         createDummyNodes(layers);
-        sortWithinLayers(layers);
     }
 
     public void setRightDrawLocations(int setLayerIndex) {
@@ -365,42 +362,53 @@ public class SubGraph {
     }
 
     /**
-     * Sort each Layer to minimize edge crossings between the Layers.
-     *
+     * Find the Layer with the least number of nodes.
      * @param layers The layers to sort.
      */
-    private void sortWithinLayers(List<Layer> layers) {
-        ListIterator<Layer> nextIter = layers.listIterator();
-
+    private int findMinimumNodesLayerIndex(List<Layer> layers) {
         // find a layer with a single node
-        Layer prev = null;
+
+        int index = -1;
         int min = Integer.MAX_VALUE;
-        while (nextIter.hasNext()) {
-            Layer currentLayer = nextIter.next();
+
+        Iterator<Layer> layerIterator = layers.iterator();
+        for (int i = 0; layerIterator.hasNext(); i++) {
+            Layer currentLayer = layerIterator.next();
+
             int currentSize = currentLayer.size();
             if (currentSize < min) {
-                prev = currentLayer;
+                min = currentSize;
+                index = i;
                 if (currentSize <= 1) {
+                    // There should be no layers with less than 1 node,
+                    // so this layer has the least amount of nodes.
                     break;
-                } else {
-                    min = currentSize;
                 }
             }
         }
 
-        Layer next = prev;
-        ListIterator<Layer> prevIter = layers.listIterator(nextIter.previousIndex());
+        return index;
+    }
 
-        while (nextIter.hasNext()) {
-            Layer layer = nextIter.next();
+    private void sortLayersRightFrom(int layerIndex) {
+        ListIterator<Layer> iterator = layers.listIterator(layerIndex);
+        Layer prev = iterator.next();
+
+        while (iterator.hasNext()) {
+            Layer layer = iterator.next();
             layer.sort(this, prev, true);
             prev = layer;
         }
+    }
 
-        while (prevIter.hasPrevious()) {
-            Layer layer = prevIter.previous();
-            layer.sort(this, next, false);
-            next = layer;
+    private void sortLayersLeftFrom(int layerIndex) {
+        ListIterator<Layer> iterator = layers.listIterator(layerIndex + 1);
+        Layer prev = iterator.previous();
+
+        while (iterator.hasPrevious()) {
+            Layer layer = iterator.previous();
+            layer.sort(this, prev, false);
+            prev = layer;
         }
     }
 
@@ -501,82 +509,16 @@ public class SubGraph {
             }
         });
 
+        this.layers.addAll(0, leftSubGraph.layers);
+
+
         // TODO: find DummyNodes between subgraphs. Just use findDummyNodes on full graph?
-    }
-
-    public void rootLayerLayout(Layer oldRootLayer, Layer newRootLayer) {
-        createDummyNodesRoot(newRootLayer);
-//        sortWithinRootLayer(newRootLayer);
-        newRootLayer.sort(this, oldRootLayer, true);
-    }
-
-    private void createDummyNodesRoot(Layer newRootLayer) {
-        // TODO: Implement :D
-
+        throw new Error("Not implemented yet");
     }
 
     public void addFromEndNodes() {
-        GraphPart graphPart = findNodes(layers.get(layers.size() - 1).getNodes(), DEFAULT_DYNAMIC_RADIUS);
-
-        layers.get(layers.size() - 1).getNodes().forEach(node -> graphPart.getNodes().put(node.getIdentifier(), node));
-
-        layout(graphPart);
-    }
-
-    public void endLayerLayout(Layer oldEndLayer, Layer newEndLayer) {
-        createDummyNodesEnd(oldEndLayer, newEndLayer);
-        // sortWithinEndLayer(newEndLayer); Is not implemented but I believe method below does the same job.
-        newEndLayer.sort(this, oldEndLayer, true);
-
-        double x = endLayerX;
-        int size = oldEndLayer.size();
-        int newSize = newEndLayer.size();
-        System.out.println(newEndLayer.size());
-        int diff = Math.abs(newSize - size);
-        double y = 50;
-        x += layerPadding + diffLayerPadding * diff;
-        for (DrawableNode d : newEndLayer) {
-            d.setLocation(x, y);
-            y += LINE_PADDING;
-        }
-        x += newEndLayer.getWidth() + layerPadding * 0.1 * newSize;
-        endLayerX = x;
-    }
-
-
-
-
-    private void createDummyNodesEnd(Layer oldEndLayer, Layer newEndLayer) {
-        int dummyId = -1;
-        Layer current = oldEndLayer;
-        Layer next = newEndLayer;
-        for (DrawableNode node : current) {
-            for (DrawableNode child : this.getChildren(node)) {
-                if (!next.contains(child)) {
-                    DrawableDummy dummy = new DrawableDummy(dummyId, node, child, this.getGraph());
-                    dummyId--;
-                    node.replaceChild(child, dummy);
-                    child.replaceParent(node, dummy);
-                    dummy.setWidth(next.getWidth());
-                    this.nodes.put(dummy.getIdentifier(), dummy);
-                    next.add(dummy);
-                }
-            }
-        }
-    }
-
-    /**
-     * Set the centerNode of this SubGraph.
-     * Nodes that are now outside the radius of this SubGraph will be removed,
-     * and Nodes that are now inside will be added.
-     *
-     * @param nodeID The new centerNode.
-     */
-    public void setCenterNode(int nodeID) {
-        // TODO
-        // drop nodes that are now outside radius
-        // include nodes that have come into radius
-        // drop nodes that are only connected via nodes now outside radius?
+        // TODO: copy from addFromRootNodes
+        throw new Error("Not implemented yet");
     }
 
     /**
