@@ -66,12 +66,15 @@ public class SubGraph {
         }
     }
 
+    /**
+     * Detect SNPs and replace them.
+     */
     public void replaceSNPs() {
-        DrawableSegment child;
         Map<Integer, DrawableNode> nodesCopy = new LinkedHashMap<>(this.nodes);
         for (Map.Entry<Integer, DrawableNode> entry : nodesCopy.entrySet()) {
             DrawableNode parent = entry.getValue();
-            if ((child = parent.hasSNPChildren(this)) != null) {
+            DrawableSegment child = parent.hasSNPChildren(this);
+            if (child != null) {
                 Collection<DrawableNode> children = this.getChildren(parent);
                 DrawableSNP snp = new DrawableSNP(parent, child, children);
                 children.stream().map(DrawableNode::getIdentifier).forEach(this.nodes::remove);

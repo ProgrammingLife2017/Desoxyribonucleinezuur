@@ -14,11 +14,12 @@ import java.util.stream.Collectors;
 public class DrawableSNP extends DrawableNode {
     private DrawableSegment parent;
     private DrawableSegment child;
-    final private Collection<DrawableSegment> mutations;
+    private final Collection<DrawableSegment> mutations;
 
     /**
      * Construct a {@link DrawableNode}.
-     *
+     * @param parent the parent Segment of the mutations/SNP
+     * @param child the child Segment of the mutations/SNP
      * @param mutations the Segments in this bubble
      */
     DrawableSNP(DrawableNode parent, DrawableNode child, Collection<DrawableNode> mutations) {
@@ -140,7 +141,11 @@ public class DrawableSNP extends DrawableNode {
         this.setDrawDimensionsUpToDate(true);
     }
 
-    void setSize(XYCoordinate size) {
+    /**
+     * Set the size of this {@link Drawable}.
+     * @param size the preferred size
+     */
+    private void setSize(XYCoordinate size) {
         this.setWidth(size.getX());
         this.setHeight(size.getY());
         this.setDrawDimensionsUpToDate(true);

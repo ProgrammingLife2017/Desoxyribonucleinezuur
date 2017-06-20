@@ -95,6 +95,9 @@ public class DrawableDummy extends DrawableNode {
         this.setStroke(strokeColor);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public DrawableSegment hasSNPChildren(SubGraph subGraph) {
         return null;
     }

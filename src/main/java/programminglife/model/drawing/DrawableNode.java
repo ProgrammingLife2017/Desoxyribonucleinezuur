@@ -32,8 +32,12 @@ public abstract class DrawableNode extends Rectangle implements Drawable {
 
     @Override
     public final boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof DrawableNode)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof DrawableNode)) {
+            return false;
+        }
 
         DrawableNode that = (DrawableNode) o;
         if (!this.getClass().equals(that.getClass())) {

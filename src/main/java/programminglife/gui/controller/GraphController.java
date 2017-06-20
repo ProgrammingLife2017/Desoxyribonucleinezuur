@@ -48,6 +48,11 @@ public class GraphController {
         return this.centerNodeInt;
     }
 
+    /**
+     * Utility function for benchmarking purposes.
+     * @param description the description to print
+     * @param r the {@link Runnable} to run/benchmark
+     */
     private void time(String description, Runnable r) {
         long start = System.nanoTime();
         r.run();

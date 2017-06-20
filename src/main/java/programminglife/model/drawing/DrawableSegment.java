@@ -162,7 +162,8 @@ public class DrawableSegment extends DrawableNode {
             return null;
         } else if (children.stream().anyMatch(id -> id < 1)) { // - no dummy children
             return null;
-        } else if (children.stream().anyMatch(id -> getGraph().getSequenceLength(id) != 1)) { // - only children of length 1
+        } else if (children.stream().anyMatch(id -> getGraph().getSequenceLength(id) != 1)) {
+            // - only children of length 1
             return null;
         } else  {
             Collection<DrawableNode> childNodes = subGraph.getChildren(this);
