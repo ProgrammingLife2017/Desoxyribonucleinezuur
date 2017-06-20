@@ -64,11 +64,9 @@ public class SubGraph {
         if (!this.nodes.containsKey(centerNode.getIdentifier())) {
             this.nodes.put(centerNode.getIdentifier(), centerNode);
         }
-
-        this.replaceSNPs();
     }
 
-    private void replaceSNPs() {
+    public void replaceSNPs() {
         DrawableSegment child;
         Map<Integer, DrawableNode> nodesCopy = new LinkedHashMap<>(this.nodes);
         for (Map.Entry<Integer, DrawableNode> entry : nodesCopy.entrySet()) {

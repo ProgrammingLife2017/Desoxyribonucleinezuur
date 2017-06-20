@@ -48,59 +48,38 @@ public class GraphController {
         return this.centerNodeInt;
     }
 
+    private void time(String description, Runnable r) {
+        long start = System.nanoTime();
+        r.run();
+        Console.println(String.format("%s: %d ms", description, (System.nanoTime() - start) / 1000000));
+    }
+
     /**
      * Method to draw the subGraph decided by a center node and radius.
      * @param center the node of which the radius starts.
      * @param radius the amount of layers to be drawn.
      */
     public void draw(int center, int radius) {
-        long startTimeProgram = System.nanoTime();
-        DrawableSegment centerNode = new DrawableSegment(graph, center);
-        centerNodeInt = centerNode.getIdentifier();
-        long startTimeSubGraph = System.nanoTime();
-        subGraph = new SubGraph(centerNode, radius);
+        time("Total drawing", () -> {
+            DrawableSegment centerNode = new DrawableSegment(graph, center);
+            centerNodeInt = centerNode.getIdentifier();
 
-        long finishTimeSubGraph = System.nanoTime();
+            time("Find subgraph", () -> subGraph = new SubGraph(centerNode, radius));
+            time("Replace SNPs", subGraph::replaceSNPs);
+            time("Layout subgraph", subGraph::layout);
+            time("Calculate genomes through edges", subGraph::calculateGenomes);
+            time("Drawing", () -> {
+                for (DrawableNode drawableNode : subGraph.getNodes().values()) {
+                    drawNode(drawableNode);
+                    for (DrawableNode child : subGraph.getChildren(drawableNode)) {
+                        drawEdge(drawableNode, child);
+                    }
+                }
+            });
 
-        long startLayoutTime = System.nanoTime();
-        subGraph.layout();
-        long finishTimeLayout = System.nanoTime();
-
-        long startTimeGenome = System.nanoTime();
-        subGraph.calculateGenomes();
-        long finishTimeGenome = System.nanoTime();
-
-
-        long startTimeDrawing = System.nanoTime();
-        for (DrawableNode drawableNode : subGraph.getNodes().values()) {
-            drawNode(drawableNode);
-            for (DrawableNode child : subGraph.getChildren(drawableNode)) {
-                drawEdge(drawableNode, child);
-            }
-        }
-        long finishTimeDrawing = System.nanoTime();
-
-        centerOnNodeId(center);
-        highlightNode(center, Color.DARKORANGE);
-
-        long finishTime = System.nanoTime();
-        long differenceTimeProgram = finishTime - startTimeProgram;
-        long differenceTimeDrawing = finishTimeDrawing - startTimeDrawing;
-        long differenceTimeLayout = finishTimeLayout - startLayoutTime;
-        long differenceTimeSubGraph = finishTimeSubGraph - startTimeSubGraph;
-        long differenceTimeGenomes = finishTimeGenome - startTimeGenome;
-        long msDifferenceTimeProgram = differenceTimeProgram / 1000000;
-        long millisecondTimeDrawing = differenceTimeDrawing   / 1000000;
-        long msDifferenceTimeLayout = differenceTimeLayout   / 1000000;
-        long msDifferenceTimeSubGraph = differenceTimeSubGraph / 1000000;
-        long msDifferenceTimeGenomes = differenceTimeGenomes / 1000000;
-        Console.println("time of SubGraph: " + msDifferenceTimeSubGraph);
-        Console.println("Time of layout:  " + msDifferenceTimeLayout);
-        Console.println("Time to find genomes: " + msDifferenceTimeGenomes);
-        Console.println("Time of drawing:  " + millisecondTimeDrawing);
-        Console.println("Time of Total Program:  " + msDifferenceTimeProgram);
-
-
+            centerOnNodeId(center);
+            highlightNode(center, Color.DARKORANGE);
+        });
     }
 
     /**

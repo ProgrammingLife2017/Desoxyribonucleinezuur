@@ -7,6 +7,7 @@ import org.junit.Test;
 import programminglife.model.GenomeGraph;
 import programminglife.utility.InitFXThread;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
@@ -60,7 +61,7 @@ public class SubGraphSNPTest {
         DrawableNode seg2 = sg.getNodes().get(2);
         DrawableNode seg3 = sg.getNodes().get(3);
 
-        assertNotNull(seg0.hasSNPChildren(sg));
+        assertEquals(seg3, seg0.hasSNPChildren(sg));
         assertNull(seg1.hasSNPChildren(sg));
         assertNull(seg2.hasSNPChildren(sg));
         assertNull(seg3.hasSNPChildren(sg));
@@ -107,7 +108,7 @@ public class SubGraphSNPTest {
         DrawableNode seg4 = sg.getNodes().get(4);
         DrawableNode seg5 = sg.getNodes().get(5);
 
-        assertNotNull(seg0.hasSNPChildren(sg));
+        assertEquals(seg5, seg0.hasSNPChildren(sg));
         assertNull(seg1.hasSNPChildren(sg));
         assertNull(seg2.hasSNPChildren(sg));
         assertNull(seg3.hasSNPChildren(sg));
