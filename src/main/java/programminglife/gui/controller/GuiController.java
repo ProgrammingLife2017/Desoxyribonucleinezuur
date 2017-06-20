@@ -88,7 +88,7 @@ public class GuiController implements Observer {
     @FXML private javafx.scene.canvas.Canvas miniMap;
 
     private double orgSceneX, orgSceneY;
-    private double orgTranslateX, orgTranslateY;
+
     private double scale;
     private GraphController graphController;
     private RecentFileController recentFileControllerGFA;

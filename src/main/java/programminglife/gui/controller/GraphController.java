@@ -32,6 +32,7 @@ public class GraphController {
     private LinkedList<DrawableNode> oldGenomeList = new LinkedList<>();
     private ResizableCanvas canvas;
 
+    private double zoomLevel = 1;
 
     private int centerNodeInt;
 
@@ -186,7 +187,7 @@ public class GraphController {
 
         edge.colorize(subGraph);
 
-        gc.setLineWidth(edge.getStrokeWidth());
+        gc.setLineWidth(edge.getStrokeWidth() * zoomLevel);
         gc.setStroke(edge.getStrokeColor());
 
         XYCoordinate startLocation = edge.getStartLocation();
@@ -301,8 +302,10 @@ public class GraphController {
             double oldYLocation = node.getLocation().getY();
             node.setHeight(node.getHeight() / scale);
             node.setWidth(node.getWidth() / scale);
+            node.setStrokeWidth(node.getStrokeWidth() / scale);
             node.setLocation(oldXLocation / scale, oldYLocation / scale);
         }
+        zoomLevel /= scale;
         draw(canvas.getGraphicsContext2D());
     }
 
