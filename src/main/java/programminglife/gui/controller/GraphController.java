@@ -7,6 +7,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import programminglife.gui.ResizableCanvas;
 import programminglife.model.GenomeGraph;
@@ -15,6 +16,7 @@ import programminglife.model.drawing.*;
 import programminglife.utility.Console;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 /**
@@ -30,6 +32,7 @@ public class GraphController {
     private SubGraph subGraph;
     private AnchorPane anchorGraphInfo;
     private LinkedList<DrawableNode> oldGenomeList = new LinkedList<>();
+    private HashMap<DrawableEdge, Line> edgeLocation = new HashMap<>();
     private ResizableCanvas canvas;
 
     private double zoomLevel = 1;
@@ -195,6 +198,10 @@ public class GraphController {
         XYCoordinate startLocation = edge.getStartLocation();
         XYCoordinate endLocation = edge.getEndLocation();
 
+        Line line = new Line(startLocation.getX(), startLocation.getY(), endLocation.getX(), endLocation.getY());
+        line.setStrokeWidth(edge.getStrokeWidth());
+        this.edgeLocation.put(edge, line);
+
         gc.strokeLine(startLocation.getX(), startLocation.getY(), endLocation.getX(), endLocation.getY());
     }
 
@@ -212,21 +219,6 @@ public class GraphController {
                 drawableNode.getWidth(), drawableNode.getHeight());
         gc.fillRect(drawableNode.getLeftBorderCenter().getX(), drawableNode.getLocation().getY(),
                 drawableNode.getWidth(), drawableNode.getHeight());
-
-
-//        if (!(drawableNode instanceof DrawableDummy)) {
-//            drawableNode.setOnMouseClicked(event -> Console.println(drawableNode.details()));
-//
-//            drawableNode.setOnMouseClicked(event -> {
-//                if (event.isShiftDown()) {
-//                    showInfoNode((DrawableSegment) drawableNode, 250);
-//                } else {
-//                    showInfoNode((DrawableSegment) drawableNode, 10);
-//                }
-//            });
-//        }
-
-
     }
 
     /**
@@ -502,25 +494,25 @@ public class GraphController {
 
     /**
      * Returns the node clicked on else returns null.
-     * @param x
-     * @param y
+     * @param x position horizontally where clicked
+     * @param y position vertically where clicked
      */
-    public DrawableNode onClick(double x, double y) {
+    void onClick(double x, double y, int location) {
         System.out.println("Canvas clicked " + x + ", " + y);
         //TODO implement this with a tree instead of iterating.
-        DrawableNode nodeClicked = null;
         for (DrawableNode drawableNode : subGraph.getNodes().values()) {
-            if (x >= drawableNode.getLocation().getX()
-                    && x <= drawableNode.getLocation().getX() + drawableNode.getWidth()) {
-                if (y >= drawableNode.getLocation().getY()
-                        && y <= drawableNode.getLocation().getY() + drawableNode.getHeight()) {
-                    nodeClicked = drawableNode;
-                }
-
+            if (x >= drawableNode.getLocation().getX() && y >= drawableNode.getLocation().getY()
+                    && x <= drawableNode.getLocation().getX() + drawableNode.getWidth()
+                    && y <= drawableNode.getLocation().getY() + drawableNode.getHeight()) {
+                showInfoNode((DrawableSegment) drawableNode, location);
+                return;
             }
         }
-        return nodeClicked;
-
+        this.edgeLocation.forEach((drawableEdge, line) -> {
+            if (line.contains(x, y)) {
+                showInfoEdge(drawableEdge, location);
+            }
+        });
     }
 
     public void setZoomLevel(double zoomLevel) {
