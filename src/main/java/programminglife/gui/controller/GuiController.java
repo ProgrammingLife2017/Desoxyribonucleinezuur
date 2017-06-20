@@ -389,6 +389,7 @@ public class GuiController implements Observer {
         Console.println("[%s] Drawing graph...", Thread.currentThread().getName());
         int centerNode = 0;
         int maxDepth = 0;
+        scale = 1;
         try {
             centerNode = Integer.parseInt(txtCenterNode.getText());
             try {

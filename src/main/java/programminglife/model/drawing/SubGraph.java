@@ -14,8 +14,9 @@ import java.util.*;
 public class SubGraph {
     private static final int DEFAULT_DYNAMIC_RADIUS = 50;
     private static final int DEFAULT_NODE_Y = 50;
+    private static final int BORDER_BUFFER = 40;
 
-    private static final int MIN_RADIUS_DEFAULT = 200;
+    private static final int MIN_RADIUS_DEFAULT = 50;
     /**
      * The amount of padding between layers (horizontal padding).
      */
@@ -58,6 +59,8 @@ public class SubGraph {
         this.nodes = nodes;
         this.rootNodes = rootNodes;
         this.endNodes = endNodes;
+
+        this.createLayers();
     }
 
     /**
@@ -77,6 +80,9 @@ public class SubGraph {
         firstLayer.setX(0);
         firstLayer.setDrawLocations(DEFAULT_NODE_Y);
         this.setRightDrawLocations(this.layers, 0);
+
+        double center = this.layers.get(this.layers.size() - 1).getX() / 2;
+        this.translate(-center);
     }
 
     /**
@@ -147,7 +153,7 @@ public class SubGraph {
                 continue;
             }
 
-            if (excludedNodes.containsKey(current.node.getIdentifier())) {
+            if (!startNodes.contains(current.node) && excludedNodes.containsKey(current.node.getIdentifier())) {
                 continue;
             }
 
@@ -184,6 +190,15 @@ public class SubGraph {
         long difference = endTime - startTime;
         double difInSeconds = difference / 1000000000.0;
         Console.println("Time for finding nodes: %f s", difInSeconds);
+    }
+
+    public void checkDynamicLoad(int leftBorder, double rightBorder) {
+        if (layers.get(BORDER_BUFFER).getX() > leftBorder) {
+            this.addFromRootNodes(SubGraph.DEFAULT_DYNAMIC_RADIUS);
+        }
+        if (layers.get(layers.size() - BORDER_BUFFER - 1).getX() < rightBorder) {
+            this.addFromEndNodes(SubGraph.DEFAULT_DYNAMIC_RADIUS);
+        }
     }
 
     /**
@@ -567,6 +582,7 @@ public class SubGraph {
         SubGraph subGraph = new SubGraph(graph);
 
         findNodes(subGraph, layers.get(0).getNodes(), this.nodes, radius);
+        subGraph.createLayers();
 
         this.mergeLeftSubGraphIntoThisSubGraph(subGraph);
     }
@@ -609,11 +625,15 @@ public class SubGraph {
             }
         });
 
+        int oldFirstIndex = leftSubGraph.layers.size();
         this.layers.addAll(0, leftSubGraph.layers);
 
 
         // TODO: find DummyNodes between subgraphs. Just use findDummyNodes on full graph?
-        throw new Error("Not implemented yet");
+//        throw new Error("Not implemented yet");
+
+        this.sortLayersLeftFrom(oldFirstIndex);
+        this.setLeftDrawLocations(this.layers, oldFirstIndex);
     }
 
     /**
@@ -641,4 +661,15 @@ public class SubGraph {
         this.layerPadding /= zoom;
         this.diffLayerPadding /= zoom;
     }
+
+    public void translate(double diff) {
+        for (Layer layer : this.layers) {
+            layer.setX(layer.getX() + diff);
+            for (DrawableNode node : layer) {
+                node.setLocation(node.getLocation().getX() + diff, node.getLocation().getY());
+            }
+        }
+    }
+
+
 }

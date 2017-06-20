@@ -61,11 +61,7 @@ public class GraphController {
         subGraph = new SubGraph(centerNode, radius);
         Console.println("Time to find nodes: " + (System.nanoTime() - startFindNodes) / 1000000 + " ms");
 
-        long getNodes = System.nanoTime();
-        Collection<DrawableNode> dNodes = subGraph.getNodes().values();
-        Console.println("Time to get drawable nodes: " + (System.nanoTime() - getNodes) / 1000000 + " ms");
-
-        // this.sizeToCanvas(dNodes);
+        subGraph.translate(canvas.getWidth() / 2);
 
         long startDrawing = System.nanoTime();
         draw(gc);
@@ -242,11 +238,7 @@ public class GraphController {
     }
 
     public void translate(double xDifference) {
-        for (DrawableNode node : subGraph.getNodes().values()) {
-            double oldXLocation = node.getLocation().getX();
-            node.setLocation(oldXLocation + xDifference, node.getLocation().getY());
-        }
-        // TODO: dynamically load if too much left or right.
+        subGraph.translate(xDifference);
         draw(canvas.getGraphicsContext2D());
     }
 
@@ -263,6 +255,9 @@ public class GraphController {
 
     public void draw(GraphicsContext gc) {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+
+        subGraph.checkDynamicLoad(0, canvas.getWidth());
+
         for (DrawableNode drawableNode : subGraph.getNodes().values()) {
             drawNode(gc, drawableNode);
             for (DrawableNode child : subGraph.getChildren(drawableNode)) {

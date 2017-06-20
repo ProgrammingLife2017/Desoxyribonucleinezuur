@@ -11,6 +11,7 @@ import java.util.Collection;
  * A segment that also implements {@link Drawable}.
  */
 public abstract class DrawableNode implements Drawable {
+    private static int uniqueId = 0;
 
     private final GenomeGraph graph;
     private final int id;
@@ -186,5 +187,16 @@ public abstract class DrawableNode implements Drawable {
 
     public void setLayer(Layer layer) {
         this.layer = layer;
+    }
+
+    /**
+     * Get a unique ID for a DrawableNode. These IDs are always negative. These IDs are globally unique,
+     * which means that every call to this method will return a different number (until you reach underflow,
+     * which is assumed to not happen)
+     * @return A negative unique ID.
+     */
+    synchronized public static int getUniqueId() {
+        uniqueId--;
+        return uniqueId;
     }
 }
