@@ -1,7 +1,9 @@
 package programminglife.model.drawing;
 
-import org.eclipse.collections.impl.factory.Sets;
 import programminglife.model.GenomeGraph;
+
+import java.util.LinkedHashMap;
+import org.eclipse.collections.impl.factory.Sets;
 import programminglife.model.XYCoordinate;
 import programminglife.utility.Console;
 
@@ -243,12 +245,12 @@ public class SubGraph {
         sortWithinLayers(layers);
 
 
-        int x = 50;
+        double x = 0;
         int size = 1;
         for (Layer layer : layers) {
             int newSize = layer.size();
             int diff = Math.abs(newSize - size);
-            int y = 50;
+            double y = 50;
             x += LAYER_PADDING + 7 * diff;
             for (DrawableNode d : layer) {
                 d.setLocation(x, y);
@@ -523,7 +525,7 @@ public class SubGraph {
         // when getting smaller: drop nodes outside new radius.
     }
 
-    public LinkedHashMap<Integer, ? extends DrawableNode> getNodes() {
+    public LinkedHashMap<Integer, DrawableNode> getNodes() {
         return this.nodes;
     }
 

@@ -5,6 +5,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
+import programminglife.gui.AutoCompleteTextField;
 import programminglife.model.Annotation;
 import programminglife.model.Feature;
 import programminglife.utility.NumbersOnlyListener;
