@@ -363,7 +363,7 @@ public class GraphController {
      * Returns the node clicked on else returns null.
      * @param x position horizontally where clicked
      * @param y position vertically where clicked
-     * @return nodeClicked {@link DrawableNode} returns null if no note is clicked.
+     * @return nodeClicked {@link DrawableNode} returns null if no node is clicked.
      */
     public DrawableNode onClick(double x, double y) {
         DrawableNode nodeClicked = null;
@@ -373,6 +373,7 @@ public class GraphController {
                     && x <= drawableNode.getLocation().getX() + drawableNode.getWidth()
                     && y <= drawableNode.getLocation().getY() + drawableNode.getHeight()) {
                 nodeClicked = drawableNode;
+                break;
             }
         }
         return nodeClicked;

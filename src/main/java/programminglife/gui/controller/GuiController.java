@@ -105,6 +105,7 @@ public class GuiController implements Observer {
     private static final double MAX_SCALE = 5.0d;
     private static final double MIN_SCALE = .02d;
     private static final double ZOOM_FACTOR = 1.05d;
+    private static final double ZOOM_SPEED = 1.03d;
 
 
     /**
@@ -464,11 +465,7 @@ public class GuiController implements Observer {
         if (clickedOn != null) {
             if (clickedOn instanceof DrawableSegment) {
                 DrawableSegment segment = (DrawableSegment) clickedOn;
-                if (shiftPressed) {
-                    showInfoNode(segment, 240);
-                } else {
-                    showInfoNode(segment, 10);
-                }
+                showInfoNode(segment, shiftPressed ? 240 : 10);
             }
 
         }
@@ -486,9 +483,9 @@ public class GuiController implements Observer {
         double oldScale = scale;
 
         if (deltaX < 0 || deltaY < 0) {
-            scale *= Math.pow(1.03, delta);
+            scale *= Math.pow(ZOOM_SPEED, delta);
         } else {
-            scale /= Math.pow(1.03, delta);
+            scale /= Math.pow(ZOOM_SPEED, delta);
         }
 
         scale = clamp(scale, MIN_SCALE, MAX_SCALE);
