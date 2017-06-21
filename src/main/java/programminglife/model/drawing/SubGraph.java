@@ -22,7 +22,8 @@ public class SubGraph {
      */
     private double layerPadding = 20;
 
-    private double diffLayerPadding = 3;
+    private double diffLayerPadding = 7
+            ;
 
     /**
      * The amount of padding between nodes within a Layer (vertical padding).
@@ -347,10 +348,11 @@ public class SubGraph {
 
             int newSize = layer.size();
             int diff = Math.abs(newSize - size);
-            x -= (layer.getWidth() + layerPadding * 1.1 * newSize + diffLayerPadding * diff);
+            x -= layerPadding + diff * diffLayerPadding + layer.getWidth();
 
             layer.setX(x);
             layer.setDrawLocations(DEFAULT_NODE_Y);
+            x -= layerPadding * 0.1 + newSize;
             size = newSize;
         }
     }
@@ -592,8 +594,48 @@ public class SubGraph {
      * @param radius The number of steps to take from the endNodes before stopping the search.
      */
     public void addFromEndNodes(int radius) {
-        // TODO: copy from addFromRootNodes
-        throw new Error("Not implemented yet");
+        Console.println("Increasing graph with radius %d", radius);
+        SubGraph subGraph = new SubGraph(graph);
+
+        findNodes(subGraph, layers.get(layers.size()-1).getNodes(), this.nodes, radius);
+        subGraph.createLayers();
+
+        this.mergeRightSubGraphIntoThisSubGraph(subGraph);
+    }
+
+    private void mergeRightSubGraphIntoThisSubGraph(SubGraph rightSubGraph) {
+        this.nodes.putAll(rightSubGraph.nodes);
+        this.endNodes = rightSubGraph.endNodes;
+        rightSubGraph.rootNodes.forEach((id, node) -> {
+            boolean addToEndNodes = false;
+            for (Integer parentId : node.getParents()) {
+                if (this.nodes.containsKey(parentId)) {
+                    addToEndNodes = true;
+                    break;
+                }
+            }
+            if (!addToEndNodes) {
+                for (Integer childId : node.getChildren()) {
+                    if (this.nodes.containsKey(childId)) {
+                        addToEndNodes = true;
+                        break;
+                    }
+                }
+            }
+            if (addToEndNodes) {
+                this.endNodes.put(id, node);
+            }
+        });
+
+        int oldLastIndex = this.layers.size() - rightSubGraph.layers.size() - 1;
+        this.layers.addAll(rightSubGraph.layers);
+
+
+        // TODO: find DummyNodes between subgraphs. Just use findDummyNodes on full graph?
+//        throw new Error("Not implemented yet");
+
+        this.sortLayersRightFrom(oldLastIndex);
+        this.setRightDrawLocations(this.layers, oldLastIndex);
     }
 
     /**
