@@ -243,13 +243,7 @@ public class GraphController {
     }
 
     public void zoom(double scale) {
-        for (DrawableNode node : subGraph.getNodes().values()) {
-            double oldXLocation = node.getLocation().getX();
-            double oldYLocation = node.getLocation().getY();
-            node.setWidth(node.getWidth() / scale);
-            node.setLocation(oldXLocation / scale, oldYLocation);
-            subGraph.scaleLayerPadding(scale);
-        }
+        subGraph.zoom(scale);
         draw(canvas.getGraphicsContext2D());
     }
 

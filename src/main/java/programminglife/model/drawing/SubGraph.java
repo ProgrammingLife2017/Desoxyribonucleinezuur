@@ -20,10 +20,11 @@ public class SubGraph {
     /**
      * The amount of padding between layers (horizontal padding).
      */
-    private double layerPadding = 20;
+    private static final double LAYER_PADDING = 20;
 
-    private double diffLayerPadding = 7
-            ;
+    private static final double DIFF_LAYER_PADDING = 7;
+
+    private double zoomLevel;
 
     /**
      * The amount of padding between nodes within a Layer (vertical padding).
@@ -43,8 +44,8 @@ public class SubGraph {
      * Create a SubGraph from a graph, without any nodes initially.
      * @param graph The {@link GenomeGraph} that this SubGraph is based on.
      */
-    private SubGraph(GenomeGraph graph) {
-        this(graph, new LinkedHashMap<>(), new LinkedHashMap<>(), new LinkedHashMap<>());
+    private SubGraph(GenomeGraph graph, double zoomLevel) {
+        this(graph, zoomLevel, new LinkedHashMap<>(), new LinkedHashMap<>(), new LinkedHashMap<>());
     }
 
     /**
@@ -54,9 +55,10 @@ public class SubGraph {
      * @param rootNodes The rootNodes of this SubGraph.
      * @param endNodes The endNodes of this SubGraph.
      */
-    private SubGraph(GenomeGraph graph, LinkedHashMap<Integer, DrawableNode> nodes,
+    private SubGraph(GenomeGraph graph, double zoomLevel, LinkedHashMap<Integer, DrawableNode> nodes,
                      LinkedHashMap<Integer, DrawableNode> rootNodes, LinkedHashMap<Integer, DrawableNode> endNodes) {
         this.graph = graph;
+        this.zoomLevel = zoomLevel;
         this.nodes = nodes;
         this.rootNodes = rootNodes;
         this.endNodes = endNodes;
@@ -73,7 +75,7 @@ public class SubGraph {
      * @param radius     The radius
      */
     public SubGraph(DrawableSegment centerNode, int radius) {
-        this(centerNode, MIN_RADIUS_DEFAULT, Math.max(radius, MIN_RADIUS_DEFAULT));
+        this(centerNode, 1, MIN_RADIUS_DEFAULT, Math.max(radius, MIN_RADIUS_DEFAULT));
 
         Layer firstLayer = layers.get(0);
         assert (firstLayer != null);
@@ -95,10 +97,11 @@ public class SubGraph {
      * @param minRadius  The minimum radius.
      * @param radius     The radius
      */
-    SubGraph(DrawableSegment centerNode, int minRadius, int radius) {
+    SubGraph(DrawableSegment centerNode, double zoomLevel, int minRadius, int radius) {
         assert (minRadius <= radius);
 
         this.graph = centerNode.getGraph();
+        this.zoomLevel = zoomLevel;
         this.layers = null;
 
         findNodes(this, Collections.singleton(centerNode), new LinkedHashMap<>(), radius);
@@ -164,9 +167,11 @@ public class SubGraph {
             if (lastRow) {
                 // last row, add this node to rootNodes / endNodes even if we already found this node
                 // (for when a node is both a root and an end node)
-                if (current.foundFrom == FoundNode.FoundFrom.CHILD) {
+                if (current.foundFrom == FoundNode.FoundFrom.CHILD &&
+                        (previous == null || subGraph.endNodes.containsKey(current.node.getIdentifier()))) {
                     subGraph.rootNodes.put(current.node.getIdentifier(), current.node);
-                } else if (current.foundFrom == FoundNode.FoundFrom.PARENT) {
+                } else if (current.foundFrom == FoundNode.FoundFrom.PARENT &&
+                        (previous == null || subGraph.rootNodes.containsKey(current.node.getIdentifier()))) {
                     subGraph.endNodes.put(current.node.getIdentifier(), current.node);
                 }
                 // else: current.foundFrom == null, true for the centerNode.
@@ -180,10 +185,14 @@ public class SubGraph {
                 Collection<Integer> children = current.node.getChildren();
                 Collection<Integer> parents = current.node.getParents();
 
-                children.forEach(node -> queue.add(
-                        new FoundNode(new DrawableSegment(subGraph.graph, node), FoundNode.FoundFrom.PARENT)));
-                parents.forEach(node -> queue.add(
-                        new FoundNode(new DrawableSegment(subGraph.graph, node), FoundNode.FoundFrom.CHILD)));
+                children.forEach(node -> { if (node > 0) {
+                    queue.add(
+                            new FoundNode(new DrawableSegment(subGraph.graph, node), FoundNode.FoundFrom.PARENT));
+                }});
+                parents.forEach(node -> { if (node > 0) {
+                    queue.add(
+                            new FoundNode(new DrawableSegment(subGraph.graph, node), FoundNode.FoundFrom.CHILD));
+                }});
             }
         }
 
@@ -302,7 +311,7 @@ public class SubGraph {
     private void createLayers() {
         this.layers = findLayers();
 
-        createDummyNodes(layers);
+        createDummyNodes(layers, true);
     }
 
     /**
@@ -320,13 +329,15 @@ public class SubGraph {
         while (layerIterator.hasNext()) {
             Layer layer = layerIterator.next();
 
+            layer.setSize(zoomLevel);
+
             int newSize = layer.size();
             int diff = Math.abs(newSize - size);
-            x += layerPadding + diffLayerPadding * diff;
+            x += (LAYER_PADDING * zoomLevel)  + (DIFF_LAYER_PADDING * zoomLevel) * diff;
 
             layer.setX(x);
             layer.setDrawLocations(DEFAULT_NODE_Y);
-            x += layer.getWidth() + layerPadding * 0.1 + newSize;
+            x += layer.getWidth() + (LAYER_PADDING * zoomLevel) * 0.1 + newSize;
             size = newSize;
         }
     }
@@ -346,13 +357,16 @@ public class SubGraph {
         while (layerIterator.hasPrevious()) {
             Layer layer = layerIterator.previous();
 
+            layer.setSize(zoomLevel);
+
             int newSize = layer.size();
             int diff = Math.abs(newSize - size);
-            x -= layerPadding + diff * diffLayerPadding + layer.getWidth();
+            x -= (LAYER_PADDING * zoomLevel) + diff * (DIFF_LAYER_PADDING * zoomLevel)
+                    + layer.getWidth();
 
             layer.setX(x);
             layer.setDrawLocations(DEFAULT_NODE_Y);
-            x -= layerPadding * 0.1 + newSize;
+            x -= (LAYER_PADDING * zoomLevel) * 0.1 + newSize;
             size = newSize;
         }
     }
@@ -362,7 +376,11 @@ public class SubGraph {
      *
      * @param layers {@link List} representing all layers to be drawn.
      */
-    private void createDummyNodes(List<Layer> layers) {
+    private int
+    createDummyNodes(List<Layer> layers,
+                                 boolean returnHighestLayer) {
+        int lowestOrHighest = -1;
+        int layerIndex = 0;
         Layer current = new Layer();
         for (Layer next : layers) {
             for (DrawableNode node : current) {
@@ -374,12 +392,19 @@ public class SubGraph {
                         child.replaceParent(node, dummy);
                         dummy.setWidth(next.getWidth());
                         this.nodes.put(dummy.getIdentifier(), dummy);
+                        dummy.setLayer(next);
                         next.add(dummy);
+
+                        if (returnHighestLayer || lowestOrHighest == -1) {
+                            lowestOrHighest = layerIndex;
+                        }
                     }
                 }
             }
             current = next;
+            layerIndex++;
         }
+        return lowestOrHighest;
     }
 
     /**
@@ -412,6 +437,7 @@ public class SubGraph {
             if (layerList.size() <= maxParentLevel) {
                 layerList.add(new Layer());
             }
+            node.setLayer(layerList.get(maxParentLevel));
             layerList.get(maxParentLevel).add(node);
         }
 
@@ -581,9 +607,10 @@ public class SubGraph {
      */
     private void addFromRootNodes(int radius) {
         Console.println("Increasing graph with radius %d", radius);
-        SubGraph subGraph = new SubGraph(graph);
+        SubGraph subGraph = new SubGraph(graph, zoomLevel);
 
-        findNodes(subGraph, layers.get(0).getNodes(), this.nodes, radius);
+        this.rootNodes.forEach((id, node) -> this.endNodes.remove(id));
+        findNodes(subGraph, rootNodes.values(), this.nodes, radius);
         subGraph.createLayers();
 
         this.mergeLeftSubGraphIntoThisSubGraph(subGraph);
@@ -595,9 +622,12 @@ public class SubGraph {
      */
     public void addFromEndNodes(int radius) {
         Console.println("Increasing graph with radius %d", radius);
-        SubGraph subGraph = new SubGraph(graph);
+        SubGraph subGraph = new SubGraph(graph, zoomLevel);
 
-        findNodes(subGraph, layers.get(layers.size()-1).getNodes(), this.nodes, radius);
+        this.endNodes.forEach((id, node) -> System.out.println(id));
+
+        this.endNodes.forEach((id, node) -> this.rootNodes.remove(id));
+        findNodes(subGraph, endNodes.values(), this.nodes, radius);
         subGraph.createLayers();
 
         this.mergeRightSubGraphIntoThisSubGraph(subGraph);
@@ -627,13 +657,12 @@ public class SubGraph {
             }
         });
 
-        int oldLastIndex = this.layers.size() - rightSubGraph.layers.size() - 1;
+        int oldLastIndex = this.layers.size() - 1;
         this.layers.addAll(rightSubGraph.layers);
 
 
         // TODO: find DummyNodes between subgraphs. Just use findDummyNodes on full graph?
-//        throw new Error("Not implemented yet");
-
+        
         this.sortLayersRightFrom(oldLastIndex);
         this.setRightDrawLocations(this.layers, oldLastIndex);
     }
@@ -672,11 +701,11 @@ public class SubGraph {
 
 
         // TODO: find DummyNodes between subgraphs. Just use findDummyNodes on full graph?
-//        throw new Error("Not implemented yet");
 
         this.sortLayersLeftFrom(oldFirstIndex);
         this.setLeftDrawLocations(this.layers, oldFirstIndex);
     }
+
 
     /**
      * Set the radius of this SubGraph.
@@ -699,11 +728,6 @@ public class SubGraph {
         return graph;
     }
 
-    public void scaleLayerPadding(double zoom) {
-        this.layerPadding /= zoom;
-        this.diffLayerPadding /= zoom;
-    }
-
     public void translate(double diff) {
         for (Layer layer : this.layers) {
             layer.setX(layer.getX() + diff);
@@ -711,6 +735,19 @@ public class SubGraph {
                 node.setLocation(node.getLocation().getX() + diff, node.getLocation().getY());
             }
         }
+    }
+
+    public void zoom(double scale) {
+        for (Layer layer : this.layers) {
+            layer.setX(layer.getX() / scale);
+            for (DrawableNode node : layer) {
+                double oldXLocation = node.getLocation().getX();
+                double oldYLocation = node.getLocation().getY();
+                node.setWidth(node.getWidth() / scale);
+                node.setLocation(oldXLocation / scale, oldYLocation);
+            }
+        }
+        zoomLevel /= scale;
     }
 
 

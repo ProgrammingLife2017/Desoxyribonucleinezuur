@@ -46,38 +46,12 @@ public class SubGraphTest {
     }
 
     @Test
-    public void testConstructorOnlyCenterNode() throws Exception {
+    public void testConstructor() throws Exception {
         SubGraph sg = new SubGraph(centerNode, 0);
         Set<DrawableNode> nodes = new LinkedHashSet<>(sg.getNodes().values());
-        assertEquals(1, nodes.size());
+        assertEquals(8, nodes.size());
         assertTrue(nodes.contains(centerNode));
     }
-
-    @Test
-    public void testConstructorRadius1() throws Exception {
-        SubGraph sg = new SubGraph(centerNode, 1);
-        Set<DrawableNode> nodes = new LinkedHashSet<>(sg.getNodes().values());
-        assertEquals(4, nodes.size());
-        assertTrue(nodes.contains(centerNode));
-        assertTrue(nodes.containsAll(sg.getChildren(centerNode)));
-        assertTrue(nodes.containsAll(sg.getParents(centerNode)));
-    }
-
-    @Test
-    public void testConstructorRadius4() throws Exception {
-        SubGraph sg = new SubGraph(centerNode, 4);
-
-        Set<DrawableNode> expected = new HashSet<>();
-        for (Integer id : new int[] {1, 2, 3, 4, 5, 6, 7, 8}) {
-            expected.add(new DrawableSegment(graph, id));
-        }
-
-        Set<DrawableNode> actual = new LinkedHashSet<>(sg.getNodes().values());
-        assertEquals(8, actual.size());
-        assertEquals(expected, actual);
-    }
-
-
 
     @Test
     public void topoSortTest() throws Exception {

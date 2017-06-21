@@ -11,7 +11,6 @@ import java.util.*;
  * @see SubGraph#findLayers()
  */
 public class Layer implements Iterable<DrawableNode>, Comparable<Double> {
-    private double width;
     private double x;
     private List<DrawableNode> nodes;
 
@@ -21,17 +20,18 @@ public class Layer implements Iterable<DrawableNode>, Comparable<Double> {
      * Default empty constructor.
      */
     public Layer() {
-        this.width = 0;
         this.x = 0;
         this.nodes = new ArrayList<>();
     }
 
     public double getWidth() {
+        double width = 0;
+        for (DrawableNode node : nodes) {
+            if (node.getWidth() > width) {
+                width = node.getWidth();
+            }
+        }
         return width;
-    }
-
-    public void setWidth(double width) {
-        this.width = width;
     }
 
     /**
@@ -39,9 +39,6 @@ public class Layer implements Iterable<DrawableNode>, Comparable<Double> {
      * @param node the node to add.
      */
     public void add(DrawableNode node) {
-        if (node.getWidth() > width) {
-            this.width = node.getWidth();
-        }
         this.nodes.add(node);
     }
 
@@ -133,9 +130,15 @@ public class Layer implements Iterable<DrawableNode>, Comparable<Double> {
     }
 
     public void setDrawLocations(double y) {
-        for (DrawableNode d : nodes) {
-            d.setLocation(x, y);
+        for (DrawableNode node : nodes) {
+            node.setLocation(x, y);
             y += LINE_PADDING;
+        }
+    }
+
+    public void setSize(double scale) {
+        for (DrawableNode node : nodes) {
+            node.setWidth(node.getWidth() * scale);
         }
     }
 
