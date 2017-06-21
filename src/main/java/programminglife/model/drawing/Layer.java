@@ -96,9 +96,10 @@ public class Layer implements Iterable<DrawableNode> {
                 return 1;
             } else if (difference > epsilon) {
                 return -1;
+            } else  if (o1.getGenomes().size() != o2.getGenomes().size()) {
+                return o2.getGenomes().size() - o1.getGenomes().size();
             } else {
                 return o2.getIdentifier() - o1.getIdentifier();
-
             }
         });
     }
