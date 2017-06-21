@@ -81,8 +81,6 @@ public class GraphController {
 
         highlightNode(center, Color.DARKORANGE);
         centerOnNodeId(center);
-        System.out.println(this.subGraph.getNodes().get(center).getLocation());
-
 
         long finishTime = System.nanoTime();
         long differenceTimeProgram = finishTime - startTimeProgram;
