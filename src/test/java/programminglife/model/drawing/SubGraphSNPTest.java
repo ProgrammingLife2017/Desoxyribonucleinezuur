@@ -65,8 +65,6 @@ public class SubGraphSNPTest {
         assertNull(seg1.hasSNPChildren(sg));
         assertNull(seg2.hasSNPChildren(sg));
         assertNull(seg3.hasSNPChildren(sg));
-
-        g.removeCache();
     }
 
     @Test
@@ -114,8 +112,6 @@ public class SubGraphSNPTest {
         assertNull(seg3.hasSNPChildren(sg));
         assertNull(seg4.hasSNPChildren(sg));
         assertNull(seg5.hasSNPChildren(sg));
-
-        g.removeCache();
     }
 
     @Test
@@ -169,8 +165,6 @@ public class SubGraphSNPTest {
         assertNull(seg4.hasSNPChildren(sg));
         assertNull(seg5.hasSNPChildren(sg));
         assertNull(seg6.hasSNPChildren(sg));
-
-        g.removeCache();
     }
 
     @Test
@@ -200,8 +194,6 @@ public class SubGraphSNPTest {
         assertNull(seg0.hasSNPChildren(sg));
         assertNull(seg1.hasSNPChildren(sg));
         assertNull(seg2.hasSNPChildren(sg));
-
-        g.removeCache();
     }
 
     @Test
@@ -237,8 +229,6 @@ public class SubGraphSNPTest {
         assertNull(seg1.hasSNPChildren(sg));
         assertNull(seg2.hasSNPChildren(sg));
         assertNull(seg3.hasSNPChildren(sg));
-
-        g.removeCache();
     }
 
     @Test
@@ -279,8 +269,6 @@ public class SubGraphSNPTest {
         assertNull(seg2.hasSNPChildren(sg));
         assertNull(seg3.hasSNPChildren(sg));
         assertNull(seg4.hasSNPChildren(sg));
-
-        g.removeCache();
     }
 
     @Test
@@ -321,7 +309,5 @@ public class SubGraphSNPTest {
         assertNull(seg2.hasSNPChildren(sg));
         assertNull(seg3.hasSNPChildren(sg));
         assertNull(seg4.hasSNPChildren(sg));
-
-        g.removeCache();
     }
 }

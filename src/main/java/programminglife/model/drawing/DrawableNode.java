@@ -35,15 +35,11 @@ public abstract class DrawableNode extends Rectangle implements Drawable {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof DrawableNode)) {
-            return false;
-        }
 
-        DrawableNode that = (DrawableNode) o;
-        if (!this.getClass().equals(that.getClass())) {
+        if (!this.getClass().equals(o.getClass())) {
             return false;
         }
-        return this.getIdentifier() == that.getIdentifier();
+        return this.getIdentifier() == ((DrawableNode) o).getIdentifier();
     }
 
     @Override

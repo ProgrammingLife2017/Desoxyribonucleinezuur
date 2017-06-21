@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
  * Created by toinehartman on 19/06/2017.
  */
 public class DrawableSNP extends DrawableNode {
+    private static final int SNP_WIDTH = 11;
+
     private DrawableSegment parent;
     private DrawableSegment child;
     private final Collection<DrawableSegment> mutations;
@@ -73,8 +75,14 @@ public class DrawableSNP extends DrawableNode {
      */
     @Override
     void replaceParent(DrawableNode oldParent, DrawableNode newParent) {
-        if (this.parent.getIdentifier() == oldParent.getIdentifier() && newParent instanceof DrawableSegment) {
-            this.parent = (DrawableSegment) newParent;
+        if (this.parent.getIdentifier() == oldParent.getIdentifier()) {
+            if (newParent instanceof DrawableSegment) {
+                this.parent = (DrawableSegment) newParent;
+            } else {
+                throw new IllegalArgumentException(
+                        String.format("The new parent (%d) of this SNP (%d) is not a Segment.",
+                                newParent.getIdentifier(), this.getIdentifier()));
+            }
         } else {
             throw new NoSuchElementException(
                     String.format("The node to be replaced (%d) is not the parent of this SNP (%d).",
@@ -90,8 +98,14 @@ public class DrawableSNP extends DrawableNode {
      */
     @Override
     void replaceChild(DrawableNode oldChild, DrawableNode newChild) {
-        if (this.child.getIdentifier() == oldChild.getIdentifier() && newChild instanceof DrawableSegment) {
-            this.child = (DrawableSegment) newChild;
+        if (this.child.getIdentifier() == oldChild.getIdentifier()) {
+            if (newChild instanceof DrawableSegment) {
+                this.child = (DrawableSegment) newChild;
+            } else {
+                throw new IllegalArgumentException(
+                        String.format("The new child (%d) of this SNP (%d) is not a Segment.",
+                                newChild.getIdentifier(), this.getIdentifier()));
+            }
         } else {
             throw new NoSuchElementException(
                     String.format("The node to be replaced (%d) is not the parent of this SNP (%d).",
@@ -131,13 +145,7 @@ public class DrawableSNP extends DrawableNode {
      */
     @Override
     protected void setDrawDimensions() {
-        int segmentLength = 1;
-        int width, height;
-
-        width = 10 + (int) Math.pow(segmentLength, 1.0 / 2);
-        height = NODE_HEIGHT;
-
-        this.setSize(new XYCoordinate(width, height));
+        this.setSize(new XYCoordinate(SNP_WIDTH, NODE_HEIGHT));
         this.setDrawDimensionsUpToDate(true);
     }
 
