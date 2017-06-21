@@ -660,6 +660,10 @@ public class SubGraph {
      * @param radius The number of steps to take from the rootNodes before stopping the search.
      */
     private void addFromRootNodes(int radius) {
+        if (this.rootNodes.isEmpty()) {
+            return;
+        }
+
         Console.println("Increasing graph with radius %d", radius);
         SubGraph subGraph = new SubGraph(graph, zoomLevel);
 
@@ -675,6 +679,10 @@ public class SubGraph {
      * @param radius The number of steps to take from the endNodes before stopping the search.
      */
     public void addFromEndNodes(int radius) {
+        if (this.endNodes.isEmpty()) {
+            return;
+        }
+
         Console.println("Increasing graph with radius %d", radius);
         SubGraph subGraph = new SubGraph(graph, zoomLevel);
 
