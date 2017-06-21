@@ -14,8 +14,8 @@ import java.util.stream.Collectors;
 public class DrawableSNP extends DrawableNode {
     private static final int SNP_WIDTH = 11;
 
-    private DrawableSegment parent;
-    private DrawableSegment child;
+    private DrawableNode parent;
+    private DrawableNode child;
     private final Collection<DrawableSegment> mutations;
 
     /**
@@ -39,9 +39,10 @@ public class DrawableSNP extends DrawableNode {
         this.child = (DrawableSegment) child;
         this.mutations = mutations.stream().map(DrawableSegment.class::cast).collect(Collectors.toSet());
 
-        this.parent.getChildren().clear();
+        this.mutations.stream().map(DrawableSegment::getIdentifier).forEach(this.parent.getChildren()::remove);
         this.parent.getChildren().add(this.getIdentifier());
-        this.child.getParents().clear();
+
+        this.mutations.stream().map(DrawableSegment::getIdentifier).forEach(this.child.getParents()::remove);
         this.child.getParents().add(this.getIdentifier());
 
         this.setDrawDimensions();
@@ -76,13 +77,7 @@ public class DrawableSNP extends DrawableNode {
     @Override
     void replaceParent(DrawableNode oldParent, DrawableNode newParent) {
         if (this.parent.getIdentifier() == oldParent.getIdentifier()) {
-            if (newParent instanceof DrawableSegment) {
-                this.parent = (DrawableSegment) newParent;
-            } else {
-                throw new IllegalArgumentException(
-                        String.format("The new parent (%d) of this SNP (%d) is not a Segment.",
-                                newParent.getIdentifier(), this.getIdentifier()));
-            }
+            this.parent = newParent;
         } else {
             throw new NoSuchElementException(
                     String.format("The node to be replaced (%d) is not the parent of this SNP (%d).",
@@ -99,13 +94,7 @@ public class DrawableSNP extends DrawableNode {
     @Override
     void replaceChild(DrawableNode oldChild, DrawableNode newChild) {
         if (this.child.getIdentifier() == oldChild.getIdentifier()) {
-            if (newChild instanceof DrawableSegment) {
-                this.child = (DrawableSegment) newChild;
-            } else {
-                throw new IllegalArgumentException(
-                        String.format("The new child (%d) of this SNP (%d) is not a Segment.",
-                                newChild.getIdentifier(), this.getIdentifier()));
-            }
+            this.child = newChild;
         } else {
             throw new NoSuchElementException(
                     String.format("The node to be replaced (%d) is not the parent of this SNP (%d).",
