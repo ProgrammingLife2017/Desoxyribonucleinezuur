@@ -196,7 +196,7 @@ public abstract class DrawableNode implements Drawable {
         return location;
     }
 
-    public final Collection<Integer> getGenomes() {
+    public Collection<Integer> getGenomes() {
         return this.genomes;
     }
 

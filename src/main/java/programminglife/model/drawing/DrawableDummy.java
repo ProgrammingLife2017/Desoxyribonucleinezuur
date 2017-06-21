@@ -118,7 +118,6 @@ public class DrawableDummy extends DrawableNode {
         return this.child.getChildSegment();
     }
 
-
     /**
      * Set the size of this drawing.
      */
