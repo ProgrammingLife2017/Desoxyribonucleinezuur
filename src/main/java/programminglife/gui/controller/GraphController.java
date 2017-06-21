@@ -3,12 +3,8 @@ package programminglife.gui.controller;
 import javafx.geometry.Bounds;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
-import javafx.scene.text.Text;
 import programminglife.gui.ResizableCanvas;
 import programminglife.model.GenomeGraph;
 import programminglife.model.XYCoordinate;
@@ -16,7 +12,6 @@ import programminglife.model.drawing.*;
 import programminglife.utility.Console;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedList;
 
 /**
@@ -32,7 +27,6 @@ public class GraphController {
     private SubGraph subGraph;
     private AnchorPane anchorGraphInfo;
     private LinkedList<DrawableNode> oldGenomeList = new LinkedList<>();
-    private HashMap<DrawableEdge, Line> edgeLocation = new HashMap<>();
     private ResizableCanvas canvas;
 
     private double zoomLevel = 1;
@@ -198,10 +192,6 @@ public class GraphController {
         XYCoordinate startLocation = edge.getStartLocation();
         XYCoordinate endLocation = edge.getEndLocation();
 
-        Line line = new Line(startLocation.getX(), startLocation.getY(), endLocation.getX(), endLocation.getY());
-        line.setStrokeWidth(edge.getStrokeWidth());
-        this.edgeLocation.put(edge, line);
-
         gc.strokeLine(startLocation.getX(), startLocation.getY(), endLocation.getX(), endLocation.getY());
     }
 
@@ -318,126 +308,6 @@ public class GraphController {
     }
 
     /**
-     * Method to show the information of an edge.
-     * @param edge DrawableEdge the edge which has been clicked on.
-     * @param x int the x location of the TextField.
-     */
-    private void showInfoEdge(DrawableEdge edge, int x) {
-        anchorGraphInfo.getChildren().removeIf(node1 -> node1.getLayoutX() == x);
-
-        Text idText = new Text("Genomes: "); idText.setLayoutX(x); idText.setLayoutY(65);
-        Text parentsText = new Text("Parent: "); parentsText.setLayoutX(x); parentsText.setLayoutY(115);
-        Text childrenText = new Text("Child: "); childrenText.setLayoutX(x); childrenText.setLayoutY(165);
-
-        TextField id = getTextField("Genomes: ", x, 70, graph.getGenomeNames(edge.getGenomes()).toString());
-        TextField parent = getTextField("Parent Node: ", x, 120, Integer.toString(edge.getStart().getIdentifier()));
-        TextField child = getTextField("Child Node: ", x, 170, Integer.toString(edge.getEnd().getIdentifier()));
-
-        anchorGraphInfo.getChildren().addAll(idText, parentsText, childrenText, id, parent, child);
-    }
-
-    /**
-     * Method to show the information of a node.
-     * @param node DrawableSegment the node which has been clicked on.
-     * @param x int the x location of the TextField.
-     */
-    private void showInfoNode(DrawableSegment node, int x) {
-        Text idText = new Text("ID: "); idText.setLayoutX(x); idText.setLayoutY(65);
-        Text parentText = new Text("Parents: "); parentText.setLayoutX(x); parentText.setLayoutY(105);
-        Text childText = new Text("Children: "); childText.setLayoutX(x); childText.setLayoutY(145);
-        Text inEdgeText = new Text("Incoming Edges: "); inEdgeText.setLayoutX(x); inEdgeText.setLayoutY(185);
-        Text outEdgeText = new Text("Outgoing Edges: "); outEdgeText.setLayoutX(x); outEdgeText.setLayoutY(225);
-        Text seqLengthText = new Text("Sequence Length: "); seqLengthText.setLayoutX(x); seqLengthText.setLayoutY(265);
-        Text genomeText = new Text("Genomes: "); genomeText.setLayoutX(x); genomeText.setLayoutY(305);
-        Text seqText = new Text("Sequence: "); seqText.setLayoutX(x); seqText.setLayoutY(370);
-
-        anchorGraphInfo.getChildren().removeIf(node1 -> node1.getLayoutX() == x);
-
-        TextField idTextField = getTextField("ID: ", x, 70, Integer.toString(node.getIdentifier()));
-
-        StringBuilder parentSB = new StringBuilder();
-        node.getParents().forEach(id -> parentSB.append(id).append(", "));
-        TextField parents;
-        if (parentSB.length() > 2) {
-            parentSB.setLength(parentSB.length() - 2);
-            parents = getTextField("Parents: ", x, 110, parentSB.toString());
-        } else {
-            parentSB.replace(0, parentSB.length(), "This node has no parent(s)");
-            parents = getTextField("Parents: ", x, 110, parentSB.toString());
-        }
-
-        StringBuilder childSB = new StringBuilder();
-        node.getChildren().forEach(id -> childSB.append(id).append(", "));
-        TextField children;
-        if (childSB.length() > 2) {
-            childSB.setLength(childSB.length() - 2);
-            children = getTextField("Children: ", x, 150, childSB.toString());
-        } else {
-            childSB.replace(0, childSB.length(), "This node has no child(ren)");
-            children = getTextField("Children: ", x, 150, childSB.toString());
-        }
-
-        String genomesString = graph.getGenomeNames(node.getGenomes()).toString();
-        String sequenceString = node.getSequence().replaceAll("(.{24})", "$1" + System.getProperty("line.separator"));
-        TextField inEdges = getTextField("Incoming Edges: ", x, 190, Integer.toString(node.getParents().size()));
-        TextField outEdges = getTextField("Outgoing Edges: ", x, 230, Integer.toString(node.getChildren().size()));
-        TextField seqLength = getTextField("Sequence Length: ", x, 270, Integer.toString(node.getSequence().length()));
-        TextArea genome = getTextArea("Genome: ", x, 310, genomesString.substring(1, genomesString.length() - 1), 40);
-        genome.setWrapText(true);
-        TextArea seq = getTextArea("Sequence: ", x, 375, sequenceString, 250);
-        anchorGraphInfo.getChildren().addAll(idText, parentText, childText, inEdgeText,
-                outEdgeText, genomeText, seqLengthText, seqText);
-        anchorGraphInfo.getChildren().addAll(idTextField, parents, children, inEdges, outEdges, genome, seqLength, seq);
-    }
-
-    /**
-     * Returns a textField to be used by the edge and node information show panel.
-     * @param id String the id of the textField.
-     * @param x int the x coordinate of the textField inside the anchorPane.
-     * @param y int the y coordinate of the textField inside the anchorPane.
-     * @param text String the text to be shown by the textField.
-     * @param height int of the height of the area.
-     * @return TextField the created textField.
-     */
-    private TextArea getTextArea(String id, int x, int y, String text, int height) {
-        TextArea textArea = new TextArea();
-        textArea.setId(id);
-        textArea.setText(text);
-        textArea.setLayoutX(x);
-        textArea.setLayoutY(y);
-        textArea.setEditable(false);
-        textArea.setStyle("-fx-text-box-border: transparent;-fx-background-color: none; -fx-background-insets: 0;"
-                + " -fx-padding: 1 3 1 3; -fx-focus-color: transparent; "
-                + "-fx-faint-focus-color: transparent; -fx-font-family: monospace;");
-        textArea.setPrefSize(225, height);
-
-        return textArea;
-    }
-
-    /**
-     * Returns a textField to be used by the edge and node information show panel.
-     * @param id String the id of the textField.
-     * @param x int the x coordinate of the textField inside the anchorPane.
-     * @param y int the y coordinate of the textField inside the anchorPane.
-     * @param text String the text to be shown by the textField.
-     * @return TextField the created textField.
-     */
-    private TextField getTextField(String id, int x, int y, String text) {
-        TextField textField = new TextField();
-        textField.setId(id);
-        textField.setText(text);
-        textField.setLayoutX(x);
-        textField.setLayoutY(y);
-        textField.setEditable(false);
-        textField.setStyle("-fx-text-box-border: transparent;-fx-background-color: none; -fx-background-insets: 0;"
-                + " -fx-padding: 1 3 1 3; -fx-focus-color: transparent; "
-                + "-fx-faint-focus-color: transparent; -fx-font-family: monospace;");
-        textField.setPrefSize(220, 20);
-
-        return textField;
-    }
-
-    /**
      * Method to do highlighting based on a min and max amount of genomes in a node.
      * @param min The minimal amount of genomes
      * @param max The maximal amount of genomes
@@ -496,23 +366,19 @@ public class GraphController {
      * Returns the node clicked on else returns null.
      * @param x position horizontally where clicked
      * @param y position vertically where clicked
+     * @return nodeClicked {@link DrawableNode} returns null if no note is clicked.
      */
-    void onClick(double x, double y, int location) {
-        System.out.println("Canvas clicked " + x + ", " + y);
+    public DrawableNode onClick(double x, double y) {
+        DrawableNode nodeClicked = null;
         //TODO implement this with a tree instead of iterating.
         for (DrawableNode drawableNode : subGraph.getNodes().values()) {
             if (x >= drawableNode.getLocation().getX() && y >= drawableNode.getLocation().getY()
                     && x <= drawableNode.getLocation().getX() + drawableNode.getWidth()
                     && y <= drawableNode.getLocation().getY() + drawableNode.getHeight()) {
-                showInfoNode((DrawableSegment) drawableNode, location);
-                return;
+                nodeClicked = drawableNode;
             }
         }
-        this.edgeLocation.forEach((drawableEdge, line) -> {
-            if (line.contains(x, y)) {
-                showInfoEdge(drawableEdge, location);
-            }
-        });
+        return nodeClicked;
     }
 
     public void setZoomLevel(double zoomLevel) {

@@ -16,6 +16,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
@@ -26,6 +27,7 @@ import programminglife.controller.RecentFileController;
 import programminglife.gui.ResizableCanvas;
 import programminglife.model.Feature;
 import programminglife.model.GenomeGraph;
+import programminglife.model.drawing.*;
 import programminglife.parser.AnnotationParser;
 import programminglife.parser.GraphParser;
 import programminglife.utility.Alerts;
@@ -434,9 +436,10 @@ public class GuiController implements Observer {
         });
         canvas.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
             if (event.isShiftDown()) {
-                graphController.onClick(event.getX(), event.getY(), 240);
+                mouseClick(event.getX(), event.getY(), true);
             } else {
-                graphController.onClick(event.getX(), event.getY(), 10);
+                mouseClick(event.getX(), event.getY(), false);
+
             }
         });
         anchorGraphPanel.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> {
@@ -449,6 +452,27 @@ public class GuiController implements Observer {
         });
         anchorGraphPanel.addEventHandler(ScrollEvent.SCROLL, event ->
                 zoom(event.getDeltaX(), event.getDeltaY(), event.getSceneX(), event.getSceneY(), ZOOM_FACTOR));
+    }
+
+    /**
+     * Mouse click method that does the show info handling.
+     * @param x coordinate where is clicked.
+     * @param y coordinate where is clicked.
+     * @param shiftPressed boolean if shift is pressed it should be displayed in panel 2.
+     */
+    private void mouseClick(double x, double y, boolean shiftPressed) {
+        DrawableNode clickedOn = graphController.onClick(x, y);
+        if (clickedOn != null) {
+            if (clickedOn instanceof DrawableSegment) {
+                DrawableSegment segment = (DrawableSegment) clickedOn;
+                if (shiftPressed) {
+                    showInfoNode(segment, 240);
+                } else {
+                    showInfoNode(segment, 10);
+                }
+            }
+
+        }
     }
 
     /**
@@ -589,6 +613,129 @@ public class GuiController implements Observer {
     void setText(int center, int radius) {
         txtCenterNode.setText(String.valueOf(center));
         txtMaxDrawDepth.setText(String.valueOf(radius));
+    }
+
+     /**
+     * Method to show the information of an edge.
+     * @param edge DrawableEdge the edge which has been clicked on.
+     * @param x int the x location of the TextField.
+     */
+    private void showInfoEdge(DrawableEdge edge, int x) {
+        anchorGraphInfo.getChildren().removeIf(node1 -> node1.getLayoutX() == x);
+
+        Text idText = new Text("Genomes: "); idText.setLayoutX(x); idText.setLayoutY(65);
+        Text parentsText = new Text("Parent: "); parentsText.setLayoutX(x); parentsText.setLayoutY(115);
+        Text childrenText = new Text("Child: "); childrenText.setLayoutX(x); childrenText.setLayoutY(165);
+
+        TextField id = getTextField("Genomes: ", x, 70,
+                graphController.getGraph().getGenomeNames(edge.getGenomes()).toString());
+        TextField parent = getTextField("Parent Node: ", x, 120, Integer.toString(edge.getStart().getIdentifier()));
+        TextField child = getTextField("Child Node: ", x, 170, Integer.toString(edge.getEnd().getIdentifier()));
+
+        anchorGraphInfo.getChildren().addAll(idText, parentsText, childrenText, id, parent, child);
+    }
+
+
+    /**
+     * Method to show the information of a node.
+     * @param node DrawableSegment the node which has been clicked on.
+     * @param x int the x location of the TextField.
+     */
+    private void showInfoNode(DrawableSegment node, int x) {
+        Text idText = new Text("ID: "); idText.setLayoutX(x); idText.setLayoutY(65);
+        Text parentText = new Text("Parents: "); parentText.setLayoutX(x); parentText.setLayoutY(105);
+        Text childText = new Text("Children: "); childText.setLayoutX(x); childText.setLayoutY(145);
+        Text inEdgeText = new Text("Incoming Edges: "); inEdgeText.setLayoutX(x); inEdgeText.setLayoutY(185);
+        Text outEdgeText = new Text("Outgoing Edges: "); outEdgeText.setLayoutX(x); outEdgeText.setLayoutY(225);
+        Text seqLengthText = new Text("Sequence Length: "); seqLengthText.setLayoutX(x); seqLengthText.setLayoutY(265);
+        Text genomeText = new Text("Genomes: "); genomeText.setLayoutX(x); genomeText.setLayoutY(305);
+        Text seqText = new Text("Sequence: "); seqText.setLayoutX(x); seqText.setLayoutY(370);
+
+        anchorGraphInfo.getChildren().removeIf(node1 -> node1.getLayoutX() == x);
+
+        TextField idTextField = getTextField("ID: ", x, 70, Integer.toString(node.getIdentifier()));
+
+        StringBuilder parentSB = new StringBuilder();
+        node.getParents().forEach(id -> parentSB.append(id).append(", "));
+        TextField parents;
+        if (parentSB.length() > 2) {
+            parentSB.setLength(parentSB.length() - 2);
+            parents = getTextField("Parents: ", x, 110, parentSB.toString());
+        } else {
+            parentSB.replace(0, parentSB.length(), "This node has no parent(s)");
+            parents = getTextField("Parents: ", x, 110, parentSB.toString());
+        }
+
+        StringBuilder childSB = new StringBuilder();
+        node.getChildren().forEach(id -> childSB.append(id).append(", "));
+        TextField children;
+        if (childSB.length() > 2) {
+            childSB.setLength(childSB.length() - 2);
+            children = getTextField("Children: ", x, 150, childSB.toString());
+        } else {
+            childSB.replace(0, childSB.length(), "This node has no child(ren)");
+            children = getTextField("Children: ", x, 150, childSB.toString());
+        }
+
+        String genomesString = graphController.getGraph().getGenomeNames(node.getGenomes()).toString();
+        String sequenceString = node.getSequence().replaceAll("(.{24})", "$1" + System.getProperty("line.separator"));
+        TextField inEdges = getTextField("Incoming Edges: ", x, 190, Integer.toString(node.getParents().size()));
+        TextField outEdges = getTextField("Outgoing Edges: ", x, 230, Integer.toString(node.getChildren().size()));
+        TextField seqLength = getTextField("Sequence Length: ", x, 270, Integer.toString(node.getSequence().length()));
+        TextArea genome = getTextArea("Genome: ", x, 310, genomesString.substring(1, genomesString.length() - 1), 40);
+        genome.setWrapText(true);
+        TextArea seq = getTextArea("Sequence: ", x, 375, sequenceString, 250);
+        anchorGraphInfo.getChildren().addAll(idText, parentText, childText, inEdgeText,
+                outEdgeText, genomeText, seqLengthText, seqText);
+        anchorGraphInfo.getChildren().addAll(idTextField, parents, children, inEdges, outEdges, genome, seqLength, seq);
+    }
+
+
+    /**
+     * Returns a textField to be used by the edge and node information show panel.
+     * @param id String the id of the textField.
+     * @param x int the x coordinate of the textField inside the anchorPane.
+     * @param y int the y coordinate of the textField inside the anchorPane.
+     * @param text String the text to be shown by the textField.
+     * @return TextField the created textField.
+     */
+    private TextField getTextField(String id, int x, int y, String text) {
+        TextField textField = new TextField();
+        textField.setId(id);
+        textField.setText(text);
+        textField.setLayoutX(x);
+        textField.setLayoutY(y);
+        textField.setEditable(false);
+        textField.setStyle("-fx-text-box-border: transparent;-fx-background-color: none; -fx-background-insets: 0;"
+                + " -fx-padding: 1 3 1 3; -fx-focus-color: transparent; "
+                + "-fx-faint-focus-color: transparent; -fx-font-family: monospace;");
+        textField.setPrefSize(220, 20);
+
+        return textField;
+    }
+
+    /**
+     * Returns a textField to be used by the edge and node information show panel.
+     * @param id String the id of the textField.
+     * @param x int the x coordinate of the textField inside the anchorPane.
+     * @param y int the y coordinate of the textField inside the anchorPane.
+     * @param text String the text to be shown by the textField.
+     * @param height int of the height of the area.
+     * @return TextField the created textField.
+     */
+    private TextArea getTextArea(String id, int x, int y, String text, int height) {
+        TextArea textArea = new TextArea();
+        textArea.setId(id);
+        textArea.setText(text);
+        textArea.setLayoutX(x);
+        textArea.setLayoutY(y);
+        textArea.setEditable(false);
+        textArea.setStyle("-fx-text-box-border: transparent;-fx-background-color: none; -fx-background-insets: 0;"
+                + " -fx-padding: 1 3 1 3; -fx-focus-color: transparent; "
+                + "-fx-faint-focus-color: transparent; -fx-font-family: monospace;");
+        textArea.setPrefSize(225, height);
+
+        return textArea;
     }
 
     public File getFile() {
