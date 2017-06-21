@@ -202,13 +202,67 @@ public class SubGraph {
         Console.println("Time for finding nodes: %f s", difInSeconds);
     }
 
+    /**
+     * Checks whether a dynamic load is necessary. This includes both loading new nodes
+     * into the datastructure as well as removing nodes from the datastructure.
+     * @param leftBorder The left border of the canvas.
+     * @param rightBorder The right border of the canvas.
+     */
     public void checkDynamicLoad(int leftBorder, double rightBorder) {
+        assert (leftBorder < rightBorder);
         if (layers.get(BORDER_BUFFER).getX() > leftBorder) {
             this.addFromRootNodes(SubGraph.DEFAULT_DYNAMIC_RADIUS);
         }
         if (layers.get(layers.size() - BORDER_BUFFER - 1).getX() < rightBorder) {
             this.addFromEndNodes(SubGraph.DEFAULT_DYNAMIC_RADIUS);
         }
+
+        int amountOfLayersLeft = 0;
+        int amountOfLayersRight = 0;
+        for (int i = 0; i < layers.size(); i++) {
+            if (layers.get(i).getX() < 0) {
+                amountOfLayersLeft++;
+            } else if (layers.get(i).getX() > rightBorder) {
+                amountOfLayersRight = layers.size() - i;
+                break;
+            }
+        }
+
+        if (amountOfLayersLeft > 3 * BORDER_BUFFER) {
+            removeLeftLayers(BORDER_BUFFER);
+        }
+        if (amountOfLayersRight > 3 * BORDER_BUFFER) {
+            removeRightLayers(BORDER_BUFFER);
+        }
+        System.out.println(this.nodes.size());
+    }
+
+    /**
+     * Removes layers from the right of the graph.
+     * @param numberOfLayers The number of layers to remove from the graph.
+     */
+    private void removeRightLayers(int numberOfLayers) {
+        for (Layer layer : this.layers.subList(this.layers.size() - numberOfLayers, this.layers.size())) {
+            layer.forEach(node -> this.nodes.remove(node.getIdentifier()));
+        }
+        this.layers = new ArrayList<>(this.layers.subList(0, this.layers.size() - numberOfLayers));
+        this.endNodes = new LinkedHashMap<>();
+        this.layers.get(this.layers.size() - 1).
+                forEach(node -> endNodes.put(node.getIdentifier(), node));
+    }
+
+    /**
+     * Removes layers from the left of the graph.
+     * @param numberOfLayers The number of layers to remove from the graph.
+     */
+    private void removeLeftLayers(int numberOfLayers) {
+        for (Layer layer : this.layers.subList(0, numberOfLayers)) {
+            layer.forEach(node -> this.nodes.remove(node.getIdentifier()));
+        }
+        this.layers = new ArrayList<>(this.layers.subList(numberOfLayers, this.layers.size()));
+        this.rootNodes = new LinkedHashMap<>();
+        this.layers.get(0).
+                forEach(node -> rootNodes.put(node.getIdentifier(), node));
     }
 
     /**
@@ -662,7 +716,7 @@ public class SubGraph {
 
 
         // TODO: find DummyNodes between subgraphs. Just use findDummyNodes on full graph?
-        
+
         this.sortLayersRightFrom(oldLastIndex);
         this.setRightDrawLocations(this.layers, oldLastIndex);
     }
@@ -749,6 +803,4 @@ public class SubGraph {
         }
         zoomLevel /= scale;
     }
-
-
 }
