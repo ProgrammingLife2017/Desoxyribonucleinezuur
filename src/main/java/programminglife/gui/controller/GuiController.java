@@ -105,7 +105,6 @@ public class GuiController implements Observer {
     private static final double MAX_SCALE = 5.0d;
     private static final double MIN_SCALE = .02d;
     private static final double ZOOM_FACTOR = 1.05d;
-    private static final double ZOOM_SPEED = 1.03d;
 
 
     /**
@@ -483,9 +482,9 @@ public class GuiController implements Observer {
         double oldScale = scale;
 
         if (deltaX < 0 || deltaY < 0) {
-            scale *= Math.pow(ZOOM_SPEED, delta);
+            scale *= delta;
         } else {
-            scale /= Math.pow(ZOOM_SPEED, delta);
+            scale /= delta;
         }
 
         scale = clamp(scale, MIN_SCALE, MAX_SCALE);
