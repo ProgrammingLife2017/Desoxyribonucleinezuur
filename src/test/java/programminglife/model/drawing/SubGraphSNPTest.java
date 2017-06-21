@@ -7,6 +7,8 @@ import org.junit.Test;
 import programminglife.model.GenomeGraph;
 import programminglife.utility.InitFXThread;
 
+import java.util.stream.Collectors;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -61,10 +63,10 @@ public class SubGraphSNPTest {
         DrawableNode seg2 = sg.getNodes().get(2);
         DrawableNode seg3 = sg.getNodes().get(3);
 
-        assertEquals(seg3, seg0.hasSNPChildren(sg));
-        assertNull(seg1.hasSNPChildren(sg));
-        assertNull(seg2.hasSNPChildren(sg));
-        assertNull(seg3.hasSNPChildren(sg));
+        assertEquals(seg3, seg0.createSNPIfPossible(sg));
+        assertNull(seg1.createSNPIfPossible(sg));
+        assertNull(seg2.createSNPIfPossible(sg));
+        assertNull(seg3.createSNPIfPossible(sg));
     }
 
     @Test
@@ -106,12 +108,15 @@ public class SubGraphSNPTest {
         DrawableNode seg4 = sg.getNodes().get(4);
         DrawableNode seg5 = sg.getNodes().get(5);
 
-        assertEquals(seg5, seg0.hasSNPChildren(sg));
-        assertNull(seg1.hasSNPChildren(sg));
-        assertNull(seg2.hasSNPChildren(sg));
-        assertNull(seg3.hasSNPChildren(sg));
-        assertNull(seg4.hasSNPChildren(sg));
-        assertNull(seg5.hasSNPChildren(sg));
+        DrawableSNP snp = new DrawableSNP(seg0, seg5, sg.getChildren(seg0).stream()
+                                                                        .map(DrawableSegment.class::cast)
+                                                                        .collect(Collectors.toSet()));
+        assertNotNull(seg0.createSNPIfPossible(sg));
+        assertNull(seg1.createSNPIfPossible(sg));
+        assertNull(seg2.createSNPIfPossible(sg));
+        assertNull(seg3.createSNPIfPossible(sg));
+        assertNull(seg4.createSNPIfPossible(sg));
+        assertNull(seg5.createSNPIfPossible(sg));
     }
 
     @Test
@@ -158,13 +163,13 @@ public class SubGraphSNPTest {
         DrawableNode seg5 = sg.getNodes().get(5);
         DrawableNode seg6 = sg.getNodes().get(6);
 
-        assertNull(seg0.hasSNPChildren(sg));
-        assertNull(seg1.hasSNPChildren(sg));
-        assertNull(seg2.hasSNPChildren(sg));
-        assertNull(seg3.hasSNPChildren(sg));
-        assertNull(seg4.hasSNPChildren(sg));
-        assertNull(seg5.hasSNPChildren(sg));
-        assertNull(seg6.hasSNPChildren(sg));
+        assertNull(seg0.createSNPIfPossible(sg));
+        assertNull(seg1.createSNPIfPossible(sg));
+        assertNull(seg2.createSNPIfPossible(sg));
+        assertNull(seg3.createSNPIfPossible(sg));
+        assertNull(seg4.createSNPIfPossible(sg));
+        assertNull(seg5.createSNPIfPossible(sg));
+        assertNull(seg6.createSNPIfPossible(sg));
     }
 
     @Test
@@ -191,9 +196,9 @@ public class SubGraphSNPTest {
         DrawableNode seg1 = sg.getNodes().get(1);
         DrawableNode seg2 = sg.getNodes().get(2);
 
-        assertNull(seg0.hasSNPChildren(sg));
-        assertNull(seg1.hasSNPChildren(sg));
-        assertNull(seg2.hasSNPChildren(sg));
+        assertNull(seg0.createSNPIfPossible(sg));
+        assertNull(seg1.createSNPIfPossible(sg));
+        assertNull(seg2.createSNPIfPossible(sg));
     }
 
     @Test
@@ -225,10 +230,10 @@ public class SubGraphSNPTest {
         DrawableNode seg2 = sg.getNodes().get(2);
         DrawableNode seg3 = sg.getNodes().get(3);
 
-        assertNull(seg0.hasSNPChildren(sg));
-        assertNull(seg1.hasSNPChildren(sg));
-        assertNull(seg2.hasSNPChildren(sg));
-        assertNull(seg3.hasSNPChildren(sg));
+        assertNull(seg0.createSNPIfPossible(sg));
+        assertNull(seg1.createSNPIfPossible(sg));
+        assertNull(seg2.createSNPIfPossible(sg));
+        assertNull(seg3.createSNPIfPossible(sg));
     }
 
     @Test
@@ -264,11 +269,11 @@ public class SubGraphSNPTest {
         DrawableNode seg3 = sg.getNodes().get(3);
         DrawableNode seg4 = sg.getNodes().get(4);
 
-        assertNull(seg0.hasSNPChildren(sg));
-        assertNull(seg1.hasSNPChildren(sg));
-        assertNull(seg2.hasSNPChildren(sg));
-        assertNull(seg3.hasSNPChildren(sg));
-        assertNull(seg4.hasSNPChildren(sg));
+        assertNull(seg0.createSNPIfPossible(sg));
+        assertNull(seg1.createSNPIfPossible(sg));
+        assertNull(seg2.createSNPIfPossible(sg));
+        assertNull(seg3.createSNPIfPossible(sg));
+        assertNull(seg4.createSNPIfPossible(sg));
     }
 
     @Test
@@ -304,10 +309,10 @@ public class SubGraphSNPTest {
         DrawableNode seg3 = sg.getNodes().get(3);
         DrawableNode seg4 = sg.getNodes().get(4);
 
-        assertNull(seg0.hasSNPChildren(sg));
-        assertNull(seg1.hasSNPChildren(sg));
-        assertNull(seg2.hasSNPChildren(sg));
-        assertNull(seg3.hasSNPChildren(sg));
-        assertNull(seg4.hasSNPChildren(sg));
+        assertNull(seg0.createSNPIfPossible(sg));
+        assertNull(seg1.createSNPIfPossible(sg));
+        assertNull(seg2.createSNPIfPossible(sg));
+        assertNull(seg3.createSNPIfPossible(sg));
+        assertNull(seg4.createSNPIfPossible(sg));
     }
 }

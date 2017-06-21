@@ -74,11 +74,13 @@ public class SubGraph {
         Map<Integer, DrawableNode> nodesCopy = new LinkedHashMap<>(this.nodes);
         for (Map.Entry<Integer, DrawableNode> entry : nodesCopy.entrySet()) {
             DrawableNode parent = entry.getValue();
-            DrawableSegment child = parent.hasSNPChildren(this);
-            if (child != null) {
-                Collection<DrawableNode> children = this.getChildren(parent);
-                DrawableSNP snp = new DrawableSNP(parent, child, children);
-                children.stream().map(DrawableNode::getIdentifier).forEach(this.nodes::remove);
+            DrawableSNP snp = parent.createSNPIfPossible(this);
+            if (snp != null) {
+                snp.getMutations().stream().map(DrawableNode::getIdentifier).forEach(id -> {
+                    this.nodes.remove(id);
+                    parent.getChildren().remove(id);
+                    snp.getChild().getParents().remove(id);
+                });
                 this.nodes.put(snp.getIdentifier(), snp);
             }
         }

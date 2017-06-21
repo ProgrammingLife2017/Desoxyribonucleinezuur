@@ -116,9 +116,9 @@ public abstract class DrawableNode extends Rectangle implements Drawable {
     /**
      * Checks if the children of this {@link DrawableNode} can be merged as a SNP.
      * @param subGraph the {@link SubGraph} this {@link DrawableNode} is in
-     * @return null if children cannot be SNP'ed, child of SNP otherwise
+     * @return null if children cannot be SNP'ed, SNP with (parent, child and mutation) otherwise
      */
-    public abstract DrawableSegment hasSNPChildren(SubGraph subGraph);
+    public abstract DrawableSNP createSNPIfPossible(SubGraph subGraph);
 
     /**
      * Color this according to contents.

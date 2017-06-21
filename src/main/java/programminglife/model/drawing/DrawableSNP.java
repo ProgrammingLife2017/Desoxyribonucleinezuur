@@ -24,21 +24,14 @@ public class DrawableSNP extends DrawableNode {
      * @param child the child Segment of the mutations/SNP
      * @param mutations the Segments in this bubble
      */
-    DrawableSNP(DrawableNode parent, DrawableNode child, Collection<DrawableNode> mutations) {
+    DrawableSNP(DrawableNode parent, DrawableNode child, Collection<DrawableSegment> mutations) {
         super(mutations.iterator().next().getGraph(), -mutations.hashCode());
-
-        if (!mutations.stream().allMatch(DrawableSegment.class::isInstance)) {
-            throw new IllegalArgumentException("Mutations of SNP must be Segments!");
-        }
 
         this.parent = parent;
         this.child = child;
-        this.mutations = mutations.stream().map(DrawableSegment.class::cast).collect(Collectors.toSet());
+        this.mutations = mutations;
 
-        this.mutations.stream().map(DrawableSegment::getIdentifier).forEach(this.parent.getChildren()::remove);
         this.parent.getChildren().add(this.getIdentifier());
-
-        this.mutations.stream().map(DrawableSegment::getIdentifier).forEach(this.child.getParents()::remove);
         this.child.getParents().add(this.getIdentifier());
 
         this.setDrawDimensions();
@@ -109,7 +102,7 @@ public class DrawableSNP extends DrawableNode {
     }
 
     @Override
-    public DrawableSegment hasSNPChildren(SubGraph subGraph) {
+    public DrawableSNP createSNPIfPossible(SubGraph subGraph) {
         return null;
     }
 
@@ -160,5 +153,13 @@ public class DrawableSNP extends DrawableNode {
                             .map(DrawableSegment::getGenomes)
                             .flatMap(Collection::stream)
                             .collect(Collectors.toSet());
+    }
+
+    public Collection<DrawableSegment> getMutations() {
+        return this.mutations;
+    }
+
+    public DrawableNode getChild() {
+        return child;
     }
 }

@@ -153,20 +153,33 @@ public class DrawableSegment extends DrawableNode {
         return this; // Don't ask!
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public DrawableSegment hasSNPChildren(SubGraph subGraph) {
+    public DrawableSNP createSNPIfPossible(SubGraph subGraph) {
         // A SNP-able node has:
         if (children.size() < 2) { // - at least 2 children
+            System.out.println("Not enough children");
             return null;
         } else if (children.size() > 4) { // - at most 4 children
+            System.out.println("Too many children (" + children.size() + ")");
             return null;
-        } else if (children.stream().anyMatch(id -> id < 1)) { // - no dummy children
+        } else if (!children.stream().allMatch(id -> id >= 0)) { // - no dummy children
+            System.out.println("ID < 0");
+            return null;
+        } else if (!subGraph.getChildren(this).stream().allMatch(DrawableSegment.class::isInstance)) {
+            // - only children of type DrawableSegment
+            System.out.println("Not all Segments");
             return null;
         } else if (children.stream().anyMatch(id -> getGraph().getSequenceLength(id) != 1)) {
             // - only children of length 1
+            System.out.println("Sequence length > 1");
             return null;
         } else  {
-            Collection<DrawableNode> childNodes = subGraph.getChildren(this);
+            Collection<DrawableSegment> childNodes = subGraph.getChildren(this).stream()
+                    .map(DrawableSegment.class::cast)
+                    .collect(Collectors.toSet());
             Collection<DrawableNode> childParents = childNodes.stream()
                     .map(subGraph::getParents)
                     .flatMap(Collection::stream)
@@ -176,12 +189,14 @@ public class DrawableSegment extends DrawableNode {
                     .flatMap(Collection::stream)
                     .collect(Collectors.toSet());
             if (childChildren.size() != 1) { // - all children have 1 and the same child
+                System.out.println("More than 1 children");
                 return null;
             } else if (childParents.size() != 1) { // - all children have 1 and the same parent
+                System.out.println("More than 1 parents");
                 return null;
             }
 
-            return (DrawableSegment) childChildren.iterator().next();
+            return new DrawableSNP(this, childChildren.iterator().next(), childNodes);
         }
     }
 

@@ -98,7 +98,7 @@ public class DrawableDummy extends DrawableNode {
     /**
      * {@inheritDoc}
      */
-    public DrawableSegment hasSNPChildren(SubGraph subGraph) {
+    public DrawableSNP createSNPIfPossible(SubGraph subGraph) {
         return null;
     }
 
