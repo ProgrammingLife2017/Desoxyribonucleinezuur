@@ -115,7 +115,6 @@ public class GuiController implements Observer {
     private void initialize() {
         this.graphController = new GraphController(null, this.canvas, this.anchorGraphInfo);
         this.scale = 1;
-        // initRecent();
 
         this.recentFileControllerGFA = new RecentFileController(this.recentFileGFA, this.menuRecentGFA);
         this.recentFileControllerGFA.setGuiController(this);

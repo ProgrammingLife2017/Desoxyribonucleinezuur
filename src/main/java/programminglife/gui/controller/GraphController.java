@@ -79,12 +79,10 @@ public class GraphController {
         draw(gc);
         long finishTimeDrawing = System.nanoTime();
 
-//        long startHighlight = System.nanoTime();
         highlightNode(center, Color.DARKORANGE);
         centerOnNodeId(center);
         System.out.println(this.subGraph.getNodes().get(center).getLocation());
 
-//        Console.println("Time to highlight: " + (System.nanoTime() - startHighlight) / 1000000 + " ms");
 
         long finishTime = System.nanoTime();
         long differenceTimeProgram = finishTime - startTimeProgram;
@@ -108,7 +106,6 @@ public class GraphController {
      * Method to do the coloring of the to be drawn graph.
      */
     private void colorize() {
-        canvas.getGraphicsContext2D().setLineWidth(3.0);
         for (DrawableNode drawableNode : subGraph.getNodes().values()) {
             drawableNode.colorize(subGraph);
         }
