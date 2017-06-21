@@ -27,16 +27,12 @@ public class DrawableSNP extends DrawableNode {
     DrawableSNP(DrawableNode parent, DrawableNode child, Collection<DrawableNode> mutations) {
         super(mutations.iterator().next().getGraph(), -mutations.hashCode());
 
-        if (!(parent instanceof DrawableSegment)) {
-            throw new IllegalArgumentException("Parent of SNP must be a Segment!");
-        } else if (!(child instanceof DrawableSegment)) {
-            throw new IllegalArgumentException("Child of SNP must be a Segment!");
-        } else if (!mutations.stream().allMatch(DrawableSegment.class::isInstance)) {
+        if (!mutations.stream().allMatch(DrawableSegment.class::isInstance)) {
             throw new IllegalArgumentException("Mutations of SNP must be Segments!");
         }
 
-        this.parent = (DrawableSegment) parent;
-        this.child = (DrawableSegment) child;
+        this.parent = parent;
+        this.child = child;
         this.mutations = mutations.stream().map(DrawableSegment.class::cast).collect(Collectors.toSet());
 
         this.mutations.stream().map(DrawableSegment::getIdentifier).forEach(this.parent.getChildren()::remove);
