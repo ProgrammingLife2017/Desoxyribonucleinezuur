@@ -54,6 +54,7 @@ public class SubGraph {
         this.graph = centerNode.getGraph();
         this.radius = radius;
         this.layout = false;
+        this.genomes = new LinkedHashMap<>();
 
         this.numberOfGenomes = graph.getTotalGenomeNumber();
 
@@ -500,14 +501,12 @@ public class SubGraph {
      * @return a {@link Map} of {@link Map Maps} of collections of genomes through links
      */
     public Map<DrawableNode, Map<DrawableNode, Collection<Integer>>> calculateGenomes() {
-        Map<DrawableNode, Map<DrawableNode, Collection<Integer>>> genomes = new LinkedHashMap<>();
         // For every node in the subGraph
         for (DrawableNode parent : this.nodes.values()) {
             Map<DrawableNode, Collection<Integer>> parentGenomes = this.calculateGenomes(parent);
-            genomes.put(parent, parentGenomes);
+            this.genomes.put(parent, parentGenomes);
         }
 
-        this.genomes = genomes;
         return this.genomes;
     }
 
