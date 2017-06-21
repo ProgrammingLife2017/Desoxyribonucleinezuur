@@ -88,4 +88,9 @@ public class XYCoordinate {
     public String toString() {
         return "(" + this.getX() + ", " + this.getY() + ")";
     }
+
+    public void set(double x, double y) {
+        this.setX(x);
+        this.setY(y);
+    }
 }
