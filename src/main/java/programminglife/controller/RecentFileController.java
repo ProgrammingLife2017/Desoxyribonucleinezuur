@@ -42,7 +42,12 @@ public class RecentFileController {
 
         this.recentFile = recentFile;
         this.menuRecent = menuRecent;
-        this.initRecent();
+        initRecent();
+        updateLines();
+        doesFileExist();
+    }
+
+    private void updateLines() {
         lines = recentItems.split(System.getProperty("line.separator"));
 
         for (int i = 0; i < lineAmount; i++) {
@@ -66,7 +71,6 @@ public class RecentFileController {
                     break;
             }
         }
-        doesFileExist();
     }
 
     /**
@@ -125,6 +129,7 @@ public class RecentFileController {
      * @param file File to check if it already contained.
      */
     public void updateRecent(File recentFile, File file) {
+        updateLines();
         if (checkDuplicate(file)) {
             moveFiles(file);
             updateRecent(recentFile);
@@ -166,12 +171,13 @@ public class RecentFileController {
      * @return boolean, true if it is not a duplicate.
      */
     private boolean checkDuplicate(File file) {
+        boolean duplicate = true;
         for (String s : lines) {
-            if (!s.contains(file.getAbsolutePath())) {
-                return true;
+            if (s.equals(file.getAbsolutePath())) {
+                duplicate = false;
             }
         }
-        return false;
+        return duplicate;
     }
 
     /**
