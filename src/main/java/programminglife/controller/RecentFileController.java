@@ -84,7 +84,6 @@ public class RecentFileController {
             while ((reader.readLine()) != null) {
                 lineAmount++;
             }
-            System.out.println(lineAmount);
             reader.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -184,7 +183,6 @@ public class RecentFileController {
                 duplicate = false;
             }
         }
-        System.out.println(duplicate);
         return duplicate;
     }
 
