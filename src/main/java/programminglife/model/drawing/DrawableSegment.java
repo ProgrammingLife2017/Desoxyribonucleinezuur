@@ -2,7 +2,6 @@ package programminglife.model.drawing;
 
 import javafx.scene.paint.Color;
 import programminglife.model.GenomeGraph;
-import programminglife.model.XYCoordinate;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -14,6 +13,8 @@ import java.util.stream.Collectors;
  * A Segment that also Implements {@link Drawable}.
  */
 public class DrawableSegment extends DrawableNode {
+    private static final double DRAWABLE_SEGMENT_STROKE_WIDTH = 3.0;
+
     private Set<Integer> parents;
     private Set<Integer> children;
 
@@ -45,6 +46,7 @@ public class DrawableSegment extends DrawableNode {
      * Get all the parents of the node {@link DrawableSegment}.
      * @return parent {@link Collection} are the direct parents of the node {@link DrawableSegment}.
      **/
+    @Override
     public Set<Integer> getParents() {
         return parents;
     }
@@ -54,7 +56,8 @@ public class DrawableSegment extends DrawableNode {
      * @param oldChild The {@link DrawableSegment} to replace.
      * @param newChild The {@link DrawableSegment} to replace with.
      */
-    void replaceChild(DrawableNode oldChild, DrawableNode newChild) {
+    @Override
+    public void replaceChild(DrawableNode oldChild, DrawableNode newChild) {
         if (!this.children.remove(oldChild.getIdentifier())) {
             throw new NoSuchElementException("The node to be replaced is not a child of this node.");
         }
@@ -72,7 +75,8 @@ public class DrawableSegment extends DrawableNode {
      * @param oldParent The {@link DrawableSegment} to replace.
      * @param newParent The {@link DrawableSegment} to replace with.
      */
-    void replaceParent(DrawableNode oldParent, DrawableNode newParent) {
+    @Override
+    public void replaceParent(DrawableNode oldParent, DrawableNode newParent) {
         if (!this.parents.remove(oldParent.getIdentifier())) {
             throw new NoSuchElementException(
                     String.format("The node to be replaced (%d) is not a parent of this node (%d).",
@@ -81,66 +85,19 @@ public class DrawableSegment extends DrawableNode {
         this.parents.add(newParent.getIdentifier());
     }
 
-    public int getIntX() {
-        return (int) Math.ceil(this.getX());
-    }
-
-    public int getIntY() {
-        return (int) Math.ceil(this.getY());
-    }
-
-    public int getIntWidth() {
-        return (int) Math.ceil(this.getWidth());
-    }
-
-    public int getIntHeight() {
-        return (int) Math.ceil(this.getHeight());
-    }
-
-    /**
-     * Set the size {@link XYCoordinate} of the Segment.
-     * @param size The {@link XYCoordinate} representing the size
-     */
-    void setSize(XYCoordinate size) {
-        this.setWidth(size.getX());
-        this.setHeight(size.getY());
-        this.setDrawDimensionsUpToDate(true);
-    }
-
-    /**
-     * getter for the width coordinate.
-     * @return XYCoordinate.
-     */
-    public XYCoordinate getWidthCoordinate() {
-        if (!this.isDrawDimensionsUpToDate()) {
-            setDrawDimensions();
-        }
-        return new XYCoordinate((int) this.getWidth(), 0);
-    }
-
-    /**
-     * getter for the height coordinate.
-     * @return XYCoordinate.
-     */
-    public XYCoordinate getHeightCoordinate() {
-        if (!this.isDrawDimensionsUpToDate()) {
-            setDrawDimensions();
-        }
-        return new XYCoordinate(0, (int) this.getHeight());
-    }
-
     /**
      * Setter for the dimension of the node.
      */
-    protected void setDrawDimensions() {
+    @Override
+    public void setDrawDimensions() {
         int segmentLength = this.getSequenceLength();
-        int width, height;
+        double width, height;
 
-        width = 10 + (int) Math.pow(segmentLength, 1.0 / 2);
+        width = 10 + Math.pow(segmentLength, 1.0 / 2);
         height = NODE_HEIGHT;
 
-        this.setSize(new XYCoordinate(width, height));
-        this.setDrawDimensionsUpToDate(true);
+        this.setSize(width, height);
+        this.setDrawDimensionsUpToDate();
     }
 
     @Override
@@ -152,6 +109,7 @@ public class DrawableSegment extends DrawableNode {
     public DrawableNode getChildSegment() {
         return this; // Don't ask!
     }
+
 
     /**
      * {@inheritDoc}
@@ -246,8 +204,8 @@ public class DrawableSegment extends DrawableNode {
 
         Color fillColor = Color.hsb(227, saturation, 1.d);
         Color strokeColor = Color.hsb(227, maxSaturation, 1.d);
+        this.setStrokeWidth(DRAWABLE_SEGMENT_STROKE_WIDTH);
 
-        this.setFill(fillColor);
-        this.setStroke(strokeColor);
+        this.setColors(fillColor, strokeColor);
     }
 }

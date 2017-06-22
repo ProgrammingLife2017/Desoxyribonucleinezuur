@@ -1,34 +1,55 @@
 package programminglife.model.drawing;
 
-import javafx.scene.shape.Rectangle;
+import javafx.scene.paint.Color;
 import programminglife.model.GenomeGraph;
 import programminglife.model.XYCoordinate;
 
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedHashSet;
+import java.util.Collections;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * A segment that also implements {@link Drawable}.
  */
-public abstract class DrawableNode extends Rectangle implements Drawable {
-    static final int NODE_HEIGHT = 10;
+public abstract class DrawableNode implements Drawable {
+    static final double NODE_HEIGHT = 10;
 
     private final GenomeGraph graph;
     private final int id;
     private final Collection<Integer> genomes;
 
+    private final XYCoordinate location;
+    private final XYCoordinate dimensions;
     private boolean drawDimensionsUpToDate = false;
 
+    private double strokeWidth;
+    private Color fillColor;
+    private Color strokeColor;
+
     /**
-     * Construct a {@link DrawableNode}.
-     * @param graph the {@link GenomeGraph} to draw from
-     * @param id the ID of the {@link DrawableNode}
+     * Constructor for a DrawableNode.
+     * @param graph The {@link GenomeGraph} that this DrawableNode is part of.
+     * @param id The id for this DrawableNode. These should be non-negative for Nodes actually in the
+     *           graph ({@link DrawableSegment}), and negative for Nodes that are not in the
+     *           graph ({@link DrawableDummy}).
      */
-    DrawableNode(GenomeGraph graph, int id) {
+    public DrawableNode(GenomeGraph graph, int id) {
         this.graph = graph;
         this.id = id;
-        this.genomes = new LinkedHashSet<>();
+
+        this.dimensions = new XYCoordinate(0, 0);
+        this.location = new XYCoordinate(0, 0);
+
+        int[] genomes = graph.getGenomes(id);
+        if (genomes != null) {
+            this.genomes = Arrays.stream(genomes).boxed().collect(Collectors.toSet());
+        } else {
+            this.genomes = Collections.emptySet();
+        }
     }
+
 
     @Override
     public final boolean equals(Object o) {
@@ -61,37 +82,41 @@ public abstract class DrawableNode extends Rectangle implements Drawable {
      * Get the {@link GenomeGraph}.
      * @return the graph
      */
-    public final GenomeGraph getGraph() {
+    final GenomeGraph getGraph() {
         return graph;
     }
 
     /**
      * Set if the dimensions are up to date.
-     * @param upToDate {@link boolean} true if up to date else false
      */
-    final void setDrawDimensionsUpToDate(boolean upToDate) {
-        this.drawDimensionsUpToDate = upToDate;
+    final void setDrawDimensionsUpToDate() {
+        this.drawDimensionsUpToDate = true;
     }
+
+    /**
+     * Set the size of this drawing.
+     */
+    protected abstract void setDrawDimensions();
 
     /**
      * Get if the dimensions are up to date.
      * @return boolean true if up to date else false
      */
-    final boolean isDrawDimensionsUpToDate() {
-        return drawDimensionsUpToDate;
+    private boolean isDrawDimensionsUpToDate() {
+        return this.drawDimensionsUpToDate;
     }
 
     /**
      * Get the IDs of children of this.
      * @return IDs of drawable children
      */
-    public abstract Collection<Integer> getChildren();
+    abstract Collection<Integer> getChildren();
 
     /**
      * Get the IDs of parents of this.
      * @return IDs of drawable parents.
      */
-    public abstract Collection<Integer> getParents();
+    abstract Collection<Integer> getParents();
 
     /**
      * Replace a parent with another one.
@@ -122,86 +147,103 @@ public abstract class DrawableNode extends Rectangle implements Drawable {
 
     /**
      * Color this according to contents.
-     * @param sg the {@link SubGraph} this {@link DrawableNode} is in
+     * @param subGraph {@link SubGraph} to colorize.
      */
-    public abstract void colorize(SubGraph sg);
+    public abstract void colorize(SubGraph subGraph);
+
+    /**
+     * Set the size {@link XYCoordinate} of the Segment.
+     * @param width The double representing the width of the DrawableSegment
+     * @param height The double representing the height of the DrawableSegment
+     */
+    final void setSize(double width, double height) {
+        this.setWidth(width);
+        this.setHeight(height);
+        this.setDrawDimensionsUpToDate();
+    }
 
     /**
      * Set the location to draw this.
      * @param x the x location
      * @param y the y location
      */
-    protected void setLocation(int x, int y) {
-        this.setX(x);
-        this.setY(y);
+    public final void setLocation(double x, double y) {
+        this.location.set(x, y);
     }
 
     /**
-     * Set the size of this drawing.
+     * Get the width of the node.
+     * @return The width of the node.
      */
-    protected abstract void setDrawDimensions();
+    public final double getWidth() {
+        return dimensions.getX();
+    }
 
     /**
-     * Get a {@link XYCoordinate} representing the size of the Segment.
-     * @return The size of the Segment
+     * Get the height of the node.
+     * @return The height of the node.
      */
-    public XYCoordinate getSize() {
-        if (!drawDimensionsUpToDate) {
+    public final double getHeight() {
+        if (!isDrawDimensionsUpToDate()) {
             setDrawDimensions();
         }
-        return new XYCoordinate((int) this.getWidth(), (int) this.getHeight());
+        return dimensions.getY();
     }
 
     /**
      * getter for the center of the left border.
      * @return XYCoordinate.
      */
-    public XYCoordinate getLeftBorderCenter() {
-        if (!drawDimensionsUpToDate) {
+    public final XYCoordinate getLeftBorderCenter() {
+        if (!isDrawDimensionsUpToDate()) {
             setDrawDimensions();
         }
-        return this.getCenter().add(-(this.getSize().getX() / 2), 0);
+        return new XYCoordinate(location.getX(), location.getY() + 0.5 * getHeight());
     }
 
     /**
      * getter for the center.
      * @return XYCoordinate.
      */
-    private XYCoordinate getCenter() {
-        if (!drawDimensionsUpToDate) {
+    public final XYCoordinate getCenter() {
+        if (!isDrawDimensionsUpToDate()) {
             setDrawDimensions();
         }
-        return this.getLocation().add(this.getSize().multiply(0.5));
+        return new XYCoordinate(location.getX() + 0.5 * getWidth(), location.getY() + 0.5 * getHeight());
     }
 
     /**
      * getter for the center of the right border.
      * @return XYCoordinate.
      */
-    public XYCoordinate getRightBorderCenter() {
-        if (!drawDimensionsUpToDate) {
+    final XYCoordinate getRightBorderCenter() {
+        if (!isDrawDimensionsUpToDate()) {
             setDrawDimensions();
         }
-        return this.getCenter().add(this.getSize().getX() / 2, 0);
+        return new XYCoordinate(location.getX() + getWidth(), location.getY() + 0.5 * getHeight());
     }
 
-    /**
-     * Getter for top left corner of a Segment.
-     * @return {@link XYCoordinate} with the values of the top left corner.
-     */
-    XYCoordinate getLocation() {
-        return new XYCoordinate((int) this.getX(), (int) this.getY());
+    public final XYCoordinate getLocation() {
+        return location;
     }
 
     public Collection<Integer> getGenomes() {
         return this.genomes;
     }
 
+    public final void setWidth(double width) {
+        this.dimensions.setX(width);
+    }
+
+    public final void setHeight(double height) {
+        this.dimensions.setY(height);
+    }
+
     /**
-     * Add genomes to the collection.
-     * @param genomes a {@link Collection} of genome IDs
+     * Method to add genomes to a Drawable node.
+     * @param genomes is a Set of Integers representing the genomeIDs.
      */
-    public final void addGenomes(Collection<Integer> genomes) {
+    final void addGenomes(Set<Integer> genomes) {
         this.genomes.addAll(genomes);
     }
 
@@ -216,4 +258,35 @@ public abstract class DrawableNode extends Rectangle implements Drawable {
      * @return the 'closest' child {@link DrawableSegment}
      */
     public abstract DrawableNode getChildSegment();
+
+    public final void setStrokeColor(Color strokeColor) {
+        this.strokeColor = strokeColor;
+    }
+
+    public final void setStrokeWidth(double strokeWidth) {
+        this.strokeWidth = strokeWidth;
+    }
+
+    /**
+     * Method to set the fill and stroke color of a {@link DrawableSegment}.
+     * @param fillColor {@link Color} is the color to fill the segment with.
+     * @param strokeColor {@link Color} is the color of the stroke.
+     */
+    final void setColors(Color fillColor, Color strokeColor) {
+        this.fillColor = fillColor;
+        this.strokeColor = strokeColor;
+    }
+
+    public final Color getStrokeColor() {
+        return this.strokeColor;
+    }
+
+    public final Color getFillColor() {
+        return this.fillColor;
+    }
+
+    public final double getStrokeWidth() {
+        return this.strokeWidth;
+    }
+
 }

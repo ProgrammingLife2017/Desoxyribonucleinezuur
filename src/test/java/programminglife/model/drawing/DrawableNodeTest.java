@@ -43,16 +43,16 @@ public class DrawableNodeTest {
 
     @Test
     public void sizeTest() {
-        node.setSize(new XYCoordinate(3, 4));
+        node.setSize(3, 4);
 
-        assertEquals(3, node.getSize().getX(), 0.0);
-        assertEquals(4, node.getSize().getY(), 0.0);
+        assertEquals(3, node.getWidth(), 0.0);
+        assertEquals(4, node.getHeight(), 0.0);
     }
 
     @Test
     public void rightBorderCenterTest() {
         node.setLocation(2, 2);
-        node.setSize(new XYCoordinate(4, 2));
+        node.setSize(4, 2);
 
         assertEquals(6, node.getRightBorderCenter().getX(), 0.0);
         assertEquals(3, node.getRightBorderCenter().getY(), 0.0);
@@ -61,7 +61,7 @@ public class DrawableNodeTest {
     @Test
     public void leftBorderCenterTest() {
         node.setLocation(2, 2);
-        node.setSize(new XYCoordinate(4, 2));
+        node.setSize(4, 2);
 
         assertEquals(2, node.getLeftBorderCenter().getX(), 0.0);
         assertEquals(3, node.getLeftBorderCenter().getY(), 0.0);

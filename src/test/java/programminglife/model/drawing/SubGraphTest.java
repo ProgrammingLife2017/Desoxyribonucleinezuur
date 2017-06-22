@@ -23,7 +23,6 @@ public class SubGraphTest {
     @BeforeClass
     public static void setUpClass() throws Exception {
         InitFXThread.setupClass();
-
         TEST_PATH = new File(SubGraphTest.class.getResource("/test.gfa").toURI()).getAbsolutePath();
     }
 

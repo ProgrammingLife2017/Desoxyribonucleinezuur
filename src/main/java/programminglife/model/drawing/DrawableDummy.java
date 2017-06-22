@@ -3,7 +3,10 @@ package programminglife.model.drawing;
 import javafx.scene.paint.Color;
 import programminglife.model.GenomeGraph;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.NoSuchElementException;
 
 /**
  * A class that handles the creation and usage of dummy nodes.
@@ -19,7 +22,7 @@ public class DrawableDummy extends DrawableNode {
      * @param childNode the dummy's child
      * @param graph the GenomeGraph currently drawn
      */
-    public DrawableDummy(int id, DrawableNode parentNode, DrawableNode childNode, GenomeGraph graph) {
+    DrawableDummy(int id, DrawableNode parentNode, DrawableNode childNode, GenomeGraph graph) {
         super(graph, id);
 
         this.parent = parentNode;
@@ -28,20 +31,20 @@ public class DrawableDummy extends DrawableNode {
 
     @Override
     public Collection<Integer> getChildren() {
-        Collection<Integer> result = new LinkedHashSet();
+        Collection<Integer> result = new LinkedHashSet<>();
         result.add(child.getIdentifier());
         return result;
     }
 
     @Override
     public Collection<Integer> getParents() {
-        Collection result = new LinkedHashSet();
+        Collection<Integer> result = new LinkedHashSet<>();
         result.add(parent.getIdentifier());
         return result;
     }
 
     @Override
-    void replaceParent(DrawableNode oldParent, DrawableNode newParent) {
+    public void replaceParent(DrawableNode oldParent, DrawableNode newParent) {
         if (this.parent.getIdentifier() == oldParent.getIdentifier()) {
             this.parent = newParent;
         } else {
@@ -52,9 +55,10 @@ public class DrawableDummy extends DrawableNode {
     }
 
     @Override
-    void replaceChild(DrawableNode oldChild, DrawableNode newChild) {
+    public void replaceChild(DrawableNode oldChild, DrawableNode newChild) {
         if (this.child.getIdentifier() == oldChild.getIdentifier()) {
             this.child = newChild;
+
         } else {
             throw new NoSuchElementException(
                     String.format("The node to be replaced (%d) is not a child of this node (%d).",
@@ -70,6 +74,11 @@ public class DrawableDummy extends DrawableNode {
     @Override
     public String details() {
         return toString();
+    }
+
+    @Override
+    public DrawableSNP createSNPIfPossible(SubGraph subGraph) {
+        return null;
     }
 
     @Override
@@ -92,27 +101,14 @@ public class DrawableDummy extends DrawableNode {
         Color strokeColor = Color.hsb(0.d, 0.d, brightness);
 
         this.setStrokeWidth(strokeWidth);
-        this.setStroke(strokeColor);
+        this.setStrokeColor(strokeColor);
+
     }
 
     /**
-     * {@inheritDoc}
+     * To string method of a dummy.
+     * @return Dummy representation of a string.
      */
-    public DrawableSNP createSNPIfPossible(SubGraph subGraph) {
-        return null;
-    }
-
-    @Override
-    public void setLocation(int x, int y) {
-        this.setX(x);
-        this.setY(y + NODE_HEIGHT / 2);
-    }
-
-    @Override
-    protected void setDrawDimensions() {
-
-    }
-
     @Override
     public String toString() {
         return String.format("Link from %s to %s", this.parent, this.child);
@@ -126,5 +122,12 @@ public class DrawableDummy extends DrawableNode {
     @Override
     public DrawableNode getChildSegment() {
         return this.child.getChildSegment();
+    }
+
+    /**
+     * Set the size of this drawing.
+     */
+    @Override
+    protected void setDrawDimensions() {
     }
 }

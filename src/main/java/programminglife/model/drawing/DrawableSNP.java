@@ -113,8 +113,7 @@ public class DrawableSNP extends DrawableNode {
      */
     @Override
     public void colorize(SubGraph sg) {
-        this.setFill(Color.BLANCHEDALMOND);
-        this.setStroke(Color.DARKRED);
+        this.setColors(Color.BLANCHEDALMOND, Color.DARKRED);
         this.setStrokeWidth(3.5);
     }
 
@@ -124,7 +123,7 @@ public class DrawableSNP extends DrawableNode {
     @Override
     protected void setDrawDimensions() {
         this.setSize(new XYCoordinate(SNP_WIDTH, NODE_HEIGHT));
-        this.setDrawDimensionsUpToDate(true);
+        this.setDrawDimensionsUpToDate();
     }
 
     /**
@@ -134,7 +133,7 @@ public class DrawableSNP extends DrawableNode {
     private void setSize(XYCoordinate size) {
         this.setWidth(size.getX());
         this.setHeight(size.getY());
-        this.setDrawDimensionsUpToDate(true);
+        this.setDrawDimensionsUpToDate();
     }
 
     @Override
