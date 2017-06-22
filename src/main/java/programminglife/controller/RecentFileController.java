@@ -235,11 +235,6 @@ public class RecentFileController {
         file3 = file2;
         file2 = file1;
         file1 = file;
-        System.out.println(file1);
-        System.out.println(file2);
-        System.out.println(file3);
-        System.out.println(file4);
-        System.out.println(file5);
     }
 
     /**
