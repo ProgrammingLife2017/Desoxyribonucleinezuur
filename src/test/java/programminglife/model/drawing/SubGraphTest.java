@@ -1,8 +1,10 @@
 package programminglife.model.drawing;
 
-import org.junit.*;
-import programminglife.model.*;
-import programminglife.parser.Cache;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import programminglife.model.GenomeGraph;
 import programminglife.parser.GraphParser;
 import programminglife.utility.InitFXThread;
 
@@ -21,8 +23,7 @@ public class SubGraphTest {
     @BeforeClass
     public static void setUpClass() throws Exception {
         InitFXThread.setupClass();
-
-        TEST_PATH = GenomeGraphTest.class.getResource("/test.gfa").toURI().getPath();
+        TEST_PATH = new File(SubGraphTest.class.getResource("/test.gfa").toURI()).getAbsolutePath();
     }
 
     @Before
@@ -38,11 +39,6 @@ public class SubGraphTest {
     @After
     public void tearDown() throws Exception {
         graph.removeCache();
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-        Cache.removeDB(TEST_PATH);
     }
 
     @Test

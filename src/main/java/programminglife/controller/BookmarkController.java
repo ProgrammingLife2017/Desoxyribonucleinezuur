@@ -72,6 +72,7 @@ public final class BookmarkController {
      */
     private static boolean bookmarkExists(String fileName, String graphName, String bookmarkName) {
         Element doc = loadDoc(fileName);
+        assert doc != null;
         Element graph = findTag(doc.getElementsByTagName("graph"), graphName);
         if (graph != null) {
             Element bookmark = findTag(graph.getElementsByTagName("bookmark"), bookmarkName);
@@ -164,6 +165,7 @@ public final class BookmarkController {
      */
     static void deleteBookmark(String fileName, String graphName, String bookmarkName) {
         Element doc = loadDoc(fileName);
+        assert doc != null;
         Element graphTag = findTag(doc.getElementsByTagName("graph"), graphName);
         if (graphTag != null) {
             Element bookmarkTag = findTag(graphTag.getElementsByTagName("bookmark"), bookmarkName);
@@ -211,6 +213,7 @@ public final class BookmarkController {
     static Map<String, List<Bookmark>> loadAllBookmarks(String fileName) {
         Map<String, List<Bookmark>> result = new HashMap<>();
         Element doc = loadDoc(fileName);
+        assert doc != null;
         NodeList graphs = doc.getElementsByTagName("graph");
         if (graphs != null) {
             for (int i = 0; i < graphs.getLength(); i++) {

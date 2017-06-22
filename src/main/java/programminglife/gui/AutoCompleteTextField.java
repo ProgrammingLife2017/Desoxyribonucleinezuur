@@ -91,13 +91,6 @@ public class AutoCompleteTextField extends TextField {
             checkBox.setPrefHeight(10);  //don't sure why it's changed with "graphic"
             CustomMenuItem item = new CustomMenuItem(checkBox, false);
             menuItems.add(item);
-
-            //if any suggestion is select set it into text and close popup
-//            item.setOnAction(actionEvent -> {
-//                setText(result);
-//                positionCaret(result.length());
-//                entriesPopup.hide();
-//            });
         }
 
         //"Refresh" context menu

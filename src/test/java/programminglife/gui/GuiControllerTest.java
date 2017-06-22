@@ -87,25 +87,47 @@ public class GuiControllerTest extends FxRobot {
         clickOn("#txtMaxDrawDepth").type(KeyCode.DIGIT4);
         clickOn("#txtCenterNode").type(KeyCode.BACK_SPACE);
         clickOn("#txtCenterNode").type(KeyCode.DIGIT2);
+        press(KeyCode.CONTROL).type(KeyCode.M);
+        release(KeyCode.CONTROL);
         clickOn("#btnDraw");
+
+
         assertEquals("2", ((TextField) lookup("#txtCenterNode").query()).getCharacters().toString());
         assertEquals("4", ((TextField) lookup("#txtMaxDrawDepth").query()).getCharacters().toString());
         clickOn("#btnZoomReset");
         clickOn("#btnDrawRandom");
         sleep(500);
+        openWindows();
+    }
+
+    private void openWindows() {
+        press(KeyCode.CONTROL).type(KeyCode.H);
+        release(KeyCode.CONTROL);
+        sleep(500);
+        type(KeyCode.ENTER);
+        sleep(500);
+
         clickOn("#menuHelp");
         clickOn("#btnAbout");
         sleep(500);
         type(KeyCode.ENTER);
+
+        press(KeyCode.CONTROL).type(KeyCode.I);
+        release(KeyCode.CONTROL);
+        sleep(500);
+        type(KeyCode.ENTER);
+        sleep(500);
+
         clickOn("#menuHelp");
         clickOn("#btnInstructions");
         sleep(500);
         type(KeyCode.ENTER);
+        sleep(500);
     }
 
     private void openAndParseFile(String fileName) {
-        clickOn("#menuFile");
-        clickOn("#btnOpen");
+        press(KeyCode.CONTROL).type(KeyCode.O);
+        release(KeyCode.CONTROL);
         sleep(1, TimeUnit.SECONDS);
 
         typeString(fileName);

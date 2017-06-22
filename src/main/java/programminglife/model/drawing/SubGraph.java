@@ -1,6 +1,9 @@
 package programminglife.model.drawing;
 
 import programminglife.model.GenomeGraph;
+
+import java.util.LinkedHashMap;
+import org.eclipse.collections.impl.factory.Sets;
 import programminglife.model.XYCoordinate;
 import programminglife.utility.Console;
 
@@ -35,6 +38,8 @@ public class SubGraph {
     private LinkedHashMap<Integer, DrawableNode> endNodes;
 
     private ArrayList<Layer> layers;
+    private Map<DrawableNode, Map<DrawableNode, Collection<Integer>>> genomes;
+    private int numberOfGenomes;
 
     // TODO: cache topological sorting (inside topoSort(), only recalculate when adding / removing nodes)
     // important: directly invalidate cache (set to null), because otherwise removed nodes
@@ -101,12 +106,36 @@ public class SubGraph {
         assert (minRadius <= radius);
 
         this.graph = centerNode.getGraph();
+        this.radius = radius;
+        this.layout = false;
         this.zoomLevel = zoomLevel;
         this.layers = null;
+        this.genomes = new LinkedHashMap<>();
+
+        this.numberOfGenomes = graph.getTotalGenomeNumber();
 
         findNodes(this, Collections.singleton(centerNode), new LinkedHashMap<>(), radius);
 
         layout();
+    }
+
+    /**
+     * Detect SNPs and replace them.
+     */
+    public void replaceSNPs() {
+        Map<Integer, DrawableNode> nodesCopy = new LinkedHashMap<>(this.nodes);
+        for (Map.Entry<Integer, DrawableNode> entry : nodesCopy.entrySet()) {
+            DrawableNode parent = entry.getValue();
+            DrawableSNP snp = parent.createSNPIfPossible(this);
+            if (snp != null) {
+                snp.getMutations().stream().map(DrawableNode::getIdentifier).forEach(id -> {
+                    this.nodes.remove(id);
+                    parent.getChildren().remove(id);
+                    snp.getChild().getParents().remove(id);
+                });
+                this.nodes.put(snp.getIdentifier(), snp);
+            }
+        }
     }
 
     // TODO: change findParents and findChildren to reliably only find nodes with a *longest* path of at most radius.
@@ -657,6 +686,49 @@ public class SubGraph {
     }
 
     /**
+     * Calculate genomes through all outgoing edges of a parent.
+     * @param parent find all genomes through edges from this parent
+     * @return a {@link Map} of  collections of genomes through links
+     */
+    Map<DrawableNode, Collection<Integer>> calculateGenomes(DrawableNode parent) {
+        Map<DrawableNode, Collection<Integer>> outgoingGenomes = new LinkedHashMap<>();
+
+        // Create set of parent genomes
+        Set<Integer> parentGenomes = new LinkedHashSet<>(parent.getGenomes());
+        // Topo sort (= natural order) children
+        Collection<DrawableNode> children = this.getChildren(parent);
+        // For every child (in order); do
+        children.stream()
+                .sorted(Comparator.comparingInt(DrawableNode::getIdentifier))
+                .forEach(child -> {
+                    Set<Integer> childGenomes = new LinkedHashSet<>(child.getGenomes());
+                    // Find mutual genomes between parent and child
+                    Set<Integer> mutualGenomes = Sets.intersect(parentGenomes, childGenomes);
+                    // Add mutual genomes to edge
+                    outgoingGenomes.put(child, mutualGenomes);
+
+                    // Subtract mutual genomes from parent set
+                    parentGenomes.removeAll(mutualGenomes);
+                });
+
+        return outgoingGenomes;
+    }
+
+    /**
+     * Calculate genomes through edge, based on topological ordering and node-genome information.
+     * @return a {@link Map} of {@link Map Maps} of collections of genomes through links
+     */
+    public Map<DrawableNode, Map<DrawableNode, Collection<Integer>>> calculateGenomes() {
+        // For every node in the subGraph
+        for (DrawableNode parent : this.nodes.values()) {
+            Map<DrawableNode, Collection<Integer>> parentGenomes = this.calculateGenomes(parent);
+            this.genomes.put(parent, parentGenomes);
+        }
+
+        return this.genomes;
+    }
+
+    /**
      * Add nodes from the {@link #rootNodes}.
      * @param radius The number of steps to take from the rootNodes before stopping the search.
      */
@@ -811,5 +883,13 @@ public class SubGraph {
             }
         }
         zoomLevel /= scale;
+    }
+
+    public Map<DrawableNode, Map<DrawableNode, Collection<Integer>>> getGenomes() {
+        return genomes;
+    }
+
+    public int getNumberOfGenomes() {
+        return numberOfGenomes;
     }
 }

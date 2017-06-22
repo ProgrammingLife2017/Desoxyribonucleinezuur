@@ -49,6 +49,8 @@ public final class ProgrammingLife extends Application {
         close.setOnAction(event -> primaryStage.fireEvent(
                 new WindowEvent(primaryStage, WindowEvent.WINDOW_CLOSE_REQUEST))
         );
+        primaryStage.setMinWidth(600);
+        primaryStage.setMinHeight(400);
         primaryStage.sizeToScene();
         primaryStage.show();
         primaryStage.setMaximized(true);

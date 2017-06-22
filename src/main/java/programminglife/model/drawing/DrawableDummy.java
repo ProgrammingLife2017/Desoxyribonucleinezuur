@@ -2,26 +2,18 @@ package programminglife.model.drawing;
 
 import javafx.scene.paint.Color;
 import programminglife.model.GenomeGraph;
-import programminglife.model.Link;
-import programminglife.model.XYCoordinate;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 /**
  * A class that handles the creation and usage of dummy nodes.
  */
 public class DrawableDummy extends DrawableNode {
-    public static final int DUMMY_HEIGHT = 5;
-
-    private Color strokeColor;
-    private double strokeWidth;
-    private boolean drawDimensionsUpToDate = false;
-
-    private int parentID;
-    private int childID;
-    private Link link;
+    private DrawableNode parent;
+    private DrawableNode child;
 
     /**
      * Create a dummy node.
@@ -30,32 +22,31 @@ public class DrawableDummy extends DrawableNode {
      * @param childNode the dummy's child
      * @param graph the GenomeGraph currently drawn
      */
-    public DrawableDummy(int id, DrawableNode parentNode, DrawableNode childNode, GenomeGraph graph) {
+    DrawableDummy(int id, DrawableNode parentNode, DrawableNode childNode, GenomeGraph graph) {
         super(graph, id);
 
-        this.parentID = parentNode.getIdentifier();
-        this.childID = childNode.getIdentifier();
-        this.link = parentNode.getLink(childNode);
+        this.parent = parentNode;
+        this.child = childNode;
     }
 
     @Override
     public Collection<Integer> getChildren() {
-        Collection<Integer> result = new LinkedHashSet();
-        result.add(childID);
+        Collection<Integer> result = new LinkedHashSet<>();
+        result.add(child.getIdentifier());
         return result;
     }
 
     @Override
     public Collection<Integer> getParents() {
-        Collection result = new LinkedHashSet();
-        result.add(parentID);
+        Collection<Integer> result = new LinkedHashSet<>();
+        result.add(parent.getIdentifier());
         return result;
     }
 
     @Override
     public void replaceParent(DrawableNode oldParent, DrawableNode newParent) {
-        if (this.parentID == oldParent.getIdentifier()) {
-            this.parentID = newParent.getIdentifier();
+        if (this.parent.getIdentifier() == oldParent.getIdentifier()) {
+            this.parent = newParent;
         } else {
             throw new NoSuchElementException(
                     String.format("The node to be replaced (%d) is not a parent of this node (%d).",
@@ -65,8 +56,9 @@ public class DrawableDummy extends DrawableNode {
 
     @Override
     public void replaceChild(DrawableNode oldChild, DrawableNode newChild) {
-        if (this.childID == oldChild.getIdentifier()) {
-            this.childID = newChild.getIdentifier();
+        if (this.child.getIdentifier() == oldChild.getIdentifier()) {
+            this.child = newChild;
+
         } else {
             throw new NoSuchElementException(
                     String.format("The node to be replaced (%d) is not a child of this node (%d).",
@@ -74,85 +66,68 @@ public class DrawableDummy extends DrawableNode {
         }
     }
 
+    /**
+     * Information {@link String} about this.
+     *
+     * @return info
+     */
     @Override
     public String details() {
-        return this.link.details();
+        return toString();
     }
 
     @Override
-    public int[] getGenomes() {
-        return this.link.getGenomes();
+    public DrawableSNP createSNPIfPossible(SubGraph subGraph) {
+        return null;
     }
 
     @Override
-    public void colorize() {
-        DrawableEdge.colorize(this, this.link, this.getGraph());
-    }
+    public void colorize(SubGraph sg) {
+        double genomeFraction = 0.d;
+        Map<DrawableNode, Collection<Integer>> from = sg.getGenomes().get(this.getParentSegment());
+        if (from != null) {
+            Collection<Integer> genomes = from.get(this.getChildSegment());
+            if (genomes != null) {
+                genomeFraction = genomes.size() / (double) sg.getNumberOfGenomes();
+            }
+        }
 
-    @Override
-    public Link getLink(DrawableNode child) {
-        return this.link;
-    }
+        double minStrokeWidth = 1.d, maxStrokeWidth = 6.5;
+        double strokeWidth = minStrokeWidth + genomeFraction * (maxStrokeWidth - minStrokeWidth);
 
-    @Override
-    public void updateDrawDimensions() { }
+        double minBrightness = 0.6, maxBrightness = 0.25;
+        double brightness = minBrightness + genomeFraction * (maxBrightness - minBrightness);
 
-    @Override
-    public void setStrokeColor(Color color) {
-        this.strokeColor = color;
-    }
+        Color strokeColor = Color.hsb(0.d, 0.d, brightness);
 
-    @Override
-    public void setStrokeWidth(double width) {
-        this.strokeWidth = width;
-    }
+        this.setStrokeWidth(strokeWidth);
+        this.setStrokeColor(strokeColor);
 
-    @Override
-    public void setDrawDimensionsUpToDate(boolean upToDate) {
-        this.drawDimensionsUpToDate = upToDate;
-    }
-
-    @Override
-    public boolean isDrawDimensionsUpToDate() {
-        return this.drawDimensionsUpToDate;
     }
 
     /**
-     * getter for the center of the left border.
-     * @return XYCoordinate.
+     * To string method of a dummy.
+     * @return Dummy representation of a string.
      */
     @Override
-    public XYCoordinate getLeftBorderCenter() {
-        if (!drawDimensionsUpToDate) {
-            updateDrawDimensions();
-        }
-        return super.getLeftBorderCenter();
-    }
-
-    /**
-     * getter for the center.
-     * @return XYCoordinate.
-     */
-    public XYCoordinate getCenter() {
-        if (!drawDimensionsUpToDate) {
-            updateDrawDimensions();
-        }
-        return super.getCenter();
-    }
-
-    /**
-     * getter for the center of the right border.
-     * @return XYCoordinate.
-     */
-    public XYCoordinate getRightBorderCenter() {
-        if (!drawDimensionsUpToDate) {
-            updateDrawDimensions();
-        }
-        return super.getRightBorderCenter();
+    public String toString() {
+        return String.format("Link from %s to %s", this.parent, this.child);
     }
 
     @Override
-    public Color getStrokeColor() {
-        return this.strokeColor;
+    public DrawableNode getParentSegment() {
+        return this.parent.getParentSegment();
+    }
+
+    @Override
+    public DrawableNode getChildSegment() {
+        return this.child.getChildSegment();
+    }
+
+    /**
+     * Set the size of this drawing.
+     */
+    @Override
+    protected void setDrawDimensions() {
     }
 }

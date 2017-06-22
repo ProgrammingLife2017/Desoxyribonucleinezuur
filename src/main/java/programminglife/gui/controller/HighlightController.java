@@ -5,9 +5,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
-import javafx.stage.Stage;
 import programminglife.gui.AutoCompleteTextField;
+import programminglife.model.Annotation;
+import programminglife.model.Feature;
 import programminglife.utility.NumbersOnlyListener;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Controller class for the highlights.
@@ -16,10 +21,11 @@ public class HighlightController {
 
     private static final Color HIGHLIGHT_MIN_MAX_COLOR = Color.HOTPINK;
     private GraphController graphController;
+    private GuiController guiController;
 
-    @FXML private Button btnClose;
     @FXML private Button btnHighlight;
     @FXML private AutoCompleteTextField txtGenome;
+    @FXML private AutoCompleteTextField txtAnnotations;
     @FXML private TextField txtMin;
     @FXML private TextField txtMax;
     @FXML private CheckBox checkMin;
@@ -53,7 +59,6 @@ public class HighlightController {
             }
         });
 
-        btnClose.setOnAction(event -> ((Stage) btnClose.getScene().getWindow()).close());
     }
 
     /**
@@ -61,6 +66,31 @@ public class HighlightController {
      */
     public void initGenome() {
         txtGenome.getEntries().addAll(graphController.getGraph().getGenomeNames());
+    }
+
+    /**
+     * Initializes the annotations.
+     */
+    public void initAnnotations() {
+        txtAnnotations.getEntries().clear();
+        if (guiController.getFeatures() != null) {
+            txtAnnotations.getEntries().addAll(guiController.getFeatures().keySet());
+
+            Set<Set<Annotation>> c = guiController.getFeatures()
+                    .values()
+                    .stream()
+                    .map(Feature::getAnnotations)
+                    .collect(Collectors.toSet());
+
+            Set<String> search = new LinkedHashSet<>();
+
+            c.forEach(setOfAnno -> setOfAnno.forEach(anno -> anno.getTextFields().forEach((key, value) -> {
+                search.add(key);
+                search.addAll(value);
+            })));
+
+            txtAnnotations.getEntries().addAll(search);
+        }
     }
 
     /**
@@ -112,5 +142,9 @@ public class HighlightController {
      */
     void setGraphController(GraphController graphController) {
         this.graphController = graphController;
+    }
+
+    public void setGUIController(GuiController guiController) {
+        this.guiController = guiController;
     }
 }

@@ -3,24 +3,18 @@ package programminglife.gui.controller;
 import javafx.geometry.Bounds;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import programminglife.gui.ResizableCanvas;
+import programminglife.model.GenomeGraph;
 import programminglife.model.XYCoordinate;
 import programminglife.model.drawing.*;
-import programminglife.model.GenomeGraph;
 import programminglife.utility.Console;
 
 import java.util.Collection;
 import java.util.LinkedList;
 
-import static javafx.scene.shape.StrokeType.OUTSIDE;
-
 /**
- * Created by Martijn van Meerten on 8-5-2017.
  * Controller for drawing the graph.
  */
 public class GraphController {
@@ -31,9 +25,13 @@ public class GraphController {
     private LinkedList<DrawableNode> oldMinMaxList = new LinkedList<>();
     private SubGraph subGraph;
     private AnchorPane anchorGraphInfo;
-    private AnchorPane anchorCanvasPanel;
     private LinkedList<DrawableNode> oldGenomeList = new LinkedList<>();
     private ResizableCanvas canvas;
+
+    private double zoomLevel = 1;
+
+    private int centerNodeInt;
+    private boolean drawSNP = false;
 
     /**
      * Initialize controller object.
@@ -41,11 +39,25 @@ public class GraphController {
      * @param canvas the {@link Canvas} to draw in
      * @param anchorGraphInfo the {@link AnchorPane} were to show the info of a node or edge.
      */
-    public GraphController(GenomeGraph graph, ResizableCanvas canvas, AnchorPane anchorGraphInfo, AnchorPane anchorCanvasPanel) {
+    public GraphController(GenomeGraph graph, ResizableCanvas canvas, AnchorPane anchorGraphInfo) {
         this.graph = graph;
         this.canvas = canvas;
         this.anchorGraphInfo = anchorGraphInfo;
-        this.anchorCanvasPanel = anchorCanvasPanel;
+    }
+
+    public int getCenterNodeInt() {
+        return this.centerNodeInt;
+    }
+
+    /**
+     * Utility function for benchmarking purposes.
+     * @param description the description to print
+     * @param r the {@link Runnable} to run/benchmark
+     */
+    private void time(String description, Runnable r) {
+        long start = System.nanoTime();
+        r.run();
+        Console.println(String.format("%s: %d ms", description, (System.nanoTime() - start) / 1000000));
     }
 
     /**
@@ -54,36 +66,33 @@ public class GraphController {
      * @param radius the amount of layers to be drawn.
      */
     public void draw(int center, int radius) {
-        GraphicsContext gc = canvas.getGraphicsContext2D();
+        time("Total drawing", () -> {
+            DrawableSegment centerNode = new DrawableSegment(graph, center);
+            centerNodeInt = centerNode.getIdentifier();
+            GraphicsContext gc = canvas.getGraphicsContext2D();
 
-        long startFindNodes = System.nanoTime();
-        DrawableSegment centerNode = new DrawableSegment(graph, center);
-        subGraph = new SubGraph(centerNode, radius);
-        Console.println("Time to find nodes: " + (System.nanoTime() - startFindNodes) / 1000000 + " ms");
+            time("Find subgraph", () -> subGraph = new SubGraph(centerNode, radius, drawSNP));
 
-        subGraph.translate(canvas.getWidth() / 2);
+            // TODO: center on centerNode.
 
-        long startDrawing = System.nanoTime();
-        draw(gc);
-        Console.println("Time to draw: " + (System.nanoTime() - startDrawing) / 1000000 + " ms");
+            time("Colorize", this::colorize);
 
-        long startHighlight = System.nanoTime();
-        //centerOnNodeId(center);
-        highlightNode(center, Color.DARKORANGE);
-        Console.println("Time to highlight: " + (System.nanoTime() - startHighlight) / 1000000 + " ms");
+            time("Calculate genomes through edges", subGraph::calculateGenomes);
+            time("Drawing", () -> {
+                draw(gc);
+            });
+
+            centerOnNodeId(center);
+            highlightNode(center, Color.DARKORANGE);
+        });
     }
 
-    public void sizeToCanvas(Collection<DrawableNode> drawableNodes) {
-        double maxWidth = 0;
-        for (DrawableNode node : drawableNodes) {
-            if (node.getRightBorderCenter().getX() > maxWidth) {
-                maxWidth = node.getRightBorderCenter().getX();
-            }
-        }
-        for (DrawableNode node : drawableNodes) {
-            node.setLocation(node.getLocation().getX()/maxWidth*(canvas.getWidth() - 20), node.getLocation().getY());
-            node.setHeight(node.getHeight() / maxWidth * canvas.getHeight());
-            node.setWidth(node.getWidth() / maxWidth * (canvas.getWidth() - 20));
+    /**
+     * Method to do the coloring of the to be drawn graph.
+     */
+    private void colorize() {
+        for (DrawableNode drawableNode : subGraph.getNodes().values()) {
+            drawableNode.colorize(subGraph);
         }
     }
 
@@ -126,6 +135,8 @@ public class GraphController {
      */
     public void highlightNode(DrawableNode node, Color color) {
         node.setStrokeColor(color);
+        node.setStrokeWidth(5.0);
+        drawNode(canvas.getGraphicsContext2D(), node);
     }
 
     /**
@@ -148,13 +159,17 @@ public class GraphController {
 
     /**
      * Draws a edge on the location it has.
+     * @param gc {@link GraphicsContext} is the GraphicsContext required to draw.
      * @param parent {@link DrawableNode} is the node to be draw from.
      * @param child {@link DrawableNode} is the node to draw to.
      */
     private void drawEdge(GraphicsContext gc, DrawableNode parent, DrawableNode child) {
         DrawableEdge edge = new DrawableEdge(parent, child);
 
-//        edge.colorize(graph);
+        edge.colorize(subGraph);
+
+        gc.setLineWidth(edge.getStrokeWidth() * zoomLevel);
+        gc.setStroke(edge.getStrokeColor());
 
         XYCoordinate startLocation = edge.getStartLocation();
         XYCoordinate endLocation = edge.getEndLocation();
@@ -164,26 +179,18 @@ public class GraphController {
 
     /**
      * Draws a node on the location it has.
+     * @param gc {@link GraphicsContext} is the GraphicsContext required to draw.
      * @param drawableNode {@link DrawableNode} is the node to be drawn.
      */
     public void drawNode(GraphicsContext gc, DrawableNode drawableNode) {
         gc.setStroke(drawableNode.getStrokeColor());
+        gc.setFill(drawableNode.getFillColor());
+        gc.setLineWidth(drawableNode.getStrokeWidth());
+
         gc.strokeRect(drawableNode.getLeftBorderCenter().getX(), drawableNode.getLocation().getY(),
                 drawableNode.getWidth(), drawableNode.getHeight());
-
-//        if (!(drawableNode instanceof DrawableDummy)) {
-//            drawableNode.setOnMouseClicked(event -> Console.println(drawableNode.details()));
-//
-//            drawableNode.setOnMouseClicked(event -> {
-//                if (event.isShiftDown()) {
-//                    showInfoNode((DrawableSegment) drawableNode, 250);
-//                } else {
-//                    showInfoNode((DrawableSegment) drawableNode, 10);
-//                }
-//            });
-//        }
-
-//        drawableNode.colorize();
+        gc.fillRect(drawableNode.getLeftBorderCenter().getX(), drawableNode.getLocation().getY(),
+                drawableNode.getWidth(), drawableNode.getHeight());
     }
 
     /**
@@ -233,20 +240,45 @@ public class GraphController {
         locationCenterY = boundsHeight / 4;
         locationCenterX = boundsWidth / 2 - xCoordinate;
 
-        canvas.setTranslateX(locationCenterX);
-        canvas.setTranslateY(locationCenterY);
+        translate(locationCenterX, locationCenterY);
     }
 
-    public void translate(double xDifference) {
-        subGraph.translate(xDifference);
+    /**
+     * Translate function for the nodes. Used to change the location of nodes instead of mocing the canvas.
+     * @param xDifference double with the value of the change in the X (horizontal) direction.
+     * @param yDifference double with the value of the change in the Y (vertical) direction.
+     */
+    public void translate(double xDifference, double yDifference) {
+        for (DrawableNode node : subGraph.getNodes().values()) {
+            double oldXLocation = node.getLocation().getX();
+            double oldYLocation = node.getLocation().getY();
+            node.setLocation(oldXLocation + xDifference, oldYLocation + yDifference);
+        }
         draw(canvas.getGraphicsContext2D());
     }
 
+    /**
+     * Zoom function for the nodes. Used to increase the size of the nodes instead of zooming in on the canvas itself.
+     * @param scale double with the value of the increase of the nodes. Value higher than 1 means that the node size
+     * decreases, value below 1 means that the node size increases.
+     */
     public void zoom(double scale) {
-        subGraph.zoom(scale);
+        for (DrawableNode node : subGraph.getNodes().values()) {
+            double oldXLocation = node.getLocation().getX();
+            double oldYLocation = node.getLocation().getY();
+            node.setHeight(node.getHeight() / scale);
+            node.setWidth(node.getWidth() / scale);
+            node.setStrokeWidth(node.getStrokeWidth() / scale);
+            node.setLocation(oldXLocation / scale, oldYLocation / scale);
+        }
+        zoomLevel /= scale;
         draw(canvas.getGraphicsContext2D());
     }
 
+    /**
+     * Draw method for the whole subgraph. Calls draw node and draw Edge for every node and edge.
+     * @param gc is the {@link GraphicsContext} required to draw.
+     */
     public void draw(GraphicsContext gc) {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
@@ -258,107 +290,6 @@ public class GraphController {
                 drawEdge(gc, drawableNode, child);
             }
         }
-    }
-
-    /**
-     * Method to show the information of an edge.
-     * @param edge DrawableEdge the edge which has been clicked on.
-     * @param x int the x location of the TextField.
-     */
-    private void showInfoEdge(DrawableEdge edge, int x) {
-        anchorGraphInfo.getChildren().removeIf(node1 -> node1.getLayoutX() == x);
-
-        Text idText = new Text("Genomes: "); idText.setLayoutX(x); idText.setLayoutY(65);
-        Text parentsText = new Text("Parent: "); parentsText.setLayoutX(x); parentsText.setLayoutY(115);
-        Text childrenText = new Text("Child: "); childrenText.setLayoutX(x); childrenText.setLayoutY(165);
-
-        TextField id = getTextField("Genomes: ", x, 70, graph.getGenomeNames(edge.getLink().getGenomes()).toString());
-        TextField parent = getTextField("Parent Node: ", x, 120, Integer.toString(edge.getLink().getStartID()));
-        TextField child = getTextField("Child Node: ", x, 170, Integer.toString(edge.getLink().getEndID()));
-
-        anchorGraphInfo.getChildren().addAll(idText, parentsText, childrenText, id, parent, child);
-    }
-
-    /**
-     * Method to show the information of a node.
-     * @param node DrawableSegment the node which has been clicked on.
-     * @param x int the x location of the TextField.
-     */
-    private void showInfoNode(DrawableSegment node, int x) {
-        Text idText = new Text("ID: "); idText.setLayoutX(x); idText.setLayoutY(65);
-        Text parentText = new Text("Parents: "); parentText.setLayoutX(x); parentText.setLayoutY(115);
-        Text childText = new Text("Children: "); childText.setLayoutX(x); childText.setLayoutY(165);
-        Text inEdgeText = new Text("Incoming Edges: "); inEdgeText.setLayoutX(x); inEdgeText.setLayoutY(215);
-        Text outEdgeText = new Text("Outgoing Edges: "); outEdgeText.setLayoutX(x); outEdgeText.setLayoutY(265);
-        Text genomeText = new Text("Genomes: "); genomeText.setLayoutX(x); genomeText.setLayoutY(315);
-        Text seqLengthText = new Text("Sequence Length: "); seqLengthText.setLayoutX(x); seqLengthText.setLayoutY(365);
-        Text seqText = new Text("Sequence: "); seqText.setLayoutX(x); seqText.setLayoutY(415);
-
-        anchorGraphInfo.getChildren().removeIf(node1 -> node1.getLayoutX() == x);
-
-        TextField idTextField = getTextField("ID: ", x, 70, Integer.toString(node.getIdentifier()));
-
-        StringBuilder parentSB = new StringBuilder();
-        node.getParents().forEach(id -> parentSB.append(id).append(", "));
-        TextField parents;
-        if (parentSB.length() > 2) {
-            parentSB.setLength(parentSB.length() - 2);
-            parents = getTextField("Parents: ", x, 120, parentSB.toString());
-        } else {
-            parentSB.replace(0, parentSB.length(), "This node has no parent(s)");
-            parents = getTextField("Parents: ", x, 120, parentSB.toString());
-        }
-
-        StringBuilder childSB = new StringBuilder();
-        node.getChildren().forEach(id -> childSB.append(id).append(", "));
-        TextField children;
-        if (childSB.length() > 2) {
-            childSB.setLength(childSB.length() - 2);
-            children = getTextField("Children: ", x, 170, childSB.toString());
-        } else {
-            childSB.replace(0, childSB.length(), "This node has no child(ren)");
-            children = getTextField("Children: ", x, 170, childSB.toString());
-        }
-
-        TextField inEdges = getTextField("Incoming Edges: ", x, 220, Integer.toString(node.getParents().size()));
-        TextField outEdges = getTextField("Outgoing Edges: ", x, 270, Integer.toString(node.getChildren().size()));
-        TextField genome = getTextField("Genome: ", x, 320,
-                graph.getGenomeNames(node.getGenomes()).toString());
-        TextField seqLength = getTextField("Sequence Length: ", x, 370, Integer.toString(node.getSequence().length()));
-
-        TextArea seq = new TextArea("Sequence: ");
-        seq.setEditable(false);
-        seq.setLayoutX(x); seq.setLayoutY(420);
-        seq.setText(node.getSequence().replaceAll("(.{25})", "$1" + System.getProperty("line.separator")));
-        seq.setPrefWidth(225); seq.setPrefHeight(25 * Math.ceil(node.getSequence().length() / 25));
-        seq.setStyle("-fx-text-box-border: transparent;-fx-background-color: none; -fx-background-insets: 0;"
-                + " -fx-padding: 1 3 1 3; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;");
-
-        anchorGraphInfo.getChildren().addAll(idText, parentText, childText, inEdgeText,
-                outEdgeText, genomeText, seqLengthText, seqText);
-        anchorGraphInfo.getChildren().addAll(idTextField, parents, children, inEdges, outEdges, genome, seqLength, seq);
-    }
-
-    /**
-     * Returns a textField to be used by the edge and node information show panel.
-     * @param id String the id of the textField.
-     * @param x int the x coordinate of the textField inside the anchorPane.
-     * @param y int the y coordinate of the textField inside the anchorPane.
-     * @param text String the text to be shown by the textField.
-     * @return TextField the created textField.
-     */
-    private TextField getTextField(String id, int x, int y, String text) {
-        TextField textField = new TextField();
-        textField.setId(id);
-        textField.setText(text);
-        textField.setLayoutX(x);
-        textField.setLayoutY(y);
-        textField.setEditable(false);
-        textField.setStyle("-fx-text-box-border: transparent;-fx-background-color: none; -fx-background-insets: 0;"
-                + " -fx-padding: 1 3 1 3; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;");
-        textField.setPrefSize(220, 20);
-
-        return textField;
     }
 
     /**
@@ -374,7 +305,7 @@ public class GraphController {
         removeHighlight(oldGenomeList);
         for (DrawableNode drawableNode: subGraph.getNodes().values()) {
             if (drawableNode != null && !(drawableNode instanceof DrawableDummy)) {
-                int genomeCount = drawableNode.getGenomes().length;
+                int genomeCount = drawableNode.getGenomes().size();
                 if (genomeCount >= min && genomeCount <= max) {
                     drawNodeList.add(drawableNode);
                 }
@@ -390,8 +321,9 @@ public class GraphController {
      */
     private void removeHighlight(Collection<DrawableNode> nodes) {
         for (DrawableNode node: nodes) {
-            node.colorize();
+            node.colorize(subGraph);
         }
+        this.draw(canvas.getGraphicsContext2D());
     }
 
 
@@ -404,7 +336,7 @@ public class GraphController {
         removeHighlight(oldGenomeList);
         removeHighlight(oldMinMaxList);
         for (DrawableNode drawableNode: subGraph.getNodes().values()) {
-            int[] genomes = drawableNode.getGenomes();
+            Collection<Integer> genomes = drawableNode.getGenomes();
             for (int genome : genomes) {
                 if (genome == genomeID && !(drawableNode instanceof DrawableDummy)) {
                     drawNodeList.add(drawableNode);
@@ -413,5 +345,36 @@ public class GraphController {
         }
         oldGenomeList = drawNodeList;
         highlightNodes(drawNodeList, Color.YELLOW);
+    }
+
+    /**
+     * Sets if the glyph  snippets will be drawn or not.
+     */
+    void setSNP() {
+        drawSNP = !drawSNP;
+    }
+
+    /**
+     * Returns the node clicked on else returns null.
+     * @param x position horizontally where clicked
+     * @param y position vertically where clicked
+     * @return nodeClicked {@link DrawableNode} returns null if no node is clicked.
+     */
+    public DrawableNode onClick(double x, double y) {
+        DrawableNode nodeClicked = null;
+        //TODO implement this with a tree instead of iterating.
+        for (DrawableNode drawableNode : subGraph.getNodes().values()) {
+            if (x >= drawableNode.getLocation().getX() && y >= drawableNode.getLocation().getY()
+                    && x <= drawableNode.getLocation().getX() + drawableNode.getWidth()
+                    && y <= drawableNode.getLocation().getY() + drawableNode.getHeight()) {
+                nodeClicked = drawableNode;
+                break;
+            }
+        }
+        return nodeClicked;
+    }
+
+    public void setZoomLevel(double zoomLevel) {
+        this.zoomLevel = zoomLevel;
     }
 }
