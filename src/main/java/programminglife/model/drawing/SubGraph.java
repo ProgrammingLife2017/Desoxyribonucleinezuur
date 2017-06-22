@@ -701,9 +701,10 @@ public class SubGraph {
         Collection<DrawableNode> children = this.getChildren(parent);
         // For every child (in order); do
         children.stream()
+                .map(DrawableNode::getChildSegment)
                 .sorted(Comparator.comparingInt(DrawableNode::getIdentifier))
                 .forEach(child -> {
-                    Set<Integer> childGenomes = new LinkedHashSet<>(child.getChildGenomes());
+                    Set<Integer> childGenomes = new LinkedHashSet<>(child.getGenomes());
                     // Find mutual genomes between parent and child
                     Set<Integer> mutualGenomes = Sets.intersect(parentGenomes, childGenomes);
                     // Add mutual genomes to edge
@@ -722,10 +723,10 @@ public class SubGraph {
      */
     public Map<DrawableNode, Map<DrawableNode, Collection<Integer>>> calculateGenomes() {
         // For every node in the subGraph
-        for (DrawableNode parent : this.nodes.values()) {
+        this.nodes.values().stream().map(DrawableNode::getParentSegment).forEach(parent -> {
             Map<DrawableNode, Collection<Integer>> parentGenomes = this.calculateGenomes(parent);
             this.genomes.put(parent, parentGenomes);
-        }
+        });
 
         return this.genomes;
     }
