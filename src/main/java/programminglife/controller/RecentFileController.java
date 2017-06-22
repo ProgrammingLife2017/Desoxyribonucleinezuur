@@ -43,8 +43,8 @@ public class RecentFileController {
         this.recentFile = recentFile;
         this.menuRecent = menuRecent;
         initRecent();
-        updateLines();
         doesFileExist();
+        updateLines();
     }
 
     private void updateLines() {
@@ -129,6 +129,11 @@ public class RecentFileController {
      * @param file File to check if it already contained.
      */
     public void updateRecent(File recentFile, File file) {
+        try {
+            findLines(recentFile);
+        } catch (IOException e) {
+            programminglife.utility.Console.println("Recent.txt could not be updated.");
+        }
         updateLines();
         if (checkDuplicate(file)) {
             moveFiles(file);
