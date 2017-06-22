@@ -283,7 +283,7 @@ public class GuiController implements Observer {
         btnOpenGFF.setOnAction((ActionEvent event) -> fileChooser(extFilterGFF, false));
 
         btnQuit.setOnAction(event -> Alerts.quitAlert());
-        btnQuit.setAccelerator(new KeyCodeCombination(KeyCode.E, KeyCodeCombination.CONTROL_DOWN));
+        btnQuit.setAccelerator(new KeyCodeCombination(KeyCode.Q, KeyCodeCombination.CONTROL_DOWN));
 
         btnAbout.setOnAction(event -> Alerts.infoAboutAlert());
         btnAbout.setAccelerator(new KeyCodeCombination(KeyCode.I, KeyCodeCombination.CONTROL_DOWN));
