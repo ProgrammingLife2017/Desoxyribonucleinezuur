@@ -62,7 +62,7 @@ public class SubGraphGenomesOnEdgeTest {
 
         g.cacheLastEdges();
 
-        SubGraph sg = new SubGraph(new DrawableSegment(g, 3), 5);
+        SubGraph sg = new SubGraph(new DrawableSegment(g, 3), 5, false);
         Map<DrawableNode, Map<DrawableNode, Collection<Integer>>> genomes = sg.calculateGenomes();
 
         DrawableNode seg3 = sg.getNodes().get(3);
@@ -96,7 +96,7 @@ public class SubGraphGenomesOnEdgeTest {
 
         g.cacheLastEdges();
 
-        SubGraph sg = new SubGraph(new DrawableSegment(g, 3), 5);
+        SubGraph sg = new SubGraph(new DrawableSegment(g, 3), 5, false);
         Map<DrawableNode, Map<DrawableNode, Collection<Integer>>> genomes = sg.calculateGenomes();
 
         DrawableNode seg3 = sg.getNodes().get(3);
@@ -134,7 +134,7 @@ public class SubGraphGenomesOnEdgeTest {
 
         g.cacheLastEdges();
 
-        SubGraph sg = new SubGraph(new DrawableSegment(g, 3), 5);
+        SubGraph sg = new SubGraph(new DrawableSegment(g, 3), 5, false);
 
         DrawableNode seg3 = sg.getNodes().get(3);
         DrawableNode seg4 = sg.getNodes().get(4);

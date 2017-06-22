@@ -43,7 +43,7 @@ public class SubGraphTest {
 
     @Test
     public void testConstructor() throws Exception {
-        SubGraph sg = new SubGraph(centerNode, 0);
+        SubGraph sg = new SubGraph(centerNode, 0, false);
         Set<DrawableNode> nodes = new LinkedHashSet<>(sg.getNodes().values());
         assertEquals(8, nodes.size());
         assertTrue(nodes.contains(centerNode));
@@ -51,7 +51,7 @@ public class SubGraphTest {
 
     @Test
     public void topoSortTest() throws Exception {
-        SubGraph sg = new SubGraph(centerNode, 5);
+        SubGraph sg = new SubGraph(centerNode, 5, false);
         List<DrawableNode> actual = sg.topoSort();
 
         Set<DrawableNode> graphNodes = new LinkedHashSet<>(sg.getNodes().values());

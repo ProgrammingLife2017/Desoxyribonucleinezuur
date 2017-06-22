@@ -7,20 +7,23 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.*;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.input.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
-import javafx.scene.canvas.Canvas;
 import jp.uphy.javafx.console.ConsoleView;
 import programminglife.ProgrammingLife;
 import programminglife.controller.MiniMapController;
@@ -28,7 +31,9 @@ import programminglife.controller.RecentFileController;
 import programminglife.gui.ResizableCanvas;
 import programminglife.model.Feature;
 import programminglife.model.GenomeGraph;
-import programminglife.model.drawing.*;
+import programminglife.model.drawing.DrawableEdge;
+import programminglife.model.drawing.DrawableNode;
+import programminglife.model.drawing.DrawableSegment;
 import programminglife.parser.AnnotationParser;
 import programminglife.parser.GraphParser;
 import programminglife.utility.Alerts;
@@ -454,12 +459,14 @@ public class GuiController implements Observer {
         });
         anchorGraphPanel.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> {
             double xDifference = event.getSceneX() - orgSceneX;
+            double yDifference = event.getSceneY() - orgSceneY;
             orgSceneX += xDifference;
-            graphController.translate(xDifference);
+            orgSceneY += yDifference;
+            graphController.translate(xDifference, yDifference);
             event.consume();
         });
         anchorGraphPanel.addEventHandler(ScrollEvent.SCROLL, event ->
-                zoom(event.getDeltaX(), event.getDeltaY(), event.getSceneX(), ZOOM_FACTOR));
+                zoom(event.getDeltaX(), event.getDeltaY(), event.getSceneX(), event.getSceneY(), ZOOM_FACTOR));
     }
 
     /**
@@ -482,10 +489,12 @@ public class GuiController implements Observer {
     /**
      * Handles the zooming in and out of the group.
      * @param deltaX The scroll amount in the X direction. See {@link ScrollEvent#getDeltaX()}
+     * @param deltaY The scroll amount in the Y direction. See {@link ScrollEvent#getDeltaY()}
      * @param sceneX double for the x location.
+     * @param sceneY double for the y location.
      * @param delta double the factor by which is zoomed.
      */
-    private void zoom(double deltaX, double deltaY, double sceneX, double delta) {
+    private void zoom(double deltaX, double deltaY, double sceneX, double sceneY, double delta) {
         double oldScale = scale;
 
         if (deltaX < 0 || deltaY < 0) {
@@ -502,8 +511,9 @@ public class GuiController implements Observer {
 
         Bounds bounds = canvas.localToScene(canvas.getBoundsInLocal());
         double dx = (sceneX - bounds.getMinX());
+        double dy = (sceneY - bounds.getMinY());
 
-        graphController.translate(factor * dx);
+        graphController.translate(factor * dx, factor * dy);
     }
 
     /**

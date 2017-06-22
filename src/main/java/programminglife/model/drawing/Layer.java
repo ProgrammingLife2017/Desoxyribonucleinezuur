@@ -172,4 +172,8 @@ public class Layer implements Iterable<DrawableNode>, Comparable<Double> {
     public int compareTo(@NotNull Double o) {
         return Double.compare(this.x, o);
     }
+
+    public double getY() {
+        return this.nodes.get(0).getLocation().getY();
+    }
 }

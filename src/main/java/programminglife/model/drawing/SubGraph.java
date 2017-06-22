@@ -1,9 +1,7 @@
 package programminglife.model.drawing;
 
-import programminglife.model.GenomeGraph;
-
-import java.util.LinkedHashMap;
 import org.eclipse.collections.impl.factory.Sets;
+import programminglife.model.GenomeGraph;
 import programminglife.model.XYCoordinate;
 import programminglife.utility.Console;
 
@@ -75,12 +73,12 @@ public class SubGraph {
      * Create a SubGraph using a centerNode and a radius around that centerNode.
      * This SubGraph will include all Nodes within radius steps to a parent,
      * and then another 2radius steps to a child, and symmetrically the same with children / parents reversed.
-     *
-     * @param centerNode The centerNode
+     *  @param centerNode The centerNode
      * @param radius     The radius
+     * @param replaceSNPs
      */
-    public SubGraph(DrawableSegment centerNode, int radius) {
-        this(centerNode, 1, MIN_RADIUS_DEFAULT, Math.max(radius, MIN_RADIUS_DEFAULT));
+    public SubGraph(DrawableSegment centerNode, int radius, boolean replaceSNPs) {
+        this(centerNode, 1, MIN_RADIUS_DEFAULT, Math.max(radius, MIN_RADIUS_DEFAULT), replaceSNPs);
 
         Layer firstLayer = layers.get(0);
         assert (firstLayer != null);
@@ -88,26 +86,21 @@ public class SubGraph {
         firstLayer.setX(0);
         firstLayer.setDrawLocations(DEFAULT_NODE_Y);
         this.setRightDrawLocations(this.layers, 0);
-
-        double center = this.layers.get(this.layers.size() - 1).getX() / 2;
-        this.translate(-center);
     }
 
     /**
      * Create a SubGraph using a centerNode and a radius around that centerNode.
      * This SubGraph will include all Nodes within radius steps to a parent,
      * and then another 2radius steps to a child, and symmetrically the same with children / parents reversed.
-     *
-     * @param centerNode The centerNode
+     *  @param centerNode The centerNode
      * @param minRadius  The minimum radius.
      * @param radius     The radius
+     * @param replaceSNPs
      */
-    SubGraph(DrawableSegment centerNode, double zoomLevel, int minRadius, int radius) {
+    SubGraph(DrawableSegment centerNode, double zoomLevel, int minRadius, int radius, boolean replaceSNPs) {
         assert (minRadius <= radius);
 
         this.graph = centerNode.getGraph();
-        this.radius = radius;
-        this.layout = false;
         this.zoomLevel = zoomLevel;
         this.layers = null;
         this.genomes = new LinkedHashMap<>();
@@ -116,7 +109,15 @@ public class SubGraph {
 
         findNodes(this, Collections.singleton(centerNode), new LinkedHashMap<>(), radius);
 
+        if (replaceSNPs) {
+            this.replaceSNPs();
+        }
+
+        calculateGenomes();
+
         layout();
+
+        colorize();
     }
 
     /**
@@ -408,19 +409,20 @@ public class SubGraph {
         ListIterator<Layer> layerIterator = layers.listIterator(setLayerIndex);
         Layer setLayer = layerIterator.next();
         double x = setLayer.getX() + setLayer.getWidth();
+        double firstY = setLayer.getY();
         int size = setLayer.size();
 
         while (layerIterator.hasNext()) {
             Layer layer = layerIterator.next();
 
-            layer.setSize(zoomLevel);
+//            layer.setSize(zoomLevel);
 
             int newSize = layer.size();
             int diff = Math.abs(newSize - size);
             x += (LAYER_PADDING * zoomLevel)  + (DIFF_LAYER_PADDING * zoomLevel) * diff;
 
             layer.setX(x);
-            layer.setDrawLocations(DEFAULT_NODE_Y);
+            layer.setDrawLocations(firstY);
             x += layer.getWidth() + (LAYER_PADDING * zoomLevel) * 0.1 + newSize;
             size = newSize;
         }
@@ -436,6 +438,7 @@ public class SubGraph {
         ListIterator<Layer> layerIterator = layers.listIterator(setLayerIndex + 1);
         Layer setLayer = layerIterator.previous();
         double x = setLayer.getX();
+        double firstY = setLayer.getY();
         int size = setLayer.size();
 
         while (layerIterator.hasPrevious()) {
@@ -449,7 +452,7 @@ public class SubGraph {
                     + layer.getWidth();
 
             layer.setX(x);
-            layer.setDrawLocations(DEFAULT_NODE_Y);
+            layer.setDrawLocations(firstY);
             x -= (LAYER_PADDING * zoomLevel) * 0.1 + newSize;
             size = newSize;
         }
@@ -461,8 +464,7 @@ public class SubGraph {
      * @param layers {@link List} representing all layers to be drawn.
      */
     private int
-    createDummyNodes(List<Layer> layers,
-                                 boolean returnHighestLayer) {
+    createDummyNodes(List<Layer> layers, boolean returnHighestLayer) {
         int lowestOrHighest = -1;
         int layerIndex = 0;
         Layer current = new Layer();
@@ -471,7 +473,7 @@ public class SubGraph {
                 for (DrawableNode child : this.getChildren(node)) {
                     if (!next.contains(child)) {
                         DrawableDummy dummy = new DrawableDummy(
-                                DrawableNode.getUniqueId(), node, child, this.getGraph());
+                                DrawableNode.getUniqueId(), node, child, this.getGraph(), this);
                         node.replaceChild(child, dummy);
                         child.replaceParent(node, dummy);
                         dummy.setWidth(next.getWidth());
@@ -694,14 +696,14 @@ public class SubGraph {
         Map<DrawableNode, Collection<Integer>> outgoingGenomes = new LinkedHashMap<>();
 
         // Create set of parent genomes
-        Set<Integer> parentGenomes = new LinkedHashSet<>(parent.getGenomes());
+        Set<Integer> parentGenomes = new LinkedHashSet<>(parent.getParentGenomes());
         // Topo sort (= natural order) children
         Collection<DrawableNode> children = this.getChildren(parent);
         // For every child (in order); do
         children.stream()
                 .sorted(Comparator.comparingInt(DrawableNode::getIdentifier))
                 .forEach(child -> {
-                    Set<Integer> childGenomes = new LinkedHashSet<>(child.getGenomes());
+                    Set<Integer> childGenomes = new LinkedHashSet<>(child.getChildGenomes());
                     // Find mutual genomes between parent and child
                     Set<Integer> mutualGenomes = Sets.intersect(parentGenomes, childGenomes);
                     // Add mutual genomes to edge
@@ -863,11 +865,13 @@ public class SubGraph {
         return graph;
     }
 
-    public void translate(double diff) {
+    public void translate(double xDifference, double yDifference) {
         for (Layer layer : this.layers) {
-            layer.setX(layer.getX() + diff);
+            layer.setX(layer.getX() + xDifference);
             for (DrawableNode node : layer) {
-                node.setLocation(node.getLocation().getX() + diff, node.getLocation().getY());
+                double oldX = node.getLocation().getX();
+                double oldY = node.getLocation().getY();
+                node.setLocation(oldX + xDifference, oldY + yDifference);
             }
         }
     }
@@ -878,12 +882,21 @@ public class SubGraph {
             for (DrawableNode node : layer) {
                 double oldXLocation = node.getLocation().getX();
                 double oldYLocation = node.getLocation().getY();
+                node.setHeight(node.getHeight() / scale);
                 node.setWidth(node.getWidth() / scale);
-                node.setLocation(oldXLocation / scale, oldYLocation);
+                node.setStrokeWidth(node.getStrokeWidth() / scale);
+                node.setLocation(oldXLocation / scale, oldYLocation / scale);
             }
         }
         zoomLevel /= scale;
     }
+
+    public void colorize() {
+        for (DrawableNode drawableNode : this.nodes.values()) {
+            drawableNode.colorize(this);
+        }
+    }
+
 
     public Map<DrawableNode, Map<DrawableNode, Collection<Integer>>> getGenomes() {
         return genomes;

@@ -4,11 +4,7 @@ import javafx.scene.paint.Color;
 import programminglife.model.GenomeGraph;
 import programminglife.model.XYCoordinate;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * A segment that also implements {@link Drawable}.
@@ -19,7 +15,6 @@ public abstract class DrawableNode implements Drawable {
 
     private final GenomeGraph graph;
     private final int id;
-    private final Collection<Integer> genomes;
     private Layer layer;
 
     private final XYCoordinate location;
@@ -43,15 +38,7 @@ public abstract class DrawableNode implements Drawable {
 
         this.dimensions = new XYCoordinate(0, 0);
         this.location = new XYCoordinate(0, 0);
-
-        int[] genomes = graph.getGenomes(id);
-        if (genomes != null) {
-            this.genomes = Arrays.stream(genomes).boxed().collect(Collectors.toSet());
-        } else {
-            this.genomes = Collections.emptySet();
-        }
     }
-
 
     @Override
     public final boolean equals(Object o) {
@@ -232,9 +219,7 @@ public abstract class DrawableNode implements Drawable {
         return location;
     }
 
-    public Collection<Integer> getGenomes() {
-        return this.genomes;
-    }
+    public abstract Collection<Integer> getGenomes();
 
     public final void setWidth(double width) {
         this.dimensions.setX(width);
@@ -242,14 +227,6 @@ public abstract class DrawableNode implements Drawable {
 
     public final void setHeight(double height) {
         this.dimensions.setY(height);
-    }
-
-    /**
-     * Method to add genomes to a Drawable node.
-     * @param genomes is a Set of Integers representing the genomeIDs.
-     */
-    final void addGenomes(Set<Integer> genomes) {
-        this.genomes.addAll(genomes);
     }
 
     /**
@@ -312,4 +289,7 @@ public abstract class DrawableNode implements Drawable {
         uniqueId--;
         return uniqueId;
     }
+
+    public abstract Collection<Integer> getParentGenomes();
+    public abstract Collection<Integer> getChildGenomes();
 }

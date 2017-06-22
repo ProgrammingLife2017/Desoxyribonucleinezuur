@@ -15,18 +15,23 @@ public class DrawableDummy extends DrawableNode {
     private DrawableNode parent;
     private DrawableNode child;
 
+    private SubGraph subGraph;
+
     /**
      * Create a dummy node.
      * @param id the ID
      * @param parentNode the dummy's parent
      * @param childNode the dummy's child
      * @param graph the GenomeGraph currently drawn
+     * @param subgraph The {@link SubGraph} that this DrawableDummy belongs to.
      */
-    DrawableDummy(int id, DrawableNode parentNode, DrawableNode childNode, GenomeGraph graph) {
+    DrawableDummy(int id, DrawableNode parentNode, DrawableNode childNode, GenomeGraph graph, SubGraph subgraph) {
         super(graph, id);
 
         this.parent = parentNode;
         this.child = childNode;
+
+        this.subGraph = subgraph;
     }
 
     @Override
@@ -105,6 +110,19 @@ public class DrawableDummy extends DrawableNode {
 
     }
 
+    @Override
+    public Collection<Integer> getGenomes() {
+        Map<DrawableNode, Collection<Integer>> from = subGraph.getGenomes().get(this.getParentSegment());
+        if (from != null) {
+            Collection<Integer> genomes = from.get(this.getChildSegment());
+            if (genomes != null) {
+                return genomes;
+            }
+        }
+
+        return null;
+    }
+
     /**
      * To string method of a dummy.
      * @return Dummy representation of a string.
@@ -122,6 +140,16 @@ public class DrawableDummy extends DrawableNode {
     @Override
     public DrawableNode getChildSegment() {
         return this.child.getChildSegment();
+    }
+
+    @Override
+    public Collection<Integer> getParentGenomes() {
+        return parent.getParentGenomes();
+    }
+
+    @Override
+    public Collection<Integer> getChildGenomes() {
+        return child.getChildGenomes();
     }
 
     /**

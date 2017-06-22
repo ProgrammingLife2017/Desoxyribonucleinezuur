@@ -117,6 +117,14 @@ public class DrawableSNP extends DrawableNode {
         this.setStrokeWidth(3.5);
     }
 
+    @Override
+    public Collection<Integer> getGenomes() {
+        return mutations.stream()
+                .map(DrawableNode::getGenomes)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toSet());
+    }
+
     /**
      * Set the size of this drawing.
      */
@@ -147,11 +155,13 @@ public class DrawableSNP extends DrawableNode {
     }
 
     @Override
-    public Collection<Integer> getGenomes() {
-        return this.mutations.stream()
-                            .map(DrawableSegment::getGenomes)
-                            .flatMap(Collection::stream)
-                            .collect(Collectors.toSet());
+    public Collection<Integer> getParentGenomes() {
+        return this.getGenomes();
+    }
+
+    @Override
+    public Collection<Integer> getChildGenomes() {
+        return this.getGenomes();
     }
 
     public Collection<DrawableSegment> getMutations() {

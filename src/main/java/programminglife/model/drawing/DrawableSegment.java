@@ -17,6 +17,8 @@ public class DrawableSegment extends DrawableNode {
 
     private Set<Integer> parents;
     private Set<Integer> children;
+    private Set<Integer> genomes;
+
 
     /**
      * Create a DrawableSegment from a Segment.
@@ -26,9 +28,11 @@ public class DrawableSegment extends DrawableNode {
     public DrawableSegment(GenomeGraph graph, int nodeID) {
         super(graph, nodeID);
 
+        assert (nodeID >= 0);
+
         parents = Arrays.stream(graph.getParentIDs(nodeID)).boxed().collect(Collectors.toSet());
         children = Arrays.stream(graph.getChildIDs(nodeID)).boxed().collect(Collectors.toSet());
-        this.addGenomes(Arrays.stream(graph.getGenomes(nodeID)).boxed().collect(Collectors.toSet()));
+        genomes = (Arrays.stream(graph.getGenomes(nodeID)).boxed().collect(Collectors.toSet()));
 
         this.setDrawDimensions();
     }
@@ -108,6 +112,16 @@ public class DrawableSegment extends DrawableNode {
     @Override
     public DrawableNode getChildSegment() {
         return this; // Don't ask!
+    }
+
+    @Override
+    public Collection<Integer> getParentGenomes() {
+        return this.getGenomes();
+    }
+
+    @Override
+    public Collection<Integer> getChildGenomes() {
+        return this.getGenomes();
     }
 
 
@@ -200,5 +214,10 @@ public class DrawableSegment extends DrawableNode {
         this.setStrokeWidth(DRAWABLE_SEGMENT_STROKE_WIDTH);
 
         this.setColors(fillColor, strokeColor);
+    }
+
+    @Override
+    public Collection<Integer> getGenomes() {
+        return genomes;
     }
 }

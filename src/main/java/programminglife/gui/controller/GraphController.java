@@ -91,9 +91,7 @@ public class GraphController {
      * Method to do the coloring of the to be drawn graph.
      */
     private void colorize() {
-        for (DrawableNode drawableNode : subGraph.getNodes().values()) {
-            drawableNode.colorize(subGraph);
-        }
+        subGraph.colorize();
     }
 
     /**
@@ -249,11 +247,7 @@ public class GraphController {
      * @param yDifference double with the value of the change in the Y (vertical) direction.
      */
     public void translate(double xDifference, double yDifference) {
-        for (DrawableNode node : subGraph.getNodes().values()) {
-            double oldXLocation = node.getLocation().getX();
-            double oldYLocation = node.getLocation().getY();
-            node.setLocation(oldXLocation + xDifference, oldYLocation + yDifference);
-        }
+        subGraph.translate(xDifference, yDifference);
         draw(canvas.getGraphicsContext2D());
     }
 
@@ -263,14 +257,7 @@ public class GraphController {
      * decreases, value below 1 means that the node size increases.
      */
     public void zoom(double scale) {
-        for (DrawableNode node : subGraph.getNodes().values()) {
-            double oldXLocation = node.getLocation().getX();
-            double oldYLocation = node.getLocation().getY();
-            node.setHeight(node.getHeight() / scale);
-            node.setWidth(node.getWidth() / scale);
-            node.setStrokeWidth(node.getStrokeWidth() / scale);
-            node.setLocation(oldXLocation / scale, oldYLocation / scale);
-        }
+        subGraph.zoom(scale);
         zoomLevel /= scale;
         draw(canvas.getGraphicsContext2D());
     }
