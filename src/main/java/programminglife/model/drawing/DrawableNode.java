@@ -50,6 +50,34 @@ public abstract class DrawableNode implements Drawable {
         }
     }
 
+
+    @Override
+    public final boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (!this.getClass().equals(o.getClass())) {
+            return false;
+        }
+        return this.getIdentifier() == ((DrawableNode) o).getIdentifier();
+    }
+
+    @Override
+    public final int hashCode() {
+        int result = getGraph().hashCode();
+        result = 31 * result + getIdentifier();
+        return result;
+    }
+
+    /**
+     * Get the ID.
+     * @return the ID
+     */
+    public final int getIdentifier() {
+        return this.id;
+    }
+
     /**
      * Get the {@link GenomeGraph}.
      * @return the graph
@@ -109,6 +137,13 @@ public abstract class DrawableNode implements Drawable {
      * @return info
      */
     public abstract String details();
+
+    /**
+     * Checks if the children of this {@link DrawableNode} can be merged as a SNP.
+     * @param subGraph the {@link SubGraph} this {@link DrawableNode} is in
+     * @return null if children cannot be SNP'ed, SNP with (parent, child and mutation) otherwise
+     */
+    public abstract DrawableSNP createSNPIfPossible(SubGraph subGraph);
 
     /**
      * Color this according to contents.
@@ -186,10 +221,6 @@ public abstract class DrawableNode implements Drawable {
             setDrawDimensions();
         }
         return new XYCoordinate(location.getX() + getWidth(), location.getY() + 0.5 * getHeight());
-    }
-
-    public final int getIdentifier() {
-        return id;
     }
 
     public final XYCoordinate getLocation() {

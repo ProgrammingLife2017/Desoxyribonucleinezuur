@@ -56,6 +56,7 @@ public class SubGraph {
         this.graph = centerNode.getGraph();
         this.radius = radius;
         this.layout = false;
+        this.genomes = new LinkedHashMap<>();
 
         this.numberOfGenomes = graph.getTotalGenomeNumber();
 
@@ -66,10 +67,25 @@ public class SubGraph {
         if (!this.nodes.containsKey(centerNode.getIdentifier())) {
             this.nodes.put(centerNode.getIdentifier(), centerNode);
         }
+    }
 
-        long genomeTime = System.nanoTime();
-        this.calculateGenomes();
-        Console.println("Time to find genomes through edge: " + (System.nanoTime() - genomeTime) / 1000000);
+    /**
+     * Detect SNPs and replace them.
+     */
+    public void replaceSNPs() {
+        Map<Integer, DrawableNode> nodesCopy = new LinkedHashMap<>(this.nodes);
+        for (Map.Entry<Integer, DrawableNode> entry : nodesCopy.entrySet()) {
+            DrawableNode parent = entry.getValue();
+            DrawableSNP snp = parent.createSNPIfPossible(this);
+            if (snp != null) {
+                snp.getMutations().stream().map(DrawableNode::getIdentifier).forEach(id -> {
+                    this.nodes.remove(id);
+                    parent.getChildren().remove(id);
+                    snp.getChild().getParents().remove(id);
+                });
+                this.nodes.put(snp.getIdentifier(), snp);
+            }
+        }
     }
 
     // TODO: change findParents and findChildren to reliably only find nodes with a *longest* path of at most radius.
@@ -488,15 +504,13 @@ public class SubGraph {
      * Calculate genomes through edge, based on topological ordering and node-genome information.
      * @return a {@link Map} of {@link Map Maps} of collections of genomes through links
      */
-    Map<DrawableNode, Map<DrawableNode, Collection<Integer>>> calculateGenomes() {
-        Map<DrawableNode, Map<DrawableNode, Collection<Integer>>> genomes = new LinkedHashMap<>();
+    public Map<DrawableNode, Map<DrawableNode, Collection<Integer>>> calculateGenomes() {
         // For every node in the subGraph
         for (DrawableNode parent : this.nodes.values()) {
             Map<DrawableNode, Collection<Integer>> parentGenomes = this.calculateGenomes(parent);
-            genomes.put(parent, parentGenomes);
+            this.genomes.put(parent, parentGenomes);
         }
 
-        this.genomes = genomes;
         return this.genomes;
     }
 

@@ -77,6 +77,11 @@ public class DrawableDummy extends DrawableNode {
     }
 
     @Override
+    public DrawableSNP createSNPIfPossible(SubGraph subGraph) {
+        return null;
+    }
+
+    @Override
     public void colorize(SubGraph sg) {
         double genomeFraction = 0.d;
         Map<DrawableNode, Collection<Integer>> from = sg.getGenomes().get(this.getParentSegment());
@@ -97,6 +102,7 @@ public class DrawableDummy extends DrawableNode {
 
         this.setStrokeWidth(strokeWidth);
         this.setStrokeColor(strokeColor);
+
     }
 
     /**

@@ -17,10 +17,15 @@
                         <Menu fx:id="menuRecentGFA" mnemonicParsing="false" text="Open Recent GFA" />
                         <Menu fx:id="menuRecentGFF" mnemonicParsing="false" text="Open Recent GFF" />
                         <SeparatorMenuItem mnemonicParsing="false" />
-                        <RadioMenuItem fx:id="btnToggle" mnemonicParsing="false" text="Toggle Console" />
-                        <RadioMenuItem fx:id="btnMiniMap" mnemonicParsing="false" text="Toggle MiniMap" />
                         <MenuItem fx:id="btnQuit" mnemonicParsing="false" text="Quit" />
                     </items>
+                 </Menu>
+                 <Menu fx:id="menuToggle" mnemonicParsing="false" text="View">
+                     <items>
+                         <RadioMenuItem fx:id="btnSNP" mnemonicParsing="false" text="Toggle SNP" />
+                         <RadioMenuItem fx:id="btnConsole" mnemonicParsing="false" text="Toggle Console" />
+                         <RadioMenuItem fx:id="btnMiniMap" mnemonicParsing="false" text="Toggle MiniMap" />
+                     </items>
                  </Menu>
                  <Menu fx:id="menuHelp" mnemonicParsing="false" text="Help">
                     <items>

@@ -15,7 +15,6 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 /**
- * Created by Martijn van Meerten on 8-5-2017.
  * Controller for drawing the graph.
  */
 public class GraphController {
@@ -32,6 +31,7 @@ public class GraphController {
     private double zoomLevel = 1;
 
     private int centerNodeInt;
+    private boolean drawSNP = false;
 
     /**
      * Initialize controller object.
@@ -50,54 +50,44 @@ public class GraphController {
     }
 
     /**
+     * Utility function for benchmarking purposes.
+     * @param description the description to print
+     * @param r the {@link Runnable} to run/benchmark
+     */
+    private void time(String description, Runnable r) {
+        long start = System.nanoTime();
+        r.run();
+        Console.println(String.format("%s: %d ms", description, (System.nanoTime() - start) / 1000000));
+    }
+
+    /**
      * Method to draw the subGraph decided by a center node and radius.
      * @param center the node of which the radius starts.
      * @param radius the amount of layers to be drawn.
      */
     public void draw(int center, int radius) {
-        long startTimeProgram = System.nanoTime();
-        GraphicsContext gc = canvas.getGraphicsContext2D();
+        time("Total drawing", () -> {
+            DrawableSegment centerNode = new DrawableSegment(graph, center);
+            centerNodeInt = centerNode.getIdentifier();
+            GraphicsContext gc = canvas.getGraphicsContext2D();
 
-        long startTimeSubGraph = System.nanoTime();
+            time("Find subgraph", () -> subGraph = new SubGraph(centerNode, radius));
 
-        DrawableSegment centerNode = new DrawableSegment(graph, center);
-        centerNodeInt = centerNode.getIdentifier();
-        subGraph = new SubGraph(centerNode, radius);
+            if (drawSNP) {
+                time("Replace SNPs", subGraph::replaceSNPs);
+            }
+            time("Layout subgraph", subGraph::layout);
 
-        long finishTimeSubGraph = System.nanoTime();
+            time("Colorize", this::colorize);
 
-        long startLayoutTime = System.nanoTime();
-        subGraph.layout();
-        long finishTimeLayout = System.nanoTime();
+            time("Calculate genomes through edges", subGraph::calculateGenomes);
+            time("Drawing", () -> {
+                draw(gc);
+            });
 
-        long startTimeColorize = System.nanoTime();
-        colorize();
-        long finishTimeColorize = System.nanoTime();
-
-
-        long startTimeDrawing = System.nanoTime();
-        draw(gc);
-        long finishTimeDrawing = System.nanoTime();
-
-        highlightNode(center, Color.DARKORANGE);
-        centerOnNodeId(center);
-
-        long finishTime = System.nanoTime();
-        long differenceTimeProgram = finishTime - startTimeProgram;
-        long differenceTimeDrawing = finishTimeDrawing - startTimeDrawing;
-        long differenceTimeLayout = finishTimeLayout - startLayoutTime;
-        long differenceTimeSubGraph = finishTimeSubGraph - startTimeSubGraph;
-        long differenceTimeColorize = finishTimeColorize - startTimeColorize;
-        long msDifferenceTimeProgram = differenceTimeProgram / 1000000;
-        long millisecondTimeDrawing = differenceTimeDrawing / 1000000;
-        long msDifferenceTimeLayout = differenceTimeLayout / 1000000;
-        long msDifferenceTimeSubGraph = differenceTimeSubGraph / 1000000;
-        long msDifferenceTimeColorize = differenceTimeColorize / 1000000;
-        Console.println("time of SubGraph: " + msDifferenceTimeSubGraph);
-        Console.println("Time of layout:  " + msDifferenceTimeLayout);
-        Console.println("Time of Colorize:  " + msDifferenceTimeColorize);
-        Console.println("Time of Drawing:  " + millisecondTimeDrawing);
-        Console.println("Time of Total Program:  " + msDifferenceTimeProgram);
+            centerOnNodeId(center);
+            highlightNode(center, Color.DARKORANGE);
+        });
     }
 
     /**
@@ -355,6 +345,13 @@ public class GraphController {
         }
         oldGenomeList = drawNodeList;
         highlightNodes(drawNodeList, Color.YELLOW);
+    }
+
+    /**
+     * Sets if the glyph  snippets will be drawn or not.
+     */
+    void setSNP() {
+        drawSNP = !drawSNP;
     }
 
     /**

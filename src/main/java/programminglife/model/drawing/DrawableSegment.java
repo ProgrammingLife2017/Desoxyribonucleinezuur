@@ -110,7 +110,48 @@ public class DrawableSegment extends DrawableNode {
         return this; // Don't ask!
     }
 
-    private double getGenomeFraction() {
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public DrawableSNP createSNPIfPossible(SubGraph subGraph) {
+        // A SNP-able node has:
+        if (children.size() < 2) { // - at least 2 children
+            return null;
+        } else if (children.size() > 4) { // - at most 4 children
+            return null;
+        } else if (!children.stream().allMatch(id -> id >= 0)) { // - no dummy children
+            return null;
+        } else if (!subGraph.getChildren(this).stream().allMatch(DrawableSegment.class::isInstance)) {
+            // - only children of type DrawableSegment
+            return null;
+        } else if (children.stream().anyMatch(id -> getGraph().getSequenceLength(id) != 1)) {
+            // - only children of length 1
+            return null;
+        } else  {
+            Collection<DrawableSegment> childNodes = subGraph.getChildren(this).stream()
+                    .map(DrawableSegment.class::cast)
+                    .collect(Collectors.toSet());
+            Collection<DrawableNode> childParents = childNodes.stream()
+                    .map(subGraph::getParents)
+                    .flatMap(Collection::stream)
+                    .collect(Collectors.toSet());
+            Collection<DrawableNode> childChildren = childNodes.stream()
+                    .map(subGraph::getChildren)
+                    .flatMap(Collection::stream)
+                    .collect(Collectors.toSet());
+            if (childChildren.size() != 1) { // - all children have 1 and the same child
+                return null;
+            } else if (childParents.size() != 1) { // - all children have 1 and the same parent
+                return null;
+            }
+
+            return new DrawableSNP(this, childChildren.iterator().next(), childNodes);
+        }
+    }
+
+    public double getGenomeFraction() {
         return this.getGraph().getGenomeFraction(this.getIdentifier());
     }
 
@@ -143,23 +184,6 @@ public class DrawableSegment extends DrawableNode {
                 + this.getLocation().getX()
                 + ","
                 + this.getLocation().getY();
-    }
-
-
-    @Override
-    public boolean equals(Object other) {
-        if (other instanceof DrawableSegment) {
-            DrawableSegment that = (DrawableSegment) other;
-            if (that.getIdentifier() == this.getIdentifier()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        return getIdentifier();
     }
 
     /**
