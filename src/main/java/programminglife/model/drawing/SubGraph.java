@@ -185,14 +185,14 @@ public class SubGraph {
                 Collection<Integer> children = current.node.getChildren();
                 Collection<Integer> parents = current.node.getParents();
 
-                children.forEach(node -> { if (node > 0) {
+                children.forEach(node -> {
                     queue.add(
                             new FoundNode(new DrawableSegment(subGraph.graph, node), FoundNode.FoundFrom.PARENT));
-                }});
-                parents.forEach(node -> { if (node > 0) {
+                });
+                parents.forEach(node -> {
                     queue.add(
                             new FoundNode(new DrawableSegment(subGraph.graph, node), FoundNode.FoundFrom.CHILD));
-                }});
+                });
             }
         }
 
@@ -334,8 +334,9 @@ public class SubGraph {
             // x < 0, -x is the closest layer on the right, -x - 1 is the closest
             // layer on the left. (see binarySearch documentation)
             // check which of the two layers is closest.
-            int rightLayerIndex = -resultIndex;
-            int leftLayerIndex = -resultIndex - 1;
+            int insertionPoint = -(resultIndex + 1);
+            int rightLayerIndex = insertionPoint;
+            int leftLayerIndex = insertionPoint - 1;
             Layer rightLayer = layers.get(rightLayerIndex);
             Layer leftLayer = layers.get(leftLayerIndex);
 
