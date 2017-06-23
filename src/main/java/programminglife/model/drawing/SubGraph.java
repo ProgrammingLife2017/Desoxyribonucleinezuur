@@ -38,6 +38,7 @@ public class SubGraph {
     private ArrayList<Layer> layers;
     private Map<DrawableNode, Map<DrawableNode, Collection<Integer>>> genomes;
     private int numberOfGenomes;
+    private boolean replaceSNPs;
 
     // TODO: cache topological sorting (inside topoSort(), only recalculate when adding / removing nodes)
     // important: directly invalidate cache (set to null), because otherwise removed nodes
@@ -47,8 +48,8 @@ public class SubGraph {
      * Create a SubGraph from a graph, without any nodes initially.
      * @param graph The {@link GenomeGraph} that this SubGraph is based on.
      */
-    private SubGraph(GenomeGraph graph, double zoomLevel) {
-        this(graph, zoomLevel, new LinkedHashMap<>(), new LinkedHashMap<>(), new LinkedHashMap<>());
+    private SubGraph(GenomeGraph graph, double zoomLevel, boolean replaceSNPs) {
+        this(graph, zoomLevel, replaceSNPs, new LinkedHashMap<>(), new LinkedHashMap<>(), new LinkedHashMap<>());
     }
 
     /**
@@ -58,7 +59,7 @@ public class SubGraph {
      * @param rootNodes The rootNodes of this SubGraph.
      * @param endNodes The endNodes of this SubGraph.
      */
-    private SubGraph(GenomeGraph graph, double zoomLevel, LinkedHashMap<Integer, DrawableNode> nodes,
+    private SubGraph(GenomeGraph graph, double zoomLevel, boolean replaceSNPs, LinkedHashMap<Integer, DrawableNode> nodes,
                      LinkedHashMap<Integer, DrawableNode> rootNodes, LinkedHashMap<Integer, DrawableNode> endNodes) {
         this.graph = graph;
         this.zoomLevel = zoomLevel;
@@ -67,6 +68,9 @@ public class SubGraph {
         this.endNodes = endNodes;
         this.genomes = new LinkedHashMap<>();
         this.numberOfGenomes = graph.getTotalGenomeNumber();
+        this.replaceSNPs = replaceSNPs;
+
+        this.replaceSNPs();
         this.calculateGenomes();
         this.createLayers();
     }
@@ -106,37 +110,33 @@ public class SubGraph {
         this.zoomLevel = zoomLevel;
         this.layers = null;
         this.genomes = new LinkedHashMap<>();
-
+        this.replaceSNPs = replaceSNPs;
         this.numberOfGenomes = graph.getTotalGenomeNumber();
 
         findNodes(this, Collections.singleton(centerNode), new LinkedHashMap<>(), radius);
-
-        if (replaceSNPs) {
-            this.replaceSNPs();
-        }
-
-        calculateGenomes();
-
-        layout();
-
-        colorize();
+        this.replaceSNPs();
+        this.calculateGenomes();
+        this.layout();
+        this.colorize();
     }
 
     /**
      * Detect SNPs and replace them.
      */
     public void replaceSNPs() {
-        Map<Integer, DrawableNode> nodesCopy = new LinkedHashMap<>(this.nodes);
-        for (Map.Entry<Integer, DrawableNode> entry : nodesCopy.entrySet()) {
-            DrawableNode parent = entry.getValue();
-            DrawableSNP snp = parent.createSNPIfPossible(this);
-            if (snp != null) {
-                snp.getMutations().stream().map(DrawableNode::getIdentifier).forEach(id -> {
-                    this.nodes.remove(id);
-                    parent.getChildren().remove(id);
-                    snp.getChild().getParents().remove(id);
-                });
-                this.nodes.put(snp.getIdentifier(), snp);
+        if (this.replaceSNPs) {
+            Map<Integer, DrawableNode> nodesCopy = new LinkedHashMap<>(this.nodes);
+            for (Map.Entry<Integer, DrawableNode> entry : nodesCopy.entrySet()) {
+                DrawableNode parent = entry.getValue();
+                DrawableSNP snp = parent.createSNPIfPossible(this);
+                if (snp != null) {
+                    snp.getMutations().stream().map(DrawableNode::getIdentifier).forEach(id -> {
+                        this.nodes.remove(id);
+                        parent.getChildren().remove(id);
+                        snp.getChild().getParents().remove(id);
+                    });
+                    this.nodes.put(snp.getIdentifier(), snp);
+                }
             }
         }
     }
@@ -756,12 +756,12 @@ public class SubGraph {
         }
 
         Console.println("Increasing graph with radius %d", radius);
-        SubGraph subGraph = new SubGraph(graph, zoomLevel);
+        SubGraph subGraph = new SubGraph(graph, zoomLevel, replaceSNPs);
 
         this.rootNodes.forEach((id, node) -> this.endNodes.remove(id));
         findNodes(subGraph, rootNodes.values(), this.nodes, radius);
+        subGraph.replaceSNPs();
         subGraph.createLayers();
-
         subGraph.calculateGenomes();
         this.mergeLeftSubGraphIntoThisSubGraph(subGraph);
     }
@@ -776,15 +776,15 @@ public class SubGraph {
         }
 
         Console.println("Increasing graph with radius %d", radius);
-        SubGraph subGraph = new SubGraph(graph, zoomLevel);
+        SubGraph subGraph = new SubGraph(graph, zoomLevel, replaceSNPs);
 
         this.endNodes.forEach((id, node) -> System.out.print(id + " "));
         System.out.println();
 
         this.endNodes.forEach((id, node) -> this.rootNodes.remove(id));
         findNodes(subGraph, endNodes.values(), this.nodes, radius);
+        subGraph.replaceSNPs();
         subGraph.createLayers();
-
         subGraph.calculateGenomes();
         this.mergeRightSubGraphIntoThisSubGraph(subGraph);
     }
