@@ -111,7 +111,7 @@ public class GuiController implements Observer {
     private final ExtensionFilter extFilterGFF = new ExtensionFilter("GFF files (*.gff)", "*.GFF");
     private final ExtensionFilter extFilterGFA = new ExtensionFilter("GFA files (*.gfa)", "*.GFA");
 
-    private static final double MAX_SCALE = 5.0d;
+    private static final double MAX_SCALE = 10.0d;
     private static final double MIN_SCALE = .02d;
     private static final double ZOOM_FACTOR = 1.05d;
 
@@ -358,7 +358,6 @@ public class GuiController implements Observer {
 
         btnTranslateReset.setOnAction(event -> this.draw());
 
-
         btnZoomReset.setOnAction(event -> this.draw());
     }
 
@@ -413,7 +412,9 @@ public class GuiController implements Observer {
         } catch (NumberFormatException e) {
             Alerts.warning("Center node ID is not a number, try again with a number as input.");
         }
-
+        if (centerNode > getGraphController().getGraph().size()) {
+            centerNode = 1;
+        }
         if (graphController.getGraph().contains(centerNode)) {
             this.graphController.clear();
             this.graphController.draw(centerNode, maxDepth);
@@ -460,7 +461,6 @@ public class GuiController implements Observer {
                 mouseClick(event.getX(), event.getY(), true);
             } else {
                 mouseClick(event.getX(), event.getY(), false);
-
             }
         });
         anchorGraphPanel.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> {
@@ -489,7 +489,6 @@ public class GuiController implements Observer {
                 showInfoNode(segment, shiftPressed ? 240 : 10);
                 graphController.highlightClicked(segment, shiftPressed);
             }
-
         }
     }
 

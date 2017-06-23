@@ -9,7 +9,8 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 /**
- * Created by toinehartman on 19/06/2017.
+ * Class representing a SNP.
+ * Contains from 2 to 4 nodes.
  */
 public class DrawableSNP extends DrawableNode {
 //    private static final int SNP_WIDTH = 11;

@@ -420,7 +420,7 @@ public class SubGraph {
     private void createLayers() {
         this.layers = findLayers();
 
-        createDummyNodes(layers, true);
+        createDummyNodes(layers);
     }
 
     /**
@@ -487,10 +487,7 @@ public class SubGraph {
      *
      * @param layers {@link List} representing all layers to be drawn.
      */
-    private int
-    createDummyNodes(List<Layer> layers, boolean returnHighestLayer) {
-        int lowestOrHighest = -1;
-        int layerIndex = 0;
+    private void createDummyNodes(List<Layer> layers) {
         Layer current = new Layer();
         for (Layer next : layers) {
             for (DrawableNode node : current) {
@@ -504,17 +501,11 @@ public class SubGraph {
                         this.nodes.put(dummy.getIdentifier(), dummy);
                         dummy.setLayer(next);
                         next.add(dummy);
-
-                        if (returnHighestLayer || lowestOrHighest == -1) {
-                            lowestOrHighest = layerIndex;
-                        }
                     }
                 }
             }
             current = next;
-            layerIndex++;
         }
-        return lowestOrHighest;
     }
 
     /**
