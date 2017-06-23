@@ -38,6 +38,7 @@ public class SubGraph {
     private ArrayList<Layer> layers;
     private Map<DrawableNode, Map<DrawableNode, Collection<Integer>>> genomes;
     private int numberOfGenomes;
+    private boolean replaceSNPs;
 
     // TODO: cache topological sorting (inside topoSort(), only recalculate when adding / removing nodes)
     // important: directly invalidate cache (set to null), because otherwise removed nodes
@@ -48,8 +49,8 @@ public class SubGraph {
      *
      * @param graph The {@link GenomeGraph} that this SubGraph is based on.
      */
-    private SubGraph(GenomeGraph graph, double zoomLevel) {
-        this(graph, zoomLevel, new LinkedHashMap<>(), new LinkedHashMap<>(), new LinkedHashMap<>());
+    private SubGraph(GenomeGraph graph, double zoomLevel, boolean replaceSNPs) {
+        this(graph, zoomLevel, replaceSNPs, new LinkedHashMap<>(), new LinkedHashMap<>(), new LinkedHashMap<>());
     }
 
     /**
@@ -60,7 +61,7 @@ public class SubGraph {
      * @param rootNodes The rootNodes of this SubGraph.
      * @param endNodes  The endNodes of this SubGraph.
      */
-    private SubGraph(GenomeGraph graph, double zoomLevel, LinkedHashMap<Integer, DrawableNode> nodes,
+    private SubGraph(GenomeGraph graph, double zoomLevel, boolean replaceSNPs, LinkedHashMap<Integer, DrawableNode> nodes,
                      LinkedHashMap<Integer, DrawableNode> rootNodes, LinkedHashMap<Integer, DrawableNode> endNodes) {
         this.graph = graph;
         this.zoomLevel = zoomLevel;
@@ -69,6 +70,9 @@ public class SubGraph {
         this.endNodes = endNodes;
         this.genomes = new LinkedHashMap<>();
         this.numberOfGenomes = graph.getTotalGenomeNumber();
+        this.replaceSNPs = replaceSNPs;
+
+        this.replaceSNPs();
         this.calculateGenomes();
         this.createLayers();
     }
@@ -110,37 +114,33 @@ public class SubGraph {
         this.zoomLevel = zoomLevel;
         this.layers = null;
         this.genomes = new LinkedHashMap<>();
-
+        this.replaceSNPs = replaceSNPs;
         this.numberOfGenomes = graph.getTotalGenomeNumber();
 
         findNodes(this, Collections.singleton(centerNode), new LinkedHashMap<>(), radius);
-
-        if (replaceSNPs) {
-            this.replaceSNPs();
-        }
-
-        calculateGenomes();
-
-        layout();
-
-        colorize();
+        this.replaceSNPs();
+        this.calculateGenomes();
+        this.layout();
+        this.colorize();
     }
 
     /**
      * Detect SNPs and replace them.
      */
-    private void replaceSNPs() {
-        Map<Integer, DrawableNode> nodesCopy = new LinkedHashMap<>(this.nodes);
-        for (Map.Entry<Integer, DrawableNode> entry : nodesCopy.entrySet()) {
-            DrawableNode parent = entry.getValue();
-            DrawableSNP snp = parent.createSNPIfPossible(this);
-            if (snp != null) {
-                snp.getMutations().stream().map(DrawableNode::getIdentifier).forEach(id -> {
-                    this.nodes.remove(id);
-                    parent.getChildren().remove(id);
-                    snp.getChild().getParents().remove(id);
-                });
-                this.nodes.put(snp.getIdentifier(), snp);
+    public void replaceSNPs() {
+        if (this.replaceSNPs) {
+            Map<Integer, DrawableNode> nodesCopy = new LinkedHashMap<>(this.nodes);
+            for (Map.Entry<Integer, DrawableNode> entry : nodesCopy.entrySet()) {
+                DrawableNode parent = entry.getValue();
+                DrawableSNP snp = parent.createSNPIfPossible(this);
+                if (snp != null) {
+                    snp.getMutations().stream().map(DrawableNode::getIdentifier).forEach(id -> {
+                        this.nodes.remove(id);
+                        parent.getChildren().remove(id);
+                        snp.getChild().getParents().remove(id);
+                    });
+                    this.nodes.put(snp.getIdentifier(), snp);
+                }
             }
         }
     }
@@ -233,14 +233,14 @@ public class SubGraph {
 
                 children.forEach(node -> {
                     if (node >= 0 && !foundNodes.containsKey(node)) {
-                        DrawableSegment child = new DrawableSegment(subGraph.graph, node);
+                        DrawableSegment child = new DrawableSegment(subGraph.graph, node, subGraph.zoomLevel);
                         foundNodes.put(node, child);
                         queue.add(new FoundNode(child, FoundNode.FoundFrom.PARENT));
                     }
                 });
                 parents.forEach(node -> {
                     if (node >= 0 && !foundNodes.containsKey(node)) {
-                        DrawableSegment parent = new DrawableSegment(subGraph.graph, node);
+                        DrawableSegment parent = new DrawableSegment(subGraph.graph, node, subGraph.zoomLevel);
                         foundNodes.put(node, parent);
                         queue.add(new FoundNode(parent, FoundNode.FoundFrom.CHILD));
                     }
@@ -320,6 +320,10 @@ public class SubGraph {
         this.rootNodes = new LinkedHashMap<>();
         this.layers.get(0).
                 forEach(node -> rootNodes.put(node.getIdentifier(), node));
+    }
+
+    public void setZoomLevel(double zoomLevel) {
+        this.zoomLevel = zoomLevel;
     }
 
     /**
@@ -429,7 +433,7 @@ public class SubGraph {
     private void createLayers() {
         this.layers = findLayers();
 
-        createDummyNodes(layers, true);
+        createDummyNodes(layers);
     }
 
     /**
@@ -498,9 +502,7 @@ public class SubGraph {
      *
      * @param layers {@link List} representing all layers to be drawn.
      */
-    private int createDummyNodes(List<Layer> layers, boolean returnHighestLayer) {
-        int lowestOrHighest = -1;
-        int layerIndex = 0;
+    private void createDummyNodes(List<Layer> layers) {
         Layer current = new Layer();
         for (Layer next : layers) {
             for (DrawableNode node : current) {
@@ -514,17 +516,11 @@ public class SubGraph {
                         this.nodes.put(dummy.getIdentifier(), dummy);
                         dummy.setLayer(next);
                         next.add(dummy);
-
-                        if (returnHighestLayer || lowestOrHighest == -1) {
-                            lowestOrHighest = layerIndex;
-                        }
                     }
                 }
             }
             current = next;
-            layerIndex++;
         }
-        return lowestOrHighest;
     }
 
     /**
@@ -781,12 +777,12 @@ public class SubGraph {
         }
 
         Console.println("Increasing graph with radius %d", radius);
-        SubGraph subGraph = new SubGraph(graph, zoomLevel);
+        SubGraph subGraph = new SubGraph(graph, zoomLevel, replaceSNPs);
 
         this.rootNodes.forEach((id, node) -> this.endNodes.remove(id));
         findNodes(subGraph, rootNodes.values(), this.nodes, radius);
+        subGraph.replaceSNPs();
         subGraph.createLayers();
-
         subGraph.calculateGenomes();
         this.mergeLeftSubGraphIntoThisSubGraph(subGraph);
     }
@@ -802,15 +798,15 @@ public class SubGraph {
         }
 
         Console.println("Increasing graph with radius %d", radius);
-        SubGraph subGraph = new SubGraph(graph, zoomLevel);
+        SubGraph subGraph = new SubGraph(graph, zoomLevel, replaceSNPs);
 
         this.endNodes.forEach((id, node) -> System.out.print(id + " "));
         System.out.println();
 
         this.endNodes.forEach((id, node) -> this.rootNodes.remove(id));
         findNodes(subGraph, endNodes.values(), this.nodes, radius);
+        subGraph.replaceSNPs();
         subGraph.createLayers();
-
         subGraph.calculateGenomes();
         this.mergeRightSubGraphIntoThisSubGraph(subGraph);
     }
@@ -918,6 +914,7 @@ public class SubGraph {
     }
 
     public void zoom(double scale) {
+        zoomLevel /= scale;
         for (Layer layer : this.layers) {
             layer.setX(layer.getX() / scale);
             for (DrawableNode node : layer) {
@@ -929,12 +926,11 @@ public class SubGraph {
                 node.setLocation(oldXLocation / scale, oldYLocation / scale);
             }
         }
-        zoomLevel /= scale;
     }
 
     public void colorize() {
         for (DrawableNode drawableNode : this.nodes.values()) {
-            drawableNode.colorize(this, zoomLevel);
+            drawableNode.colorize(this);
         }
     }
 
@@ -945,5 +941,9 @@ public class SubGraph {
 
     public int getNumberOfGenomes() {
         return numberOfGenomes;
+    }
+
+    public double getZoomLevel() {
+        return zoomLevel;
     }
 }

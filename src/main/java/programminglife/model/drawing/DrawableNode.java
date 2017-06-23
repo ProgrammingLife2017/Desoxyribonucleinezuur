@@ -73,6 +73,14 @@ public abstract class DrawableNode implements Drawable {
     }
 
     /**
+<<<<<<< HEAD
+=======
+     * Set the size of this drawing.
+     */
+    protected abstract void setDrawDimensions(double zoomLevel);
+
+    /**
+>>>>>>> origin/develop
      * Get the IDs of children of this.
      *
      * @return IDs of drawable children
@@ -119,11 +127,15 @@ public abstract class DrawableNode implements Drawable {
 
     /**
      * Color this according to contents.
+<<<<<<< HEAD
      *
      * @param subGraph  {@link SubGraph} to colorize.
      * @param zoomLevel is double with a value which describes what the current zoom is.
+=======
+     * @param subGraph {@link SubGraph} to colorize.
+>>>>>>> origin/develop
      */
-    public abstract void colorize(SubGraph subGraph, double zoomLevel);
+    public abstract void colorize(SubGraph subGraph);
 
     /**
      * Set the size {@link XYCoordinate} of the Segment.

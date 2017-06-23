@@ -72,7 +72,7 @@ public class DrawableEdge implements Drawable {
 
         Color strokeColor = Color.hsb(0.d, 0.d, brightness);
 
-        this.setStrokeWidth(strokeWidth);
+        this.setStrokeWidth(strokeWidth * sg.getZoomLevel());
         this.setStrokeColor(strokeColor);
     }
 

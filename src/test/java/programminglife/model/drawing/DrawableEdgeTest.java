@@ -59,7 +59,7 @@ public class DrawableEdgeTest {
         graph.addEdge(3,4);
         graph.cacheLastEdges();
 
-        subGraph = new SubGraph(new DrawableSegment(graph, 3),10,false);
+        subGraph = new SubGraph(new DrawableSegment(graph, 3, 1),10,false);
         DrawableNode seg1 = subGraph.getNodes().get(3);
         DrawableNode seg2 = subGraph.getNodes().get(4);
 

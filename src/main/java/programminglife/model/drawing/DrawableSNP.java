@@ -9,7 +9,12 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 /**
+<<<<<<< HEAD
  * A subclass of {@link DrawableNode} representing Singular Nucleotide Polymorphism.
+=======
+ * Class representing a SNP.
+ * Contains from 2 to 4 nodes.
+>>>>>>> origin/develop
  */
 public class DrawableSNP extends DrawableNode {
 //    private static final int SNP_WIDTH = 11;
@@ -25,8 +30,8 @@ public class DrawableSNP extends DrawableNode {
      * @param child     the child Segment of the mutations/SNP
      * @param mutations the Segments in this bubble
      */
-    DrawableSNP(DrawableNode parent, DrawableNode child, Collection<DrawableSegment> mutations) {
-        super(mutations.iterator().next().getGraph(), -mutations.hashCode());
+    DrawableSNP(DrawableNode parent, DrawableNode child, Collection<DrawableSegment> mutations, double zoomLevel) {
+        super(mutations.iterator().next().getGraph(), DrawableNode.getUniqueId());
 
         this.parent = parent;
         this.child = child;
@@ -35,7 +40,7 @@ public class DrawableSNP extends DrawableNode {
         this.parent.getChildren().add(this.getIdentifier());
         this.child.getParents().add(this.getIdentifier());
 
-        this.setDrawDimensions();
+        this.setDrawDimensions(zoomLevel);
     }
 
     /**
@@ -113,9 +118,9 @@ public class DrawableSNP extends DrawableNode {
      * @param sg the {@link SubGraph} this {@link DrawableNode} is in
      */
     @Override
-    public void colorize(SubGraph sg, double zoomLevel) {
+    public void colorize(SubGraph sg) {
         this.setColors(Color.BLANCHEDALMOND, Color.DARKRED);
-        this.setStrokeWidth(3.5 * zoomLevel);
+        this.setStrokeWidth(3.5 * sg.getZoomLevel());
     }
 
     @Override
@@ -129,9 +134,9 @@ public class DrawableSNP extends DrawableNode {
     /**
      * Set the size of this drawing.
      */
-    private void setDrawDimensions() {
-        //noinspection SuspiciousNameCombination
-        this.setSize(new XYCoordinate(NODE_HEIGHT, NODE_HEIGHT));
+    @Override
+    protected void setDrawDimensions(double zoomLevel) {
+        this.setSize(new XYCoordinate(NODE_HEIGHT * zoomLevel, NODE_HEIGHT));
     }
 
     /**

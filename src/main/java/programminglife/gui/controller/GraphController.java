@@ -26,7 +26,6 @@ class GraphController {
     private LinkedList<DrawableNode> oldGenomeList = new LinkedList<>();
     private final ResizableCanvas canvas;
 
-    private double zoomLevel = 1;
 
     private int centerNodeInt;
     private boolean drawSNP = false;
@@ -67,7 +66,7 @@ class GraphController {
      */
     public void draw(int center, int radius) {
         time("Total drawing", () -> {
-            DrawableSegment centerNode = new DrawableSegment(graph, center);
+            DrawableSegment centerNode = new DrawableSegment(graph, center, 1);
             centerNodeInt = centerNode.getIdentifier();
             GraphicsContext gc = canvas.getGraphicsContext2D();
 
@@ -204,7 +203,6 @@ class GraphController {
             gc.fillRect(locX, locY, width, height);
 
             gc.restore();
-
         } else {
             gc.strokeRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height);
             gc.fillRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height);
@@ -284,7 +282,6 @@ class GraphController {
      */
     public void zoom(double scale) {
         subGraph.zoom(scale);
-        zoomLevel /= scale;
         draw(canvas.getGraphicsContext2D());
     }
 
@@ -336,8 +333,8 @@ class GraphController {
      * @param nodes are the nodes to remove the highlight from.
      */
     private void removeHighlight(Collection<DrawableNode> nodes) {
-        for (DrawableNode node : nodes) {
-            node.colorize(subGraph, zoomLevel);
+        for (DrawableNode node: nodes) {
+            node.colorize(subGraph);
         }
         this.draw(canvas.getGraphicsContext2D());
     }
@@ -396,10 +393,6 @@ class GraphController {
         return nodeClicked;
     }
 
-    public void setZoomLevel(double zoomLevel) {
-        this.zoomLevel = zoomLevel;
-    }
-
     /**
      * Method to hightlight the node clicked on.
      *
@@ -409,19 +402,23 @@ class GraphController {
     public void highlightClicked(DrawableSegment segment, boolean shiftPressed) {
         if (shiftPressed) {
             if (highlightSegmentShift != null) {
-                this.highlightSegmentShift.colorize(subGraph, zoomLevel);
+                this.highlightSegmentShift.colorize(subGraph);
             }
             this.highlightSegmentShift = segment;
             highlightNode(segment, Color.DARKTURQUOISE);
-            segment.setStrokeWidth(5.0 * this.zoomLevel); //Correct thickness when zoomed
+            segment.setStrokeWidth(5.0 * subGraph.getZoomLevel()); //Correct thickness when zoomed
         } else {
             if (highlightSegment != null) {
-                this.highlightSegment.colorize(subGraph, zoomLevel);
+                this.highlightSegment.colorize(subGraph);
             }
             this.highlightSegment = segment;
             highlightNode(segment, Color.PURPLE);
-            segment.setStrokeWidth(5.0 * this.zoomLevel); //Correct thickness when zoomed
+            segment.setStrokeWidth(5.0 * subGraph.getZoomLevel()); //Correct thickness when zoomed
         }
         draw(canvas.getGraphicsContext2D());
+    }
+
+    public void resetZoom() {
+        this.subGraph.setZoomLevel(1);
     }
 }
