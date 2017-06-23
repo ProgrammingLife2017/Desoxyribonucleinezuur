@@ -32,6 +32,8 @@ public class GraphController {
 
     private int centerNodeInt;
     private boolean drawSNP = false;
+    private DrawableSegment highlightSegmentShift;
+    private DrawableSegment highlightSegment;
 
     /**
      * Initialize controller object.
@@ -95,7 +97,7 @@ public class GraphController {
      */
     private void colorize() {
         for (DrawableNode drawableNode : subGraph.getNodes().values()) {
-            drawableNode.colorize(subGraph);
+            drawableNode.colorize(subGraph, zoomLevel);
         }
     }
 
@@ -171,7 +173,7 @@ public class GraphController {
 
         edge.colorize(subGraph);
 
-        gc.setLineWidth(edge.getStrokeWidth() * zoomLevel);
+        gc.setLineWidth(edge.getStrokeWidth());
         gc.setStroke(edge.getStrokeColor());
 
         XYCoordinate startLocation = edge.getStartLocation();
@@ -321,7 +323,7 @@ public class GraphController {
      */
     private void removeHighlight(Collection<DrawableNode> nodes) {
         for (DrawableNode node: nodes) {
-            node.colorize(subGraph);
+            node.colorize(subGraph, zoomLevel);
         }
         this.draw(canvas.getGraphicsContext2D());
     }
@@ -376,5 +378,29 @@ public class GraphController {
 
     public void setZoomLevel(double zoomLevel) {
         this.zoomLevel = zoomLevel;
+    }
+
+    /**
+     * Method to hightlight the node clicked on.
+     * @param segment is the {@link DrawableSegment} clicked on.
+     * @param shiftPressed boolean true if shift was pressed during the click.
+     */
+    public void highlightClicked(DrawableSegment segment, boolean shiftPressed) {
+        if (shiftPressed) {
+            if (highlightSegmentShift != null) {
+                this.highlightSegmentShift.colorize(subGraph, zoomLevel);
+            }
+            this.highlightSegmentShift = segment;
+            highlightNode(segment, Color.DARKTURQUOISE);
+            segment.setStrokeWidth(5.0 * this.zoomLevel); //Correct thickness when zoomed
+        } else {
+            if (highlightSegment != null) {
+                this.highlightSegment.colorize(subGraph, zoomLevel);
+            }
+            this.highlightSegment = segment;
+            highlightNode(segment, Color.PURPLE);
+            segment.setStrokeWidth(5.0 * this.zoomLevel); //Correct thickness when zoomed
+        }
+        draw(canvas.getGraphicsContext2D());
     }
 }
