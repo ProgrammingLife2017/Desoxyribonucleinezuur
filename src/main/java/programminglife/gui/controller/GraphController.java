@@ -391,7 +391,7 @@ public class GraphController {
                 this.highlightSegmentShift.colorize(subGraph, zoomLevel);
             }
             this.highlightSegmentShift = segment;
-            highlightNode(segment, Color.MEDIUMPURPLE);
+            highlightNode(segment, Color.DARKTURQUOISE);
             segment.setStrokeWidth(5.0 * this.zoomLevel); //Correct thickness when zoomed
         } else {
             if (highlightSegment != null) {
