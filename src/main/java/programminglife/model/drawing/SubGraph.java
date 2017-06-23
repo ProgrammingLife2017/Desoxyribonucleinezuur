@@ -783,7 +783,8 @@ public class SubGraph {
         Console.println("Increasing graph with radius %d", radius);
         SubGraph subGraph = new SubGraph(graph, zoomLevel);
 
-        this.endNodes.forEach((id, node) -> System.out.println(id));
+        this.endNodes.forEach((id, node) -> System.out.print(id + " "));
+        System.out.println();
 
         this.endNodes.forEach((id, node) -> this.rootNodes.remove(id));
         findNodes(subGraph, endNodes.values(), this.nodes, radius);

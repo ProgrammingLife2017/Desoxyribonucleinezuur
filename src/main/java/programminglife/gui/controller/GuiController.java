@@ -245,7 +245,7 @@ public class GuiController implements Observer {
             miniMap.setHeight(50.d);
             Console.println("[%s] Graph was set to %s.", Thread.currentThread().getName(), graph.getID());
             Console.println("[%s] The graph has %d nodes", Thread.currentThread().getName(), graph.size());
-            this.draw();
+            Platform.runLater(this::draw);
         }
     }
 
