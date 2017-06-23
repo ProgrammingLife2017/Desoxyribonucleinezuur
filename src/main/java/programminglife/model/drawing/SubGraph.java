@@ -188,12 +188,21 @@ public class SubGraph {
                 continue;
             }
 
-            if (!startNodes.contains(current.node) && excludedNodes.containsKey(current.node.getIdentifier())) {
-                continue;
+            DrawableNode previous;
+            if (excludedNodes.containsKey(current.node.getIdentifier())) {
+                if (startNodes.contains(current.node)) {
+                    // this is an excluded start node. Add all children and parents, but not this node
+                    previous = null;
+                } else {
+                    // This is an excluded node, just continue with next
+                    continue;
+                }
+            } else {
+                // normal (non-excluded) node
+                // save this node, save the result to check whether we had found it earlier.
+                previous = subGraph.nodes.put(current.node.getIdentifier(), current.node);
             }
 
-            // save this node, save the result to check whether we had found it earlier.
-            DrawableNode previous = subGraph.nodes.put(current.node.getIdentifier(), current.node);
 
             if (lastRow) {
                 // last row, add this node to rootNodes / endNodes even if we already found this node
