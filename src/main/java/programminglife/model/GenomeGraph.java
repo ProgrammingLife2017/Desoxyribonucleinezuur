@@ -131,7 +131,7 @@ public class GenomeGraph {
      * @param genomeID the Genome to look up
      * @return a {@link Collection} of Node IDs in the Genome
      */
-    Collection<Integer> getNodeIDs(int genomeID) {
+    public Collection<Integer> getNodeIDs(int genomeID) {
         return this.cache.getGenomeNodeIDs(genomeID);
     }
 

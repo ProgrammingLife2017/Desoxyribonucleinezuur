@@ -210,6 +210,24 @@ public class GenomeGraphTest {
     }
 
     @Test
+    public void getMultipleGenomeNamesCorrectCollection() {
+        graph.addGenome("TestGenome");
+        graph.addGenome("OtherGenome");
+        int testID = graph.getGenomeID("TestGenome");
+        int otherID = graph.getGenomeID("OtherGenome");
+
+        HashSet<String> genomeNamesExpected = new HashSet<>();
+        genomeNamesExpected.add("TestGenome");
+        genomeNamesExpected.add("OtherGenome");
+
+        HashSet<Integer> ids = new HashSet<>();
+        ids.add(testID);
+        ids.add(otherID);
+        HashSet<String> actual = new HashSet<>(graph.getGenomeNames(ids));
+        assertEquals(genomeNamesExpected,actual);
+    }
+
+    @Test
     public void getGenomeNodeIDs() {
         graph.replaceNode(4);
         graph.replaceNode(5);
@@ -233,6 +251,7 @@ public class GenomeGraphTest {
         actual = new HashSet<>(graph.getNodeIDs(37));
         assertEquals(expected, actual);
     }
+
 
 
 }
