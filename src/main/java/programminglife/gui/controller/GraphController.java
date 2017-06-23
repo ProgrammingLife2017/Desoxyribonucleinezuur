@@ -192,10 +192,28 @@ public class GraphController {
         gc.setFill(drawableNode.getFillColor());
         gc.setLineWidth(drawableNode.getStrokeWidth());
 
-        gc.strokeRect(drawableNode.getLeftBorderCenter().getX(), drawableNode.getLocation().getY(),
-                drawableNode.getWidth(), drawableNode.getHeight());
-        gc.fillRect(drawableNode.getLeftBorderCenter().getX(), drawableNode.getLocation().getY(),
-                drawableNode.getWidth(), drawableNode.getHeight());
+        double width = drawableNode.getWidth();
+        double height = drawableNode.getHeight();
+        double locX = drawableNode.getLocation().getX();
+        double locY = drawableNode.getLocation().getY();
+
+        if (drawableNode instanceof DrawableSNP) {
+            gc.save();
+
+            gc.translate(locX, locY);
+            gc.rotate(45);
+            gc.translate(-locX, -locY);
+
+            gc.strokeRect(locX, locY, width, height);
+            gc.fillRect(locX, locY, width, height);
+
+            gc.restore();
+
+        } else {
+            gc.strokeRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height);
+            gc.fillRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height);
+        }
+
     }
 
     /**
