@@ -112,7 +112,7 @@ public class HighlightController {
         this.graphController = graphController;
     }
 
-    public void setGUIController(GuiController guiController) {
+    void setGUIController(GuiController guiController) {
         this.guiController = guiController;
     }
 }
