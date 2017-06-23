@@ -73,25 +73,9 @@ public abstract class DrawableNode implements Drawable {
     }
 
     /**
-     * Set if the dimensions are up to date.
-     */
-    final void setDrawDimensionsUpToDate() {
-        this.drawDimensionsUpToDate = true;
-    }
-
-    /**
      * Set the size of this drawing.
      */
     protected abstract void setDrawDimensions();
-
-    /**
-     * Get if the dimensions are up to date.
-     *
-     * @return boolean true if up to date else false
-     */
-    private boolean isDrawDimensionsUpToDate() {
-        return this.drawDimensionsUpToDate;
-    }
 
     /**
      * Get the IDs of children of this.
@@ -155,7 +139,6 @@ public abstract class DrawableNode implements Drawable {
     final void setSize(double width, double height) {
         this.setWidth(width);
         this.setHeight(height);
-        this.setDrawDimensionsUpToDate();
     }
 
     /**
@@ -174,9 +157,6 @@ public abstract class DrawableNode implements Drawable {
      * @return The width of the node.
      */
     public final double getWidth() {
-        if (!isDrawDimensionsUpToDate()) {
-            setDrawDimensions();
-        }
         return dimensions.getX();
     }
 
@@ -186,9 +166,6 @@ public abstract class DrawableNode implements Drawable {
      * @return The height of the node.
      */
     public final double getHeight() {
-        if (!isDrawDimensionsUpToDate()) {
-            setDrawDimensions();
-        }
         return dimensions.getY();
     }
 
@@ -198,9 +175,6 @@ public abstract class DrawableNode implements Drawable {
      * @return XYCoordinate.
      */
     public final XYCoordinate getLeftBorderCenter() {
-        if (!isDrawDimensionsUpToDate()) {
-            setDrawDimensions();
-        }
         return new XYCoordinate(location.getX(), location.getY() + 0.5 * getHeight());
     }
 
@@ -210,9 +184,6 @@ public abstract class DrawableNode implements Drawable {
      * @return XYCoordinate.
      */
     public final XYCoordinate getCenter() {
-        if (!isDrawDimensionsUpToDate()) {
-            setDrawDimensions();
-        }
         return new XYCoordinate(location.getX() + 0.5 * getWidth(), location.getY() + 0.5 * getHeight());
     }
 
@@ -222,9 +193,6 @@ public abstract class DrawableNode implements Drawable {
      * @return XYCoordinate.
      */
     final XYCoordinate getRightBorderCenter() {
-        if (!isDrawDimensionsUpToDate()) {
-            setDrawDimensions();
-        }
         return new XYCoordinate(location.getX() + getWidth(), location.getY() + 0.5 * getHeight());
     }
 

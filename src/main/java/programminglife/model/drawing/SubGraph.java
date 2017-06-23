@@ -89,7 +89,7 @@ public class SubGraph {
         assert (firstLayer != null);
 
         firstLayer.setX(0);
-        firstLayer.setDrawLocations(DEFAULT_NODE_Y);
+        firstLayer.setDrawLocations(DEFAULT_NODE_Y, zoomLevel);
         this.setRightDrawLocations(this.layers, 0);
     }
 
@@ -449,14 +449,14 @@ public class SubGraph {
         while (layerIterator.hasNext()) {
             Layer layer = layerIterator.next();
 
-//            layer.setSize(zoomLevel);
+            layer.setSize(zoomLevel);
 
             int newSize = layer.size();
             int diff = Math.abs(newSize - size);
             x += (LAYER_PADDING * zoomLevel) + (DIFF_LAYER_PADDING * zoomLevel) * diff;
 
             layer.setX(x);
-            layer.setDrawLocations(firstY);
+            layer.setDrawLocations(firstY, zoomLevel);
             x += layer.getWidth() + (LAYER_PADDING * zoomLevel) * 0.1 + newSize;
             size = newSize;
         }
@@ -487,7 +487,7 @@ public class SubGraph {
                     + layer.getWidth();
 
             layer.setX(x);
-            layer.setDrawLocations(firstY);
+            layer.setDrawLocations(firstY, zoomLevel);
             x -= (LAYER_PADDING * zoomLevel) * 0.1 + newSize;
             size = newSize;
         }
@@ -805,7 +805,8 @@ public class SubGraph {
         Console.println("Increasing graph with radius %d", radius);
         SubGraph subGraph = new SubGraph(graph, zoomLevel);
 
-        this.endNodes.forEach((id, node) -> System.out.println(id));
+        this.endNodes.forEach((id, node) -> System.out.print(id + " "));
+        System.out.println();
 
         this.endNodes.forEach((id, node) -> this.rootNodes.remove(id));
         findNodes(subGraph, endNodes.values(), this.nodes, radius);
