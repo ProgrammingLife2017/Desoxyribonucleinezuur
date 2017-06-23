@@ -20,7 +20,7 @@ class MiniMapController {
      * @param miniMap Canvas of the miniMap to be used.
      * @param size    int Size of the graph.
      */
-    public MiniMapController(Canvas miniMap, int size) {
+    MiniMapController(Canvas miniMap, int size) {
         this.miniMap = miniMap;
         miniMap.setVisible(visible);
         this.size = size;

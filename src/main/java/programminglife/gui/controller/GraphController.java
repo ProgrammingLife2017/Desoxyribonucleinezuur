@@ -38,7 +38,7 @@ class GraphController {
      *
      * @param canvas the {@link Canvas} to draw in
      */
-    public GraphController(ResizableCanvas canvas) {
+    GraphController(ResizableCanvas canvas) {
         this.graph = null;
         this.canvas = canvas;
     }

@@ -99,8 +99,7 @@ public class DrawableSegment extends DrawableNode {
     /**
      * Setter for the dimension of the node.
      */
-    @Override
-    protected void setDrawDimensions() {
+    private void setDrawDimensions() {
         int segmentLength = this.getSequenceLength();
         double width, height;
 

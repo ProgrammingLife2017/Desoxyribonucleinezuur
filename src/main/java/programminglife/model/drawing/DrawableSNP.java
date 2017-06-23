@@ -129,8 +129,7 @@ public class DrawableSNP extends DrawableNode {
     /**
      * Set the size of this drawing.
      */
-    @Override
-    protected void setDrawDimensions() {
+    private void setDrawDimensions() {
         //noinspection SuspiciousNameCombination
         this.setSize(new XYCoordinate(NODE_HEIGHT, NODE_HEIGHT));
     }

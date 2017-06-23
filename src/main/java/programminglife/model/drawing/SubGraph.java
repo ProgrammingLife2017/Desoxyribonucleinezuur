@@ -213,11 +213,11 @@ public class SubGraph {
             if (lastRow) {
                 // last row, add this node to rootNodes / endNodes even if we already found this node
                 // (for when a node is both a root and an end node)
-                if (current.foundFrom == FoundNode.FoundFrom.CHILD &&
-                        (previous == null || subGraph.endNodes.containsKey(current.node.getIdentifier()))) {
+                if (current.foundFrom == FoundNode.FoundFrom.CHILD
+                        && (previous == null || subGraph.endNodes.containsKey(current.node.getIdentifier()))) {
                     subGraph.rootNodes.put(current.node.getIdentifier(), current.node);
-                } else if (current.foundFrom == FoundNode.FoundFrom.PARENT &&
-                        (previous == null || subGraph.rootNodes.containsKey(current.node.getIdentifier()))) {
+                } else if (current.foundFrom == FoundNode.FoundFrom.PARENT
+                        && (previous == null || subGraph.rootNodes.containsKey(current.node.getIdentifier()))) {
                     subGraph.endNodes.put(current.node.getIdentifier(), current.node);
                 }
                 // else: current.foundFrom == null, true for the centerNode.
@@ -498,8 +498,7 @@ public class SubGraph {
      *
      * @param layers {@link List} representing all layers to be drawn.
      */
-    private int
-    createDummyNodes(List<Layer> layers, boolean returnHighestLayer) {
+    private int createDummyNodes(List<Layer> layers, boolean returnHighestLayer) {
         int lowestOrHighest = -1;
         int layerIndex = 0;
         Layer current = new Layer();

@@ -324,7 +324,6 @@ public final class Cache {
     /**
      * Completely remove a database. This cannot be undone.
      *
-     * @return true if the file was removed, false if it did not exist
      * @throws IOException when something strange happens during deletion
      */
     public void removeDB() throws IOException {
@@ -342,13 +341,6 @@ public final class Cache {
      */
     public static boolean removeDB(String name) throws IOException {
         return Files.deleteIfExists(Paths.get(toDBFile(name)));
-    }
-
-    /**
-     * Persist cache to disk.
-     */
-    public void commit() {
-        this.db.commit();
     }
 
     /**

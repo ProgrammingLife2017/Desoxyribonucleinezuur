@@ -105,6 +105,17 @@ public class Bookmark {
     }
 
     @Override
+    public int hashCode() {
+        int result = getGraphName().hashCode();
+        result = 31 * result + getPath().hashCode();
+        result = 31 * result + getRadius();
+        result = 31 * result + getNodeID();
+        result = 31 * result + getBookmarkName().hashCode();
+        result = 31 * result + getDescription().hashCode();
+        return result;
+    }
+
+    @Override
     public String toString() {
         return ("{file: " + this.graphName + ", name: " + this.bookmarkName
                 + ", description: " + this.description

@@ -6,6 +6,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import programminglife.gui.InitFXThread;
 import programminglife.model.GenomeGraph;
+import programminglife.model.XYCoordinate;
 
 import static org.junit.Assert.assertEquals;
 

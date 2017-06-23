@@ -103,12 +103,13 @@ public class XYCoordinate {
     }
 
     /**
-     * Equals method for XYCoordinate
+     * Equals method for XYCoordinate.
      * @param other the object to compare with.
      * @return boolean true if equals, false if not equal.
      */
+    @Override
     public boolean equals(Object other) {
-        if (other instanceof XYCoordinate){
+        if (other instanceof XYCoordinate) {
             XYCoordinate that = (XYCoordinate) other;
             return this.getX() == that.getX() && this.getY() == that.getY();
         }

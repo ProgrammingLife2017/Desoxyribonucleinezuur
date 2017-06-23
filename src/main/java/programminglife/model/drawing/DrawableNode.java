@@ -19,7 +19,6 @@ public abstract class DrawableNode implements Drawable {
 
     private final XYCoordinate location;
     private final XYCoordinate dimensions;
-    private boolean drawDimensionsUpToDate = false;
 
     private double strokeWidth;
     private Color fillColor;
@@ -43,7 +42,8 @@ public abstract class DrawableNode implements Drawable {
 
     @Override
     public final boolean equals(Object o) {
-        return this == o || this.getClass().equals(o.getClass()) && this.getIdentifier() == ((DrawableNode) o).getIdentifier();
+        return this == o || this.getClass().equals(o.getClass())
+                && this.getIdentifier() == ((DrawableNode) o).getIdentifier();
 
     }
 
@@ -71,11 +71,6 @@ public abstract class DrawableNode implements Drawable {
     final GenomeGraph getGraph() {
         return graph;
     }
-
-    /**
-     * Set the size of this drawing.
-     */
-    protected abstract void setDrawDimensions();
 
     /**
      * Get the IDs of children of this.

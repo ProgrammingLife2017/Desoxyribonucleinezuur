@@ -511,7 +511,11 @@ public class GuiController implements Observer {
         if (clickedOn != null) {
             if (clickedOn instanceof DrawableSegment) {
                 DrawableSegment segment = (DrawableSegment) clickedOn;
-                showInfoNode(segment, shiftPressed ? 240 : 10);
+                if (shiftPressed) {
+                    showInfoNode(segment, 240);
+                } else {
+                    showInfoNode(segment, 10);
+                }
                 graphController.highlightClicked(segment, shiftPressed);
             }
 

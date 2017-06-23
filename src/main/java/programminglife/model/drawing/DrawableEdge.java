@@ -12,8 +12,8 @@ import java.util.Map;
  */
 
 public class DrawableEdge implements Drawable {
-    private XYCoordinate startLocation;
-    private XYCoordinate endLocation;
+    private final XYCoordinate startLocation;
+    private final XYCoordinate endLocation;
 
     private double strokeWidth;
     private Color strokeColor;

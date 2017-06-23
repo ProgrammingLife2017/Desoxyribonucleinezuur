@@ -154,10 +154,4 @@ public class DrawableDummy extends DrawableNode {
         return child.getChildGenomes();
     }
 
-    /**
-     * Set the size of this drawing.
-     */
-    @Override
-    protected void setDrawDimensions() {
-    }
 }

@@ -34,7 +34,7 @@ class RecentFileController {
      * @param recentFile File containing the recent entries.
      * @param menuRecent Menu containing the recent entries.
      */
-    public RecentFileController(File recentFile, Menu menuRecent) {
+    RecentFileController(File recentFile, Menu menuRecent) {
         findLines(recentFile);
 
         this.recentFile = recentFile;
