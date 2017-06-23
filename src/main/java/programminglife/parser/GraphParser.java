@@ -4,7 +4,7 @@ import com.diffplug.common.base.Errors;
 import javafx.application.Platform;
 import programminglife.gui.Alerts;
 import programminglife.model.GenomeGraph;
-import programminglife.model.exception.UnknownTypeException;
+import programminglife.model.exception.ParseException;
 import programminglife.utility.Console;
 
 import java.io.*;
@@ -76,9 +76,9 @@ public class GraphParser extends Observable implements Runnable {
      * Parse a GFA file as a {@link GenomeGraph}.
      *
      * @throws IOException          when no file is found at the given path.
-     * @throws UnknownTypeException when an unknown identifier (H/S/L) is read from the file.
+     * @throws ParseException when an unknown identifier (H/S/L) is read from the file.
      */
-    public synchronized void parse() throws IOException, UnknownTypeException {
+    public synchronized void parse() throws IOException, ParseException {
         Console.println("[%s] Parsing file with name %s with path %s", Thread.currentThread().getName(),
                 this.name, this.graphFile.getAbsolutePath());
 
@@ -104,7 +104,7 @@ public class GraphParser extends Observable implements Runnable {
                         this.parseHeader(line);
                         break;
                     default:
-                        throw new UnknownTypeException(String.format("Unknown symbol '%c'", type));
+                        throw new ParseException(String.format("Unknown symbol '%c'", type));
                 }
 
                 if (Thread.currentThread().isInterrupted()) {
@@ -114,8 +114,8 @@ public class GraphParser extends Observable implements Runnable {
                 }
             }));
         } catch (Errors.WrappedAsRuntimeException e) {
-            if (e.getCause() instanceof UnknownTypeException) {
-                throw (UnknownTypeException) e.getCause();
+            if (e.getCause() instanceof ParseException) {
+                throw (ParseException) e.getCause();
             } else {
                 throw e;
             }
@@ -155,9 +155,9 @@ public class GraphParser extends Observable implements Runnable {
      * Parse a {@link String} representing a Segment.
      *
      * @param propertyString the {@link String} from a GFA file.
-     * @throws UnknownTypeException when a segment cannot be parsed
+     * @throws ParseException when a segment cannot be parsed
      */
-    synchronized void parseSegment(String propertyString) throws UnknownTypeException {
+    synchronized void parseSegment(String propertyString) throws ParseException {
         int segmentID;
         String sequence;
         int[] genomeIDs;
@@ -165,21 +165,21 @@ public class GraphParser extends Observable implements Runnable {
 
         String[] properties = propertyString.split("\\s");
         if (!properties[0].equals("S")) {
-            throw new UnknownTypeException(String.format("Line (%s) is not a segment", properties[0]));
+            throw new ParseException(String.format("Line (%s) is not a segment", properties[0]));
         }
 
         if (properties.length < 5) {
-            throw new UnknownTypeException(String.format("Segment has less than 5 properties (%d)", properties.length));
+            throw new ParseException(String.format("Segment has less than 5 properties (%d)", properties.length));
         }
 
         try {
             segmentID = Integer.parseInt(properties[1]);
         } catch (NumberFormatException nfe) {
-            throw new UnknownTypeException(String.format("The segment ID (%s) should be a number", properties[1]), nfe);
+            throw new ParseException(String.format("The segment ID (%s) should be a number", properties[1]), nfe);
         }
 
         if (!properties[4].startsWith("ORI:Z:")) {
-            throw new UnknownTypeException("Segment has no genomes");
+            throw new ParseException("Segment has no genomes");
         }
 
         sequence = properties[2];
@@ -191,7 +191,7 @@ public class GraphParser extends Observable implements Runnable {
             try {
                 genomeIDs = Arrays.stream(genomeNames).mapToInt(Integer::parseInt).toArray();
             } catch (NumberFormatException nfe) {
-                throw new UnknownTypeException("Unknown genome name in segment", nfe);
+                throw new ParseException("Unknown genome name in segment", nfe);
             }
         }
 
@@ -206,39 +206,39 @@ public class GraphParser extends Observable implements Runnable {
      * Parse a {@link String} representing a Link.
      *
      * @param propertyString the {@link String} from a GFA file.
-     * @throws UnknownTypeException when a link cannot be parsed
+     * @throws ParseException when a link cannot be parsed
      */
-    synchronized void parseLink(String propertyString) throws UnknownTypeException {
+    synchronized void parseLink(String propertyString) throws ParseException {
         int sourceID, destinationID;
 
         String[] properties = propertyString.split("\\s");
 
         if (!properties[0].equals("L")) {
-            throw new UnknownTypeException(String.format("Line (%s) is not a link", properties[0]));
+            throw new ParseException(String.format("Line (%s) is not a link", properties[0]));
         }
 
         if (properties.length < 4) {
-            throw new UnknownTypeException(String.format("Link has less than 4 properties (%d)", properties.length));
+            throw new ParseException(String.format("Link has less than 4 properties (%d)", properties.length));
         }
 
         try {
             sourceID = Integer.parseInt(properties[1]);
         } catch (NumberFormatException nfe) {
-            throw new UnknownTypeException(String.format("The source ID (%s) should be a number", properties[1]), nfe);
+            throw new ParseException(String.format("The source ID (%s) should be a number", properties[1]), nfe);
         }
         // properties[2] is unused
         try {
             destinationID = Integer.parseInt(properties[3]);
         } catch (NumberFormatException nfe) {
-            throw new UnknownTypeException(String.format("The destination ID (%s) should be a number",
+            throw new ParseException(String.format("The destination ID (%s) should be a number",
                     properties[3]), nfe);
         }
         // properties[4] and further are unused
 
         if (sourceID == destinationID) {
-            throw new UnknownTypeException("Link cannot have same source as destination.");
+            throw new ParseException("Link cannot have same source as destination.");
         } else if (sourceID > destinationID) {
-            throw new UnknownTypeException("Graph is not in topological order: source ID > destination ID.");
+            throw new ParseException("Graph is not in topological order: source ID > destination ID.");
         }
 
         // We can now assume that traversing nodes by ID is in topological order
@@ -257,13 +257,13 @@ public class GraphParser extends Observable implements Runnable {
      * Parse a {@link String} representing a header.
      *
      * @param propertyString the {@link String} from a GFA file
-     * @throws UnknownTypeException when a header cannot be parsed
+     * @throws ParseException when a header cannot be parsed
      */
-    void parseHeader(String propertyString) throws UnknownTypeException {
+    void parseHeader(String propertyString) throws ParseException {
         String[] properties = propertyString.split("\\s");
 
         if (!properties[0].equals("H")) {
-            throw new UnknownTypeException(String.format("Line (%s) is not a header", properties[0]));
+            throw new ParseException(String.format("Line (%s) is not a header", properties[0]));
         }
 
         if (properties[1].startsWith("ORI:Z:")) {

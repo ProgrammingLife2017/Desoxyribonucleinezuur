@@ -4,7 +4,7 @@ import com.diffplug.common.base.Errors;
 import org.jetbrains.annotations.NotNull;
 import programminglife.model.Annotation;
 import programminglife.model.Feature;
-import programminglife.model.exception.UnknownTypeException;
+import programminglife.model.exception.ParseException;
 
 import java.io.*;
 import java.util.EnumSet;
@@ -37,7 +37,7 @@ public class AnnotationParser extends Observable implements Runnable {
             parseFile(file);
             this.setChanged();
             this.notifyObservers(features);
-        } catch (UnknownTypeException | IOException e) {
+        } catch (ParseException | IOException e) {
             this.setChanged();
             this.notifyObservers(e);
         }
@@ -49,9 +49,9 @@ public class AnnotationParser extends Observable implements Runnable {
      *
      * @param file The file to parse.
      * @throws IOException          If there is an issue opening / closing the file.
-     * @throws UnknownTypeException If the file is malformed.
+     * @throws ParseException If the file is malformed.
      */
-    private void parseFile(File file) throws IOException, UnknownTypeException {
+    private void parseFile(File file) throws IOException, ParseException {
         int numberOfLines = GraphParser.countLines(file);
         progressCounter.setTotal(numberOfLines);
 
@@ -68,8 +68,8 @@ public class AnnotationParser extends Observable implements Runnable {
             }));
         } catch (Errors.WrappedAsRuntimeException e) {
             this.features = null;
-            if (e.getCause() instanceof UnknownTypeException) {
-                throw new UnknownTypeException(
+            if (e.getCause() instanceof ParseException) {
+                throw new ParseException(
                         String.format("An error occurred while parsing line %d", progressCounter.getProgress()),
                         e.getCause()
                 );
@@ -92,9 +92,9 @@ public class AnnotationParser extends Observable implements Runnable {
      *
      * @param line The String to parse
      * @return The parsed Annotation. If this line is empty or a comment (starts with #), this returns null.
-     * @throws UnknownTypeException If the line is malformed.
+     * @throws ParseException If the line is malformed.
      */
-    private Annotation parseLine(String line) throws UnknownTypeException {
+    private Annotation parseLine(String line) throws ParseException {
         // check that line is not a comment or is empty.
         if (line.length() == 0 || line.charAt(0) == '#') {
             return null;
@@ -103,7 +103,7 @@ public class AnnotationParser extends Observable implements Runnable {
         String[] columns = line.split("\t");
 
         if (columns.length != 9) {
-            throw new UnknownTypeException(String.format(
+            throw new ParseException(String.format(
                     "The annotation does not contain the required 9 columns. Actual number of columns: %d",
                     columns.length
             ));
@@ -126,7 +126,7 @@ public class AnnotationParser extends Observable implements Runnable {
             }
             id = decode(afterID.substring(0, index), Encoding.EXTENDED);
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
-            throw new UnknownTypeException(
+            throw new ParseException(
                     "One of the columns of this Annotation could not be parsed.",
                     e
             );
@@ -150,9 +150,9 @@ public class AnnotationParser extends Observable implements Runnable {
      *
      * @param annotation The annotation to add the attributes to.
      * @param attributes The String containing the attributes. This String should be column 9 in the gff spec.
-     * @throws UnknownTypeException If the attributes are malformed.
+     * @throws ParseException If the attributes are malformed.
      */
-    private void parseAttributes(Annotation annotation, String attributes) throws UnknownTypeException {
+    private void parseAttributes(Annotation annotation, String attributes) throws ParseException {
         String[] attributesArray = attributes.split(";");
         for (String attribute : attributesArray) {
             String[] values = attribute.split(",");
@@ -161,7 +161,7 @@ public class AnnotationParser extends Observable implements Runnable {
                 name = values[0].substring(0, values[0].indexOf('='));
                 values[0] = values[0].substring(values[0].indexOf('=') + 1);
             } catch (IndexOutOfBoundsException e) {
-                throw new UnknownTypeException(
+                throw new ParseException(
                         String.format("Malformed key-value pair in attributes: \"%s\".", attribute),
                         e
                 );
@@ -266,9 +266,9 @@ public class AnnotationParser extends Observable implements Runnable {
      *
      * @param ignored String to be received.
      * @throws IOException          If file is not found
-     * @throws UnknownTypeException If file is not of the correct type.
+     * @throws ParseException If file is not of the correct type.
      */
-    public static void main(String... ignored) throws IOException, UnknownTypeException {
+    public static void main(String... ignored) throws IOException, ParseException {
 //        File file = new File("C:\\Users\\Ivo\\Google Drive local\\university\\Context project" +
 //                "\\project\\ProgrammingLife\\data\\annotations\\intervalAnnotation.txt");
         File file = new File("C:\\Users\\Ivo\\Google Drive local\\university\\Context project"
