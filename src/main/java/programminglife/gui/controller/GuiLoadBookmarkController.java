@@ -12,10 +12,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import programminglife.ProgrammingLife;
+import programminglife.gui.Alerts;
 import programminglife.model.Bookmark;
 import programminglife.model.GenomeGraph;
 import programminglife.parser.GraphParser;
-import programminglife.gui.Alerts;
 import programminglife.utility.Console;
 
 import java.io.File;
@@ -28,11 +28,16 @@ import java.util.*;
 public class GuiLoadBookmarkController implements Observer {
     private GuiController guiController;
 
-    @FXML private Button btnOpenBookmark;
-    @FXML private Button btnDeleteBookmark;
-    @FXML private Button btnCreateBookmark;
-    @FXML private Button btnShowInfo;
-    @FXML private Accordion accordionBookmark;
+    @FXML
+    private Button btnOpenBookmark;
+    @FXML
+    private Button btnDeleteBookmark;
+    @FXML
+    private Button btnCreateBookmark;
+    @FXML
+    private Button btnShowInfo;
+    @FXML
+    private Accordion accordionBookmark;
     private List<TableView<Bookmark>> tableViews;
 
     /**
@@ -47,6 +52,7 @@ public class GuiLoadBookmarkController implements Observer {
 
     /**
      * Checks whether the user has selected a bookmark.
+     *
      * @return True if selected, false otherwise.
      */
     private Bookmark checkBookmarkSelection() {
@@ -152,7 +158,8 @@ public class GuiLoadBookmarkController implements Observer {
 
     /**
      * Creates the tableview with the menu's for the bookmarks.
-     * @param graph String the graph for which we have bookmarks.
+     *
+     * @param graph     String the graph for which we have bookmarks.
      * @param bookmarks List of bookmarks that are created for the graphs.
      */
     private void createTableView(String graph, List<Bookmark> bookmarks) {
@@ -224,6 +231,7 @@ public class GuiLoadBookmarkController implements Observer {
     /**
      * Sets the guicontroller for controlling the menu.
      * Is used for setting center node and radius text fields.
+     *
      * @param guiController The gui controller
      */
     void setGuiController(GuiController guiController) {

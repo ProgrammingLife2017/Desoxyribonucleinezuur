@@ -19,10 +19,12 @@ public final class Alerts {
     /**
      * Constructor for the Alert.
      */
-    private Alerts() { }
+    private Alerts() {
+    }
 
     /**
      * Alert method used if the alert is an error.
+     *
      * @param message String containing the message to be given to the user.
      */
     public static void error(String message) {
@@ -31,6 +33,7 @@ public final class Alerts {
 
     /**
      * Alert method used if the alert is a warning.
+     *
      * @param message String containing the message to be given to the user.
      */
     public static void warning(String message) {
@@ -40,6 +43,7 @@ public final class Alerts {
 
     /**
      * Alert method used if the alert is informative.
+     *
      * @param message String containing the message to be given to the user.
      */
     public static void info(String message) {
@@ -103,6 +107,7 @@ public final class Alerts {
 
     /**
      * Alert to show the information of a bookmark.
+     *
      * @param s String given in the alert.
      */
     public static void infoBookmarkAlert(String s) {

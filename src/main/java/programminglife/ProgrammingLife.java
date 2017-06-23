@@ -12,9 +12,9 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import programminglife.gui.Alerts;
 import programminglife.gui.controller.GuiController;
 import programminglife.parser.Cache;
-import programminglife.gui.Alerts;
 import programminglife.utility.Console;
 
 import java.io.File;
@@ -31,6 +31,7 @@ public final class ProgrammingLife extends Application {
 
     /**
      * Main method for the application.
+     *
      * @param args argument
      */
     public static void main(String[] args) {
@@ -65,6 +66,7 @@ public final class ProgrammingLife extends Application {
 
     /**
      * Process command line arguments.
+     *
      * @param guiCtrl the {@link GuiController}, needed for opening files
      * @throws IOException if a specified file cannot be opened
      */
@@ -106,6 +108,7 @@ public final class ProgrammingLife extends Application {
 
     /**
      * Returns the Stage if called upon.
+     *
      * @return stage
      */
     public static Stage getStage() {

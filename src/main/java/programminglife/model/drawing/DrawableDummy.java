@@ -19,11 +19,12 @@ public class DrawableDummy extends DrawableNode {
 
     /**
      * Create a dummy node.
-     * @param id the ID
+     *
+     * @param id         the ID
      * @param parentNode the dummy's parent
-     * @param childNode the dummy's child
-     * @param graph the GenomeGraph currently drawn
-     * @param subgraph The {@link SubGraph} that this DrawableDummy belongs to.
+     * @param childNode  the dummy's child
+     * @param graph      the GenomeGraph currently drawn
+     * @param subgraph   The {@link SubGraph} that this DrawableDummy belongs to.
      */
     DrawableDummy(int id, DrawableNode parentNode, DrawableNode childNode, GenomeGraph graph, SubGraph subgraph) {
         super(graph, id);
@@ -55,7 +56,7 @@ public class DrawableDummy extends DrawableNode {
         } else {
             throw new NoSuchElementException(
                     String.format("The node to be replaced (%d) is not a parent of this node (%d).",
-                    oldParent.getIdentifier(), this.getIdentifier()));
+                            oldParent.getIdentifier(), this.getIdentifier()));
         }
     }
 
@@ -125,6 +126,7 @@ public class DrawableDummy extends DrawableNode {
 
     /**
      * To string method of a dummy.
+     *
      * @return Dummy representation of a string.
      */
     @Override

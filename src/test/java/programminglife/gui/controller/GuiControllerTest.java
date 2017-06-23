@@ -133,7 +133,7 @@ public class GuiControllerTest extends FxRobot {
         typeString(fileName);
 
         type(KeyCode.ENTER);
-        if(operatingSystem.contains("mac")) {
+        if (operatingSystem.contains("mac")) {
             sleep(500, TimeUnit.MILLISECONDS);
             type(KeyCode.ENTER);
         }

@@ -16,12 +16,13 @@ public class Bookmark {
 
     /**
      * Initialize a bookmark.
-     * @param graphName The graph file where this bookmark belongs to
-     * @param path The path where the graph file is located.
+     *
+     * @param graphName    The graph file where this bookmark belongs to
+     * @param path         The path where the graph file is located.
      * @param bookmarkName this is the bookmarkName of the file in which this genome and location is present
-     * @param nodeID is the ID of the node where the bookmark is present.
-     * @param radius is the depth to which surrounding nodes will be visualized.
-     * @param description The text describing this bookmark.
+     * @param nodeID       is the ID of the node where the bookmark is present.
+     * @param radius       is the depth to which surrounding nodes will be visualized.
+     * @param description  The text describing this bookmark.
      */
     public Bookmark(String graphName, String path, int nodeID, int radius, String bookmarkName, String description) {
         this.graphName = graphName;

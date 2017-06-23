@@ -46,7 +46,7 @@ public class SubGraphSNPTest {
         g.setSequence(3, "GCTA");
 
         for (int i = 0; i <= 3; i++)
-            g.setGenomes(i, new int[] {0});
+            g.setGenomes(i, new int[]{0});
 
         g.addEdge(0, 1);
         g.addEdge(0, 2);
@@ -85,7 +85,7 @@ public class SubGraphSNPTest {
         g.setSequence(5, "GCTA");
 
         for (int i = 0; i <= 5; i++)
-            g.setGenomes(i, new int[] {0});
+            g.setGenomes(i, new int[]{0});
 
         g.addEdge(0, 1);
         g.addEdge(0, 2);
@@ -134,7 +134,7 @@ public class SubGraphSNPTest {
         g.setSequence(6, "GCTA");
 
         for (int i = 0; i <= 6; i++)
-            g.setGenomes(i, new int[] {0});
+            g.setGenomes(i, new int[]{0});
 
         g.addEdge(0, 1);
         g.addEdge(0, 2);
@@ -179,7 +179,7 @@ public class SubGraphSNPTest {
         g.setSequence(2, "CTGA");
 
         for (int i = 0; i <= 2; i++)
-            g.setGenomes(i, new int[] {0});
+            g.setGenomes(i, new int[]{0});
 
         g.addEdge(0, 1);
         g.addEdge(1, 2);
@@ -210,7 +210,7 @@ public class SubGraphSNPTest {
         g.setSequence(3, "GCTA");
 
         for (int i = 0; i <= 3; i++)
-            g.setGenomes(i, new int[] {0});
+            g.setGenomes(i, new int[]{0});
 
         g.addEdge(0, 1);
         g.addEdge(0, 2);
@@ -247,7 +247,7 @@ public class SubGraphSNPTest {
         g.setSequence(4, "GCTA");
 
         for (int i = 0; i <= 4; i++)
-            g.setGenomes(i, new int[] {0});
+            g.setGenomes(i, new int[]{0});
 
         g.addEdge(0, 2);
         g.addEdge(1, 2);
@@ -287,7 +287,7 @@ public class SubGraphSNPTest {
         g.setSequence(4, "G");
 
         for (int i = 0; i <= 4; i++)
-            g.setGenomes(i, new int[] {0});
+            g.setGenomes(i, new int[]{0});
 
         g.addEdge(0, 1);
         g.addEdge(0, 2);

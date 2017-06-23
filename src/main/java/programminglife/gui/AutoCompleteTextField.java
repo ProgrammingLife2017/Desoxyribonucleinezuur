@@ -1,7 +1,10 @@
 package programminglife.gui;
 
 import javafx.geometry.Side;
-import javafx.scene.control.*;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.CustomMenuItem;
+import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -73,7 +76,7 @@ public class AutoCompleteTextField extends TextField {
     /**
      * Populate the entry set with the given search results. Display is limited to 10 entries, for performance.
      *
-     * @param searchResult The set of matching strings.
+     * @param searchResult  The set of matching strings.
      * @param searchRequest String of the request to be processed.
      */
     private void populatePopup(List<String> searchResult, String searchRequest) {
@@ -111,7 +114,7 @@ public class AutoCompleteTextField extends TextField {
     /**
      * Build TextFlow with selected text. Return "case" dependent.
      *
-     * @param text - string with text
+     * @param text   - string with text
      * @param filter - string to select in text
      * @return - TextFlow
      */
@@ -120,7 +123,7 @@ public class AutoCompleteTextField extends TextField {
         Text textBefore = new Text(text.substring(0, filterIndex));
         Text textAfter = new Text(text.substring(filterIndex + filter.length()));
         //instead of "filter" to keep all "case sensitive"
-        Text textFilter = new Text(text.substring(filterIndex,  filterIndex + filter.length()));
+        Text textFilter = new Text(text.substring(filterIndex, filterIndex + filter.length()));
         textFilter.setFill(Color.ORANGE);
         textFilter.setFont(Font.font("Helvetica", FontWeight.BOLD, 12));
         return new TextFlow(textBefore, textFilter, textAfter);

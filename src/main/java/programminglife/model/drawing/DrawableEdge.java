@@ -24,8 +24,9 @@ public class DrawableEdge implements Drawable {
 
     /**
      * Create a Drawable edge.
+     *
      * @param parent The {@link DrawableSegment} parent of this edge
-     * @param child The {@link DrawableSegment} child of this edge
+     * @param child  The {@link DrawableSegment} child of this edge
      */
     public DrawableEdge(DrawableNode parent, DrawableNode child) {
         this.startLocation = parent.getRightBorderCenter();
@@ -50,6 +51,7 @@ public class DrawableEdge implements Drawable {
 
     /**
      * Color a {@link DrawableEdge} depending on its properties.
+     *
      * @param sg the {@link SubGraph} belonging to the {@link DrawableEdge}
      */
     public void colorize(SubGraph sg) {

@@ -52,13 +52,13 @@ public class SubGraphGenomesOnEdgeTest {
             g.setSequence(i, "A");
         }
 
-        g.setGenomes(3, new int[] {0, 1, 2, 3, 4});
-        g.setGenomes(4, new int[] {1, 4});
-        g.setGenomes(5, new int[] {0, 1, 2, 3, 4});
+        g.setGenomes(3, new int[]{0, 1, 2, 3, 4});
+        g.setGenomes(4, new int[]{1, 4});
+        g.setGenomes(5, new int[]{0, 1, 2, 3, 4});
 
-        g.addEdge(3,4);
-        g.addEdge(4,5);
-        g.addEdge(3,5);
+        g.addEdge(3, 4);
+        g.addEdge(4, 5);
+        g.addEdge(3, 5);
 
         g.cacheLastEdges();
 
@@ -85,12 +85,12 @@ public class SubGraphGenomesOnEdgeTest {
             g.setSequence(i, "A");
         }
 
-        g.setGenomes(3, new int[] {0, 1, 2, 3, 4, 5});
-        g.setGenomes(4, new int[] {2, 5});
-        g.setGenomes(5, new int[] {0, 1, 5});
-        g.setGenomes(6, new int[] {0, 1, 2, 3, 4, 5});
+        g.setGenomes(3, new int[]{0, 1, 2, 3, 4, 5});
+        g.setGenomes(4, new int[]{2, 5});
+        g.setGenomes(5, new int[]{0, 1, 5});
+        g.setGenomes(6, new int[]{0, 1, 2, 3, 4, 5});
 
-        for (int[] edge : new int[][] {{3, 4}, {3, 5}, {3, 6}, {4, 5}, {4, 6}, {5, 6}}) {
+        for (int[] edge : new int[][]{{3, 4}, {3, 5}, {3, 6}, {4, 5}, {4, 6}, {5, 6}}) {
             g.addEdge(edge[0], edge[1]);
         }
 
@@ -123,12 +123,12 @@ public class SubGraphGenomesOnEdgeTest {
             g.setSequence(i, "A");
         }
 
-        g.setGenomes(3, new int[] {0, 1, 2, 3});
-        g.setGenomes(4, new int[] {0, 1, 2});
-        g.setGenomes(5, new int[] {0, 3});
-        g.setGenomes(6, new int[] {0, 2, 3});
+        g.setGenomes(3, new int[]{0, 1, 2, 3});
+        g.setGenomes(4, new int[]{0, 1, 2});
+        g.setGenomes(5, new int[]{0, 3});
+        g.setGenomes(6, new int[]{0, 2, 3});
 
-        for (int[] edge : new int[][] {{3, 4}, {3, 5}, {4, 5}, {4, 6}, {5, 6}}) {
+        for (int[] edge : new int[][]{{3, 4}, {3, 5}, {4, 5}, {4, 6}, {5, 6}}) {
             g.addEdge(edge[0], edge[1]);
         }
 

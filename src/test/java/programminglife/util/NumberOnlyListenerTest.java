@@ -22,11 +22,10 @@ public class NumberOnlyListenerTest {
     }
 
     @Before
-    public void setUp(){
+    public void setUp() {
         tf = new TextField();
         tf.textProperty().addListener(new NumbersOnlyListener(tf));
     }
-
 
 
     @Test

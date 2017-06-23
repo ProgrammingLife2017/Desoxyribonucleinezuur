@@ -91,7 +91,7 @@ public class GraphParserTest implements Observer {
 
     @Test
     public void parseLinkTest() throws UnknownTypeException {
-         graphParser.parseLink(linkLine);
+        graphParser.parseLink(linkLine);
     }
 
     @Test
@@ -173,7 +173,7 @@ public class GraphParserTest implements Observer {
 
     @Test
     public void parseMultipleHeaders() throws Exception {
-        String[] lines = new String[] {"H\tVN:Z:1.0\n", "H\tBUILD:Z:VCF2GRAPH\n", "H\tORI:Z:SZAXPI008746-45"};
+        String[] lines = new String[]{"H\tVN:Z:1.0\n", "H\tBUILD:Z:VCF2GRAPH\n", "H\tORI:Z:SZAXPI008746-45"};
         for (String line : lines) {
             graphParser.parseHeader(line);
         }

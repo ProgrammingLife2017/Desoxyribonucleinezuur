@@ -7,7 +7,10 @@ import programminglife.model.Feature;
 import programminglife.model.exception.UnknownTypeException;
 
 import java.io.*;
-import java.util.*;
+import java.util.EnumSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Observable;
 
 /**
  * A Parser for {@link Annotation Annotations}.
@@ -19,6 +22,7 @@ public class AnnotationParser extends Observable implements Runnable {
 
     /**
      * Constructor for an AnnotationParser.
+     *
      * @param file The {@link File} to parse.
      */
     public AnnotationParser(File file) {
@@ -42,8 +46,9 @@ public class AnnotationParser extends Observable implements Runnable {
     /**
      * Parse the file. This changes this AnnotationParser,
      * but it is the responsibility of the caller to notify the observers.
+     *
      * @param file The file to parse.
-     * @throws IOException If there is an issue opening / closing the file.
+     * @throws IOException          If there is an issue opening / closing the file.
      * @throws UnknownTypeException If the file is malformed.
      */
     private void parseFile(File file) throws IOException, UnknownTypeException {
@@ -84,6 +89,7 @@ public class AnnotationParser extends Observable implements Runnable {
 
     /**
      * Parse a String as an Annotation.
+     *
      * @param line The String to parse
      * @return The parsed Annotation. If this line is empty or a comment (starts with #), this returns null.
      * @throws UnknownTypeException If the line is malformed.
@@ -111,7 +117,7 @@ public class AnnotationParser extends Observable implements Runnable {
 
         try {
             start = Integer.parseInt(columns[3]);
-            end   = Integer.parseInt(columns[4]);
+            end = Integer.parseInt(columns[4]);
 
             String afterID = columns[8].substring(columns[8].indexOf("ID=") + 3);
             int index = afterID.indexOf(';');
@@ -141,6 +147,7 @@ public class AnnotationParser extends Observable implements Runnable {
 
     /**
      * Parse a String containing attributes for an {@link Annotation}.
+     *
      * @param annotation The annotation to add the attributes to.
      * @param attributes The String containing the attributes. This String should be column 9 in the gff spec.
      * @throws UnknownTypeException If the attributes are malformed.
@@ -168,7 +175,8 @@ public class AnnotationParser extends Observable implements Runnable {
 
     /**
      * Decode an encoded String (i.e. unescape % signs according to the gff spec)
-     * @param encoded The encoded String
+     *
+     * @param encoded  The encoded String
      * @param encoding The encoding that is decoded (this should be the encoding used to encode the string).
      * @return The decoded String.
      */
@@ -216,6 +224,7 @@ public class AnnotationParser extends Observable implements Runnable {
 
         /**
          * Constructor for an Encoding.
+         *
          * @param encodingSubTypes An {@link EnumSet} of {@link EncodingSubtype EncodingSubtypes}
          *                         that this Encoding uses.
          */
@@ -225,6 +234,7 @@ public class AnnotationParser extends Observable implements Runnable {
 
         /**
          * Whether this Encoding contains a certain {@link EncodingSubtype}.
+         *
          * @param subtype The Subtype to check for.
          * @return Whether this Encoding contains the subtype.
          */
@@ -253,8 +263,9 @@ public class AnnotationParser extends Observable implements Runnable {
 
     /**
      * Main method for parsing the annotations.
+     *
      * @param ignored String to be received.
-     * @throws IOException If file is not found
+     * @throws IOException          If file is not found
      * @throws UnknownTypeException If file is not of the correct type.
      */
     public static void main(String... ignored) throws IOException, UnknownTypeException {

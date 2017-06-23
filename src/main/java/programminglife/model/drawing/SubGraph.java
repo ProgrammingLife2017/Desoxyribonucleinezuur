@@ -45,6 +45,7 @@ public class SubGraph {
 
     /**
      * Create a SubGraph from a graph, without any nodes initially.
+     *
      * @param graph The {@link GenomeGraph} that this SubGraph is based on.
      */
     private SubGraph(GenomeGraph graph, double zoomLevel) {
@@ -53,10 +54,11 @@ public class SubGraph {
 
     /**
      * Create a SubGraph with the specified nodes, rootNodes and endNodes.
-     * @param graph The {@link GenomeGraph} that this SubGraph is based on.
-     * @param nodes The nodes of this SubGraph.
+     *
+     * @param graph     The {@link GenomeGraph} that this SubGraph is based on.
+     * @param nodes     The nodes of this SubGraph.
      * @param rootNodes The rootNodes of this SubGraph.
-     * @param endNodes The endNodes of this SubGraph.
+     * @param endNodes  The endNodes of this SubGraph.
      */
     private SubGraph(GenomeGraph graph, double zoomLevel, LinkedHashMap<Integer, DrawableNode> nodes,
                      LinkedHashMap<Integer, DrawableNode> rootNodes, LinkedHashMap<Integer, DrawableNode> endNodes) {
@@ -75,8 +77,9 @@ public class SubGraph {
      * Create a SubGraph using a centerNode and a radius around that centerNode.
      * This SubGraph will include all Nodes within radius steps to a parent,
      * and then another 2radius steps to a child, and symmetrically the same with children / parents reversed.
-     *  @param centerNode The centerNode
-     * @param radius     The radius
+     *
+     * @param centerNode  The centerNode
+     * @param radius      The radius
      * @param replaceSNPs flag if SNPs should be collapsed
      */
     public SubGraph(DrawableSegment centerNode, int radius, boolean replaceSNPs) {
@@ -94,9 +97,10 @@ public class SubGraph {
      * Create a SubGraph using a centerNode and a radius around that centerNode.
      * This SubGraph will include all Nodes within radius steps to a parent,
      * and then another 2radius steps to a child, and symmetrically the same with children / parents reversed.
-     *  @param centerNode The centerNode
-     * @param minRadius  The minimum radius.
-     * @param radius     The radius
+     *
+     * @param centerNode  The centerNode
+     * @param minRadius   The minimum radius.
+     * @param radius      The radius
      * @param replaceSNPs flag if SNPs should be collapsed
      */
     private SubGraph(DrawableSegment centerNode, double zoomLevel, int minRadius, int radius, boolean replaceSNPs) {
@@ -149,10 +153,10 @@ public class SubGraph {
      * Find nodes within radius steps from centerNode.
      * This resets the {@link #nodes}, {@link #rootNodes} and {@link #endNodes}
      *
-     * @param subGraph The SubGraph to find these nodes for.
-     * @param startNodes The Nodes to start searching from.
+     * @param subGraph      The SubGraph to find these nodes for.
+     * @param startNodes    The Nodes to start searching from.
      * @param excludedNodes The nodes that will not be added to this graph, even if they are found.
-     * @param radius The number of steps to search.
+     * @param radius        The number of steps to search.
      */
     private static void findNodes(SubGraph subGraph, Collection<DrawableNode> startNodes,
                                   LinkedHashMap<Integer, DrawableNode> excludedNodes, int radius) {
@@ -253,7 +257,8 @@ public class SubGraph {
     /**
      * Checks whether a dynamic load is necessary. This includes both loading new nodes
      * into the datastructure as well as removing nodes from the datastructure.
-     * @param leftBorder The left border of the canvas.
+     *
+     * @param leftBorder  The left border of the canvas.
      * @param rightBorder The right border of the canvas.
      */
     public void checkDynamicLoad(int leftBorder, double rightBorder) {
@@ -289,6 +294,7 @@ public class SubGraph {
 
     /**
      * Removes layers from the right of the graph.
+     *
      * @param numberOfLayers The number of layers to remove from the graph.
      */
     private void removeRightLayers(int numberOfLayers) {
@@ -303,6 +309,7 @@ public class SubGraph {
 
     /**
      * Removes layers from the left of the graph.
+     *
      * @param numberOfLayers The number of layers to remove from the graph.
      */
     private void removeLeftLayers(int numberOfLayers) {
@@ -322,13 +329,17 @@ public class SubGraph {
         /**
          * Whether a node was found from a parent or a child.
          */
-        private enum FoundFrom { PARENT, CHILD }
+        private enum FoundFrom {
+            PARENT, CHILD
+        }
+
         private final DrawableNode node;
         private final FoundFrom foundFrom;
 
         /**
          * simple constructor for a FoundNode.
-         * @param node The node that was found.
+         *
+         * @param node      The node that was found.
          * @param foundFrom Whether it was found from a parent or a child.
          */
         private FoundNode(DrawableNode node, FoundFrom foundFrom) {
@@ -368,7 +379,8 @@ public class SubGraph {
      * If two layers are equally close (x is exactly in the middle of end
      * of left layer and start of the right layer), the right Layer is returned, as this
      * one is likely to have nodes closer (nodes in the left layer do not necessarily extend to the end)
-     * @param x The coordinate
+     *
+     * @param x      The coordinate
      * @param layers The list of layers to look through.
      * @return The index of the closest layer.
      */
@@ -422,7 +434,8 @@ public class SubGraph {
 
     /**
      * Set the coordinates for all {@link Layer layers} to the right of the given Layer.
-     * @param layers The Layers to set the coordinates for.
+     *
+     * @param layers        The Layers to set the coordinates for.
      * @param setLayerIndex The index of the Layer to start from (exclusive,
      *                      so coordinates are not set for this layer).
      */
@@ -440,7 +453,7 @@ public class SubGraph {
 
             int newSize = layer.size();
             int diff = Math.abs(newSize - size);
-            x += (LAYER_PADDING * zoomLevel)  + (DIFF_LAYER_PADDING * zoomLevel) * diff;
+            x += (LAYER_PADDING * zoomLevel) + (DIFF_LAYER_PADDING * zoomLevel) * diff;
 
             layer.setX(x);
             layer.setDrawLocations(firstY);
@@ -451,7 +464,8 @@ public class SubGraph {
 
     /**
      * Set the coordinates for all {@link Layer layers} to the left of the given Layer.
-     * @param layers The Layers to set the coordinates for.
+     *
+     * @param layers        The Layers to set the coordinates for.
      * @param setLayerIndex The index of the Layer to start from (exclusive,
      *                      so coordinates are not set for this layer).
      */
@@ -585,6 +599,7 @@ public class SubGraph {
 
     /**
      * Find the Layer with the least number of nodes.
+     *
      * @param layers The {@link Layer Layers} to search through.
      * @return The index of the Layer with the minimum number of nodes, or -1 if the list of layers is empty.
      */
@@ -615,6 +630,7 @@ public class SubGraph {
 
     /**
      * Sort all {@link Layer Layers} right from a given layer.
+     *
      * @param layerIndex The index of the layer to start sorting from (exclusive, so that layer is not sorted).
      */
     private void sortLayersRightFrom(int layerIndex) {
@@ -630,6 +646,7 @@ public class SubGraph {
 
     /**
      * Sort all {@link Layer Layers} left from a given layer.
+     *
      * @param layerIndex The index of the layer to start sorting from (exclusive, so that layer is not sorted).
      */
     private void sortLayersLeftFrom(int layerIndex) {
@@ -645,7 +662,7 @@ public class SubGraph {
 
     /**
      * Topologically sort the nodes from this graph. <br />
-     *
+     * <p>
      * Assumption: graph is a DAG.
      *
      * @return a topologically sorted list of nodes
@@ -710,6 +727,7 @@ public class SubGraph {
 
     /**
      * Calculate genomes through all outgoing edges of a parent.
+     *
      * @param parent find all genomes through edges from this parent
      * @return a {@link Map} of  collections of genomes through links
      */
@@ -740,6 +758,7 @@ public class SubGraph {
 
     /**
      * Calculate genomes through edge, based on topological ordering and node-genome information.
+     *
      * @return a {@link Map} of {@link Map Maps} of collections of genomes through links
      */
     public Map<DrawableNode, Map<DrawableNode, Collection<Integer>>> calculateGenomes() {
@@ -754,6 +773,7 @@ public class SubGraph {
 
     /**
      * Add nodes from the {@link #rootNodes}.
+     *
      * @param radius The number of steps to take from the rootNodes before stopping the search.
      */
     private void addFromRootNodes(int radius) {
@@ -774,6 +794,7 @@ public class SubGraph {
 
     /**
      * Add nodes from the {@link #endNodes}.
+     *
      * @param radius The number of steps to take from the endNodes before stopping the search.
      */
     private void addFromEndNodes(int radius) {
@@ -835,6 +856,7 @@ public class SubGraph {
     /**
      * Merge another {@link SubGraph} into this SubGraph, by putting it on the left of this SubGraph,
      * and then drawing connecting edges between nodes that should have them.
+     *
      * @param leftSubGraph The other SubGraph that will be merged into this one.
      */
     private void mergeLeftSubGraphIntoThisSubGraph(SubGraph leftSubGraph) {

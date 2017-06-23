@@ -23,6 +23,7 @@ public final class InitFXThread {
 
     /**
      * Sets up the output and JFXPanel.
+     *
      * @throws Exception when creating the panel.
      */
     public static void setupClass() throws Exception {

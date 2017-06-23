@@ -22,7 +22,8 @@ public class DrawableSegment extends DrawableNode {
 
     /**
      * Create a DrawableSegment from a Segment.
-     * @param graph the graph this Segment is in
+     *
+     * @param graph  the graph this Segment is in
      * @param nodeID The segment to create this DrawableSegment from.
      */
     public DrawableSegment(GenomeGraph graph, int nodeID) {
@@ -41,6 +42,7 @@ public class DrawableSegment extends DrawableNode {
 
     /**
      * Get all the children of the node {@link DrawableSegment}.
+     *
      * @return children {@link Collection} are the direct children of the node {@link DrawableSegment}.
      */
     @Override
@@ -50,6 +52,7 @@ public class DrawableSegment extends DrawableNode {
 
     /**
      * Get all the parents of the node {@link DrawableSegment}.
+     *
      * @return parent {@link Collection} are the direct parents of the node {@link DrawableSegment}.
      **/
     @Override
@@ -59,6 +62,7 @@ public class DrawableSegment extends DrawableNode {
 
     /**
      * Replace a child node with a dummy node.
+     *
      * @param oldChild The {@link DrawableSegment} to replace.
      * @param newChild The {@link DrawableSegment} to replace with.
      */
@@ -78,6 +82,7 @@ public class DrawableSegment extends DrawableNode {
 
     /**
      * Replace a parent node with a dummy node.
+     *
      * @param oldParent The {@link DrawableSegment} to replace.
      * @param newParent The {@link DrawableSegment} to replace with.
      */
@@ -145,7 +150,7 @@ public class DrawableSegment extends DrawableNode {
         } else if (children.stream().anyMatch(id -> getGraph().getSequenceLength(id) != 1)) {
             // - only children of length 1
             return null;
-        } else  {
+        } else {
             Collection<DrawableSegment> childNodes = subGraph.getChildren(this).stream()
                     .map(DrawableSegment.class::cast)
                     .collect(Collectors.toSet());
@@ -173,6 +178,7 @@ public class DrawableSegment extends DrawableNode {
 
     /**
      * get the length of the sequence of this segment.
+     *
      * @return the length of the sequence of this segment
      */
     private int getSequenceLength() {
@@ -181,6 +187,7 @@ public class DrawableSegment extends DrawableNode {
 
     /**
      * Returns the sequence of all the segments that are part of the DrawableNode.
+     *
      * @return A string containing all the sequences appended.
      */
     public String getSequence() {
@@ -189,6 +196,7 @@ public class DrawableSegment extends DrawableNode {
 
     /**
      * Method to return a string with information about the {@link DrawableSegment}.
+     *
      * @return a {@link String} representation of a {@link DrawableSegment}.
      */
     @Override

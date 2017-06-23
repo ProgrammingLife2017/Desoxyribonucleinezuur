@@ -2,9 +2,9 @@ package programminglife.parser;
 
 import com.diffplug.common.base.Errors;
 import javafx.application.Platform;
+import programminglife.gui.Alerts;
 import programminglife.model.GenomeGraph;
 import programminglife.model.exception.UnknownTypeException;
-import programminglife.gui.Alerts;
 import programminglife.utility.Console;
 
 import java.io.*;
@@ -25,6 +25,7 @@ public class GraphParser extends Observable implements Runnable {
 
     /**
      * Initiates an empty graph and the {@link File} to parse.
+     *
      * @param graphFile the file to parse the {@link GenomeGraph} from.
      */
     public GraphParser(File graphFile) {
@@ -73,12 +74,13 @@ public class GraphParser extends Observable implements Runnable {
 
     /**
      * Parse a GFA file as a {@link GenomeGraph}.
-     * @throws IOException when no file is found at the given path.
+     *
+     * @throws IOException          when no file is found at the given path.
      * @throws UnknownTypeException when an unknown identifier (H/S/L) is read from the file.
      */
     public synchronized void parse() throws IOException, UnknownTypeException {
         Console.println("[%s] Parsing file with name %s with path %s", Thread.currentThread().getName(),
-                                this.name, this.graphFile.getAbsolutePath());
+                this.name, this.graphFile.getAbsolutePath());
 
         Console.print("[%s] Calculating number of lines in file... ", Thread.currentThread().getName());
         int lineCount = countLines(this.graphFile);
@@ -125,9 +127,10 @@ public class GraphParser extends Observable implements Runnable {
 
     /**
      * Count the number of newlines in a file.
-     *
+     * <p>
      * This method does not handle files with/without final newline differently,
      * but as it is just for optimisation purposes, this does not matter.
+     *
      * @param file The file to count the number of lines of
      * @return The number of lines in the file
      * @throws IOException if the file cannot be found or another problem occurs opening the file.
@@ -150,6 +153,7 @@ public class GraphParser extends Observable implements Runnable {
 
     /**
      * Parse a {@link String} representing a Segment.
+     *
      * @param propertyString the {@link String} from a GFA file.
      * @throws UnknownTypeException when a segment cannot be parsed
      */
@@ -200,6 +204,7 @@ public class GraphParser extends Observable implements Runnable {
 
     /**
      * Parse a {@link String} representing a Link.
+     *
      * @param propertyString the {@link String} from a GFA file.
      * @throws UnknownTypeException when a link cannot be parsed
      */
@@ -250,6 +255,7 @@ public class GraphParser extends Observable implements Runnable {
 
     /**
      * Parse a {@link String} representing a header.
+     *
      * @param propertyString the {@link String} from a GFA file
      * @throws UnknownTypeException when a header cannot be parsed
      */

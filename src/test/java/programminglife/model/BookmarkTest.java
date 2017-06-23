@@ -14,7 +14,7 @@ public class BookmarkTest {
     private Bookmark b2;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         b1 = new Bookmark("graph", "path", 1, 3, "TestName", "testDescription");
         b2 = new Bookmark("graph", "path", 1, 3, "TestName", "testDescription");
 
@@ -56,13 +56,13 @@ public class BookmarkTest {
     }
 
     @Test
-    public void notBookmarkEquals(){
+    public void notBookmarkEquals() {
         assertFalse(b1.equals("Fiets"));
     }
 
     @Test
     public void toStringTest() {
-        assertEquals("{file: graph, name: TestName, description: testDescription, ID: 1, radius: 3}" , b1.toString());
+        assertEquals("{file: graph, name: TestName, description: testDescription, ID: 1, radius: 3}", b1.toString());
     }
 
     @Test

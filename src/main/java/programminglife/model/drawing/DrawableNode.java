@@ -27,10 +27,11 @@ public abstract class DrawableNode implements Drawable {
 
     /**
      * Constructor for a DrawableNode.
+     *
      * @param graph The {@link GenomeGraph} that this DrawableNode is part of.
-     * @param id The id for this DrawableNode. These should be non-negative for Nodes actually in the
-     *           graph ({@link DrawableSegment}), and negative for Nodes that are not in the
-     *           graph ({@link DrawableDummy}).
+     * @param id    The id for this DrawableNode. These should be non-negative for Nodes actually in the
+     *              graph ({@link DrawableSegment}), and negative for Nodes that are not in the
+     *              graph ({@link DrawableDummy}).
      */
     DrawableNode(GenomeGraph graph, int id) {
         this.graph = graph;
@@ -55,6 +56,7 @@ public abstract class DrawableNode implements Drawable {
 
     /**
      * Get the ID.
+     *
      * @return the ID
      */
     public final int getIdentifier() {
@@ -63,6 +65,7 @@ public abstract class DrawableNode implements Drawable {
 
     /**
      * Get the {@link GenomeGraph}.
+     *
      * @return the graph
      */
     final GenomeGraph getGraph() {
@@ -83,6 +86,7 @@ public abstract class DrawableNode implements Drawable {
 
     /**
      * Get if the dimensions are up to date.
+     *
      * @return boolean true if up to date else false
      */
     private boolean isDrawDimensionsUpToDate() {
@@ -91,18 +95,21 @@ public abstract class DrawableNode implements Drawable {
 
     /**
      * Get the IDs of children of this.
+     *
      * @return IDs of drawable children
      */
     abstract Collection<Integer> getChildren();
 
     /**
      * Get the IDs of parents of this.
+     *
      * @return IDs of drawable parents.
      */
     abstract Collection<Integer> getParents();
 
     /**
      * Replace a parent with another one.
+     *
      * @param oldParent the parent to replace
      * @param newParent the new parent
      */
@@ -110,6 +117,7 @@ public abstract class DrawableNode implements Drawable {
 
     /**
      * Replace child with another one.
+     *
      * @param oldChild the child to replace
      * @param newChild the new child
      */
@@ -117,12 +125,14 @@ public abstract class DrawableNode implements Drawable {
 
     /**
      * Information {@link String} about this.
+     *
      * @return info
      */
     public abstract String details();
 
     /**
      * Checks if the children of this {@link DrawableNode} can be merged as a SNP.
+     *
      * @param subGraph the {@link SubGraph} this {@link DrawableNode} is in
      * @return null if children cannot be SNP'ed, SNP with (parent, child and mutation) otherwise
      */
@@ -130,14 +140,16 @@ public abstract class DrawableNode implements Drawable {
 
     /**
      * Color this according to contents.
-     * @param subGraph {@link SubGraph} to colorize.
+     *
+     * @param subGraph  {@link SubGraph} to colorize.
      * @param zoomLevel is double with a value which describes what the current zoom is.
      */
     public abstract void colorize(SubGraph subGraph, double zoomLevel);
 
     /**
      * Set the size {@link XYCoordinate} of the Segment.
-     * @param width The double representing the width of the DrawableSegment
+     *
+     * @param width  The double representing the width of the DrawableSegment
      * @param height The double representing the height of the DrawableSegment
      */
     final void setSize(double width, double height) {
@@ -148,6 +160,7 @@ public abstract class DrawableNode implements Drawable {
 
     /**
      * Set the location to draw this.
+     *
      * @param x the x location
      * @param y the y location
      */
@@ -157,6 +170,7 @@ public abstract class DrawableNode implements Drawable {
 
     /**
      * Get the width of the node.
+     *
      * @return The width of the node.
      */
     public final double getWidth() {
@@ -168,6 +182,7 @@ public abstract class DrawableNode implements Drawable {
 
     /**
      * Get the height of the node.
+     *
      * @return The height of the node.
      */
     public final double getHeight() {
@@ -179,6 +194,7 @@ public abstract class DrawableNode implements Drawable {
 
     /**
      * getter for the center of the left border.
+     *
      * @return XYCoordinate.
      */
     public final XYCoordinate getLeftBorderCenter() {
@@ -190,6 +206,7 @@ public abstract class DrawableNode implements Drawable {
 
     /**
      * getter for the center.
+     *
      * @return XYCoordinate.
      */
     public final XYCoordinate getCenter() {
@@ -201,6 +218,7 @@ public abstract class DrawableNode implements Drawable {
 
     /**
      * getter for the center of the right border.
+     *
      * @return XYCoordinate.
      */
     final XYCoordinate getRightBorderCenter() {
@@ -226,12 +244,14 @@ public abstract class DrawableNode implements Drawable {
 
     /**
      * Return this {@link DrawableNode} if it is a {@link DrawableSegment}, else return its parent.
+     *
      * @return the 'closest' parent {@link DrawableSegment}
      */
     public abstract DrawableNode getParentSegment();
 
     /**
      * Return this {@link DrawableNode} if it is a {@link DrawableSegment}, else return its child.
+     *
      * @return the 'closest' child {@link DrawableSegment}
      */
     public abstract DrawableNode getChildSegment();
@@ -246,7 +266,8 @@ public abstract class DrawableNode implements Drawable {
 
     /**
      * Method to set the fill and stroke color of a {@link DrawableSegment}.
-     * @param fillColor {@link Color} is the color to fill the segment with.
+     *
+     * @param fillColor   {@link Color} is the color to fill the segment with.
      * @param strokeColor {@link Color} is the color of the stroke.
      */
     final void setColors(Color fillColor, Color strokeColor) {
@@ -278,6 +299,7 @@ public abstract class DrawableNode implements Drawable {
      * Get a unique ID for a DrawableNode. These IDs are always negative. These IDs are globally unique,
      * which means that every call to this method will return a different number (until you reach underflow,
      * which is assumed to not happen)
+     *
      * @return A negative unique ID.
      */
     public static synchronized int getUniqueId() {
@@ -286,5 +308,6 @@ public abstract class DrawableNode implements Drawable {
     }
 
     public abstract Collection<Integer> getParentGenomes();
+
     protected abstract Collection<Integer> getChildGenomes();
 }

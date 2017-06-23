@@ -16,8 +16,9 @@ class MiniMapController {
 
     /**
      * Constructor for the miniMap.
+     *
      * @param miniMap Canvas of the miniMap to be used.
-     * @param size int Size of the graph.
+     * @param size    int Size of the graph.
      */
     public MiniMapController(Canvas miniMap, int size) {
         this.miniMap = miniMap;
@@ -52,6 +53,7 @@ class MiniMapController {
     /**
      * Shows the position of where you are in the graph (on the screen).
      * It does not handle panning as of now!
+     *
      * @param centerNode int of the centernode currently at.
      */
     public void showPosition(int centerNode) {

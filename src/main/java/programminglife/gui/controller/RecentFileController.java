@@ -30,6 +30,7 @@ class RecentFileController {
 
     /**
      * Constructor for the recent file handler.
+     *
      * @param recentFile File containing the recent entries.
      * @param menuRecent Menu containing the recent entries.
      */
@@ -74,9 +75,10 @@ class RecentFileController {
 
     /**
      * Find the amount of lines in a given file.
+     *
      * @param recentFile File to check the amount of lines of.
      */
-    private void findLines(File recentFile)  {
+    private void findLines(File recentFile) {
         BufferedReader reader;
         try {
             reader = new BufferedReader(new FileReader(recentFile));
@@ -124,8 +126,9 @@ class RecentFileController {
 
     /**
      * Updates the recent files file after opening a file.
+     *
      * @param recentFile File containing the recent entries.
-     * @param file File to check if it already contained.
+     * @param file       File to check if it already contained.
      */
     public void updateRecent(File recentFile, File file) {
         findLines(recentFile);
@@ -138,6 +141,7 @@ class RecentFileController {
 
     /**
      * Updates the recent files file after opening a file.
+     *
      * @param recentFile File containing the recent entries.
      */
     private void updateRecent(File recentFile) {
@@ -168,6 +172,7 @@ class RecentFileController {
 
     /**
      * Checks if there is a duplicate.
+     *
      * @param file File to be added to the list.
      * @return boolean, true if it is not a duplicate.
      */
@@ -220,6 +225,7 @@ class RecentFileController {
 
     /**
      * Moves all the recentFiles down by 1 position.
+     *
      * @param file File to be added to the list.
      */
     private void moveFiles(String file) {
@@ -232,6 +238,7 @@ class RecentFileController {
 
     /**
      * Sets the guicontroller for controlling the menu.
+     *
      * @param guiController The gui controller
      */
     public void setGuiController(GuiController guiController) {

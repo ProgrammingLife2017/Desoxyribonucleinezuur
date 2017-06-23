@@ -12,6 +12,7 @@ public class ProgressCounter extends Observable {
 
     /**
      * Constructor with description and integer of line count.
+     *
      * @param description String.
      */
     ProgressCounter(String description) {
@@ -44,6 +45,7 @@ public class ProgressCounter extends Observable {
 
     /**
      * Calculates how much percent has been loaded.
+     *
      * @return percentage of file parsed.
      */
     public double percentage() {
@@ -56,6 +58,7 @@ public class ProgressCounter extends Observable {
 
     /**
      * set the line count to the max so that it is 100%.
+     *
      * @param count int equal to the total
      */
     private void setProgress(int count) {

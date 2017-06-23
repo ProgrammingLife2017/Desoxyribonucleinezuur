@@ -6,8 +6,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import programminglife.model.Bookmark;
 import programminglife.gui.Alerts;
+import programminglife.model.Bookmark;
 
 /**
  * Class for the GuiCreateBookmarkController. This class handles the FXML file that comes with it.
@@ -16,12 +16,18 @@ public class GuiCreateBookmarkController {
 
     private GuiController guiController;
 
-    @FXML private Button btnOk;
-    @FXML private Button btnCancel;
-    @FXML private TextField txtBookmarkName;
-    @FXML private TextField txtId;
-    @FXML private TextField txtRadius;
-    @FXML private TextArea txtDescription;
+    @FXML
+    private Button btnOk;
+    @FXML
+    private Button btnCancel;
+    @FXML
+    private TextField txtBookmarkName;
+    @FXML
+    private TextField txtId;
+    @FXML
+    private TextField txtRadius;
+    @FXML
+    private TextArea txtDescription;
     private int inputRadius;
     private int inputCenter;
     private String bookmarkName;
@@ -77,6 +83,7 @@ public class GuiCreateBookmarkController {
 
     /**
      * Set the text in the center node and radius areas.
+     *
      * @param center The text to fill the center area with
      * @param radius The text to fill the radius area with
      */

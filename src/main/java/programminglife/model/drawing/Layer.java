@@ -36,6 +36,7 @@ public class Layer implements Iterable<DrawableNode>, Comparable<Double> {
 
     /**
      * Add a {@link DrawableNode} to this Layer.
+     *
      * @param node the node to add.
      */
     public void add(DrawableNode node) {
@@ -44,6 +45,7 @@ public class Layer implements Iterable<DrawableNode>, Comparable<Double> {
 
     /**
      * Get an iterator over the {@link DrawableNode DrawableNodes} in this Layer.
+     *
      * @return an iterator over the {@link DrawableNode DrawableNodes} in this Layer.
      */
     @NotNull
@@ -54,8 +56,9 @@ public class Layer implements Iterable<DrawableNode>, Comparable<Double> {
 
     /**
      * sort the {@link DrawableNode DrawableNodes} in this layer according to the order of the {@link Comparator} c.
-     * @param subGraph The subGraph that the neighbour layer is part of.
-     * @param neighbour The neighbouring layer that is used to sort this one.
+     *
+     * @param subGraph   The subGraph that the neighbour layer is part of.
+     * @param neighbour  The neighbouring layer that is used to sort this one.
      * @param hasParents Whether the neighbouring layer contains the parents (true)
      *                   or the children (false) of this layer.
      */
@@ -78,7 +81,7 @@ public class Layer implements Iterable<DrawableNode>, Comparable<Double> {
                     sum += index;
                 } else {
                     size--; // one of the parents / children is not in the neighbour,
-                            // we shouldn't count it towards the size
+                    // we shouldn't count it towards the size
                 }
             }
 
@@ -97,7 +100,7 @@ public class Layer implements Iterable<DrawableNode>, Comparable<Double> {
                 return 1;
             } else if (difference > epsilon) {
                 return -1;
-            } else  if (o1.getGenomes().size() != o2.getGenomes().size()) {
+            } else if (o1.getGenomes().size() != o2.getGenomes().size()) {
                 return o2.getGenomes().size() - o1.getGenomes().size();
             } else {
                 return o2.getIdentifier() - o1.getIdentifier();
@@ -107,6 +110,7 @@ public class Layer implements Iterable<DrawableNode>, Comparable<Double> {
 
     /**
      * Checks whether a node is in this layer.
+     *
      * @param node {@link DrawableNode} to check for its presence.
      * @return {@link boolean} true if it is in the layer, false otherwise.
      */
@@ -116,6 +120,7 @@ public class Layer implements Iterable<DrawableNode>, Comparable<Double> {
 
     /**
      * Get the size of the layer.
+     *
      * @return {@link int} the size of the layer.
      */
     public int size() {
@@ -124,6 +129,7 @@ public class Layer implements Iterable<DrawableNode>, Comparable<Double> {
 
     /**
      * Get the index of the a {@link DrawableNode} node in the layer.
+     *
      * @param node {@link DrawableNode} to get the index of.
      * @return the index of the node, or -1 if this Layer does not contain the node.
      */
@@ -146,6 +152,7 @@ public class Layer implements Iterable<DrawableNode>, Comparable<Double> {
 
     /**
      * Creates of toString of the layer.
+     *
      * @return String of the layer.
      */
     public String toString() {
