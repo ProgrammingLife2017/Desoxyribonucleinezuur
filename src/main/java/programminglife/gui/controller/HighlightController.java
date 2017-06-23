@@ -6,7 +6,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import programminglife.gui.AutoCompleteTextField;
-import programminglife.utility.NumbersOnlyListener;
+import programminglife.gui.NumbersOnlyListener;
 
 /**
  * Controller class for the highlights.
@@ -19,7 +19,6 @@ public class HighlightController {
 
     @FXML private Button btnHighlight;
     @FXML private AutoCompleteTextField txtGenome;
-    @FXML private AutoCompleteTextField txtAnnotations;
     @FXML private TextField txtMin;
     @FXML private TextField txtMax;
     @FXML private CheckBox checkMin;
