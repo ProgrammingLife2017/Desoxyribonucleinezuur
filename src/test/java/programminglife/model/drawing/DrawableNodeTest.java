@@ -67,4 +67,15 @@ public class DrawableNodeTest {
         assertEquals(3, node.getLeftBorderCenter().getY(), 0.0);
     }
 
+    @Test
+    public void centerTest() {
+        node.setLocation(2, 2);
+        node.setSize(4 , 2);
+        assertEquals(new XYCoordinate(4,3), node.getCenter());
+    }
+
+
+
+
+
 }

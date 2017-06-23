@@ -131,7 +131,6 @@ public class DrawableSNP extends DrawableNode {
     @Override
     protected void setDrawDimensions() {
         this.setSize(new XYCoordinate(NODE_HEIGHT, NODE_HEIGHT));
-        this.setDrawDimensionsUpToDate();
     }
 
     /**
@@ -141,7 +140,6 @@ public class DrawableSNP extends DrawableNode {
     private void setSize(XYCoordinate size) {
         this.setWidth(size.getX());
         this.setHeight(size.getY());
-        this.setDrawDimensionsUpToDate();
     }
 
     @Override
