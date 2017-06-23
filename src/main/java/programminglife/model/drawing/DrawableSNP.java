@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
  * Created by toinehartman on 19/06/2017.
  */
 public class DrawableSNP extends DrawableNode {
-    private static final int SNP_WIDTH = 11;
+//    private static final int SNP_WIDTH = 11;
 
     private DrawableNode parent;
     private DrawableNode child;
@@ -122,7 +122,7 @@ public class DrawableSNP extends DrawableNode {
      */
     @Override
     protected void setDrawDimensions() {
-        this.setSize(new XYCoordinate(SNP_WIDTH, NODE_HEIGHT));
+        this.setSize(new XYCoordinate(NODE_HEIGHT, NODE_HEIGHT));
         this.setDrawDimensionsUpToDate();
     }
 
