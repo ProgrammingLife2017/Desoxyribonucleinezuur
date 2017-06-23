@@ -3,7 +3,8 @@ package programminglife.controller;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import programminglife.gui.controller.GuiController;
-import programminglife.utility.Alerts;
+import programminglife.utility.*;
+import programminglife.utility.Console;
 
 import java.io.*;
 import java.nio.file.FileAlreadyExistsException;
@@ -86,7 +87,7 @@ public class RecentFileController {
             }
             reader.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            Console.println("Recent file couldn't be found. New one created.");
         }
     }
 
@@ -100,6 +101,7 @@ public class RecentFileController {
         } catch (FileAlreadyExistsException e) {
             //This will always happen if a user has used the program before.
             //Therefore it is unnecessary to handle further.
+            Console.println("Recent file couldn't be found. New one created.");
         } catch (IOException e) {
             Alerts.error("Recent.txt can't be opened");
             return;
