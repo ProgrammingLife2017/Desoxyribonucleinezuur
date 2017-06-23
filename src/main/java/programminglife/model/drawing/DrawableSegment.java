@@ -17,20 +17,30 @@ public class DrawableSegment extends DrawableNode {
 
     private Set<Integer> parents;
     private Set<Integer> children;
+    private Set<Integer> genomes;
+
+    private double zoomLevel;
+
 
     /**
      * Create a DrawableSegment from a Segment.
      * @param graph the graph this Segment is in
      * @param nodeID The segment to create this DrawableSegment from.
      */
-    public DrawableSegment(GenomeGraph graph, int nodeID) {
+    public DrawableSegment(GenomeGraph graph, int nodeID, double zoomLevel) {
         super(graph, nodeID);
 
-        parents = Arrays.stream(graph.getParentIDs(nodeID)).boxed().collect(Collectors.toSet());
-        children = Arrays.stream(graph.getChildIDs(nodeID)).boxed().collect(Collectors.toSet());
-        this.addGenomes(Arrays.stream(graph.getGenomes(nodeID)).boxed().collect(Collectors.toSet()));
+        assert (nodeID >= 0);
 
-        this.setDrawDimensions();
+        this.zoomLevel = zoomLevel;
+
+        if (nodeID >= 0) {
+            parents = Arrays.stream(graph.getParentIDs(nodeID)).boxed().collect(Collectors.toSet());
+            children = Arrays.stream(graph.getChildIDs(nodeID)).boxed().collect(Collectors.toSet());
+            genomes = (Arrays.stream(graph.getGenomes(nodeID)).boxed().collect(Collectors.toSet()));
+            this.setDrawDimensions(zoomLevel);
+        }
+
     }
 
     /**
@@ -89,15 +99,14 @@ public class DrawableSegment extends DrawableNode {
      * Setter for the dimension of the node.
      */
     @Override
-    public void setDrawDimensions() {
+    public void setDrawDimensions(double zoomLevel) {
         int segmentLength = this.getSequenceLength();
         double width, height;
 
         width = 10 + Math.pow(segmentLength, 1.0 / 2);
         height = NODE_HEIGHT;
 
-        this.setSize(width, height);
-        this.setDrawDimensionsUpToDate();
+        this.setSize(width, height * zoomLevel);
     }
 
     @Override
@@ -108,6 +117,16 @@ public class DrawableSegment extends DrawableNode {
     @Override
     public DrawableNode getChildSegment() {
         return this; // Don't ask!
+    }
+
+    @Override
+    public Collection<Integer> getParentGenomes() {
+        return this.getGenomes();
+    }
+
+    @Override
+    public Collection<Integer> getChildGenomes() {
+        return this.getGenomes();
     }
 
 
@@ -147,7 +166,7 @@ public class DrawableSegment extends DrawableNode {
                 return null;
             }
 
-            return new DrawableSNP(this, childChildren.iterator().next(), childNodes);
+            return new DrawableSNP(this, childChildren.iterator().next(), childNodes, zoomLevel);
         }
     }
 
@@ -190,15 +209,20 @@ public class DrawableSegment extends DrawableNode {
      * Color a {@link DrawableSegment} depending on its properties.
      */
     @Override
-    public void colorize(SubGraph sg, double zoomLevel) {
+    public void colorize(SubGraph sg) {
         double genomeFraction = this.getGenomeFraction();
         double maxSaturation = 0.8, minSaturation = 0.05;
         double saturation = minSaturation + genomeFraction * (maxSaturation - minSaturation);
 
         Color fillColor = Color.hsb(227, saturation, 1.d);
         Color strokeColor = Color.hsb(227, maxSaturation, 1.d);
-        this.setStrokeWidth(DRAWABLE_SEGMENT_STROKE_WIDTH * zoomLevel);
+        this.setStrokeWidth(DRAWABLE_SEGMENT_STROKE_WIDTH * sg.getZoomLevel());
 
         this.setColors(fillColor, strokeColor);
+    }
+
+    @Override
+    public Collection<Integer> getGenomes() {
+        return genomes;
     }
 }

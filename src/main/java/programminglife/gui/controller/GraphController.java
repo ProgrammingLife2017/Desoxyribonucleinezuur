@@ -28,7 +28,6 @@ public class GraphController {
     private LinkedList<DrawableNode> oldGenomeList = new LinkedList<>();
     private ResizableCanvas canvas;
 
-    private double zoomLevel = 1;
 
     private int centerNodeInt;
     private boolean drawSNP = false;
@@ -69,20 +68,14 @@ public class GraphController {
      */
     public void draw(int center, int radius) {
         time("Total drawing", () -> {
-            DrawableSegment centerNode = new DrawableSegment(graph, center);
+            DrawableSegment centerNode = new DrawableSegment(graph, center, 1);
             centerNodeInt = centerNode.getIdentifier();
             GraphicsContext gc = canvas.getGraphicsContext2D();
 
-            time("Find subgraph", () -> subGraph = new SubGraph(centerNode, radius));
-
-            if (drawSNP) {
-                time("Replace SNPs", subGraph::replaceSNPs);
-            }
-            time("Layout subgraph", subGraph::layout);
+            time("Find subgraph", () -> subGraph = new SubGraph(centerNode, radius, drawSNP));
 
             time("Colorize", this::colorize);
 
-            time("Calculate genomes through edges", subGraph::calculateGenomes);
             time("Drawing", () -> {
                 draw(gc);
             });
@@ -96,9 +89,7 @@ public class GraphController {
      * Method to do the coloring of the to be drawn graph.
      */
     private void colorize() {
-        for (DrawableNode drawableNode : subGraph.getNodes().values()) {
-            drawableNode.colorize(subGraph, zoomLevel);
-        }
+        subGraph.colorize();
     }
 
     /**
@@ -208,7 +199,6 @@ public class GraphController {
             gc.fillRect(locX, locY, width, height);
 
             gc.restore();
-
         } else {
             gc.strokeRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height);
             gc.fillRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height);
@@ -272,11 +262,7 @@ public class GraphController {
      * @param yDifference double with the value of the change in the Y (vertical) direction.
      */
     public void translate(double xDifference, double yDifference) {
-        for (DrawableNode node : subGraph.getNodes().values()) {
-            double oldXLocation = node.getLocation().getX();
-            double oldYLocation = node.getLocation().getY();
-            node.setLocation(oldXLocation + xDifference, oldYLocation + yDifference);
-        }
+        subGraph.translate(xDifference, yDifference);
         draw(canvas.getGraphicsContext2D());
     }
 
@@ -286,15 +272,7 @@ public class GraphController {
      * decreases, value below 1 means that the node size increases.
      */
     public void zoom(double scale) {
-        for (DrawableNode node : subGraph.getNodes().values()) {
-            double oldXLocation = node.getLocation().getX();
-            double oldYLocation = node.getLocation().getY();
-            node.setHeight(node.getHeight() / scale);
-            node.setWidth(node.getWidth() / scale);
-            node.setStrokeWidth(node.getStrokeWidth() / scale);
-            node.setLocation(oldXLocation / scale, oldYLocation / scale);
-        }
-        zoomLevel /= scale;
+        subGraph.zoom(scale);
         draw(canvas.getGraphicsContext2D());
     }
 
@@ -304,6 +282,9 @@ public class GraphController {
      */
     public void draw(GraphicsContext gc) {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+
+        subGraph.checkDynamicLoad(0, canvas.getWidth());
+
         for (DrawableNode drawableNode : subGraph.getNodes().values()) {
             drawNode(gc, drawableNode);
             for (DrawableNode child : subGraph.getChildren(drawableNode)) {
@@ -341,7 +322,7 @@ public class GraphController {
      */
     private void removeHighlight(Collection<DrawableNode> nodes) {
         for (DrawableNode node: nodes) {
-            node.colorize(subGraph, zoomLevel);
+            node.colorize(subGraph);
         }
         this.draw(canvas.getGraphicsContext2D());
     }
@@ -383,6 +364,10 @@ public class GraphController {
     public DrawableNode onClick(double x, double y) {
         DrawableNode nodeClicked = null;
         //TODO implement this with a tree instead of iterating.
+        if (subGraph == null) {
+            return null;
+        }
+
         for (DrawableNode drawableNode : subGraph.getNodes().values()) {
             if (x >= drawableNode.getLocation().getX() && y >= drawableNode.getLocation().getY()
                     && x <= drawableNode.getLocation().getX() + drawableNode.getWidth()
@@ -394,10 +379,6 @@ public class GraphController {
         return nodeClicked;
     }
 
-    public void setZoomLevel(double zoomLevel) {
-        this.zoomLevel = zoomLevel;
-    }
-
     /**
      * Method to hightlight the node clicked on.
      * @param segment is the {@link DrawableSegment} clicked on.
@@ -406,19 +387,23 @@ public class GraphController {
     public void highlightClicked(DrawableSegment segment, boolean shiftPressed) {
         if (shiftPressed) {
             if (highlightSegmentShift != null) {
-                this.highlightSegmentShift.colorize(subGraph, zoomLevel);
+                this.highlightSegmentShift.colorize(subGraph);
             }
             this.highlightSegmentShift = segment;
             highlightNode(segment, Color.DARKTURQUOISE);
-            segment.setStrokeWidth(5.0 * this.zoomLevel); //Correct thickness when zoomed
+            segment.setStrokeWidth(5.0 * subGraph.getZoomLevel()); //Correct thickness when zoomed
         } else {
             if (highlightSegment != null) {
-                this.highlightSegment.colorize(subGraph, zoomLevel);
+                this.highlightSegment.colorize(subGraph);
             }
             this.highlightSegment = segment;
             highlightNode(segment, Color.PURPLE);
-            segment.setStrokeWidth(5.0 * this.zoomLevel); //Correct thickness when zoomed
+            segment.setStrokeWidth(5.0 * subGraph.getZoomLevel()); //Correct thickness when zoomed
         }
         draw(canvas.getGraphicsContext2D());
+    }
+
+    public void resetZoom() {
+        this.subGraph.setZoomLevel(1);
     }
 }

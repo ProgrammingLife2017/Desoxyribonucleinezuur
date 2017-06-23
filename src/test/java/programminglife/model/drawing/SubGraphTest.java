@@ -33,7 +33,7 @@ public class SubGraphTest {
         graphParser.parse();
         graph = graphParser.getGraph();
 
-        centerNode = new DrawableSegment(graph, 4);
+        centerNode = new DrawableSegment(graph, 4, 1);
     }
 
     @After
@@ -42,42 +42,16 @@ public class SubGraphTest {
     }
 
     @Test
-    public void testConstructorOnlyCenterNode() throws Exception {
-        SubGraph sg = new SubGraph(centerNode, 0);
+    public void testConstructor() throws Exception {
+        SubGraph sg = new SubGraph(centerNode, 0, false);
         Set<DrawableNode> nodes = new LinkedHashSet<>(sg.getNodes().values());
-        assertEquals(1, nodes.size());
+        assertEquals(8, nodes.size());
         assertTrue(nodes.contains(centerNode));
     }
-
-    @Test
-    public void testConstructorRadius1() throws Exception {
-        SubGraph sg = new SubGraph(centerNode, 1);
-        Set<DrawableNode> nodes = new LinkedHashSet<>(sg.getNodes().values());
-        assertEquals(4, nodes.size());
-        assertTrue(nodes.contains(centerNode));
-        assertTrue(nodes.containsAll(sg.getChildren(centerNode)));
-        assertTrue(nodes.containsAll(sg.getParents(centerNode)));
-    }
-
-    @Test
-    public void testConstructorRadius4() throws Exception {
-        SubGraph sg = new SubGraph(centerNode, 4);
-
-        Set<DrawableNode> expected = new HashSet<>();
-        for (Integer id : new int[] {1, 2, 3, 4, 5, 6, 7, 8}) {
-            expected.add(new DrawableSegment(graph, id));
-        }
-
-        Set<DrawableNode> actual = new LinkedHashSet<>(sg.getNodes().values());
-        assertEquals(8, actual.size());
-        assertEquals(expected, actual);
-    }
-
-
 
     @Test
     public void topoSortTest() throws Exception {
-        SubGraph sg = new SubGraph(centerNode, 5);
+        SubGraph sg = new SubGraph(centerNode, 5, false);
         List<DrawableNode> actual = sg.topoSort();
 
         Set<DrawableNode> graphNodes = new LinkedHashSet<>(sg.getNodes().values());

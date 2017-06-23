@@ -7,20 +7,23 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.*;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.input.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
-import javafx.scene.canvas.Canvas;
 import jp.uphy.javafx.console.ConsoleView;
 import programminglife.ProgrammingLife;
 import programminglife.controller.MiniMapController;
@@ -28,7 +31,9 @@ import programminglife.controller.RecentFileController;
 import programminglife.gui.ResizableCanvas;
 import programminglife.model.Feature;
 import programminglife.model.GenomeGraph;
-import programminglife.model.drawing.*;
+import programminglife.model.drawing.DrawableEdge;
+import programminglife.model.drawing.DrawableNode;
+import programminglife.model.drawing.DrawableSegment;
 import programminglife.parser.AnnotationParser;
 import programminglife.parser.GraphParser;
 import programminglife.utility.Alerts;
@@ -106,7 +111,7 @@ public class GuiController implements Observer {
     private final ExtensionFilter extFilterGFF = new ExtensionFilter("GFF files (*.gff)", "*.GFF");
     private final ExtensionFilter extFilterGFA = new ExtensionFilter("GFA files (*.gfa)", "*.GFA");
 
-    private static final double MAX_SCALE = 5.0d;
+    private static final double MAX_SCALE = 10.0d;
     private static final double MIN_SCALE = .02d;
     private static final double ZOOM_FACTOR = 1.05d;
 
@@ -240,6 +245,7 @@ public class GuiController implements Observer {
             miniMap.setHeight(50.d);
             Console.println("[%s] Graph was set to %s.", Thread.currentThread().getName(), graph.getID());
             Console.println("[%s] The graph has %d nodes", Thread.currentThread().getName(), graph.size());
+            Platform.runLater(this::draw);
         }
     }
 
@@ -352,7 +358,6 @@ public class GuiController implements Observer {
 
         btnTranslateReset.setOnAction(event -> this.draw());
 
-
         btnZoomReset.setOnAction(event -> this.draw());
     }
 
@@ -360,7 +365,7 @@ public class GuiController implements Observer {
      * Method to reset the zoom levels.
      */
     private void resetZoom() {
-            graphController.setZoomLevel(1);
+            graphController.resetZoom();
             scale = 1;
             canvas.setScaleX(1);
             canvas.setScaleY(1);
@@ -396,6 +401,7 @@ public class GuiController implements Observer {
         Console.println("[%s] Drawing graph...", Thread.currentThread().getName());
         int centerNode = 0;
         int maxDepth = 0;
+        scale = 1;
         try {
             centerNode = Integer.parseInt(txtCenterNode.getText());
             try {
@@ -406,13 +412,14 @@ public class GuiController implements Observer {
         } catch (NumberFormatException e) {
             Alerts.warning("Center node ID is not a number, try again with a number as input.");
         }
-
-        resetZoom();
-
+        if (centerNode > getGraphController().getGraph().size()) {
+            centerNode = 1;
+        }
         if (graphController.getGraph().contains(centerNode)) {
             this.graphController.clear();
             this.graphController.draw(centerNode, maxDepth);
             this.miniMapController.showPosition(centerNode);
+            resetZoom();
             Console.println("[%s] Graph drawn.", Thread.currentThread().getName());
         } else {
             Alerts.warning("The centernode is not a existing node, try again with a number that exists as a node.");
@@ -454,7 +461,6 @@ public class GuiController implements Observer {
                 mouseClick(event.getX(), event.getY(), true);
             } else {
                 mouseClick(event.getX(), event.getY(), false);
-
             }
         });
         anchorGraphPanel.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> {
@@ -483,7 +489,6 @@ public class GuiController implements Observer {
                 showInfoNode(segment, shiftPressed ? 240 : 10);
                 graphController.highlightClicked(segment, shiftPressed);
             }
-
         }
     }
 

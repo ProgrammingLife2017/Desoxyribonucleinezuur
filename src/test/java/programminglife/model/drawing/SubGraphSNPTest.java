@@ -54,7 +54,7 @@ public class SubGraphSNPTest {
         g.addEdge(2, 3);
         g.cacheLastEdges();
 
-        SubGraph sg = new SubGraph(new DrawableSegment(g, 0), 5);
+        SubGraph sg = new SubGraph(new DrawableSegment(g, 0, 1), 5, false);
         DrawableNode seg0 = sg.getNodes().get(0);
         DrawableNode seg1 = sg.getNodes().get(1);
         DrawableNode seg2 = sg.getNodes().get(2);
@@ -97,7 +97,7 @@ public class SubGraphSNPTest {
         g.addEdge(4, 5);
         g.cacheLastEdges();
 
-        SubGraph sg = new SubGraph(new DrawableSegment(g, 0), 5);
+        SubGraph sg = new SubGraph(new DrawableSegment(g, 0, 1), 5, false);
         DrawableNode seg0 = sg.getNodes().get(0);
         DrawableNode seg1 = sg.getNodes().get(1);
         DrawableNode seg2 = sg.getNodes().get(2);
@@ -148,7 +148,7 @@ public class SubGraphSNPTest {
         g.addEdge(5, 6);
         g.cacheLastEdges();
 
-        SubGraph sg = new SubGraph(new DrawableSegment(g, 0), 5);
+        SubGraph sg = new SubGraph(new DrawableSegment(g, 0, 1), 5, false);
         DrawableNode seg0 = sg.getNodes().get(0);
         DrawableNode seg1 = sg.getNodes().get(1);
         DrawableNode seg2 = sg.getNodes().get(2);
@@ -185,7 +185,7 @@ public class SubGraphSNPTest {
         g.addEdge(1, 2);
         g.cacheLastEdges();
 
-        SubGraph sg = new SubGraph(new DrawableSegment(g, 0), 5);
+        SubGraph sg = new SubGraph(new DrawableSegment(g, 0, 1), 5, false);
         DrawableNode seg0 = sg.getNodes().get(0);
         DrawableNode seg1 = sg.getNodes().get(1);
         DrawableNode seg2 = sg.getNodes().get(2);
@@ -218,7 +218,7 @@ public class SubGraphSNPTest {
         g.addEdge(2, 3);
         g.cacheLastEdges();
 
-        SubGraph sg = new SubGraph(new DrawableSegment(g, 0), 5);
+        SubGraph sg = new SubGraph(new DrawableSegment(g, 0, 1), 5, false);
         DrawableNode seg0 = sg.getNodes().get(0);
         DrawableNode seg1 = sg.getNodes().get(1);
         DrawableNode seg2 = sg.getNodes().get(2);
@@ -256,7 +256,7 @@ public class SubGraphSNPTest {
         g.addEdge(2, 4);
         g.cacheLastEdges();
 
-        SubGraph sg = new SubGraph(new DrawableSegment(g, 0), 5);
+        SubGraph sg = new SubGraph(new DrawableSegment(g, 0, 1), 5, false);
         DrawableNode seg0 = sg.getNodes().get(0);
         DrawableNode seg1 = sg.getNodes().get(1);
         DrawableNode seg2 = sg.getNodes().get(2);
@@ -296,7 +296,7 @@ public class SubGraphSNPTest {
         g.addEdge(2, 4);
         g.cacheLastEdges();
 
-        SubGraph sg = new SubGraph(new DrawableSegment(g, 0), 5);
+        SubGraph sg = new SubGraph(new DrawableSegment(g, 0, 1), 5, false);
         DrawableNode seg0 = sg.getNodes().get(0);
         DrawableNode seg1 = sg.getNodes().get(1);
         DrawableNode seg2 = sg.getNodes().get(2);

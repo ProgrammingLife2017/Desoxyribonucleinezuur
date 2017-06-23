@@ -10,24 +10,29 @@ import java.util.*;
  * @see SubGraph#layout()
  * @see SubGraph#findLayers()
  */
-public class Layer implements Iterable<DrawableNode> {
-    private double width;
+public class Layer implements Iterable<DrawableNode>, Comparable<Double> {
+    private static final double DUMMY_Y_OFFSET = 5;
+    private double x;
     private List<DrawableNode> nodes;
+
+    private static final int LINE_PADDING = 30;
 
     /**
      * Default empty constructor.
      */
     public Layer() {
-        this.width = 0;
+        this.x = 0;
         this.nodes = new ArrayList<>();
     }
 
     public double getWidth() {
+        double width = 0;
+        for (DrawableNode node : nodes) {
+            if (node.getWidth() > width) {
+                width = node.getWidth();
+            }
+        }
         return width;
-    }
-
-    public void setWidth(double width) {
-        this.width = width;
     }
 
     /**
@@ -35,9 +40,6 @@ public class Layer implements Iterable<DrawableNode> {
      * @param node the node to add.
      */
     public void add(DrawableNode node) {
-        if (node.getWidth() > width) {
-            this.width = node.getWidth();
-        }
         this.nodes.add(node);
     }
 
@@ -130,6 +132,24 @@ public class Layer implements Iterable<DrawableNode> {
         return nodes.indexOf(node);
     }
 
+    public void setDrawLocations(double y, double zoomLevel) {
+
+        for (DrawableNode node : nodes) {
+            if (node instanceof DrawableDummy) {
+                node.setLocation(x, y + (DUMMY_Y_OFFSET * zoomLevel));
+            } else {
+                node.setLocation(x, y);
+            }
+            y += LINE_PADDING * zoomLevel;
+        }
+    }
+
+    public void setSize(double scale) {
+        for (DrawableNode node : nodes) {
+            node.setWidth(node.getWidth() * scale);
+        }
+    }
+
     /**
      * Creates of toString of the layer.
      * @return String of the layer.
@@ -140,5 +160,26 @@ public class Layer implements Iterable<DrawableNode> {
             stringBuilder.append(n.toString()).append(", ");
         }
         return stringBuilder.delete(stringBuilder.length() - 2, stringBuilder.length()).append("]").toString();
+    }
+
+    public List<DrawableNode> getNodes() {
+        return this.nodes;
+    }
+
+    public double getX() {
+        return x;
+    }
+
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    @Override
+    public int compareTo(@NotNull Double o) {
+        return Double.compare(this.x, o);
+    }
+
+    public double getY() {
+        return this.nodes.get(0).getLocation().getY();
     }
 }

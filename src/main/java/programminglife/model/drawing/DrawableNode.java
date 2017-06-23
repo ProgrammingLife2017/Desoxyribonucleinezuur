@@ -4,21 +4,18 @@ import javafx.scene.paint.Color;
 import programminglife.model.GenomeGraph;
 import programminglife.model.XYCoordinate;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * A segment that also implements {@link Drawable}.
  */
 public abstract class DrawableNode implements Drawable {
     static final double NODE_HEIGHT = 10;
+    private static int uniqueId = 0;
 
     private final GenomeGraph graph;
     private final int id;
-    private final Collection<Integer> genomes;
+    private Layer layer;
 
     private final XYCoordinate location;
     private final XYCoordinate dimensions;
@@ -41,15 +38,7 @@ public abstract class DrawableNode implements Drawable {
 
         this.dimensions = new XYCoordinate(0, 0);
         this.location = new XYCoordinate(0, 0);
-
-        int[] genomes = graph.getGenomes(id);
-        if (genomes != null) {
-            this.genomes = Arrays.stream(genomes).boxed().collect(Collectors.toSet());
-        } else {
-            this.genomes = Collections.emptySet();
-        }
     }
-
 
     @Override
     public final boolean equals(Object o) {
@@ -87,24 +76,9 @@ public abstract class DrawableNode implements Drawable {
     }
 
     /**
-     * Set if the dimensions are up to date.
-     */
-    final void setDrawDimensionsUpToDate() {
-        this.drawDimensionsUpToDate = true;
-    }
-
-    /**
      * Set the size of this drawing.
      */
-    protected abstract void setDrawDimensions();
-
-    /**
-     * Get if the dimensions are up to date.
-     * @return boolean true if up to date else false
-     */
-    private boolean isDrawDimensionsUpToDate() {
-        return this.drawDimensionsUpToDate;
-    }
+    protected abstract void setDrawDimensions(double zoomLevel);
 
     /**
      * Get the IDs of children of this.
@@ -148,9 +122,8 @@ public abstract class DrawableNode implements Drawable {
     /**
      * Color this according to contents.
      * @param subGraph {@link SubGraph} to colorize.
-     * @param zoomLevel is double with a value which describes what the current zoom is.
      */
-    public abstract void colorize(SubGraph subGraph, double zoomLevel);
+    public abstract void colorize(SubGraph subGraph);
 
     /**
      * Set the size {@link XYCoordinate} of the Segment.
@@ -160,7 +133,6 @@ public abstract class DrawableNode implements Drawable {
     final void setSize(double width, double height) {
         this.setWidth(width);
         this.setHeight(height);
-        this.setDrawDimensionsUpToDate();
     }
 
     /**
@@ -185,9 +157,6 @@ public abstract class DrawableNode implements Drawable {
      * @return The height of the node.
      */
     public final double getHeight() {
-        if (!isDrawDimensionsUpToDate()) {
-            setDrawDimensions();
-        }
         return dimensions.getY();
     }
 
@@ -196,9 +165,6 @@ public abstract class DrawableNode implements Drawable {
      * @return XYCoordinate.
      */
     public final XYCoordinate getLeftBorderCenter() {
-        if (!isDrawDimensionsUpToDate()) {
-            setDrawDimensions();
-        }
         return new XYCoordinate(location.getX(), location.getY() + 0.5 * getHeight());
     }
 
@@ -207,9 +173,6 @@ public abstract class DrawableNode implements Drawable {
      * @return XYCoordinate.
      */
     public final XYCoordinate getCenter() {
-        if (!isDrawDimensionsUpToDate()) {
-            setDrawDimensions();
-        }
         return new XYCoordinate(location.getX() + 0.5 * getWidth(), location.getY() + 0.5 * getHeight());
     }
 
@@ -218,9 +181,6 @@ public abstract class DrawableNode implements Drawable {
      * @return XYCoordinate.
      */
     final XYCoordinate getRightBorderCenter() {
-        if (!isDrawDimensionsUpToDate()) {
-            setDrawDimensions();
-        }
         return new XYCoordinate(location.getX() + getWidth(), location.getY() + 0.5 * getHeight());
     }
 
@@ -228,9 +188,7 @@ public abstract class DrawableNode implements Drawable {
         return location;
     }
 
-    public Collection<Integer> getGenomes() {
-        return this.genomes;
-    }
+    public abstract Collection<Integer> getGenomes();
 
     public final void setWidth(double width) {
         this.dimensions.setX(width);
@@ -238,14 +196,6 @@ public abstract class DrawableNode implements Drawable {
 
     public final void setHeight(double height) {
         this.dimensions.setY(height);
-    }
-
-    /**
-     * Method to add genomes to a Drawable node.
-     * @param genomes is a Set of Integers representing the genomeIDs.
-     */
-    final void addGenomes(Set<Integer> genomes) {
-        this.genomes.addAll(genomes);
     }
 
     /**
@@ -290,4 +240,25 @@ public abstract class DrawableNode implements Drawable {
         return this.strokeWidth;
     }
 
+    public Layer getLayer() {
+        return layer;
+    }
+
+    public void setLayer(Layer layer) {
+        this.layer = layer;
+    }
+
+    /**
+     * Get a unique ID for a DrawableNode. These IDs are always negative. These IDs are globally unique,
+     * which means that every call to this method will return a different number (until you reach underflow,
+     * which is assumed to not happen)
+     * @return A negative unique ID.
+     */
+    public static synchronized int getUniqueId() {
+        uniqueId--;
+        return uniqueId;
+    }
+
+    public abstract Collection<Integer> getParentGenomes();
+    public abstract Collection<Integer> getChildGenomes();
 }

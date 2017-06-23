@@ -30,7 +30,7 @@ public class DrawableNodeTest {
         g.setSequence(1, "ATCG");
         g.replaceNode(1);
         g.setGenomes(1, new int[0]);
-        node = new DrawableSegment(g, 1);
+        node = new DrawableSegment(g, 1, 1);
     }
 
     @After
@@ -66,5 +66,16 @@ public class DrawableNodeTest {
         assertEquals(2, node.getLeftBorderCenter().getX(), 0.0);
         assertEquals(3, node.getLeftBorderCenter().getY(), 0.0);
     }
+
+    @Test
+    public void centerTest() {
+        node.setLocation(2, 2);
+        node.setSize(4 , 2);
+        assertEquals(new XYCoordinate(4,3), node.getCenter());
+    }
+
+
+
+
 
 }
