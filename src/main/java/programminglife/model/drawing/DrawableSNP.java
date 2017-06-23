@@ -25,7 +25,7 @@ public class DrawableSNP extends DrawableNode {
      * @param mutations the Segments in this bubble
      */
     DrawableSNP(DrawableNode parent, DrawableNode child, Collection<DrawableSegment> mutations, double zoomLevel) {
-        super(mutations.iterator().next().getGraph(), -mutations.hashCode());
+        super(mutations.iterator().next().getGraph(), DrawableNode.getUniqueId());
 
         this.parent = parent;
         this.child = child;
