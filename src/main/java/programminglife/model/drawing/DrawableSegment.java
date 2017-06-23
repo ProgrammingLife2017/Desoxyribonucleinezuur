@@ -103,7 +103,6 @@ public class DrawableSegment extends DrawableNode {
         height = NODE_HEIGHT;
 
         this.setSize(width, height);
-        this.setDrawDimensionsUpToDate();
     }
 
     @Override

@@ -131,10 +131,11 @@ public class Layer implements Iterable<DrawableNode>, Comparable<Double> {
         return nodes.indexOf(node);
     }
 
-    public void setDrawLocations(double y) {
+    public void setDrawLocations(double y, double zoomLevel) {
+
         for (DrawableNode node : nodes) {
             node.setLocation(x, y);
-            y += LINE_PADDING;
+            y += LINE_PADDING * zoomLevel;
         }
     }
 

@@ -5,7 +5,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import programminglife.utility.InitFXThread;
 
+import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests for the {@link XYCoordinate} model.
@@ -76,5 +78,31 @@ public class XYCoordinateTest {
     @Test
     public void toStringTest() {
         assertEquals("(8.0, 54.0)", coordinate1.toString());
+    }
+
+    @Test
+    public void equalsTestTrue() {
+        XYCoordinate xy1 = new XYCoordinate(1,3);
+        XYCoordinate xy2 = new XYCoordinate(1,3);
+        assertTrue(xy1.equals(xy2));
+    }
+
+    @Test
+    public void equalsTestNotEqualOnY() {
+        XYCoordinate xy1 = new XYCoordinate(1,3);
+        XYCoordinate xy2 = new XYCoordinate(1,2);
+        assertFalse(xy1.equals(xy2));
+    }
+
+    @Test
+    public void equalsTestNotEqualOnX() {
+        XYCoordinate xy1 = new XYCoordinate(4,3);
+        XYCoordinate xy2 = new XYCoordinate(1,3);
+        assertFalse(xy1.equals(xy2));
+    }
+
+    @Test
+    public void equalsTestNotEqualsFiets() {
+        assertFalse(coordinate1.equals("Fiets"));
     }
 }
