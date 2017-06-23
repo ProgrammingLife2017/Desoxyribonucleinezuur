@@ -82,7 +82,7 @@ public class DrawableDummy extends DrawableNode {
     }
 
     @Override
-    public void colorize(SubGraph sg) {
+    public void colorize(SubGraph sg, double zoomLevel) {
         double genomeFraction = 0.d;
         Map<DrawableNode, Collection<Integer>> from = sg.getGenomes().get(this.getParentSegment());
         if (from != null) {
@@ -100,7 +100,7 @@ public class DrawableDummy extends DrawableNode {
 
         Color strokeColor = Color.hsb(0.d, 0.d, brightness);
 
-        this.setStrokeWidth(strokeWidth);
+        this.setStrokeWidth(strokeWidth * zoomLevel);
         this.setStrokeColor(strokeColor);
 
     }
