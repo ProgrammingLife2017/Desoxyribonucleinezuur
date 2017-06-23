@@ -8,6 +8,7 @@ import javafx.scene.paint.Color;
 import programminglife.gui.AutoCompleteTextField;
 import programminglife.model.Annotation;
 import programminglife.model.Feature;
+import programminglife.model.drawing.DrawableSegment;
 import programminglife.utility.NumbersOnlyListener;
 
 import java.util.LinkedHashSet;
@@ -20,6 +21,8 @@ import java.util.stream.Collectors;
 public class HighlightController {
 
     private static final Color HIGHLIGHT_MIN_MAX_COLOR = Color.HOTPINK;
+    private static DrawableSegment highlightClick;
+    private static DrawableSegment highlightShiftClick;
     private GraphController graphController;
     private GuiController guiController;
 
@@ -30,6 +33,7 @@ public class HighlightController {
     @FXML private TextField txtMax;
     @FXML private CheckBox checkMin;
     @FXML private CheckBox checkMax;
+
 
 
 
