@@ -106,7 +106,7 @@ public class DrawableSegment extends DrawableNode {
         width = 10 + Math.pow(segmentLength, 1.0 / 2);
         height = NODE_HEIGHT;
 
-        this.setSize(width * zoomLevel, height);
+        this.setSize(width, height * zoomLevel);
     }
 
     @Override
@@ -209,14 +209,14 @@ public class DrawableSegment extends DrawableNode {
      * Color a {@link DrawableSegment} depending on its properties.
      */
     @Override
-    public void colorize(SubGraph sg, double zoomLevel) {
+    public void colorize(SubGraph sg) {
         double genomeFraction = this.getGenomeFraction();
         double maxSaturation = 0.8, minSaturation = 0.05;
         double saturation = minSaturation + genomeFraction * (maxSaturation - minSaturation);
 
         Color fillColor = Color.hsb(227, saturation, 1.d);
         Color strokeColor = Color.hsb(227, maxSaturation, 1.d);
-        this.setStrokeWidth(DRAWABLE_SEGMENT_STROKE_WIDTH * zoomLevel);
+        this.setStrokeWidth(DRAWABLE_SEGMENT_STROKE_WIDTH * sg.getZoomLevel());
 
         this.setColors(fillColor, strokeColor);
     }

@@ -315,6 +315,10 @@ public class SubGraph {
                 forEach(node -> rootNodes.put(node.getIdentifier(), node));
     }
 
+    public void setZoomLevel(double zoomLevel) {
+        this.zoomLevel = zoomLevel;
+    }
+
     /**
      * A class for keeping track of how a Node was found. Only used within {@link SubGraph#findNodes}.
      */
@@ -913,6 +917,7 @@ public class SubGraph {
     }
 
     public void zoom(double scale) {
+        zoomLevel /= scale;
         for (Layer layer : this.layers) {
             layer.setX(layer.getX() / scale);
             for (DrawableNode node : layer) {
@@ -924,12 +929,11 @@ public class SubGraph {
                 node.setLocation(oldXLocation / scale, oldYLocation / scale);
             }
         }
-        zoomLevel /= scale;
     }
 
     public void colorize() {
         for (DrawableNode drawableNode : this.nodes.values()) {
-            drawableNode.colorize(this, zoomLevel);
+            drawableNode.colorize(this);
         }
     }
 

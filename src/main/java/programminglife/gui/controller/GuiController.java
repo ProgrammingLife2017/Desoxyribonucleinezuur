@@ -366,7 +366,7 @@ public class GuiController implements Observer {
      * Method to reset the zoom levels.
      */
     private void resetZoom() {
-            graphController.setZoomLevel(1);
+            graphController.resetZoom();
             scale = 1;
             canvas.setScaleX(1);
             canvas.setScaleY(1);
@@ -414,12 +414,11 @@ public class GuiController implements Observer {
             Alerts.warning("Center node ID is not a number, try again with a number as input.");
         }
 
-        resetZoom();
-
         if (graphController.getGraph().contains(centerNode)) {
             this.graphController.clear();
             this.graphController.draw(centerNode, maxDepth);
             this.miniMapController.showPosition(centerNode);
+            resetZoom();
             Console.println("[%s] Graph drawn.", Thread.currentThread().getName());
         } else {
             Alerts.warning("The centernode is not a existing node, try again with a number that exists as a node.");
