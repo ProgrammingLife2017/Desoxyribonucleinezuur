@@ -350,6 +350,10 @@ public class GraphController {
     public DrawableNode onClick(double x, double y) {
         DrawableNode nodeClicked = null;
         //TODO implement this with a tree instead of iterating.
+        if (subGraph == null) {
+            return null;
+        }
+
         for (DrawableNode drawableNode : subGraph.getNodes().values()) {
             if (x >= drawableNode.getLocation().getX() && y >= drawableNode.getLocation().getY()
                     && x <= drawableNode.getLocation().getX() + drawableNode.getWidth()
