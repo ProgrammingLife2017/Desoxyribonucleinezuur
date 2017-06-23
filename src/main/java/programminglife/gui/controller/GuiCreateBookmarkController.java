@@ -16,18 +16,12 @@ public class GuiCreateBookmarkController {
 
     private GuiController guiController;
 
-    @FXML
-    private Button btnOk;
-    @FXML
-    private Button btnCancel;
-    @FXML
-    private TextField txtBookmarkName;
-    @FXML
-    private TextField txtId;
-    @FXML
-    private TextField txtRadius;
-    @FXML
-    private TextArea txtDescription;
+    @FXML private Button btnOk;
+    @FXML private Button btnCancel;
+    @FXML private TextField txtBookmarkName;
+    @FXML private TextField txtId;
+    @FXML private TextField txtRadius;
+    @FXML private TextArea txtDescription;
     private int inputRadius;
     private int inputCenter;
     private String bookmarkName;

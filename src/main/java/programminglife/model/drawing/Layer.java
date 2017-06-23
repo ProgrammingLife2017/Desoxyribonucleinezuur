@@ -25,6 +25,11 @@ public class Layer implements Iterable<DrawableNode>, Comparable<Double> {
         this.nodes = new ArrayList<>();
     }
 
+    /**
+     * Getter for the width of a layer.
+     *
+     * @return double of the width.
+     */
     public double getWidth() {
         double width = 0;
         for (DrawableNode node : nodes) {
@@ -138,6 +143,12 @@ public class Layer implements Iterable<DrawableNode>, Comparable<Double> {
         return nodes.indexOf(node);
     }
 
+    /**
+     * Setter of the location to draw at.
+     *
+     * @param y double of the y location.
+     * @param zoomLevel double of the zoomLevel.
+     */
     public void setDrawLocations(double y, double zoomLevel) {
 
         for (DrawableNode node : nodes) {
@@ -150,6 +161,11 @@ public class Layer implements Iterable<DrawableNode>, Comparable<Double> {
         }
     }
 
+    /**
+     * setter for the size of a layer.
+     *
+     * @param scale double of the scale to be set.
+     */
     public void setSize(double scale) {
         for (DrawableNode node : nodes) {
             node.setWidth(node.getWidth() * scale);

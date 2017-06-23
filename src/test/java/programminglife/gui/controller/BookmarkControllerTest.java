@@ -33,6 +33,7 @@ public class BookmarkControllerTest {
         testPath = new File(BookmarkControllerTest.class.getResource("/bookmarkTest.xml").toURI()).getAbsolutePath();
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     @After
     public void cleanup() {
         BookmarkController.deleteBookmark(testPath, "deleteTestGraph", "deleteTest");

@@ -101,6 +101,7 @@ public class XYCoordinateTest {
         assertFalse(xy1.equals(xy2));
     }
 
+    @SuppressWarnings("EqualsBetweenInconvertibleTypes")
     @Test
     public void equalsTestNotEqualsFiets() {
         assertFalse(coordinate1.equals("Fiets"));

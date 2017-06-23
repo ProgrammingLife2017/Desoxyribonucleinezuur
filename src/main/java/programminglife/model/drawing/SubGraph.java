@@ -48,6 +48,8 @@ public class SubGraph {
      * Create a SubGraph from a graph, without any nodes initially.
      *
      * @param graph The {@link GenomeGraph} that this SubGraph is based on.
+     * @param zoomLevel double of the zoomLevel.
+     * @param replaceSNPs boolean for if the SNPs need to be drawn.
      */
     private SubGraph(GenomeGraph graph, double zoomLevel, boolean replaceSNPs) {
         this(graph, zoomLevel, replaceSNPs, new LinkedHashMap<>(), new LinkedHashMap<>(), new LinkedHashMap<>());
@@ -57,12 +59,15 @@ public class SubGraph {
      * Create a SubGraph with the specified nodes, rootNodes and endNodes.
      *
      * @param graph     The {@link GenomeGraph} that this SubGraph is based on.
+     * @param zoomLevel double of the zoomLevel.
+     * @param replaceSNPs boolean for if the SNPs need to be drawn.
      * @param nodes     The nodes of this SubGraph.
      * @param rootNodes The rootNodes of this SubGraph.
      * @param endNodes  The endNodes of this SubGraph.
      */
-    private SubGraph(GenomeGraph graph, double zoomLevel, boolean replaceSNPs, LinkedHashMap<Integer, DrawableNode> nodes,
-                     LinkedHashMap<Integer, DrawableNode> rootNodes, LinkedHashMap<Integer, DrawableNode> endNodes) {
+    private SubGraph(GenomeGraph graph, double zoomLevel, boolean replaceSNPs,
+                     LinkedHashMap<Integer, DrawableNode> nodes, LinkedHashMap<Integer, DrawableNode> rootNodes,
+                     LinkedHashMap<Integer, DrawableNode> endNodes) {
         this.graph = graph;
         this.zoomLevel = zoomLevel;
         this.nodes = nodes;
@@ -103,6 +108,7 @@ public class SubGraph {
      * and then another 2radius steps to a child, and symmetrically the same with children / parents reversed.
      *
      * @param centerNode  The centerNode
+     * @param zoomLevel   double of the amount zoomed in/out
      * @param minRadius   The minimum radius.
      * @param radius      The radius
      * @param replaceSNPs flag if SNPs should be collapsed
@@ -160,19 +166,11 @@ public class SubGraph {
      */
     private static void findNodes(SubGraph subGraph, Collection<DrawableNode> startNodes,
                                   LinkedHashMap<Integer, DrawableNode> excludedNodes, int radius) {
-        long startTime = System.nanoTime();
-
         subGraph.nodes = new LinkedHashMap<>();
         subGraph.rootNodes = new LinkedHashMap<>();
         subGraph.endNodes = new LinkedHashMap<>();
         LinkedHashMap<Integer, DrawableNode> foundNodes = new LinkedHashMap<>();
 
-        /*
-         * The queue for the BFS. This Queue uses null as separators between radii.
-         * Example: A B null C D: first A, then B, then null, so we go to the next layer, then C, then D
-         * layer 1:  A B
-         * layer 2:  C D
-         */
         Queue<FoundNode> queue = new LinkedList<>();
         startNodes.forEach(node -> queue.add(new FoundNode(node, null)));
         queue.add(null);
@@ -183,13 +181,11 @@ public class SubGraph {
 
             if (current == null) {
                 radius--;
-
                 if (radius == 0) {
                     lastRow = true;
                 } else if (radius < 0) {
                     break;
                 }
-
                 queue.add(null);
                 continue;
             }
@@ -197,18 +193,14 @@ public class SubGraph {
             DrawableNode previous;
             if (excludedNodes.containsKey(current.node.getIdentifier())) {
                 if (startNodes.contains(current.node) && !foundNodes.containsKey(current.node.getIdentifier())) {
-                    // this is an excluded start node. Add all children and parents, but not this node
                     previous = null; // to signify it did not exist in subGraph.nodes yet.
                 } else {
-                    // This is an excluded node, just continue with next
-                    continue;
+                    continue; // This is an excluded node, just continue with next
                 }
             } else {
-                // normal (non-excluded) node
-                // save this node, save the result to check whether we had found it earlier.
+                // normal (non-excluded) node, save this node, save the result to check whether we had found it earlier.
                 previous = subGraph.nodes.put(current.node.getIdentifier(), current.node);
             }
-
 
             if (lastRow) {
                 // last row, add this node to rootNodes / endNodes even if we already found this node
@@ -227,7 +219,6 @@ public class SubGraph {
                 // we already found this node, continue to next node.
                 assert (previous.equals(current.node));
             } else {
-                // this is not the last row, and this node was not added yet
                 Collection<Integer> children = current.node.getChildren();
                 Collection<Integer> parents = current.node.getParents();
 
@@ -247,11 +238,6 @@ public class SubGraph {
                 });
             }
         }
-
-        long endTime = System.nanoTime();
-        long difference = endTime - startTime;
-        double difInSeconds = difference / 1000000000.0;
-        Console.println("Time for finding nodes: %f s", difInSeconds);
     }
 
     /**
@@ -811,6 +797,11 @@ public class SubGraph {
         this.mergeRightSubGraphIntoThisSubGraph(subGraph);
     }
 
+    /**
+     * Method to merge subGraphs with each other.
+     *
+     * @param rightSubGraph SubGraph to be merged into from the right.
+     */
     private void mergeRightSubGraphIntoThisSubGraph(SubGraph rightSubGraph) {
         this.nodes.putAll(rightSubGraph.nodes);
         this.endNodes = rightSubGraph.endNodes;
@@ -898,10 +889,16 @@ public class SubGraph {
         return this.nodes;
     }
 
-    private GenomeGraph getGraph() {
+    public GenomeGraph getGraph() {
         return graph;
     }
 
+    /**
+     * Method to translate the graph.
+     *
+     * @param xDifference difference in X direction.
+     * @param yDifference difference in Y direction.
+     */
     public void translate(double xDifference, double yDifference) {
         for (Layer layer : this.layers) {
             layer.setX(layer.getX() + xDifference);
@@ -913,6 +910,11 @@ public class SubGraph {
         }
     }
 
+    /**
+     * Method to set the zoom amount.
+     *
+     * @param scale double of the amount to zoom.
+     */
     public void zoom(double scale) {
         zoomLevel /= scale;
         for (Layer layer : this.layers) {
@@ -928,6 +930,9 @@ public class SubGraph {
         }
     }
 
+    /**
+     * Method to give color to the nodes.
+     */
     public void colorize() {
         for (DrawableNode drawableNode : this.nodes.values()) {
             drawableNode.colorize(this);

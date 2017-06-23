@@ -418,6 +418,9 @@ class GraphController {
         draw(canvas.getGraphicsContext2D());
     }
 
+    /**
+     * Method to reset the zoomLevel.
+     */
     public void resetZoom() {
         this.subGraph.setZoomLevel(1);
     }

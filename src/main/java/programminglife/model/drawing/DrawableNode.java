@@ -73,14 +73,13 @@ public abstract class DrawableNode implements Drawable {
     }
 
     /**
-<<<<<<< HEAD
-=======
      * Set the size of this drawing.
+     *
+     * @param zoomLevel double of the zoomlevel.
      */
     protected abstract void setDrawDimensions(double zoomLevel);
 
     /**
->>>>>>> origin/develop
      * Get the IDs of children of this.
      *
      * @return IDs of drawable children
@@ -127,13 +126,8 @@ public abstract class DrawableNode implements Drawable {
 
     /**
      * Color this according to contents.
-<<<<<<< HEAD
      *
-     * @param subGraph  {@link SubGraph} to colorize.
-     * @param zoomLevel is double with a value which describes what the current zoom is.
-=======
      * @param subGraph {@link SubGraph} to colorize.
->>>>>>> origin/develop
      */
     public abstract void colorize(SubGraph subGraph);
 
@@ -207,12 +201,27 @@ public abstract class DrawableNode implements Drawable {
         return location;
     }
 
+    /**
+     * Getter for the collection of genomes.
+     *
+     * @return Collection<Integer> containing the genomes.
+     */
     public abstract Collection<Integer> getGenomes();
 
+    /**
+     * Setter for the width of a drawable node.
+     *
+     * @param width double of the width to be set.
+     */
     public final void setWidth(double width) {
         this.dimensions.setX(width);
     }
 
+    /**
+     * Setter for the height.
+     *
+     * @param height double of the height to be set.
+     */
     public final void setHeight(double height) {
         this.dimensions.setY(height);
     }
@@ -282,7 +291,17 @@ public abstract class DrawableNode implements Drawable {
         return uniqueId;
     }
 
+    /**
+     * getter for the genomes of the parents.
+     *
+     * @return Collection<Integer> of the genomes of the parents.
+     */
     public abstract Collection<Integer> getParentGenomes();
 
+    /**
+     * getter for the genomes of the children.
+     *
+     * @return Collection<Integer> of the genomes of the children.
+     */
     protected abstract Collection<Integer> getChildGenomes();
 }

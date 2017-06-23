@@ -28,16 +28,11 @@ import java.util.*;
 public class GuiLoadBookmarkController implements Observer {
     private GuiController guiController;
 
-    @FXML
-    private Button btnOpenBookmark;
-    @FXML
-    private Button btnDeleteBookmark;
-    @FXML
-    private Button btnCreateBookmark;
-    @FXML
-    private Button btnShowInfo;
-    @FXML
-    private Accordion accordionBookmark;
+    @FXML private Button btnOpenBookmark;
+    @FXML private Button btnDeleteBookmark;
+    @FXML private Button btnCreateBookmark;
+    @FXML private Button btnShowInfo;
+    @FXML private Accordion accordionBookmark;
     private List<TableView<Bookmark>> tableViews;
 
     /**

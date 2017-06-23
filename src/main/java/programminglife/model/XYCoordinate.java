@@ -97,6 +97,12 @@ public class XYCoordinate {
         return "(" + this.getX() + ", " + this.getY() + ")";
     }
 
+    /**
+     * Sets the X and Y coordinate.
+     *
+     * @param x double X coordinate.
+     * @param y double Y coordinate.
+     */
     public void set(double x, double y) {
         this.setX(x);
         this.setY(y);
@@ -104,6 +110,7 @@ public class XYCoordinate {
 
     /**
      * Equals method for XYCoordinate.
+     *
      * @param other the object to compare with.
      * @return boolean true if equals, false if not equal.
      */
@@ -114,5 +121,10 @@ public class XYCoordinate {
             return this.getX() == that.getX() && this.getY() == that.getY();
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 }

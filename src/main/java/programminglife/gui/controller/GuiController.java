@@ -60,64 +60,37 @@ public class GuiController implements Observer {
     private static final String INITIAL_MAX_DRAW_DEPTH = "10";
 
     //FXML imports.
-    @FXML
-    private MenuItem btnOpenGFA;
-    @FXML
-    private MenuItem btnOpenGFF;
-    @FXML
-    private MenuItem btnQuit;
-    @FXML
-    private MenuItem btnBookmarks;
-    @FXML
-    private MenuItem btnAbout;
-    @FXML
-    private MenuItem btnInstructions;
-    @FXML
-    private Menu menuRecentGFA;
-    @FXML
-    private Menu menuRecentGFF;
+    @FXML private MenuItem btnOpenGFA;
+    @FXML private MenuItem btnOpenGFF;
+    @FXML private MenuItem btnQuit;
+    @FXML private MenuItem btnBookmarks;
+    @FXML private MenuItem btnAbout;
+    @FXML private MenuItem btnInstructions;
+    @FXML private Menu menuRecentGFA;
+    @FXML private Menu menuRecentGFF;
 
-    @FXML
-    private RadioMenuItem btnSNP;
-    @FXML
-    private RadioMenuItem btnConsole;
-    @FXML
-    private RadioMenuItem btnMiniMap;
+    @FXML private RadioMenuItem btnSNP;
+    @FXML private RadioMenuItem btnConsole;
+    @FXML private RadioMenuItem btnMiniMap;
 
-    @FXML
-    private Button btnZoomReset;
-    @FXML
-    private Button btnTranslateReset;
-    @FXML
-    private Button btnDraw;
-    @FXML
-    private Button btnDrawRandom;
-    @FXML
-    private Button btnBookmark;
-    @FXML
-    private Button btnClipboard;
-    @FXML
-    private Button btnClipboard2;
-    @FXML
-    private ProgressBar progressBar;
-    @FXML
-    private Tab searchTab;
+    @FXML private Button btnZoomReset;
+    @FXML private Button btnTranslateReset;
+    @FXML private Button btnDraw;
+    @FXML private Button btnDrawRandom;
+    @FXML private Button btnBookmark;
+    @FXML private Button btnClipboard;
+    @FXML private Button btnClipboard2;
+    @FXML private ProgressBar progressBar;
+    @FXML private Tab searchTab;
 
-    @FXML
-    private TextField txtMaxDrawDepth;
-    @FXML
-    private TextField txtCenterNode;
+    @FXML private TextField txtMaxDrawDepth;
+    @FXML private TextField txtCenterNode;
 
-    @FXML
-    private ResizableCanvas canvas;
-    @FXML
-    private AnchorPane anchorLeftControlPanel;
-    @FXML
-    private AnchorPane anchorGraphPanel;
-    @FXML
-    private AnchorPane anchorGraphInfo;
-    @FXML
-    private Canvas miniMap;
+    @FXML private ResizableCanvas canvas;
+    @FXML private AnchorPane anchorLeftControlPanel;
+    @FXML private AnchorPane anchorGraphPanel;
+    @FXML private AnchorPane anchorGraphInfo;
+    @FXML private Canvas miniMap;
 
     private double orgSceneX, orgSceneY;
 

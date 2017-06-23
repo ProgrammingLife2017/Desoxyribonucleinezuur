@@ -23,20 +23,13 @@ public class HighlightController {
     private GraphController graphController;
     private GuiController guiController;
 
-    @FXML
-    private Button btnHighlight;
-    @FXML
-    private AutoCompleteTextField txtGenome;
-    @FXML
-    private AutoCompleteTextField txtAnnotations;
-    @FXML
-    private TextField txtMin;
-    @FXML
-    private TextField txtMax;
-    @FXML
-    private CheckBox checkMin;
-    @FXML
-    private CheckBox checkMax;
+    @FXML private Button btnHighlight;
+    @FXML private AutoCompleteTextField txtGenome;
+    @FXML private AutoCompleteTextField txtAnnotations;
+    @FXML private TextField txtMin;
+    @FXML private TextField txtMax;
+    @FXML private CheckBox checkMin;
+    @FXML private CheckBox checkMax;
 
 
     /**

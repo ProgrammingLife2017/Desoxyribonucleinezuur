@@ -27,6 +27,7 @@ public class DrawableSegment extends DrawableNode {
      *
      * @param graph  the graph this Segment is in
      * @param nodeID The segment to create this DrawableSegment from.
+     * @param zoomLevel double of the zoomLevel.
      */
     public DrawableSegment(GenomeGraph graph, int nodeID, double zoomLevel) {
         super(graph, nodeID);

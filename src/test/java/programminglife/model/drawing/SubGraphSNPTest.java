@@ -11,7 +11,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 /**
- * Created by toinehartman on 19/06/2017.
+ * Class for the SubGraphSNPTest.
  */
 public class SubGraphSNPTest {
     GenomeGraph g;

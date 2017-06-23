@@ -55,6 +55,7 @@ public class BookmarkTest {
         assertFalse(b1.equals(b2));
     }
 
+    @SuppressWarnings("EqualsBetweenInconvertibleTypes")
     @Test
     public void notBookmarkEquals() {
         assertFalse(b1.equals("Fiets"));

@@ -15,7 +15,7 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Created by toinehartman on 19/06/2017.
+ * Class for the SubGraphGenomesOnEdgeTest.
  */
 public class SubGraphGenomesOnEdgeTest {
     GenomeGraph g;

@@ -1,18 +1,15 @@
 package programminglife.model.drawing;
 
-import javafx.scene.paint.Color;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import programminglife.gui.InitFXThread;
 import programminglife.model.GenomeGraph;
 
-import java.util.HashSet;
-
 import static org.junit.Assert.assertEquals;
 
 /**
- * Created by iwanh on 23/06/2017.
+ * Class for the DrawableEdgeTest.
  */
 public class DrawableEdgeTest {
 
