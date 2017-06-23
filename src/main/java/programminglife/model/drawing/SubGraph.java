@@ -258,10 +258,13 @@ public class SubGraph {
      */
     public void checkDynamicLoad(int leftBorder, double rightBorder) {
         assert (leftBorder < rightBorder);
-        if (layers.get(BORDER_BUFFER).getX() > leftBorder) {
+
+        // Note: It checks if layers.size() < BORDER_BUFFER, if so: we definitely need to load.
+        // Otherwise, check that there is enough of a buffer outside the borders.
+        if (layers.size() <= BORDER_BUFFER || layers.get(BORDER_BUFFER).getX() > leftBorder) {
             this.addFromRootNodes(SubGraph.DEFAULT_DYNAMIC_RADIUS);
         }
-        if (layers.get(layers.size() - BORDER_BUFFER - 1).getX() < rightBorder) {
+        if (layers.size() <= BORDER_BUFFER || layers.get(layers.size() - BORDER_BUFFER - 1).getX() < rightBorder) {
             this.addFromEndNodes(SubGraph.DEFAULT_DYNAMIC_RADIUS);
         }
 
