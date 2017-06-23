@@ -161,6 +161,7 @@ public class SubGraph {
         subGraph.nodes = new LinkedHashMap<>();
         subGraph.rootNodes = new LinkedHashMap<>();
         subGraph.endNodes = new LinkedHashMap<>();
+        LinkedHashMap<Integer, DrawableNode> foundNodes = new LinkedHashMap<>();
 
         /*
          * The queue for the BFS. This Queue uses null as separators between radii.
@@ -191,9 +192,9 @@ public class SubGraph {
 
             DrawableNode previous;
             if (excludedNodes.containsKey(current.node.getIdentifier())) {
-                if (startNodes.contains(current.node)) {
+                if (startNodes.contains(current.node) && !foundNodes.containsKey(current.node.getIdentifier())) {
                     // this is an excluded start node. Add all children and parents, but not this node
-                    previous = null;
+                    previous = null; // to signify it did not exist in subGraph.nodes yet.
                 } else {
                     // This is an excluded node, just continue with next
                     continue;
@@ -227,15 +228,17 @@ public class SubGraph {
                 Collection<Integer> parents = current.node.getParents();
 
                 children.forEach(node -> {
-                    if (node >= 0) {
-                        queue.add(
-                                new FoundNode(new DrawableSegment(subGraph.graph, node), FoundNode.FoundFrom.PARENT));
+                    if (node >= 0 && !foundNodes.containsKey(node)) {
+                        DrawableSegment child = new DrawableSegment(subGraph.graph, node);
+                        foundNodes.put(node, child);
+                        queue.add(new FoundNode(child, FoundNode.FoundFrom.PARENT));
                     }
                 });
                 parents.forEach(node -> {
-                    if (node >= 0) {
-                        queue.add(
-                                new FoundNode(new DrawableSegment(subGraph.graph, node), FoundNode.FoundFrom.CHILD));
+                    if (node >= 0 && !foundNodes.containsKey(node)) {
+                        DrawableSegment parent = new DrawableSegment(subGraph.graph, node);
+                        foundNodes.put(node, parent);
+                        queue.add(new FoundNode(parent, FoundNode.FoundFrom.CHILD));
                     }
                 });
             }
