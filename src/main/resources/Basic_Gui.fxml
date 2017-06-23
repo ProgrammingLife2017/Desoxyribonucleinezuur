@@ -4,14 +4,14 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import programminglife.gui.ResizableCanvas?>
+
+<!--suppress ALL -->
 <AnchorPane prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="programminglife.gui.controller.GuiController">
     <MenuBar AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <Menu fx:id="menuFile" mnemonicParsing="false" text="File">
             <MenuItem fx:id="btnOpenGFA" mnemonicParsing="false" text="Open GFA"/>
-            <MenuItem fx:id="btnOpenGFF" mnemonicParsing="false" text="Open GFF"/>
             <Menu fx:id="menuRecentGFA" mnemonicParsing="false" text="Open Recent GFA"/>
-            <Menu fx:id="menuRecentGFF" mnemonicParsing="false" text="Open Recent GFF"/>
             <SeparatorMenuItem mnemonicParsing="false"/>
             <MenuItem fx:id="btnQuit" mnemonicParsing="false" text="Quit"/>
         </Menu>

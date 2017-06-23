@@ -7,12 +7,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import programminglife.gui.AutoCompleteTextField;
 import programminglife.gui.NumbersOnlyListener;
-import programminglife.model.Annotation;
-import programminglife.model.Feature;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Controller class for the highlights.
@@ -25,7 +19,6 @@ public class HighlightController {
 
     @FXML private Button btnHighlight;
     @FXML private AutoCompleteTextField txtGenome;
-    @FXML private AutoCompleteTextField txtAnnotations;
     @FXML private TextField txtMin;
     @FXML private TextField txtMax;
     @FXML private CheckBox checkMin;
@@ -65,31 +58,6 @@ public class HighlightController {
      */
     public void initGenome() {
         txtGenome.getEntries().addAll(graphController.getGraph().getGenomeNames());
-    }
-
-    /**
-     * Initializes the annotations.
-     */
-    public void initAnnotations() {
-        txtAnnotations.getEntries().clear();
-        if (guiController.getFeatures() != null) {
-            txtAnnotations.getEntries().addAll(guiController.getFeatures().keySet());
-
-            Set<Set<Annotation>> c = guiController.getFeatures()
-                    .values()
-                    .stream()
-                    .map(Feature::getAnnotations)
-                    .collect(Collectors.toSet());
-
-            Set<String> search = new LinkedHashSet<>();
-
-            c.forEach(setOfAnno -> setOfAnno.forEach(anno -> anno.getTextFields().forEach((key, value) -> {
-                search.add(key);
-                search.addAll(value);
-            })));
-
-            txtAnnotations.getEntries().addAll(search);
-        }
     }
 
     /**
@@ -144,7 +112,7 @@ public class HighlightController {
         this.graphController = graphController;
     }
 
-    public void setGUIController(GuiController guiController) {
+    void setGUIController(GuiController guiController) {
         this.guiController = guiController;
     }
 }
