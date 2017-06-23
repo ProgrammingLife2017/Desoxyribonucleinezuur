@@ -928,7 +928,7 @@ public class SubGraph {
 
     public void colorize() {
         for (DrawableNode drawableNode : this.nodes.values()) {
-            drawableNode.colorize(this);
+            drawableNode.colorize(this, zoomLevel);
         }
     }
 

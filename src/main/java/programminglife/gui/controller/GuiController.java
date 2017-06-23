@@ -266,10 +266,16 @@ public class GuiController implements Observer {
             if (file != null) {
                 if (isGFA) {
                     this.openFile(file);
-                    Platform.runLater(() -> recentFileControllerGFA.updateRecent(recentFileGFA, file));
+                    Platform.runLater(() -> {
+                        File recentFileGFA = recentFileControllerGFA.getRecentFile();
+                        recentFileControllerGFA.updateRecent(recentFileGFA, file);
+                    });
                 } else {
                     this.openAnnotationFile(file);
-                    Platform.runLater(() -> recentFileControllerGFF.updateRecent(recentFileGFF, file));
+                    Platform.runLater(() -> {
+                        File recentFileGFF = recentFileControllerGFA.getRecentFile();
+                        recentFileControllerGFF.updateRecent(recentFileGFF, file);
+                    });
                 }
             }
         } catch (FileNotFoundException e) {
@@ -482,6 +488,7 @@ public class GuiController implements Observer {
             if (clickedOn instanceof DrawableSegment) {
                 DrawableSegment segment = (DrawableSegment) clickedOn;
                 showInfoNode(segment, shiftPressed ? 240 : 10);
+                graphController.highlightClicked(segment, shiftPressed);
             }
 
         }

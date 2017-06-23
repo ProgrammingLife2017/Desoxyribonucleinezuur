@@ -137,8 +137,9 @@ public abstract class DrawableNode implements Drawable {
     /**
      * Color this according to contents.
      * @param subGraph {@link SubGraph} to colorize.
+     * @param zoomLevel is double with a value which describes what the current zoom is.
      */
-    public abstract void colorize(SubGraph subGraph);
+    public abstract void colorize(SubGraph subGraph, double zoomLevel);
 
     /**
      * Set the size {@link XYCoordinate} of the Segment.
