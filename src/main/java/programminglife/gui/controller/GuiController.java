@@ -168,7 +168,6 @@ public class GuiController implements Observer {
      *
      * @param file The {@link File} to open.
      * @return the parser to be notified when it is finished
-     * @throws IOException if the {@link File} is not found.
      */
     public GraphParser openFile(File file) {
         if (file != null) {
@@ -201,7 +200,6 @@ public class GuiController implements Observer {
      *
      * @param file The {@link File} to open.
      * @return AnnotationParser to be notified when finished.
-     * @throws IOException if the {@link File} is not found.
      */
     private AnnotationParser openAnnotationFile(File file) {
         AnnotationParser annotationParser = null;
