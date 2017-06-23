@@ -1,9 +1,8 @@
-package programminglife.controller;
+package programminglife.gui.controller;
 
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
-import programminglife.gui.controller.GuiController;
-import programminglife.utility.*;
+import programminglife.gui.Alerts;
 import programminglife.utility.Console;
 
 import java.io.*;
@@ -14,10 +13,10 @@ import java.util.Scanner;
 /**
  * Class that handles the recentFiles menuItem.
  */
-public class RecentFileController {
+class RecentFileController {
     private GuiController guiController;
-    private File recentFile;
-    private Menu menuRecent;
+    private final File recentFile;
+    private final Menu menuRecent;
     private File file;
     private String recentItems = "";
     private int lineAmount;
@@ -31,10 +30,11 @@ public class RecentFileController {
 
     /**
      * Constructor for the recent file handler.
+     *
      * @param recentFile File containing the recent entries.
      * @param menuRecent Menu containing the recent entries.
      */
-    public RecentFileController(File recentFile, Menu menuRecent) {
+    RecentFileController(File recentFile, Menu menuRecent) {
         findLines(recentFile);
 
         this.recentFile = recentFile;
@@ -75,9 +75,10 @@ public class RecentFileController {
 
     /**
      * Find the amount of lines in a given file.
+     *
      * @param recentFile File to check the amount of lines of.
      */
-    private void findLines(File recentFile)  {
+    private void findLines(File recentFile) {
         BufferedReader reader;
         try {
             reader = new BufferedReader(new FileReader(recentFile));
@@ -106,33 +107,28 @@ public class RecentFileController {
             Alerts.error("Recent.txt can't be opened");
             return;
         }
-        if (recentFile != null) {
-            try (Scanner sc = new Scanner(recentFile)) {
-                menuRecent.getItems().clear();
-                while (sc.hasNextLine()) {
-                    String next = sc.nextLine();
-                    MenuItem mi = new MenuItem(next);
-                    mi.setOnAction(event -> {
-                        try {
-                            file = new File(mi.getText());
-                            guiController.openFile(file);
-                        } catch (IOException e) {
-                            Alerts.error("Recent.txt can't be opened");
-                        }
-                    });
-                    menuRecent.getItems().add(mi);
-                    recentItems = recentItems.concat(next + System.getProperty("line.separator"));
-                }
-            } catch (FileNotFoundException e) {
-                Alerts.error("Recent.txt can't be found.");
+        try (Scanner sc = new Scanner(recentFile)) {
+            menuRecent.getItems().clear();
+            while (sc.hasNextLine()) {
+                String next = sc.nextLine();
+                MenuItem mi = new MenuItem(next);
+                mi.setOnAction(event -> {
+                    file = new File(mi.getText());
+                    guiController.openFile(file);
+                });
+                menuRecent.getItems().add(mi);
+                recentItems = recentItems.concat(next + System.getProperty("line.separator"));
             }
+        } catch (FileNotFoundException e) {
+            Alerts.error("Recent.txt can't be found.");
         }
     }
 
     /**
      * Updates the recent files file after opening a file.
+     *
      * @param recentFile File containing the recent entries.
-     * @param file File to check if it already contained.
+     * @param file       File to check if it already contained.
      */
     public void updateRecent(File recentFile, File file) {
         findLines(recentFile);
@@ -145,6 +141,7 @@ public class RecentFileController {
 
     /**
      * Updates the recent files file after opening a file.
+     *
      * @param recentFile File containing the recent entries.
      */
     private void updateRecent(File recentFile) {
@@ -175,6 +172,7 @@ public class RecentFileController {
 
     /**
      * Checks if there is a duplicate.
+     *
      * @param file File to be added to the list.
      * @return boolean, true if it is not a duplicate.
      */
@@ -227,6 +225,7 @@ public class RecentFileController {
 
     /**
      * Moves all the recentFiles down by 1 position.
+     *
      * @param file File to be added to the list.
      */
     private void moveFiles(String file) {
@@ -239,6 +238,7 @@ public class RecentFileController {
 
     /**
      * Sets the guicontroller for controlling the menu.
+     *
      * @param guiController The gui controller
      */
     public void setGuiController(GuiController guiController) {

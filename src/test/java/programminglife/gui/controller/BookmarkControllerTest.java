@@ -1,11 +1,11 @@
-package programminglife.controller;
+package programminglife.gui.controller;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import programminglife.gui.InitFXThread;
 import programminglife.model.Bookmark;
-import programminglife.utility.InitFXThread;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -29,10 +29,11 @@ public class BookmarkControllerTest {
 
     @Before
     public void setup() throws Exception {
-        bookmark = new Bookmark("test", "dummypath", 2, 6,"testbm", "testing");
+        bookmark = new Bookmark("test", "dummypath", 2, 6, "testbm", "testing");
         testPath = new File(BookmarkControllerTest.class.getResource("/bookmarkTest.xml").toURI()).getAbsolutePath();
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     @After
     public void cleanup() {
         BookmarkController.deleteBookmark(testPath, "deleteTestGraph", "deleteTest");
@@ -49,9 +50,9 @@ public class BookmarkControllerTest {
     }
 
     @Test
-    public void checkFileCreationTest(){
+    public void checkFileCreationTest() {
         assertFalse(file.exists());
-        BookmarkController.storeBookmark("src/test/resources/checkFile.xml" , bookmark);
+        BookmarkController.storeBookmark("src/test/resources/checkFile.xml", bookmark);
         assertTrue(file.exists());
     }
 
@@ -66,14 +67,14 @@ public class BookmarkControllerTest {
 
     @Test
     public void writeTest() {
-        BookmarkController.storeBookmark(testPath, new Bookmark("writeTestGraph","dummypath",2, 4, "writeTest", "writing"));
-        BookmarkController.storeBookmark(testPath, new Bookmark( "writeTestGraph", "dummypath",2, 4, "writeTeest", "writing"));
+        BookmarkController.storeBookmark(testPath, new Bookmark("writeTestGraph", "dummypath", 2, 4, "writeTest", "writing"));
+        BookmarkController.storeBookmark(testPath, new Bookmark("writeTestGraph", "dummypath", 2, 4, "writeTeest", "writing"));
         assertNotNull(BookmarkController.loadAllBookmarks(testPath).get("writeTestGraph"));
     }
 
     @Test
     public void deleteTest() {
-        BookmarkController.storeBookmark(testPath, new Bookmark("deleteTestGraph","dummypath", 3, 5, "deleteTest", "deleting"));
+        BookmarkController.storeBookmark(testPath, new Bookmark("deleteTestGraph", "dummypath", 3, 5, "deleteTest", "deleting"));
         assertNotEquals(new ArrayList<>(), BookmarkController.loadAllBookmarks(testPath).get("deleteTestGraph"));
         BookmarkController.deleteBookmark(testPath, "deleteTestGraph", "deleteTest");
         assertEquals(new ArrayList<>(), BookmarkController.loadAllBookmarks(testPath).get("deleteTestGraph"));

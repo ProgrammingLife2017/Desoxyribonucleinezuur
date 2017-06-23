@@ -4,25 +4,21 @@ import javafx.scene.paint.Color;
 import programminglife.model.GenomeGraph;
 import programminglife.model.XYCoordinate;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * A segment that also implements {@link Drawable}.
  */
 public abstract class DrawableNode implements Drawable {
     static final double NODE_HEIGHT = 10;
+    private static int uniqueId = 0;
 
     private final GenomeGraph graph;
     private final int id;
-    private final Collection<Integer> genomes;
+    private Layer layer;
 
     private final XYCoordinate location;
     private final XYCoordinate dimensions;
-    private boolean drawDimensionsUpToDate = false;
 
     private double strokeWidth;
     private Color fillColor;
@@ -30,37 +26,25 @@ public abstract class DrawableNode implements Drawable {
 
     /**
      * Constructor for a DrawableNode.
+     *
      * @param graph The {@link GenomeGraph} that this DrawableNode is part of.
-     * @param id The id for this DrawableNode. These should be non-negative for Nodes actually in the
-     *           graph ({@link DrawableSegment}), and negative for Nodes that are not in the
-     *           graph ({@link DrawableDummy}).
+     * @param id    The id for this DrawableNode. These should be non-negative for Nodes actually in the
+     *              graph ({@link DrawableSegment}), and negative for Nodes that are not in the
+     *              graph ({@link DrawableDummy}).
      */
-    public DrawableNode(GenomeGraph graph, int id) {
+    DrawableNode(GenomeGraph graph, int id) {
         this.graph = graph;
         this.id = id;
 
         this.dimensions = new XYCoordinate(0, 0);
         this.location = new XYCoordinate(0, 0);
-
-        int[] genomes = graph.getGenomes(id);
-        if (genomes != null) {
-            this.genomes = Arrays.stream(genomes).boxed().collect(Collectors.toSet());
-        } else {
-            this.genomes = Collections.emptySet();
-        }
     }
-
 
     @Override
     public final boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
+        return this == o || this.getClass().equals(o.getClass())
+                && this.getIdentifier() == ((DrawableNode) o).getIdentifier();
 
-        if (!this.getClass().equals(o.getClass())) {
-            return false;
-        }
-        return this.getIdentifier() == ((DrawableNode) o).getIdentifier();
     }
 
     @Override
@@ -72,6 +56,7 @@ public abstract class DrawableNode implements Drawable {
 
     /**
      * Get the ID.
+     *
      * @return the ID
      */
     public final int getIdentifier() {
@@ -80,6 +65,7 @@ public abstract class DrawableNode implements Drawable {
 
     /**
      * Get the {@link GenomeGraph}.
+     *
      * @return the graph
      */
     final GenomeGraph getGraph() {
@@ -87,39 +73,29 @@ public abstract class DrawableNode implements Drawable {
     }
 
     /**
-     * Set if the dimensions are up to date.
-     */
-    final void setDrawDimensionsUpToDate() {
-        this.drawDimensionsUpToDate = true;
-    }
-
-    /**
      * Set the size of this drawing.
+     *
+     * @param zoomLevel double of the zoomlevel.
      */
-    protected abstract void setDrawDimensions();
-
-    /**
-     * Get if the dimensions are up to date.
-     * @return boolean true if up to date else false
-     */
-    private boolean isDrawDimensionsUpToDate() {
-        return this.drawDimensionsUpToDate;
-    }
+    protected abstract void setDrawDimensions(double zoomLevel);
 
     /**
      * Get the IDs of children of this.
+     *
      * @return IDs of drawable children
      */
     abstract Collection<Integer> getChildren();
 
     /**
      * Get the IDs of parents of this.
+     *
      * @return IDs of drawable parents.
      */
     abstract Collection<Integer> getParents();
 
     /**
      * Replace a parent with another one.
+     *
      * @param oldParent the parent to replace
      * @param newParent the new parent
      */
@@ -127,6 +103,7 @@ public abstract class DrawableNode implements Drawable {
 
     /**
      * Replace child with another one.
+     *
      * @param oldChild the child to replace
      * @param newChild the new child
      */
@@ -134,12 +111,14 @@ public abstract class DrawableNode implements Drawable {
 
     /**
      * Information {@link String} about this.
+     *
      * @return info
      */
     public abstract String details();
 
     /**
      * Checks if the children of this {@link DrawableNode} can be merged as a SNP.
+     *
      * @param subGraph the {@link SubGraph} this {@link DrawableNode} is in
      * @return null if children cannot be SNP'ed, SNP with (parent, child and mutation) otherwise
      */
@@ -147,24 +126,25 @@ public abstract class DrawableNode implements Drawable {
 
     /**
      * Color this according to contents.
+     *
      * @param subGraph {@link SubGraph} to colorize.
-     * @param zoomLevel is double with a value which describes what the current zoom is.
      */
-    public abstract void colorize(SubGraph subGraph, double zoomLevel);
+    public abstract void colorize(SubGraph subGraph);
 
     /**
      * Set the size {@link XYCoordinate} of the Segment.
-     * @param width The double representing the width of the DrawableSegment
+     *
+     * @param width  The double representing the width of the DrawableSegment
      * @param height The double representing the height of the DrawableSegment
      */
     final void setSize(double width, double height) {
         this.setWidth(width);
         this.setHeight(height);
-        this.setDrawDimensionsUpToDate();
     }
 
     /**
      * Set the location to draw this.
+     *
      * @param x the x location
      * @param y the y location
      */
@@ -174,6 +154,7 @@ public abstract class DrawableNode implements Drawable {
 
     /**
      * Get the width of the node.
+     *
      * @return The width of the node.
      */
     public final double getWidth() {
@@ -182,45 +163,37 @@ public abstract class DrawableNode implements Drawable {
 
     /**
      * Get the height of the node.
+     *
      * @return The height of the node.
      */
     public final double getHeight() {
-        if (!isDrawDimensionsUpToDate()) {
-            setDrawDimensions();
-        }
         return dimensions.getY();
     }
 
     /**
      * getter for the center of the left border.
+     *
      * @return XYCoordinate.
      */
     public final XYCoordinate getLeftBorderCenter() {
-        if (!isDrawDimensionsUpToDate()) {
-            setDrawDimensions();
-        }
         return new XYCoordinate(location.getX(), location.getY() + 0.5 * getHeight());
     }
 
     /**
      * getter for the center.
+     *
      * @return XYCoordinate.
      */
     public final XYCoordinate getCenter() {
-        if (!isDrawDimensionsUpToDate()) {
-            setDrawDimensions();
-        }
         return new XYCoordinate(location.getX() + 0.5 * getWidth(), location.getY() + 0.5 * getHeight());
     }
 
     /**
      * getter for the center of the right border.
+     *
      * @return XYCoordinate.
      */
     final XYCoordinate getRightBorderCenter() {
-        if (!isDrawDimensionsUpToDate()) {
-            setDrawDimensions();
-        }
         return new XYCoordinate(location.getX() + getWidth(), location.getY() + 0.5 * getHeight());
     }
 
@@ -228,34 +201,41 @@ public abstract class DrawableNode implements Drawable {
         return location;
     }
 
-    public Collection<Integer> getGenomes() {
-        return this.genomes;
-    }
+    /**
+     * Getter for the collection of genomes.
+     *
+     * @return Collection<Integer> containing the genomes.
+     */
+    public abstract Collection<Integer> getGenomes();
 
+    /**
+     * Setter for the width of a drawable node.
+     *
+     * @param width double of the width to be set.
+     */
     public final void setWidth(double width) {
         this.dimensions.setX(width);
     }
 
+    /**
+     * Setter for the height.
+     *
+     * @param height double of the height to be set.
+     */
     public final void setHeight(double height) {
         this.dimensions.setY(height);
     }
 
     /**
-     * Method to add genomes to a Drawable node.
-     * @param genomes is a Set of Integers representing the genomeIDs.
-     */
-    final void addGenomes(Set<Integer> genomes) {
-        this.genomes.addAll(genomes);
-    }
-
-    /**
      * Return this {@link DrawableNode} if it is a {@link DrawableSegment}, else return its parent.
+     *
      * @return the 'closest' parent {@link DrawableSegment}
      */
     public abstract DrawableNode getParentSegment();
 
     /**
      * Return this {@link DrawableNode} if it is a {@link DrawableSegment}, else return its child.
+     *
      * @return the 'closest' child {@link DrawableSegment}
      */
     public abstract DrawableNode getChildSegment();
@@ -270,7 +250,8 @@ public abstract class DrawableNode implements Drawable {
 
     /**
      * Method to set the fill and stroke color of a {@link DrawableSegment}.
-     * @param fillColor {@link Color} is the color to fill the segment with.
+     *
+     * @param fillColor   {@link Color} is the color to fill the segment with.
      * @param strokeColor {@link Color} is the color of the stroke.
      */
     final void setColors(Color fillColor, Color strokeColor) {
@@ -290,4 +271,37 @@ public abstract class DrawableNode implements Drawable {
         return this.strokeWidth;
     }
 
+    public Layer getLayer() {
+        return layer;
+    }
+
+    public void setLayer(Layer layer) {
+        this.layer = layer;
+    }
+
+    /**
+     * Get a unique ID for a DrawableNode. These IDs are always negative. These IDs are globally unique,
+     * which means that every call to this method will return a different number (until you reach underflow,
+     * which is assumed to not happen)
+     *
+     * @return A negative unique ID.
+     */
+    public static synchronized int getUniqueId() {
+        uniqueId--;
+        return uniqueId;
+    }
+
+    /**
+     * getter for the genomes of the parents.
+     *
+     * @return Collection<Integer> of the genomes of the parents.
+     */
+    public abstract Collection<Integer> getParentGenomes();
+
+    /**
+     * getter for the genomes of the children.
+     *
+     * @return Collection<Integer> of the genomes of the children.
+     */
+    protected abstract Collection<Integer> getChildGenomes();
 }
