@@ -6,8 +6,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import programminglife.gui.AutoCompleteTextField;
-import programminglife.model.Annotation;
-import programminglife.model.Feature;
 import programminglife.model.drawing.DrawableSegment;
 import programminglife.utility.NumbersOnlyListener;
 
@@ -70,31 +68,6 @@ public class HighlightController {
      */
     public void initGenome() {
         txtGenome.getEntries().addAll(graphController.getGraph().getGenomeNames());
-    }
-
-    /**
-     * Initializes the annotations.
-     */
-    public void initAnnotations() {
-        txtAnnotations.getEntries().clear();
-        if (guiController.getFeatures() != null) {
-            txtAnnotations.getEntries().addAll(guiController.getFeatures().keySet());
-
-            Set<Set<Annotation>> c = guiController.getFeatures()
-                    .values()
-                    .stream()
-                    .map(Feature::getAnnotations)
-                    .collect(Collectors.toSet());
-
-            Set<String> search = new LinkedHashSet<>();
-
-            c.forEach(setOfAnno -> setOfAnno.forEach(anno -> anno.getTextFields().forEach((key, value) -> {
-                search.add(key);
-                search.addAll(value);
-            })));
-
-            txtAnnotations.getEntries().addAll(search);
-        }
     }
 
     /**

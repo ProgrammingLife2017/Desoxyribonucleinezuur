@@ -13,9 +13,7 @@
                  <Menu fx:id="menuFile" mnemonicParsing="false" text="File">
                     <items>
                         <MenuItem fx:id="btnOpenGFA" mnemonicParsing="false" text="Open GFA" />
-                        <MenuItem fx:id="btnOpenGFF" mnemonicParsing="false" text="Open GFF" />
                         <Menu fx:id="menuRecentGFA" mnemonicParsing="false" text="Open Recent GFA" />
-                        <Menu fx:id="menuRecentGFF" mnemonicParsing="false" text="Open Recent GFF" />
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem fx:id="btnQuit" mnemonicParsing="false" text="Quit" />
                     </items>

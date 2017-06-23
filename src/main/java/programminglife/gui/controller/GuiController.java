@@ -26,10 +26,8 @@ import programminglife.ProgrammingLife;
 import programminglife.controller.MiniMapController;
 import programminglife.controller.RecentFileController;
 import programminglife.gui.ResizableCanvas;
-import programminglife.model.Feature;
 import programminglife.model.GenomeGraph;
 import programminglife.model.drawing.*;
-import programminglife.parser.AnnotationParser;
 import programminglife.parser.GraphParser;
 import programminglife.utility.Alerts;
 import programminglife.utility.Console;
@@ -59,13 +57,11 @@ public class GuiController implements Observer {
 
     //FXML imports.
     @FXML private MenuItem btnOpenGFA;
-    @FXML private MenuItem btnOpenGFF;
     @FXML private MenuItem btnQuit;
     @FXML private MenuItem btnBookmarks;
     @FXML private MenuItem btnAbout;
     @FXML private MenuItem btnInstructions;
     @FXML private Menu menuRecentGFA;
-    @FXML private Menu menuRecentGFF;
 
     @FXML private RadioMenuItem btnSNP;
     @FXML private RadioMenuItem btnConsole;
@@ -95,12 +91,10 @@ public class GuiController implements Observer {
     private double scale;
     private GraphController graphController;
     private RecentFileController recentFileControllerGFA;
-    private RecentFileController recentFileControllerGFF;
     private MiniMapController miniMapController;
     private File file;
     private File recentFileGFA = new File("RecentGFA.txt");
     private File recentFileGFF = new File("RecentGFF.txt");
-    private Map<String, Feature> features;
     private Thread parseThread;
 
     private final ExtensionFilter extFilterGFF = new ExtensionFilter("GFF files (*.gff)", "*.GFF");
@@ -122,8 +116,6 @@ public class GuiController implements Observer {
 
         this.recentFileControllerGFA = new RecentFileController(this.recentFileGFA, this.menuRecentGFA);
         this.recentFileControllerGFA.setGuiController(this);
-        this.recentFileControllerGFF = new RecentFileController(this.recentFileGFF, this.menuRecentGFF);
-        this.recentFileControllerGFF.setGuiController(this);
         initMenuBar();
         initBookmarkMenu();
         initLeftControlpanelScreenModifiers();
@@ -166,29 +158,6 @@ public class GuiController implements Observer {
         return null;
     }
 
-    /**
-     * Open and parse a GFF file.
-     * @param file The {@link File} to open.
-     * @throws IOException if the {@link File} is not found.
-     * @return AnnotationParser to be notified when finished.
-     */
-    private AnnotationParser openAnnotationFile(File file) throws IOException {
-        AnnotationParser annotationParser = null;
-        if (file != null) {
-            Console.println("Opening annotation " + file);
-            annotationParser = new AnnotationParser(file);
-            annotationParser.addObserver(this);
-            annotationParser.getProgressCounter().addObserver(this);
-
-            if (this.parseThread != null) {
-                this.parseThread.interrupt();
-            }
-            this.parseThread = new Thread(annotationParser);
-            this.parseThread.start();
-        }
-        return annotationParser;
-    }
-
     @Override
     public void update(Observable o, Object arg) {
         if (o instanceof GraphParser) {
@@ -205,11 +174,6 @@ public class GuiController implements Observer {
             } else if (arg instanceof String) {
                 String msg = (String) arg;
                 Platform.runLater(() -> ProgrammingLife.getStage().setTitle(msg));
-            }
-        } else if (o instanceof AnnotationParser) {
-            if (arg instanceof Map) {
-                Console.println("[%s] Annotations parsed.", Thread.currentThread().getName());
-                this.setFeatures(((AnnotationParser) o).getFeatures());
             }
         } else if (o instanceof ProgressCounter) {
             progressBar.setVisible(true);
@@ -264,12 +228,6 @@ public class GuiController implements Observer {
                         File recentFileGFA = recentFileControllerGFA.getRecentFile();
                         recentFileControllerGFA.updateRecent(recentFileGFA, file);
                     });
-                } else {
-                    this.openAnnotationFile(file);
-                    Platform.runLater(() -> {
-                        File recentFileGFF = recentFileControllerGFA.getRecentFile();
-                        recentFileControllerGFF.updateRecent(recentFileGFF, file);
-                    });
                 }
             }
         } catch (FileNotFoundException e) {
@@ -287,7 +245,6 @@ public class GuiController implements Observer {
     private void initMenuBar() {
         btnOpenGFA.setOnAction((ActionEvent event) -> fileChooser(extFilterGFA, true));
         btnOpenGFA.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCodeCombination.CONTROL_DOWN));
-        btnOpenGFF.setOnAction((ActionEvent event) -> fileChooser(extFilterGFF, false));
 
         btnQuit.setOnAction(event -> Alerts.quitAlert());
         btnQuit.setAccelerator(new KeyCodeCombination(KeyCode.Q, KeyCodeCombination.CONTROL_DOWN));
@@ -580,7 +537,6 @@ public class GuiController implements Observer {
             searchTab.setDisable(true);
             searchTab.setOnSelectionChanged(event -> {
                 highlightController.initGenome();
-                highlightController.initAnnotations();
                 highlightController.initMinMax();
             });
         } catch (IOException e) {
@@ -756,14 +712,6 @@ public class GuiController implements Observer {
 
     public void setFile(File file) {
         this.file = file;
-    }
-
-    private void setFeatures(Map<String, Feature> features) {
-        this.features = features;
-    }
-
-    Map<String, Feature> getFeatures() {
-        return this.features;
     }
 
     GraphController getGraphController() {
