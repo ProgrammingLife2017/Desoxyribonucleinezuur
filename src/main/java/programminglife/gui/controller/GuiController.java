@@ -43,7 +43,6 @@ import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Random;
