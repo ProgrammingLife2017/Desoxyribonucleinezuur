@@ -3,7 +3,8 @@ package programminglife.controller;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import programminglife.gui.controller.GuiController;
-import programminglife.utility.Alerts;
+import programminglife.utility.*;
+import programminglife.utility.Console;
 
 import java.io.*;
 import java.nio.file.FileAlreadyExistsException;
@@ -34,15 +35,19 @@ public class RecentFileController {
      * @param menuRecent Menu containing the recent entries.
      */
     public RecentFileController(File recentFile, Menu menuRecent) {
-        try {
-            findLines(recentFile);
-        } catch (IOException e) {
-            programminglife.utility.Console.println("Recent.txt doesn't exist. A new one will be created.");
-        }
+        findLines(recentFile);
 
         this.recentFile = recentFile;
         this.menuRecent = menuRecent;
-        this.initRecent();
+        initRecent();
+        updateLines();
+        doesFileExist();
+    }
+
+    /**
+     * Updates the String[] lines from the lines in the file.
+     */
+    private void updateLines() {
         lines = recentItems.split(System.getProperty("line.separator"));
 
         for (int i = 0; i < lineAmount; i++) {
@@ -66,32 +71,37 @@ public class RecentFileController {
                     break;
             }
         }
-        doesFileExist();
     }
 
     /**
      * Find the amount of lines in a given file.
      * @param recentFile File to check the amount of lines of.
-     * @throws IOException Exception to be thrown when file can't be found.
      */
-    private void findLines(File recentFile) throws IOException {
-        LineNumberReader reader  = new LineNumberReader(new FileReader(recentFile));
-        String lineRead = "";
-        while ((lineRead = reader.readLine()) != null) {
-            lineAmount++;
+    private void findLines(File recentFile)  {
+        BufferedReader reader;
+        try {
+            reader = new BufferedReader(new FileReader(recentFile));
+            lineAmount = 0;
+            while ((reader.readLine()) != null) {
+                lineAmount++;
+            }
+            reader.close();
+        } catch (IOException e) {
+            Console.println("Recent file couldn't be found. New one created.");
         }
-        reader.close();
     }
 
     /**
      * Read out the file which contains all the recently opened files.
      */
     private void initRecent() {
+        recentItems = "";
         try {
             Files.createFile(recentFile.toPath());
         } catch (FileAlreadyExistsException e) {
             //This will always happen if a user has used the program before.
             //Therefore it is unnecessary to handle further.
+            Console.println("Recent file couldn't be found. New one created.");
         } catch (IOException e) {
             Alerts.error("Recent.txt can't be opened");
             return;
@@ -125,8 +135,10 @@ public class RecentFileController {
      * @param file File to check if it already contained.
      */
     public void updateRecent(File recentFile, File file) {
-        if (checkDuplicate(file)) {
-            moveFiles(file);
+        findLines(recentFile);
+        String currentFile = file.getAbsolutePath();
+        if (checkDuplicate(currentFile)) {
+            moveFiles(currentFile);
             updateRecent(recentFile);
         }
     }
@@ -155,6 +167,7 @@ public class RecentFileController {
             recentWriter.flush();
             recentWriter.close();
             initRecent();
+            updateLines();
         } catch (IOException e) {
             Alerts.error("Recent.txt cannot be updated");
         }
@@ -165,13 +178,14 @@ public class RecentFileController {
      * @param file File to be added to the list.
      * @return boolean, true if it is not a duplicate.
      */
-    private boolean checkDuplicate(File file) {
+    private boolean checkDuplicate(String file) {
+        boolean duplicate = true;
         for (String s : lines) {
-            if (!s.contains(file.getAbsolutePath())) {
-                return true;
+            if (s.equals(file)) {
+                duplicate = false;
             }
         }
-        return false;
+        return duplicate;
     }
 
     /**
@@ -208,19 +222,19 @@ public class RecentFileController {
                 file5 = null;
             }
         }
-        updateRecent(this.recentFile);
+        updateRecent(recentFile);
     }
 
     /**
      * Moves all the recentFiles down by 1 position.
      * @param file File to be added to the list.
      */
-    private void moveFiles(File file) {
+    private void moveFiles(String file) {
         file5 = file4;
         file4 = file3;
         file3 = file2;
         file2 = file1;
-        file1 = file.getAbsolutePath();
+        file1 = file;
     }
 
     /**
@@ -229,5 +243,9 @@ public class RecentFileController {
      */
     public void setGuiController(GuiController guiController) {
         this.guiController = guiController;
+    }
+
+    public File getRecentFile() {
+        return recentFile;
     }
 }
