@@ -14,7 +14,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import programminglife.gui.controller.GuiController;
 import programminglife.parser.Cache;
-import programminglife.utility.Alerts;
+import programminglife.gui.Alerts;
 import programminglife.utility.Console;
 
 import java.io.File;

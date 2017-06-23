@@ -4,7 +4,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import programminglife.utility.InitFXThread;
+import programminglife.gui.InitFXThread;
 
 import java.util.HashSet;
 import java.util.NoSuchElementException;

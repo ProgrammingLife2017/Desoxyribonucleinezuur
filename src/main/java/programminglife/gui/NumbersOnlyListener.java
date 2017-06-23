@@ -1,4 +1,4 @@
-package programminglife.utility;
+package programminglife.gui;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;

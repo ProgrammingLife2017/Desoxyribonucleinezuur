@@ -6,9 +6,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import programminglife.controller.BookmarkController;
 import programminglife.model.Bookmark;
-import programminglife.utility.Alerts;
+import programminglife.gui.Alerts;
 
 /**
  * Class for the GuiCreateBookmarkController. This class handles the FXML file that comes with it.

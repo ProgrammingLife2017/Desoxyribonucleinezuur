@@ -1,4 +1,4 @@
-package programminglife.utility;
+package programminglife.gui;
 
 import com.google.common.base.Charsets;
 import javafx.application.Platform;

@@ -1,6 +1,7 @@
-package programminglife.utility;
+package programminglife.gui;
 
 import javafx.embed.swing.JFXPanel;
+import programminglife.utility.Console;
 
 import javax.swing.*;
 import java.io.PrintStream;

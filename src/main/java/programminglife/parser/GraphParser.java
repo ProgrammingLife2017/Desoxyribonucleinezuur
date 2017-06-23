@@ -4,9 +4,8 @@ import com.diffplug.common.base.Errors;
 import javafx.application.Platform;
 import programminglife.model.GenomeGraph;
 import programminglife.model.exception.UnknownTypeException;
-import programminglife.utility.Alerts;
+import programminglife.gui.Alerts;
 import programminglife.utility.Console;
-import programminglife.utility.ProgressCounter;
 
 import java.io.*;
 import java.util.Arrays;

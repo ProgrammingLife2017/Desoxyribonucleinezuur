@@ -9,7 +9,7 @@ import programminglife.gui.AutoCompleteTextField;
 import programminglife.model.Annotation;
 import programminglife.model.Feature;
 import programminglife.model.drawing.DrawableSegment;
-import programminglife.utility.NumbersOnlyListener;
+import programminglife.gui.NumbersOnlyListener;
 
 import java.util.LinkedHashSet;
 import java.util.Set;

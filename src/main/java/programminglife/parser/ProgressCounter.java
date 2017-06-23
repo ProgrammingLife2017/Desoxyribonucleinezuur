@@ -1,4 +1,4 @@
-package programminglife.utility;
+package programminglife.parser;
 
 import java.util.Observable;
 

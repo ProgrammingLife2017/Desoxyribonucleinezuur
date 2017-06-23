@@ -12,11 +12,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import programminglife.ProgrammingLife;
-import programminglife.controller.BookmarkController;
 import programminglife.model.Bookmark;
 import programminglife.model.GenomeGraph;
 import programminglife.parser.GraphParser;
-import programminglife.utility.Alerts;
+import programminglife.gui.Alerts;
 import programminglife.utility.Console;
 
 import java.io.File;

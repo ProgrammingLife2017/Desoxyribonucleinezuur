@@ -1,4 +1,4 @@
-package programminglife.controller;
+package programminglife.gui.controller;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -6,7 +6,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import programminglife.model.Bookmark;
-import programminglife.utility.Alerts;
+import programminglife.gui.Alerts;
 import programminglife.utility.Console;
 
 import javax.xml.parsers.DocumentBuilder;

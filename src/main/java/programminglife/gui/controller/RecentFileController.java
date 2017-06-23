@@ -1,9 +1,8 @@
-package programminglife.controller;
+package programminglife.gui.controller;
 
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
-import programminglife.gui.controller.GuiController;
-import programminglife.utility.*;
+import programminglife.gui.Alerts;
 import programminglife.utility.Console;
 
 import java.io.*;

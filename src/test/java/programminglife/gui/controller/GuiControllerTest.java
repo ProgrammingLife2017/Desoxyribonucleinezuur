@@ -1,4 +1,4 @@
-package programminglife.gui;
+package programminglife.gui.controller;
 
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;

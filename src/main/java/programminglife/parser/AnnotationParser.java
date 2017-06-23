@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 import programminglife.model.Annotation;
 import programminglife.model.Feature;
 import programminglife.model.exception.UnknownTypeException;
-import programminglife.utility.ProgressCounter;
 
 import java.io.*;
 import java.util.*;

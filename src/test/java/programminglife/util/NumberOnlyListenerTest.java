@@ -4,8 +4,8 @@ import javafx.scene.control.TextField;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import programminglife.utility.InitFXThread;
-import programminglife.utility.NumbersOnlyListener;
+import programminglife.gui.InitFXThread;
+import programminglife.gui.NumbersOnlyListener;
 
 import static org.junit.Assert.assertEquals;
 

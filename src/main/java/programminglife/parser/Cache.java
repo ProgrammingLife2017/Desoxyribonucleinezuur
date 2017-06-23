@@ -6,7 +6,7 @@ import org.mapdb.Atomic;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.Serializer;
-import programminglife.utility.Alerts;
+import programminglife.gui.Alerts;
 import programminglife.utility.Console;
 
 import java.io.File;
