@@ -11,6 +11,7 @@ import java.util.*;
  * @see SubGraph#findLayers()
  */
 public class Layer implements Iterable<DrawableNode>, Comparable<Double> {
+    private static final double DUMMY_Y_OFFSET = 5;
     private double x;
     private List<DrawableNode> nodes;
 
@@ -134,7 +135,11 @@ public class Layer implements Iterable<DrawableNode>, Comparable<Double> {
     public void setDrawLocations(double y, double zoomLevel) {
 
         for (DrawableNode node : nodes) {
-            node.setLocation(x, y);
+            if (node instanceof DrawableDummy) {
+                node.setLocation(x, y + (DUMMY_Y_OFFSET * zoomLevel));
+            } else {
+                node.setLocation(x, y);
+            }
             y += LINE_PADDING * zoomLevel;
         }
     }

@@ -229,14 +229,14 @@ public class SubGraph {
 
                 children.forEach(node -> {
                     if (node >= 0 && !foundNodes.containsKey(node)) {
-                        DrawableSegment child = new DrawableSegment(subGraph.graph, node);
+                        DrawableSegment child = new DrawableSegment(subGraph.graph, node, subGraph.zoomLevel);
                         foundNodes.put(node, child);
                         queue.add(new FoundNode(child, FoundNode.FoundFrom.PARENT));
                     }
                 });
                 parents.forEach(node -> {
                     if (node >= 0 && !foundNodes.containsKey(node)) {
-                        DrawableSegment parent = new DrawableSegment(subGraph.graph, node);
+                        DrawableSegment parent = new DrawableSegment(subGraph.graph, node, subGraph.zoomLevel);
                         foundNodes.put(node, parent);
                         queue.add(new FoundNode(parent, FoundNode.FoundFrom.CHILD));
                     }
@@ -940,5 +940,9 @@ public class SubGraph {
 
     public int getNumberOfGenomes() {
         return numberOfGenomes;
+    }
+
+    public double getZoomLevel() {
+        return zoomLevel;
     }
 }

@@ -24,7 +24,7 @@ public class DrawableSNP extends DrawableNode {
      * @param child the child Segment of the mutations/SNP
      * @param mutations the Segments in this bubble
      */
-    DrawableSNP(DrawableNode parent, DrawableNode child, Collection<DrawableSegment> mutations) {
+    DrawableSNP(DrawableNode parent, DrawableNode child, Collection<DrawableSegment> mutations, double zoomLevel) {
         super(mutations.iterator().next().getGraph(), -mutations.hashCode());
 
         this.parent = parent;
@@ -34,7 +34,7 @@ public class DrawableSNP extends DrawableNode {
         this.parent.getChildren().add(this.getIdentifier());
         this.child.getParents().add(this.getIdentifier());
 
-        this.setDrawDimensions();
+        this.setDrawDimensions(zoomLevel);
     }
 
     /**
@@ -129,8 +129,8 @@ public class DrawableSNP extends DrawableNode {
      * Set the size of this drawing.
      */
     @Override
-    protected void setDrawDimensions() {
-        this.setSize(new XYCoordinate(NODE_HEIGHT, NODE_HEIGHT));
+    protected void setDrawDimensions(double zoomLevel) {
+        this.setSize(new XYCoordinate(NODE_HEIGHT * zoomLevel, NODE_HEIGHT));
     }
 
     /**

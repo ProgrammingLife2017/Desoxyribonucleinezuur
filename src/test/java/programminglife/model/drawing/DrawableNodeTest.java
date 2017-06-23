@@ -30,7 +30,7 @@ public class DrawableNodeTest {
         g.setSequence(1, "ATCG");
         g.replaceNode(1);
         g.setGenomes(1, new int[0]);
-        node = new DrawableSegment(g, 1);
+        node = new DrawableSegment(g, 1, 1);
     }
 
     @After

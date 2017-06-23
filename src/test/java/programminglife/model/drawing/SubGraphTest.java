@@ -33,7 +33,7 @@ public class SubGraphTest {
         graphParser.parse();
         graph = graphParser.getGraph();
 
-        centerNode = new DrawableSegment(graph, 4);
+        centerNode = new DrawableSegment(graph, 4, 1);
     }
 
     @After

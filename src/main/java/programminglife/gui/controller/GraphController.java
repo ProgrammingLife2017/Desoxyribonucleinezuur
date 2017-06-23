@@ -30,6 +30,8 @@ public class GraphController {
 
     private double zoomLevel = 1;
 
+    private static final double DUMMY_Y_OFFSET = 5;
+
     private int centerNodeInt;
     private boolean drawSNP = false;
     private DrawableSegment highlightSegmentShift;
@@ -69,7 +71,7 @@ public class GraphController {
      */
     public void draw(int center, int radius) {
         time("Total drawing", () -> {
-            DrawableSegment centerNode = new DrawableSegment(graph, center);
+            DrawableSegment centerNode = new DrawableSegment(graph, center, zoomLevel);
             centerNodeInt = centerNode.getIdentifier();
             GraphicsContext gc = canvas.getGraphicsContext2D();
 
@@ -200,7 +202,6 @@ public class GraphController {
             gc.fillRect(locX, locY, width, height);
 
             gc.restore();
-
         } else {
             gc.strokeRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height);
             gc.fillRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height);

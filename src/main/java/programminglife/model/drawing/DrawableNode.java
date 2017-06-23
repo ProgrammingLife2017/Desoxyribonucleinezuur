@@ -78,7 +78,7 @@ public abstract class DrawableNode implements Drawable {
     /**
      * Set the size of this drawing.
      */
-    protected abstract void setDrawDimensions();
+    protected abstract void setDrawDimensions(double zoomLevel);
 
     /**
      * Get the IDs of children of this.

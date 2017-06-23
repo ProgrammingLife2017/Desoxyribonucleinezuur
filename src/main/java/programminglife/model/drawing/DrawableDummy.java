@@ -156,6 +156,6 @@ public class DrawableDummy extends DrawableNode {
      * Set the size of this drawing.
      */
     @Override
-    protected void setDrawDimensions() {
+    protected void setDrawDimensions(double zoomLevel) {
     }
 }
