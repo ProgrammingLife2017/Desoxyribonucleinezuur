@@ -73,11 +73,8 @@ public class GraphController {
 
             time("Find subgraph", () -> subGraph = new SubGraph(centerNode, radius, drawSNP));
 
-            // TODO: center on centerNode.
-
             time("Colorize", this::colorize);
 
-            time("Calculate genomes through edges", subGraph::calculateGenomes);
             time("Drawing", () -> {
                 draw(gc);
             });

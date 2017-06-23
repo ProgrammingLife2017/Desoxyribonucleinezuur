@@ -66,6 +66,7 @@ public class SubGraph {
         this.rootNodes = rootNodes;
         this.endNodes = endNodes;
         this.genomes = new LinkedHashMap<>();
+        this.numberOfGenomes = graph.getTotalGenomeNumber();
         this.calculateGenomes();
         this.createLayers();
     }
@@ -226,12 +227,16 @@ public class SubGraph {
                 Collection<Integer> parents = current.node.getParents();
 
                 children.forEach(node -> {
-                    queue.add(
-                            new FoundNode(new DrawableSegment(subGraph.graph, node), FoundNode.FoundFrom.PARENT));
+                    if (node >= 0) {
+                        queue.add(
+                                new FoundNode(new DrawableSegment(subGraph.graph, node), FoundNode.FoundFrom.PARENT));
+                    }
                 });
                 parents.forEach(node -> {
-                    queue.add(
-                            new FoundNode(new DrawableSegment(subGraph.graph, node), FoundNode.FoundFrom.CHILD));
+                    if (node >= 0) {
+                        queue.add(
+                                new FoundNode(new DrawableSegment(subGraph.graph, node), FoundNode.FoundFrom.CHILD));
+                    }
                 });
             }
         }
@@ -811,6 +816,12 @@ public class SubGraph {
 
 
         // TODO: find DummyNodes between subgraphs. Just use findDummyNodes on full graph?
+        rightSubGraph.genomes.forEach((parent, childMap) -> {
+            this.genomes
+                    .computeIfAbsent(parent, parentId -> new LinkedHashMap<>())
+                    .putAll(childMap);
+        });
+        rightSubGraph.colorize();
 
         this.sortLayersRightFrom(oldLastIndex);
         this.setRightDrawLocations(this.layers, oldLastIndex);
@@ -850,6 +861,12 @@ public class SubGraph {
 
 
         // TODO: find DummyNodes between subgraphs. Just use findDummyNodes on full graph?
+        leftSubGraph.genomes.forEach((parent, childMap) -> {
+            this.genomes
+                    .computeIfAbsent(parent, parentId -> new LinkedHashMap<>())
+                    .putAll(childMap);
+        });
+        leftSubGraph.colorize();
 
         this.sortLayersLeftFrom(oldFirstIndex);
         this.setLeftDrawLocations(this.layers, oldFirstIndex);
