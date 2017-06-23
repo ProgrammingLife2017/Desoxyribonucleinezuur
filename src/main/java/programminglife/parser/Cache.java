@@ -6,7 +6,7 @@ import org.mapdb.Atomic;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.Serializer;
-import programminglife.utility.Alerts;
+import programminglife.gui.Alerts;
 import programminglife.utility.Console;
 
 import java.io.File;
@@ -33,7 +33,7 @@ public final class Cache {
     private static final String PARENTS_ADJACENCY_MAP_NAME = "parentsNamesMap";
     private static final String NUMBER_OF_NODES_INT_NAME = "numberOfNodes";
 
-    private String dbFileName;
+    private final String dbFileName;
     private DB db;
 
     private Map<Integer, String> sequenceMap;
@@ -52,8 +52,9 @@ public final class Cache {
 
     /**
      * Create the Cache and initialize the database.
+     *
      * @param name The name of the {@link Cache}.
-     *                 Note: this method will append .db if it doesn't already end with that.
+     *             Note: this method will append .db if it doesn't already end with that.
      */
     public Cache(String name) {
         this.dbFileName = toDBFile(name);
@@ -97,6 +98,7 @@ public final class Cache {
 
     /**
      * converts a name to the name that would be used for the cache.
+     *
      * @param name The name to be converted
      * @return The converted name.
      */
@@ -122,6 +124,7 @@ public final class Cache {
 
     /**
      * Check whether a cache exists for file named name.
+     *
      * @param name collection to check for
      * @return true iff a cache exists for the file, false iff otherwise.
      */
@@ -131,6 +134,7 @@ public final class Cache {
 
     /**
      * Get the HTreeMap cache for the cached sequence lengths.
+     *
      * @return the HTreeMap cache for the sequence lengths.
      */
     private Map<Integer, Integer> getSequenceLengthMap() {
@@ -139,6 +143,7 @@ public final class Cache {
 
     /**
      * Get the HTreeMap cache for the cached sequences.
+     *
      * @return the HTreeMap cache for the sequences.
      */
     private Map<Integer, String> getSequenceMap() {
@@ -155,9 +160,10 @@ public final class Cache {
 
     /**
      * Get the HTreeMap cache for the cached genomes.
+     *
      * @return the HTreeMap cache for the sequences.
      */
-    public Map<Integer, String> getGenomeIdNamesMap() {
+    private Map<Integer, String> getGenomeIdNamesMap() {
         return this.genomeIdNamesMap;
     }
 
@@ -179,12 +185,13 @@ public final class Cache {
 
     /**
      * Get a disk-backed hashMap named name. If it doesn't exist, it is created using the provided serializers.
-     * @param db the db to get the map from.
-     * @param name The name of the hashMap
-     * @param keySerializer The serializer for the keys
+     *
+     * @param db              the db to get the map from.
+     * @param name            The name of the hashMap
+     * @param keySerializer   The serializer for the keys
      * @param valueSerializer The serializer for th values
-     * @param <K> The type of the keys
-     * @param <V> The type of the values.
+     * @param <K>             The type of the keys
+     * @param <V>             The type of the values.
      * @return a disk-backed hashMap named name.
      */
     @NotNull
@@ -213,6 +220,7 @@ public final class Cache {
 
     /**
      * Get the sequence for the node with NodeId.
+     *
      * @param nodeID ID of the node to get the sequence for.
      * @return the sequence.
      */
@@ -227,7 +235,8 @@ public final class Cache {
 
     /**
      * Set the sequence for the node with NodeId.
-     * @param nodeID ID of the node to set the sequence for.
+     *
+     * @param nodeID   ID of the node to set the sequence for.
      * @param sequence new sequence.
      */
     public void setSequence(int nodeID, String sequence) {
@@ -239,6 +248,7 @@ public final class Cache {
 
     /**
      * Get the sequence length for the node with NodeId.
+     *
      * @param nodeID ID of the node to get the sequence length for.
      * @return the length of the sequence.
      */
@@ -252,7 +262,8 @@ public final class Cache {
 
     /**
      * Set the Genomes through a specific Node.
-     * @param nodeID the ID of the Node
+     *
+     * @param nodeID    the ID of the Node
      * @param genomeIDs an Array of IDs of Genomes
      */
     public void setGenomes(int nodeID, int[] genomeIDs) {
@@ -262,6 +273,7 @@ public final class Cache {
 
     /**
      * Get the Genomes through a specific Node.
+     *
      * @param nodeID the ID of the Node
      * @return an Array of Genome IDs
      */
@@ -271,6 +283,7 @@ public final class Cache {
 
     /**
      * Get the name of a Genome based on its index.
+     *
      * @param genomeID the index (0-based) of the Genome in the GFA header
      * @return the name of the Genome
      */
@@ -285,6 +298,7 @@ public final class Cache {
 
     /**
      * Get the ID of a Genome based on its name.
+     *
      * @param genomeName the name of the Genome
      * @return the index of the Genome in the GFA header
      */
@@ -298,6 +312,7 @@ public final class Cache {
 
     /**
      * Add the name of a Genome, index is previous one + 1.
+     *
      * @param genomeName the name of the Genome to add
      */
     public void addGenomeName(String genomeName) {
@@ -308,17 +323,18 @@ public final class Cache {
 
     /**
      * Completely remove a database. This cannot be undone.
-     * @return true if the file was removed, false if it did not exist
+     *
      * @throws IOException when something strange happens during deletion
      */
-    public boolean removeDB() throws IOException {
+    public void removeDB() throws IOException {
         Console.println("[%s] Removing database %s", Thread.currentThread().getName(), this.dbFileName);
         close();
-        return Files.deleteIfExists(Paths.get(this.dbFileName));
+        Files.deleteIfExists(Paths.get(this.dbFileName));
     }
 
     /**
      * Remove a cache file.
+     *
      * @param name the name of the file to remove
      * @return true if the file was deleted
      * @throws IOException when strange things happen
@@ -328,14 +344,8 @@ public final class Cache {
     }
 
     /**
-     * Persist cache to disk.
-     */
-    public void commit() {
-        this.db.commit();
-    }
-
-    /**
      * Rolls back non-persistent changes in database.
+     *
      * @throws IOException when something strange happens during deletion
      */
     public void rollback() throws IOException {
@@ -362,6 +372,7 @@ public final class Cache {
 
     /**
      * Get Node IDs belonging to a Genome.
+     *
      * @param genomeID the ID of the Genome to look up
      * @return a {@link Collection} of IDs
      */

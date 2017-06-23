@@ -46,7 +46,10 @@ public class SubGraph {
 
     /**
      * Create a SubGraph from a graph, without any nodes initially.
+     *
      * @param graph The {@link GenomeGraph} that this SubGraph is based on.
+     * @param zoomLevel double of the zoomLevel.
+     * @param replaceSNPs boolean for if the SNPs need to be drawn.
      */
     private SubGraph(GenomeGraph graph, double zoomLevel, boolean replaceSNPs) {
         this(graph, zoomLevel, replaceSNPs, new LinkedHashMap<>(), new LinkedHashMap<>(), new LinkedHashMap<>());
@@ -54,13 +57,17 @@ public class SubGraph {
 
     /**
      * Create a SubGraph with the specified nodes, rootNodes and endNodes.
-     * @param graph The {@link GenomeGraph} that this SubGraph is based on.
-     * @param nodes The nodes of this SubGraph.
+     *
+     * @param graph     The {@link GenomeGraph} that this SubGraph is based on.
+     * @param zoomLevel double of the zoomLevel.
+     * @param replaceSNPs boolean for if the SNPs need to be drawn.
+     * @param nodes     The nodes of this SubGraph.
      * @param rootNodes The rootNodes of this SubGraph.
-     * @param endNodes The endNodes of this SubGraph.
+     * @param endNodes  The endNodes of this SubGraph.
      */
-    private SubGraph(GenomeGraph graph, double zoomLevel, boolean replaceSNPs, LinkedHashMap<Integer, DrawableNode> nodes,
-                     LinkedHashMap<Integer, DrawableNode> rootNodes, LinkedHashMap<Integer, DrawableNode> endNodes) {
+    private SubGraph(GenomeGraph graph, double zoomLevel, boolean replaceSNPs,
+                     LinkedHashMap<Integer, DrawableNode> nodes, LinkedHashMap<Integer, DrawableNode> rootNodes,
+                     LinkedHashMap<Integer, DrawableNode> endNodes) {
         this.graph = graph;
         this.zoomLevel = zoomLevel;
         this.nodes = nodes;
@@ -79,9 +86,10 @@ public class SubGraph {
      * Create a SubGraph using a centerNode and a radius around that centerNode.
      * This SubGraph will include all Nodes within radius steps to a parent,
      * and then another 2radius steps to a child, and symmetrically the same with children / parents reversed.
-     *  @param centerNode The centerNode
-     * @param radius     The radius
-     * @param replaceSNPs
+     *
+     * @param centerNode  The centerNode
+     * @param radius      The radius
+     * @param replaceSNPs flag if SNPs should be collapsed
      */
     public SubGraph(DrawableSegment centerNode, int radius, boolean replaceSNPs) {
         this(centerNode, 1, MIN_RADIUS_DEFAULT, Math.max(radius, MIN_RADIUS_DEFAULT), replaceSNPs);
@@ -98,12 +106,14 @@ public class SubGraph {
      * Create a SubGraph using a centerNode and a radius around that centerNode.
      * This SubGraph will include all Nodes within radius steps to a parent,
      * and then another 2radius steps to a child, and symmetrically the same with children / parents reversed.
-     *  @param centerNode The centerNode
-     * @param minRadius  The minimum radius.
-     * @param radius     The radius
-     * @param replaceSNPs
+     *
+     * @param centerNode  The centerNode
+     * @param zoomLevel   double of the amount zoomed in/out
+     * @param minRadius   The minimum radius.
+     * @param radius      The radius
+     * @param replaceSNPs flag if SNPs should be collapsed
      */
-    SubGraph(DrawableSegment centerNode, double zoomLevel, int minRadius, int radius, boolean replaceSNPs) {
+    private SubGraph(DrawableSegment centerNode, double zoomLevel, int minRadius, int radius, boolean replaceSNPs) {
         assert (minRadius <= radius);
 
         this.graph = centerNode.getGraph();
@@ -149,26 +159,18 @@ public class SubGraph {
      * Find nodes within radius steps from centerNode.
      * This resets the {@link #nodes}, {@link #rootNodes} and {@link #endNodes}
      *
-     * @param subGraph The SubGraph to find these nodes for.
-     * @param startNodes The Nodes to start searching from.
+     * @param subGraph      The SubGraph to find these nodes for.
+     * @param startNodes    The Nodes to start searching from.
      * @param excludedNodes The nodes that will not be added to this graph, even if they are found.
-     * @param radius The number of steps to search.
+     * @param radius        The number of steps to search.
      */
     private static void findNodes(SubGraph subGraph, Collection<DrawableNode> startNodes,
                                   LinkedHashMap<Integer, DrawableNode> excludedNodes, int radius) {
-        long startTime = System.nanoTime();
-
         subGraph.nodes = new LinkedHashMap<>();
         subGraph.rootNodes = new LinkedHashMap<>();
         subGraph.endNodes = new LinkedHashMap<>();
         LinkedHashMap<Integer, DrawableNode> foundNodes = new LinkedHashMap<>();
 
-        /*
-         * The queue for the BFS. This Queue uses null as separators between radii.
-         * Example: A B null C D: first A, then B, then null, so we go to the next layer, then C, then D
-         * layer 1:  A B
-         * layer 2:  C D
-         */
         Queue<FoundNode> queue = new LinkedList<>();
         startNodes.forEach(node -> queue.add(new FoundNode(node, null)));
         queue.add(null);
@@ -179,13 +181,11 @@ public class SubGraph {
 
             if (current == null) {
                 radius--;
-
                 if (radius == 0) {
                     lastRow = true;
                 } else if (radius < 0) {
                     break;
                 }
-
                 queue.add(null);
                 continue;
             }
@@ -193,27 +193,23 @@ public class SubGraph {
             DrawableNode previous;
             if (excludedNodes.containsKey(current.node.getIdentifier())) {
                 if (startNodes.contains(current.node) && !foundNodes.containsKey(current.node.getIdentifier())) {
-                    // this is an excluded start node. Add all children and parents, but not this node
                     previous = null; // to signify it did not exist in subGraph.nodes yet.
                 } else {
-                    // This is an excluded node, just continue with next
-                    continue;
+                    continue; // This is an excluded node, just continue with next
                 }
             } else {
-                // normal (non-excluded) node
-                // save this node, save the result to check whether we had found it earlier.
+                // normal (non-excluded) node, save this node, save the result to check whether we had found it earlier.
                 previous = subGraph.nodes.put(current.node.getIdentifier(), current.node);
             }
-
 
             if (lastRow) {
                 // last row, add this node to rootNodes / endNodes even if we already found this node
                 // (for when a node is both a root and an end node)
-                if (current.foundFrom == FoundNode.FoundFrom.CHILD &&
-                        (previous == null || subGraph.endNodes.containsKey(current.node.getIdentifier()))) {
+                if (current.foundFrom == FoundNode.FoundFrom.CHILD
+                        && (previous == null || subGraph.endNodes.containsKey(current.node.getIdentifier()))) {
                     subGraph.rootNodes.put(current.node.getIdentifier(), current.node);
-                } else if (current.foundFrom == FoundNode.FoundFrom.PARENT &&
-                        (previous == null || subGraph.rootNodes.containsKey(current.node.getIdentifier()))) {
+                } else if (current.foundFrom == FoundNode.FoundFrom.PARENT
+                        && (previous == null || subGraph.rootNodes.containsKey(current.node.getIdentifier()))) {
                     subGraph.endNodes.put(current.node.getIdentifier(), current.node);
                 }
                 // else: current.foundFrom == null, true for the centerNode.
@@ -223,7 +219,6 @@ public class SubGraph {
                 // we already found this node, continue to next node.
                 assert (previous.equals(current.node));
             } else {
-                // this is not the last row, and this node was not added yet
                 Collection<Integer> children = current.node.getChildren();
                 Collection<Integer> parents = current.node.getParents();
 
@@ -243,17 +238,13 @@ public class SubGraph {
                 });
             }
         }
-
-        long endTime = System.nanoTime();
-        long difference = endTime - startTime;
-        double difInSeconds = difference / 1000000000.0;
-        Console.println("Time for finding nodes: %f s", difInSeconds);
     }
 
     /**
      * Checks whether a dynamic load is necessary. This includes both loading new nodes
      * into the datastructure as well as removing nodes from the datastructure.
-     * @param leftBorder The left border of the canvas.
+     *
+     * @param leftBorder  The left border of the canvas.
      * @param rightBorder The right border of the canvas.
      */
     public void checkDynamicLoad(int leftBorder, double rightBorder) {
@@ -289,6 +280,7 @@ public class SubGraph {
 
     /**
      * Removes layers from the right of the graph.
+     *
      * @param numberOfLayers The number of layers to remove from the graph.
      */
     private void removeRightLayers(int numberOfLayers) {
@@ -303,6 +295,7 @@ public class SubGraph {
 
     /**
      * Removes layers from the left of the graph.
+     *
      * @param numberOfLayers The number of layers to remove from the graph.
      */
     private void removeLeftLayers(int numberOfLayers) {
@@ -326,13 +319,17 @@ public class SubGraph {
         /**
          * Whether a node was found from a parent or a child.
          */
-        private enum FoundFrom { PARENT, CHILD }
-        private DrawableNode node;
-        private FoundFrom foundFrom;
+        private enum FoundFrom {
+            PARENT, CHILD
+        }
+
+        private final DrawableNode node;
+        private final FoundFrom foundFrom;
 
         /**
          * simple constructor for a FoundNode.
-         * @param node The node that was found.
+         *
+         * @param node      The node that was found.
          * @param foundFrom Whether it was found from a parent or a child.
          */
         private FoundNode(DrawableNode node, FoundFrom foundFrom) {
@@ -358,7 +355,7 @@ public class SubGraph {
      * @param y The y coordinate
      * @return The {@link Drawable} that is on top at the given location.
      */
-    public Drawable atLocation(double x, double y) {
+    private Drawable atLocation(double x, double y) {
         int layerIndex = getLayerIndex(this.layers, x);
 
         // TODO: implement;
@@ -372,10 +369,12 @@ public class SubGraph {
      * If two layers are equally close (x is exactly in the middle of end
      * of left layer and start of the right layer), the right Layer is returned, as this
      * one is likely to have nodes closer (nodes in the left layer do not necessarily extend to the end)
-     * @param x The coordinate
+     *
+     * @param x      The coordinate
      * @param layers The list of layers to look through.
      * @return The index of the closest layer.
      */
+    @SuppressWarnings("UnnecessaryLocalVariable")
     private int getLayerIndex(List<Layer> layers, double x) {
         int resultIndex = Collections.binarySearch(layers, x);
         if (resultIndex >= layers.size()) {
@@ -406,7 +405,7 @@ public class SubGraph {
     /**
      * Lay out the {@link Drawable Drawables} in this SubGraph.
      */
-    public void layout() {
+    private void layout() {
         createLayers();
 
         int minimumLayerIndex = findMinimumNodesLayerIndex(this.layers);
@@ -425,11 +424,12 @@ public class SubGraph {
 
     /**
      * Set the coordinates for all {@link Layer layers} to the right of the given Layer.
-     * @param layers The Layers to set the coordinates for.
+     *
+     * @param layers        The Layers to set the coordinates for.
      * @param setLayerIndex The index of the Layer to start from (exclusive,
      *                      so coordinates are not set for this layer).
      */
-    public void setRightDrawLocations(ArrayList<Layer> layers, int setLayerIndex) {
+    private void setRightDrawLocations(ArrayList<Layer> layers, int setLayerIndex) {
         ListIterator<Layer> layerIterator = layers.listIterator(setLayerIndex);
         Layer setLayer = layerIterator.next();
         double x = setLayer.getX() + setLayer.getWidth();
@@ -443,7 +443,7 @@ public class SubGraph {
 
             int newSize = layer.size();
             int diff = Math.abs(newSize - size);
-            x += (LAYER_PADDING * zoomLevel)  + (DIFF_LAYER_PADDING * zoomLevel) * diff;
+            x += (LAYER_PADDING * zoomLevel) + (DIFF_LAYER_PADDING * zoomLevel) * diff;
 
             layer.setX(x);
             layer.setDrawLocations(firstY, zoomLevel);
@@ -454,11 +454,12 @@ public class SubGraph {
 
     /**
      * Set the coordinates for all {@link Layer layers} to the left of the given Layer.
-     * @param layers The Layers to set the coordinates for.
+     *
+     * @param layers        The Layers to set the coordinates for.
      * @param setLayerIndex The index of the Layer to start from (exclusive,
      *                      so coordinates are not set for this layer).
      */
-    public void setLeftDrawLocations(ArrayList<Layer> layers, int setLayerIndex) {
+    private void setLeftDrawLocations(ArrayList<Layer> layers, int setLayerIndex) {
         ListIterator<Layer> layerIterator = layers.listIterator(setLayerIndex + 1);
         Layer setLayer = layerIterator.previous();
         double x = setLayer.getX();
@@ -579,6 +580,7 @@ public class SubGraph {
 
     /**
      * Find the Layer with the least number of nodes.
+     *
      * @param layers The {@link Layer Layers} to search through.
      * @return The index of the Layer with the minimum number of nodes, or -1 if the list of layers is empty.
      */
@@ -609,6 +611,7 @@ public class SubGraph {
 
     /**
      * Sort all {@link Layer Layers} right from a given layer.
+     *
      * @param layerIndex The index of the layer to start sorting from (exclusive, so that layer is not sorted).
      */
     private void sortLayersRightFrom(int layerIndex) {
@@ -624,6 +627,7 @@ public class SubGraph {
 
     /**
      * Sort all {@link Layer Layers} left from a given layer.
+     *
      * @param layerIndex The index of the layer to start sorting from (exclusive, so that layer is not sorted).
      */
     private void sortLayersLeftFrom(int layerIndex) {
@@ -639,7 +643,7 @@ public class SubGraph {
 
     /**
      * Topologically sort the nodes from this graph. <br />
-     *
+     * <p>
      * Assumption: graph is a DAG.
      *
      * @return a topologically sorted list of nodes
@@ -704,10 +708,11 @@ public class SubGraph {
 
     /**
      * Calculate genomes through all outgoing edges of a parent.
+     *
      * @param parent find all genomes through edges from this parent
      * @return a {@link Map} of  collections of genomes through links
      */
-    Map<DrawableNode, Collection<Integer>> calculateGenomes(DrawableNode parent) {
+    private Map<DrawableNode, Collection<Integer>> calculateGenomes(DrawableNode parent) {
         Map<DrawableNode, Collection<Integer>> outgoingGenomes = new LinkedHashMap<>();
 
         // Create set of parent genomes
@@ -734,6 +739,7 @@ public class SubGraph {
 
     /**
      * Calculate genomes through edge, based on topological ordering and node-genome information.
+     *
      * @return a {@link Map} of {@link Map Maps} of collections of genomes through links
      */
     public Map<DrawableNode, Map<DrawableNode, Collection<Integer>>> calculateGenomes() {
@@ -748,6 +754,7 @@ public class SubGraph {
 
     /**
      * Add nodes from the {@link #rootNodes}.
+     *
      * @param radius The number of steps to take from the rootNodes before stopping the search.
      */
     private void addFromRootNodes(int radius) {
@@ -768,9 +775,10 @@ public class SubGraph {
 
     /**
      * Add nodes from the {@link #endNodes}.
+     *
      * @param radius The number of steps to take from the endNodes before stopping the search.
      */
-    public void addFromEndNodes(int radius) {
+    private void addFromEndNodes(int radius) {
         if (this.endNodes.isEmpty()) {
             return;
         }
@@ -789,6 +797,11 @@ public class SubGraph {
         this.mergeRightSubGraphIntoThisSubGraph(subGraph);
     }
 
+    /**
+     * Method to merge subGraphs with each other.
+     *
+     * @param rightSubGraph SubGraph to be merged into from the right.
+     */
     private void mergeRightSubGraphIntoThisSubGraph(SubGraph rightSubGraph) {
         this.nodes.putAll(rightSubGraph.nodes);
         this.endNodes = rightSubGraph.endNodes;
@@ -818,11 +831,9 @@ public class SubGraph {
 
 
         // TODO: find DummyNodes between subgraphs. Just use findDummyNodes on full graph?
-        rightSubGraph.genomes.forEach((parent, childMap) -> {
-            this.genomes
-                    .computeIfAbsent(parent, parentId -> new LinkedHashMap<>())
-                    .putAll(childMap);
-        });
+        rightSubGraph.genomes.forEach((parent, childMap) -> this.genomes
+                .computeIfAbsent(parent, parentId -> new LinkedHashMap<>())
+                .putAll(childMap));
         rightSubGraph.colorize();
 
         this.sortLayersRightFrom(oldLastIndex);
@@ -832,6 +843,7 @@ public class SubGraph {
     /**
      * Merge another {@link SubGraph} into this SubGraph, by putting it on the left of this SubGraph,
      * and then drawing connecting edges between nodes that should have them.
+     *
      * @param leftSubGraph The other SubGraph that will be merged into this one.
      */
     private void mergeLeftSubGraphIntoThisSubGraph(SubGraph leftSubGraph) {
@@ -863,30 +875,15 @@ public class SubGraph {
 
 
         // TODO: find DummyNodes between subgraphs. Just use findDummyNodes on full graph?
-        leftSubGraph.genomes.forEach((parent, childMap) -> {
-            this.genomes
-                    .computeIfAbsent(parent, parentId -> new LinkedHashMap<>())
-                    .putAll(childMap);
-        });
+        leftSubGraph.genomes.forEach((parent, childMap) -> this.genomes
+                .computeIfAbsent(parent, parentId -> new LinkedHashMap<>())
+                .putAll(childMap));
         leftSubGraph.colorize();
 
         this.sortLayersLeftFrom(oldFirstIndex);
         this.setLeftDrawLocations(this.layers, oldFirstIndex);
     }
 
-
-    /**
-     * Set the radius of this SubGraph.
-     * Nodes that are now outside the radius of this SubGraph will be removed,
-     * and Nodes that are now inside will be added.
-     *
-     * @param radius The new radius.
-     */
-    public void setRadius(int radius) {
-        // TODO
-        // when getting bigger: include new nodes
-        // when getting smaller: drop nodes outside new radius.
-    }
 
     public LinkedHashMap<Integer, DrawableNode> getNodes() {
         return this.nodes;
@@ -896,6 +893,12 @@ public class SubGraph {
         return graph;
     }
 
+    /**
+     * Method to translate the graph.
+     *
+     * @param xDifference difference in X direction.
+     * @param yDifference difference in Y direction.
+     */
     public void translate(double xDifference, double yDifference) {
         for (Layer layer : this.layers) {
             layer.setX(layer.getX() + xDifference);
@@ -907,6 +910,11 @@ public class SubGraph {
         }
     }
 
+    /**
+     * Method to set the zoom amount.
+     *
+     * @param scale double of the amount to zoom.
+     */
     public void zoom(double scale) {
         zoomLevel /= scale;
         for (Layer layer : this.layers) {
@@ -922,6 +930,9 @@ public class SubGraph {
         }
     }
 
+    /**
+     * Method to give color to the nodes.
+     */
     public void colorize() {
         for (DrawableNode drawableNode : this.nodes.values()) {
             drawableNode.colorize(this);

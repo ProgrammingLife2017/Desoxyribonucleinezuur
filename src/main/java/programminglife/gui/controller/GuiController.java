@@ -26,8 +26,8 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import jp.uphy.javafx.console.ConsoleView;
 import programminglife.ProgrammingLife;
-import programminglife.controller.MiniMapController;
-import programminglife.controller.RecentFileController;
+import programminglife.gui.Alerts;
+import programminglife.gui.NumbersOnlyListener;
 import programminglife.gui.ResizableCanvas;
 import programminglife.model.Feature;
 import programminglife.model.GenomeGraph;
@@ -36,16 +36,13 @@ import programminglife.model.drawing.DrawableNode;
 import programminglife.model.drawing.DrawableSegment;
 import programminglife.parser.AnnotationParser;
 import programminglife.parser.GraphParser;
-import programminglife.utility.Alerts;
+import programminglife.parser.ProgressCounter;
 import programminglife.utility.Console;
-import programminglife.utility.NumbersOnlyListener;
-import programminglife.utility.ProgressCounter;
 
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Map;
@@ -103,8 +100,8 @@ public class GuiController implements Observer {
     private RecentFileController recentFileControllerGFF;
     private MiniMapController miniMapController;
     private File file;
-    private File recentFileGFA = new File("RecentGFA.txt");
-    private File recentFileGFF = new File("RecentGFF.txt");
+    private final File recentFileGFA = new File("RecentGFA.txt");
+    private final File recentFileGFF = new File("RecentGFF.txt");
     private Map<String, Feature> features;
     private Thread parseThread;
 
@@ -122,7 +119,7 @@ public class GuiController implements Observer {
     @FXML
     @SuppressWarnings("unused")
     private void initialize() {
-        this.graphController = new GraphController(null, this.canvas, this.anchorGraphInfo);
+        this.graphController = new GraphController(this.canvas);
         this.scale = 1;
 
         this.recentFileControllerGFA = new RecentFileController(this.recentFileGFA, this.menuRecentGFA);
@@ -141,11 +138,11 @@ public class GuiController implements Observer {
 
     /**
      * Open and parse a GFA file.
+     *
      * @param file The {@link File} to open.
-     * @throws IOException if the {@link File} is not found.
      * @return the parser to be notified when it is finished
      */
-    public GraphParser openFile(File file) throws IOException {
+    public GraphParser openFile(File file) {
         if (file != null) {
             if (this.graphController != null && this.graphController.getGraph() != null) {
                 this.graphController.getGraph().close();
@@ -173,11 +170,11 @@ public class GuiController implements Observer {
 
     /**
      * Open and parse a GFF file.
+     *
      * @param file The {@link File} to open.
-     * @throws IOException if the {@link File} is not found.
      * @return AnnotationParser to be notified when finished.
      */
-    private AnnotationParser openAnnotationFile(File file) throws IOException {
+    private AnnotationParser openAnnotationFile(File file) {
         AnnotationParser annotationParser = null;
         if (file != null) {
             Console.println("Opening annotation " + file);
@@ -228,9 +225,10 @@ public class GuiController implements Observer {
 
     /**
      * Set the graph for this GUIController.
+     *
      * @param graph {@link GenomeGraph} to use.
      */
-    public void setGraph(GenomeGraph graph) {
+    private void setGraph(GenomeGraph graph) {
         this.graphController.setGraph(graph);
         disableGraphUIElements(graph == null);
         searchTab.setDisable(graph == null);
@@ -251,8 +249,9 @@ public class GuiController implements Observer {
 
     /**
      * Handles the fileChooser when open a file.
+     *
      * @param filter ExtensionFilter of which file type to open.
-     * @param isGFA boolean to check if it is a GFA file.
+     * @param isGFA  boolean to check if it is a GFA file.
      */
     private void fileChooser(ExtensionFilter filter, boolean isGFA) {
         FileChooser fileChooser = new FileChooser();
@@ -261,27 +260,21 @@ public class GuiController implements Observer {
             File existDirectory = file.getParentFile();
             fileChooser.setInitialDirectory(existDirectory);
         }
-        try {
-            file = fileChooser.showOpenDialog(ProgrammingLife.getStage());
-            if (file != null) {
-                if (isGFA) {
-                    this.openFile(file);
-                    Platform.runLater(() -> {
-                        File recentFileGFA = recentFileControllerGFA.getRecentFile();
-                        recentFileControllerGFA.updateRecent(recentFileGFA, file);
-                    });
-                } else {
-                    this.openAnnotationFile(file);
-                    Platform.runLater(() -> {
-                        File recentFileGFF = recentFileControllerGFA.getRecentFile();
-                        recentFileControllerGFF.updateRecent(recentFileGFF, file);
-                    });
-                }
+        file = fileChooser.showOpenDialog(ProgrammingLife.getStage());
+        if (file != null) {
+            if (isGFA) {
+                this.openFile(file);
+                Platform.runLater(() -> {
+                    File recentFileGFA = recentFileControllerGFA.getRecentFile();
+                    recentFileControllerGFA.updateRecent(recentFileGFA, file);
+                });
+            } else {
+                this.openAnnotationFile(file);
+                Platform.runLater(() -> {
+                    File recentFileGFF = recentFileControllerGFA.getRecentFile();
+                    recentFileControllerGFF.updateRecent(recentFileGFF, file);
+                });
             }
-        } catch (FileNotFoundException e) {
-            Alerts.error("This GFA file can't be found");
-        } catch (IOException e) {
-            Alerts.error("This GFA file can't be opened");
         }
     }
 
@@ -326,7 +319,7 @@ public class GuiController implements Observer {
                 gc.setGuiController(this);
                 gc.initBookmarks();
                 if (this.graphController.getGraph() != null) {
-                    gc.setBtnCreateBookmarkActive(true);
+                    gc.setBtnCreateBookmarkActive();
                 }
                 Scene scene = new Scene(page);
                 Stage bookmarkDialogStage = new Stage();
@@ -344,6 +337,7 @@ public class GuiController implements Observer {
 
     /**
      * Method to disable the UI Elements on the left of the GUI.
+     *
      * @param isDisabled boolean, true disables the left anchor panel.
      */
     private void disableGraphUIElements(boolean isDisabled) {
@@ -365,10 +359,10 @@ public class GuiController implements Observer {
      * Method to reset the zoom levels.
      */
     private void resetZoom() {
-            graphController.resetZoom();
-            scale = 1;
-            canvas.setScaleX(1);
-            canvas.setScaleY(1);
+        graphController.resetZoom();
+        scale = 1;
+        canvas.setScaleX(1);
+        canvas.setScaleY(1);
     }
 
     /**
@@ -472,13 +466,14 @@ public class GuiController implements Observer {
             event.consume();
         });
         anchorGraphPanel.addEventHandler(ScrollEvent.SCROLL, event ->
-                zoom(event.getDeltaX(), event.getDeltaY(), event.getSceneX(), event.getSceneY(), ZOOM_FACTOR));
+                zoom(event.getDeltaX(), event.getDeltaY(), event.getSceneX(), event.getSceneY()));
     }
 
     /**
      * Mouse click method that does the show info handling.
-     * @param x coordinate where is clicked.
-     * @param y coordinate where is clicked.
+     *
+     * @param x            coordinate where is clicked.
+     * @param y            coordinate where is clicked.
      * @param shiftPressed boolean if shift is pressed it should be displayed in panel 2.
      */
     private void mouseClick(double x, double y, boolean shiftPressed) {
@@ -486,7 +481,11 @@ public class GuiController implements Observer {
         if (clickedOn != null) {
             if (clickedOn instanceof DrawableSegment) {
                 DrawableSegment segment = (DrawableSegment) clickedOn;
-                showInfoNode(segment, shiftPressed ? 240 : 10);
+                if (shiftPressed) {
+                    showInfoNode(segment, 240);
+                } else {
+                    showInfoNode(segment, 10);
+                }
                 graphController.highlightClicked(segment, shiftPressed);
             }
         }
@@ -494,22 +493,22 @@ public class GuiController implements Observer {
 
     /**
      * Handles the zooming in and out of the group.
+     *
      * @param deltaX The scroll amount in the X direction. See {@link ScrollEvent#getDeltaX()}
      * @param deltaY The scroll amount in the Y direction. See {@link ScrollEvent#getDeltaY()}
      * @param sceneX double for the x location.
      * @param sceneY double for the y location.
-     * @param delta double the factor by which is zoomed.
      */
-    private void zoom(double deltaX, double deltaY, double sceneX, double sceneY, double delta) {
+    private void zoom(double deltaX, double deltaY, double sceneX, double sceneY) {
         double oldScale = scale;
 
         if (deltaX < 0 || deltaY < 0) {
-            scale *= delta;
+            scale *= ZOOM_FACTOR;
         } else {
-            scale /= delta;
+            scale /= ZOOM_FACTOR;
         }
 
-        scale = clamp(scale, MIN_SCALE, MAX_SCALE);
+        scale = clamp(scale);
         double factor = (scale / oldScale) - 1;
 
         graphController.zoom(factor + 1);
@@ -524,17 +523,16 @@ public class GuiController implements Observer {
 
     /**
      * Clamp function used for zooming in and out.
+     *
      * @param value double current scale.
-     * @param min double min scale value.
-     * @param max double max scale value.
      * @return double scale value.
      */
-    private static double clamp(double value, double min, double max) {
-        if (Double.compare(value, min) < 0) {
-            return min;
+    private static double clamp(double value) {
+        if (Double.compare(value, GuiController.MIN_SCALE) < 0) {
+            return GuiController.MIN_SCALE;
         }
-        if (Double.compare(value, max) > 0) {
-            return max;
+        if (Double.compare(value, GuiController.MAX_SCALE) > 0) {
+            return GuiController.MAX_SCALE;
         }
         return value;
     }
@@ -607,6 +605,7 @@ public class GuiController implements Observer {
 
     /**
      * Copies information to the clipboard.
+     *
      * @param x int used in the ID, to know which sequence to get.
      */
     private void copyToClipboard(int x) {
@@ -624,6 +623,7 @@ public class GuiController implements Observer {
 
     /**
      * Sets the text field for drawing the graph.
+     *
      * @param center The center node
      * @param radius The radius of the subGraph
      */
@@ -632,17 +632,24 @@ public class GuiController implements Observer {
         txtMaxDrawDepth.setText(String.valueOf(radius));
     }
 
-     /**
+    /**
      * Method to show the information of an edge.
+     *
      * @param edge DrawableEdge the edge which has been clicked on.
-     * @param x int the x location of the TextField.
+     * @param x    int the x location of the TextField.
      */
     private void showInfoEdge(DrawableEdge edge, int x) {
         anchorGraphInfo.getChildren().removeIf(node1 -> node1.getLayoutX() == x);
 
-        Text idText = new Text("Genomes: "); idText.setLayoutX(x); idText.setLayoutY(65);
-        Text parentsText = new Text("Parent: "); parentsText.setLayoutX(x); parentsText.setLayoutY(115);
-        Text childrenText = new Text("Child: "); childrenText.setLayoutX(x); childrenText.setLayoutY(165);
+        Text idText = new Text("Genomes: ");
+        idText.setLayoutX(x);
+        idText.setLayoutY(65);
+        Text parentsText = new Text("Parent: ");
+        parentsText.setLayoutX(x);
+        parentsText.setLayoutY(115);
+        Text childrenText = new Text("Child: ");
+        childrenText.setLayoutX(x);
+        childrenText.setLayoutY(165);
 
         TextField id = getTextField("Genomes: ", x, 70,
                 graphController.getGraph().getGenomeNames(edge.getGenomes()).toString());
@@ -655,18 +662,35 @@ public class GuiController implements Observer {
 
     /**
      * Method to show the information of a node.
+     *
      * @param node DrawableSegment the node which has been clicked on.
-     * @param x int the x location of the TextField.
+     * @param x    int the x location of the TextField.
      */
     private void showInfoNode(DrawableSegment node, int x) {
-        Text idText = new Text("ID: "); idText.setLayoutX(x); idText.setLayoutY(65);
-        Text parentText = new Text("Parents: "); parentText.setLayoutX(x); parentText.setLayoutY(105);
-        Text childText = new Text("Children: "); childText.setLayoutX(x); childText.setLayoutY(145);
-        Text inEdgeText = new Text("Incoming Edges: "); inEdgeText.setLayoutX(x); inEdgeText.setLayoutY(185);
-        Text outEdgeText = new Text("Outgoing Edges: "); outEdgeText.setLayoutX(x); outEdgeText.setLayoutY(225);
-        Text seqLengthText = new Text("Sequence Length: "); seqLengthText.setLayoutX(x); seqLengthText.setLayoutY(265);
-        Text genomeText = new Text("Genomes: "); genomeText.setLayoutX(x); genomeText.setLayoutY(305);
-        Text seqText = new Text("Sequence: "); seqText.setLayoutX(x); seqText.setLayoutY(370);
+        Text idText = new Text("ID: ");
+        idText.setLayoutX(x);
+        idText.setLayoutY(65);
+        Text parentText = new Text("Parents: ");
+        parentText.setLayoutX(x);
+        parentText.setLayoutY(105);
+        Text childText = new Text("Children: ");
+        childText.setLayoutX(x);
+        childText.setLayoutY(145);
+        Text inEdgeText = new Text("Incoming Edges: ");
+        inEdgeText.setLayoutX(x);
+        inEdgeText.setLayoutY(185);
+        Text outEdgeText = new Text("Outgoing Edges: ");
+        outEdgeText.setLayoutX(x);
+        outEdgeText.setLayoutY(225);
+        Text seqLengthText = new Text("Sequence Length: ");
+        seqLengthText.setLayoutX(x);
+        seqLengthText.setLayoutY(265);
+        Text genomeText = new Text("Genomes: ");
+        genomeText.setLayoutX(x);
+        genomeText.setLayoutY(305);
+        Text seqText = new Text("Sequence: ");
+        seqText.setLayoutX(x);
+        seqText.setLayoutY(370);
 
         anchorGraphInfo.getChildren().removeIf(node1 -> node1.getLayoutX() == x);
 
@@ -710,9 +734,10 @@ public class GuiController implements Observer {
 
     /**
      * Returns a textField to be used by the edge and node information show panel.
-     * @param id String the id of the textField.
-     * @param x int the x coordinate of the textField inside the anchorPane.
-     * @param y int the y coordinate of the textField inside the anchorPane.
+     *
+     * @param id   String the id of the textField.
+     * @param x    int the x coordinate of the textField inside the anchorPane.
+     * @param y    int the y coordinate of the textField inside the anchorPane.
      * @param text String the text to be shown by the textField.
      * @return TextField the created textField.
      */
@@ -733,10 +758,11 @@ public class GuiController implements Observer {
 
     /**
      * Returns a textField to be used by the edge and node information show panel.
-     * @param id String the id of the textField.
-     * @param x int the x coordinate of the textField inside the anchorPane.
-     * @param y int the y coordinate of the textField inside the anchorPane.
-     * @param text String the text to be shown by the textField.
+     *
+     * @param id     String the id of the textField.
+     * @param x      int the x coordinate of the textField inside the anchorPane.
+     * @param y      int the y coordinate of the textField inside the anchorPane.
+     * @param text   String the text to be shown by the textField.
      * @param height int of the height of the area.
      * @return TextField the created textField.
      */

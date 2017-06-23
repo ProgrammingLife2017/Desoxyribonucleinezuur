@@ -21,12 +21,13 @@ public class Annotation {
 
     /**
      * A constructor for an Annotation.
-     * @param id The ID of this Annotation.
-     * @param file The file for this Annotation.
+     *
+     * @param id               The ID of this Annotation.
+     * @param file             The file for this Annotation.
      * @param originalGenomeID The original String for the genome. These should be mapped to the
      *                         genome indices in the {@link GenomeGraph}.
-     * @param startCoordinate The starting coordinate within the genome.
-     * @param endCoordinate The end coordinate within the genome.
+     * @param startCoordinate  The starting coordinate within the genome.
+     * @param endCoordinate    The end coordinate within the genome.
      */
     public Annotation(String id, String file, String originalGenomeID,
                       int startCoordinate, int endCoordinate) {
@@ -42,7 +43,8 @@ public class Annotation {
     /**
      * Add a text attribute.
      * If the attribute already exists, this value is added to it.
-     * @param name The name of the attribute.
+     *
+     * @param name  The name of the attribute.
      * @param value The value of the attribute.
      */
     public void addAttribute(String name, String value) {
@@ -52,7 +54,8 @@ public class Annotation {
     /**
      * Add multiple values to a single attribute.
      * If the attribute did not exist yet, it is created.
-     * @param name The name of the attribute.
+     *
+     * @param name   The name of the attribute.
      * @param values The values to add.
      */
     public void addMultiAttribute(String name, Set<String> values) {
@@ -62,7 +65,8 @@ public class Annotation {
     /**
      * Add multiple values to a single attribute.
      * If the attribute did not exist yet, it is created.
-     * @param name The name of the attribute.
+     *
+     * @param name   The name of the attribute.
      * @param values The values to add.
      */
     public void addMultiAttribute(String name, String[] values) {
@@ -72,6 +76,7 @@ public class Annotation {
     /**
      * Get or create an attribute. This returns the value set for an attribute.
      * If the attribute didn't exist yet, it is created.
+     *
      * @param name The name of the attribute.
      * @return The set of values for this attribute.
      */
@@ -96,9 +101,9 @@ public class Annotation {
                 && startCoordinate == that.startCoordinate
                 && endCoordinate == that.endCoordinate
                 && (
-                        genomeIndex == that.genomeIndex && genomeIndex != -1 // they have the same genomeIndex
+                genomeIndex == that.genomeIndex && genomeIndex != -1 // they have the same genomeIndex
                         || originalGenomeID.equals(that.originalGenomeID) // or the original names were equal
-                )
+        )
                 && textFields.equals(that.textFields);
     }
 
@@ -118,8 +123,8 @@ public class Annotation {
                 startCoordinate,
                 endCoordinate,
                 textFields.entrySet().stream().map(entry ->
-                    String.format("{%s: {%s}}", entry.getKey(),
-                            entry.getValue().stream().collect(Collectors.joining(", ")))
+                        String.format("{%s: {%s}}", entry.getKey(),
+                                entry.getValue().stream().collect(Collectors.joining(", ")))
                 ).collect(Collectors.joining(", "))
         );
     }

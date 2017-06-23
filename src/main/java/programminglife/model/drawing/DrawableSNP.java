@@ -9,11 +9,11 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 /**
+ * A subclass of {@link DrawableNode} representing Singular Nucleotide Polymorphism.
  * Class representing a SNP.
  * Contains from 2 to 4 nodes.
  */
 public class DrawableSNP extends DrawableNode {
-//    private static final int SNP_WIDTH = 11;
 
     private DrawableNode parent;
     private DrawableNode child;
@@ -21,9 +21,11 @@ public class DrawableSNP extends DrawableNode {
 
     /**
      * Construct a {@link DrawableNode}.
-     * @param parent the parent Segment of the mutations/SNP
-     * @param child the child Segment of the mutations/SNP
+     *
+     * @param parent    the parent Segment of the mutations/SNP
+     * @param child     the child Segment of the mutations/SNP
      * @param mutations the Segments in this bubble
+     * @param zoomLevel double of the zoomLevel.
      */
     DrawableSNP(DrawableNode parent, DrawableNode child, Collection<DrawableSegment> mutations, double zoomLevel) {
         super(mutations.iterator().next().getGraph(), DrawableNode.getUniqueId());
@@ -136,6 +138,7 @@ public class DrawableSNP extends DrawableNode {
 
     /**
      * Set the size of this {@link Drawable}.
+     *
      * @param size the preferred size
      */
     private void setSize(XYCoordinate size) {

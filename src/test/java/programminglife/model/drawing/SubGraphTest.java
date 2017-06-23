@@ -4,9 +4,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import programminglife.gui.InitFXThread;
 import programminglife.model.GenomeGraph;
 import programminglife.parser.GraphParser;
-import programminglife.utility.InitFXThread;
 
 import java.io.File;
 import java.util.*;

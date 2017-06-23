@@ -3,7 +3,7 @@ package programminglife.model;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import programminglife.utility.InitFXThread;
+import programminglife.gui.InitFXThread;
 
 import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertEquals;
@@ -101,6 +101,7 @@ public class XYCoordinateTest {
         assertFalse(xy1.equals(xy2));
     }
 
+    @SuppressWarnings("EqualsBetweenInconvertibleTypes")
     @Test
     public void equalsTestNotEqualsFiets() {
         assertFalse(coordinate1.equals("Fiets"));

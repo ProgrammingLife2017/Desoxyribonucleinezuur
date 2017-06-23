@@ -12,20 +12,21 @@ import java.util.Map;
  */
 
 public class DrawableEdge implements Drawable {
-    private XYCoordinate startLocation;
-    private XYCoordinate endLocation;
+    private final XYCoordinate startLocation;
+    private final XYCoordinate endLocation;
 
     private double strokeWidth;
     private Color strokeColor;
 
-    private DrawableNode parent;
-    private DrawableNode child;
-    private Collection<Integer> genomes;
+    private final DrawableNode parent;
+    private final DrawableNode child;
+    private final Collection<Integer> genomes;
 
     /**
      * Create a Drawable edge.
+     *
      * @param parent The {@link DrawableSegment} parent of this edge
-     * @param child The {@link DrawableSegment} child of this edge
+     * @param child  The {@link DrawableSegment} child of this edge
      */
     public DrawableEdge(DrawableNode parent, DrawableNode child) {
         this.startLocation = parent.getRightBorderCenter();
@@ -43,24 +44,6 @@ public class DrawableEdge implements Drawable {
         return child;
     }
 
-    /**
-     * Set the starting location of this edge.
-     * @param startNode The {@link XYCoordinate} to start drawing from.
-     */
-    public void setStartNode(DrawableNode startNode) {
-        XYCoordinate rightBorderCenter = startNode.getRightBorderCenter();
-        this.startLocation = new XYCoordinate(rightBorderCenter.getX(), rightBorderCenter.getY());
-    }
-
-    /**
-     * Set the end location of this edge.
-     * @param endNode The {@link XYCoordinate} to end the drawing at.
-     */
-    public void setEndNode(DrawableNode endNode) {
-        XYCoordinate leftBorderCenter = endNode.getLeftBorderCenter();
-        this.endLocation = new XYCoordinate(leftBorderCenter.getX(), leftBorderCenter.getY());
-    }
-
     @Override
     public String toString() {
         return String.format("Link from %s to %s", this.parent, this.child);
@@ -68,6 +51,7 @@ public class DrawableEdge implements Drawable {
 
     /**
      * Color a {@link DrawableEdge} depending on its properties.
+     *
      * @param sg the {@link SubGraph} belonging to the {@link DrawableEdge}
      */
     public void colorize(SubGraph sg) {

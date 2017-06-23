@@ -6,10 +6,9 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import programminglife.gui.AutoCompleteTextField;
+import programminglife.gui.NumbersOnlyListener;
 import programminglife.model.Annotation;
 import programminglife.model.Feature;
-import programminglife.model.drawing.DrawableSegment;
-import programminglife.utility.NumbersOnlyListener;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -21,8 +20,6 @@ import java.util.stream.Collectors;
 public class HighlightController {
 
     private static final Color HIGHLIGHT_MIN_MAX_COLOR = Color.HOTPINK;
-    private static DrawableSegment highlightClick;
-    private static DrawableSegment highlightShiftClick;
     private GraphController graphController;
     private GuiController guiController;
 
@@ -33,8 +30,6 @@ public class HighlightController {
     @FXML private TextField txtMax;
     @FXML private CheckBox checkMin;
     @FXML private CheckBox checkMax;
-
-
 
 
     /**
@@ -142,6 +137,7 @@ public class HighlightController {
     /**
      * Sets the guicontroller for controlling the menu.
      * Is used to call the graphController
+     *
      * @param graphController The gui controller
      */
     void setGraphController(GraphController graphController) {

@@ -1,6 +1,7 @@
-package programminglife.utility;
+package programminglife.gui;
 
 import javafx.embed.swing.JFXPanel;
+import programminglife.utility.Console;
 
 import javax.swing.*;
 import java.io.PrintStream;
@@ -22,6 +23,7 @@ public final class InitFXThread {
 
     /**
      * Sets up the output and JFXPanel.
+     *
      * @throws Exception when creating the panel.
      */
     public static void setupClass() throws Exception {
