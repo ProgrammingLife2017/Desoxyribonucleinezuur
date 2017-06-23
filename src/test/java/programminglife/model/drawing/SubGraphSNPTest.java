@@ -4,14 +4,14 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import programminglife.gui.InitFXThread;
 import programminglife.model.GenomeGraph;
-import programminglife.utility.InitFXThread;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 /**
- * Created by toinehartman on 19/06/2017.
+ * Class for the SubGraphSNPTest.
  */
 public class SubGraphSNPTest {
     GenomeGraph g;
@@ -46,7 +46,7 @@ public class SubGraphSNPTest {
         g.setSequence(3, "GCTA");
 
         for (int i = 0; i <= 3; i++)
-            g.setGenomes(i, new int[] {0});
+            g.setGenomes(i, new int[]{0});
 
         g.addEdge(0, 1);
         g.addEdge(0, 2);
@@ -54,7 +54,7 @@ public class SubGraphSNPTest {
         g.addEdge(2, 3);
         g.cacheLastEdges();
 
-        SubGraph sg = new SubGraph(new DrawableSegment(g, 0), 5);
+        SubGraph sg = new SubGraph(new DrawableSegment(g, 0, 1), 5, false);
         DrawableNode seg0 = sg.getNodes().get(0);
         DrawableNode seg1 = sg.getNodes().get(1);
         DrawableNode seg2 = sg.getNodes().get(2);
@@ -85,7 +85,7 @@ public class SubGraphSNPTest {
         g.setSequence(5, "GCTA");
 
         for (int i = 0; i <= 5; i++)
-            g.setGenomes(i, new int[] {0});
+            g.setGenomes(i, new int[]{0});
 
         g.addEdge(0, 1);
         g.addEdge(0, 2);
@@ -97,7 +97,7 @@ public class SubGraphSNPTest {
         g.addEdge(4, 5);
         g.cacheLastEdges();
 
-        SubGraph sg = new SubGraph(new DrawableSegment(g, 0), 5);
+        SubGraph sg = new SubGraph(new DrawableSegment(g, 0, 1), 5, false);
         DrawableNode seg0 = sg.getNodes().get(0);
         DrawableNode seg1 = sg.getNodes().get(1);
         DrawableNode seg2 = sg.getNodes().get(2);
@@ -134,7 +134,7 @@ public class SubGraphSNPTest {
         g.setSequence(6, "GCTA");
 
         for (int i = 0; i <= 6; i++)
-            g.setGenomes(i, new int[] {0});
+            g.setGenomes(i, new int[]{0});
 
         g.addEdge(0, 1);
         g.addEdge(0, 2);
@@ -148,7 +148,7 @@ public class SubGraphSNPTest {
         g.addEdge(5, 6);
         g.cacheLastEdges();
 
-        SubGraph sg = new SubGraph(new DrawableSegment(g, 0), 5);
+        SubGraph sg = new SubGraph(new DrawableSegment(g, 0, 1), 5, false);
         DrawableNode seg0 = sg.getNodes().get(0);
         DrawableNode seg1 = sg.getNodes().get(1);
         DrawableNode seg2 = sg.getNodes().get(2);
@@ -179,13 +179,13 @@ public class SubGraphSNPTest {
         g.setSequence(2, "CTGA");
 
         for (int i = 0; i <= 2; i++)
-            g.setGenomes(i, new int[] {0});
+            g.setGenomes(i, new int[]{0});
 
         g.addEdge(0, 1);
         g.addEdge(1, 2);
         g.cacheLastEdges();
 
-        SubGraph sg = new SubGraph(new DrawableSegment(g, 0), 5);
+        SubGraph sg = new SubGraph(new DrawableSegment(g, 0, 1), 5, false);
         DrawableNode seg0 = sg.getNodes().get(0);
         DrawableNode seg1 = sg.getNodes().get(1);
         DrawableNode seg2 = sg.getNodes().get(2);
@@ -210,7 +210,7 @@ public class SubGraphSNPTest {
         g.setSequence(3, "GCTA");
 
         for (int i = 0; i <= 3; i++)
-            g.setGenomes(i, new int[] {0});
+            g.setGenomes(i, new int[]{0});
 
         g.addEdge(0, 1);
         g.addEdge(0, 2);
@@ -218,7 +218,7 @@ public class SubGraphSNPTest {
         g.addEdge(2, 3);
         g.cacheLastEdges();
 
-        SubGraph sg = new SubGraph(new DrawableSegment(g, 0), 5);
+        SubGraph sg = new SubGraph(new DrawableSegment(g, 0, 1), 5, false);
         DrawableNode seg0 = sg.getNodes().get(0);
         DrawableNode seg1 = sg.getNodes().get(1);
         DrawableNode seg2 = sg.getNodes().get(2);
@@ -247,7 +247,7 @@ public class SubGraphSNPTest {
         g.setSequence(4, "GCTA");
 
         for (int i = 0; i <= 4; i++)
-            g.setGenomes(i, new int[] {0});
+            g.setGenomes(i, new int[]{0});
 
         g.addEdge(0, 2);
         g.addEdge(1, 2);
@@ -256,7 +256,7 @@ public class SubGraphSNPTest {
         g.addEdge(2, 4);
         g.cacheLastEdges();
 
-        SubGraph sg = new SubGraph(new DrawableSegment(g, 0), 5);
+        SubGraph sg = new SubGraph(new DrawableSegment(g, 0, 1), 5, false);
         DrawableNode seg0 = sg.getNodes().get(0);
         DrawableNode seg1 = sg.getNodes().get(1);
         DrawableNode seg2 = sg.getNodes().get(2);
@@ -287,7 +287,7 @@ public class SubGraphSNPTest {
         g.setSequence(4, "G");
 
         for (int i = 0; i <= 4; i++)
-            g.setGenomes(i, new int[] {0});
+            g.setGenomes(i, new int[]{0});
 
         g.addEdge(0, 1);
         g.addEdge(0, 2);
@@ -296,7 +296,7 @@ public class SubGraphSNPTest {
         g.addEdge(2, 4);
         g.cacheLastEdges();
 
-        SubGraph sg = new SubGraph(new DrawableSegment(g, 0), 5);
+        SubGraph sg = new SubGraph(new DrawableSegment(g, 0, 1), 5, false);
         DrawableNode seg0 = sg.getNodes().get(0);
         DrawableNode seg1 = sg.getNodes().get(1);
         DrawableNode seg2 = sg.getNodes().get(2);

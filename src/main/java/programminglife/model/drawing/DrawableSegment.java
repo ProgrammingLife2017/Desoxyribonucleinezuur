@@ -17,24 +17,37 @@ public class DrawableSegment extends DrawableNode {
 
     private Set<Integer> parents;
     private Set<Integer> children;
+    private Set<Integer> genomes;
+
+    private double zoomLevel;
+
 
     /**
      * Create a DrawableSegment from a Segment.
-     * @param graph the graph this Segment is in
+     *
+     * @param graph  the graph this Segment is in
      * @param nodeID The segment to create this DrawableSegment from.
+     * @param zoomLevel double of the zoomLevel.
      */
-    public DrawableSegment(GenomeGraph graph, int nodeID) {
+    public DrawableSegment(GenomeGraph graph, int nodeID, double zoomLevel) {
         super(graph, nodeID);
 
-        parents = Arrays.stream(graph.getParentIDs(nodeID)).boxed().collect(Collectors.toSet());
-        children = Arrays.stream(graph.getChildIDs(nodeID)).boxed().collect(Collectors.toSet());
-        this.addGenomes(Arrays.stream(graph.getGenomes(nodeID)).boxed().collect(Collectors.toSet()));
+        assert (nodeID >= 0);
 
-        this.setDrawDimensions();
+        this.zoomLevel = zoomLevel;
+
+        if (nodeID >= 0) {
+            parents = Arrays.stream(graph.getParentIDs(nodeID)).boxed().collect(Collectors.toSet());
+            children = Arrays.stream(graph.getChildIDs(nodeID)).boxed().collect(Collectors.toSet());
+            genomes = (Arrays.stream(graph.getGenomes(nodeID)).boxed().collect(Collectors.toSet()));
+            this.setDrawDimensions(zoomLevel);
+        }
+
     }
 
     /**
      * Get all the children of the node {@link DrawableSegment}.
+     *
      * @return children {@link Collection} are the direct children of the node {@link DrawableSegment}.
      */
     @Override
@@ -44,6 +57,7 @@ public class DrawableSegment extends DrawableNode {
 
     /**
      * Get all the parents of the node {@link DrawableSegment}.
+     *
      * @return parent {@link Collection} are the direct parents of the node {@link DrawableSegment}.
      **/
     @Override
@@ -53,6 +67,7 @@ public class DrawableSegment extends DrawableNode {
 
     /**
      * Replace a child node with a dummy node.
+     *
      * @param oldChild The {@link DrawableSegment} to replace.
      * @param newChild The {@link DrawableSegment} to replace with.
      */
@@ -72,6 +87,7 @@ public class DrawableSegment extends DrawableNode {
 
     /**
      * Replace a parent node with a dummy node.
+     *
      * @param oldParent The {@link DrawableSegment} to replace.
      * @param newParent The {@link DrawableSegment} to replace with.
      */
@@ -89,15 +105,14 @@ public class DrawableSegment extends DrawableNode {
      * Setter for the dimension of the node.
      */
     @Override
-    public void setDrawDimensions() {
+    public void setDrawDimensions(double zoomLevel) {
         int segmentLength = this.getSequenceLength();
         double width, height;
 
         width = 10 + Math.pow(segmentLength, 1.0 / 2);
         height = NODE_HEIGHT;
 
-        this.setSize(width, height);
-        this.setDrawDimensionsUpToDate();
+        this.setSize(width, height * zoomLevel);
     }
 
     @Override
@@ -108,6 +123,16 @@ public class DrawableSegment extends DrawableNode {
     @Override
     public DrawableNode getChildSegment() {
         return this; // Don't ask!
+    }
+
+    @Override
+    public Collection<Integer> getParentGenomes() {
+        return this.getGenomes();
+    }
+
+    @Override
+    public Collection<Integer> getChildGenomes() {
+        return this.getGenomes();
     }
 
 
@@ -129,7 +154,7 @@ public class DrawableSegment extends DrawableNode {
         } else if (children.stream().anyMatch(id -> getGraph().getSequenceLength(id) != 1)) {
             // - only children of length 1
             return null;
-        } else  {
+        } else {
             Collection<DrawableSegment> childNodes = subGraph.getChildren(this).stream()
                     .map(DrawableSegment.class::cast)
                     .collect(Collectors.toSet());
@@ -147,16 +172,17 @@ public class DrawableSegment extends DrawableNode {
                 return null;
             }
 
-            return new DrawableSNP(this, childChildren.iterator().next(), childNodes);
+            return new DrawableSNP(this, childChildren.iterator().next(), childNodes, zoomLevel);
         }
     }
 
-    public double getGenomeFraction() {
+    private double getGenomeFraction() {
         return this.getGraph().getGenomeFraction(this.getIdentifier());
     }
 
     /**
      * get the length of the sequence of this segment.
+     *
      * @return the length of the sequence of this segment
      */
     private int getSequenceLength() {
@@ -165,6 +191,7 @@ public class DrawableSegment extends DrawableNode {
 
     /**
      * Returns the sequence of all the segments that are part of the DrawableNode.
+     *
      * @return A string containing all the sequences appended.
      */
     public String getSequence() {
@@ -173,6 +200,7 @@ public class DrawableSegment extends DrawableNode {
 
     /**
      * Method to return a string with information about the {@link DrawableSegment}.
+     *
      * @return a {@link String} representation of a {@link DrawableSegment}.
      */
     @Override
@@ -190,15 +218,20 @@ public class DrawableSegment extends DrawableNode {
      * Color a {@link DrawableSegment} depending on its properties.
      */
     @Override
-    public void colorize(SubGraph sg, double zoomLevel) {
+    public void colorize(SubGraph sg) {
         double genomeFraction = this.getGenomeFraction();
         double maxSaturation = 0.8, minSaturation = 0.05;
         double saturation = minSaturation + genomeFraction * (maxSaturation - minSaturation);
 
         Color fillColor = Color.hsb(227, saturation, 1.d);
         Color strokeColor = Color.hsb(227, maxSaturation, 1.d);
-        this.setStrokeWidth(DRAWABLE_SEGMENT_STROKE_WIDTH * zoomLevel);
+        this.setStrokeWidth(DRAWABLE_SEGMENT_STROKE_WIDTH * sg.getZoomLevel());
 
         this.setColors(fillColor, strokeColor);
+    }
+
+    @Override
+    public Collection<Integer> getGenomes() {
+        return genomes;
     }
 }

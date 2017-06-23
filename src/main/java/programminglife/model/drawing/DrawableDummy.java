@@ -15,18 +15,24 @@ public class DrawableDummy extends DrawableNode {
     private DrawableNode parent;
     private DrawableNode child;
 
+    private final SubGraph subGraph;
+
     /**
      * Create a dummy node.
-     * @param id the ID
+     *
+     * @param id         the ID
      * @param parentNode the dummy's parent
-     * @param childNode the dummy's child
-     * @param graph the GenomeGraph currently drawn
+     * @param childNode  the dummy's child
+     * @param graph      the GenomeGraph currently drawn
+     * @param subgraph   The {@link SubGraph} that this DrawableDummy belongs to.
      */
-    DrawableDummy(int id, DrawableNode parentNode, DrawableNode childNode, GenomeGraph graph) {
+    DrawableDummy(int id, DrawableNode parentNode, DrawableNode childNode, GenomeGraph graph, SubGraph subgraph) {
         super(graph, id);
 
         this.parent = parentNode;
         this.child = childNode;
+
+        this.subGraph = subgraph;
     }
 
     @Override
@@ -50,7 +56,7 @@ public class DrawableDummy extends DrawableNode {
         } else {
             throw new NoSuchElementException(
                     String.format("The node to be replaced (%d) is not a parent of this node (%d).",
-                    oldParent.getIdentifier(), this.getIdentifier()));
+                            oldParent.getIdentifier(), this.getIdentifier()));
         }
     }
 
@@ -82,7 +88,7 @@ public class DrawableDummy extends DrawableNode {
     }
 
     @Override
-    public void colorize(SubGraph sg, double zoomLevel) {
+    public void colorize(SubGraph sg) {
         double genomeFraction = 0.d;
         Map<DrawableNode, Collection<Integer>> from = sg.getGenomes().get(this.getParentSegment());
         if (from != null) {
@@ -100,13 +106,27 @@ public class DrawableDummy extends DrawableNode {
 
         Color strokeColor = Color.hsb(0.d, 0.d, brightness);
 
-        this.setStrokeWidth(strokeWidth * zoomLevel);
+        this.setStrokeWidth(strokeWidth * sg.getZoomLevel());
         this.setStrokeColor(strokeColor);
 
     }
 
+    @Override
+    public Collection<Integer> getGenomes() {
+        Map<DrawableNode, Collection<Integer>> from = subGraph.getGenomes().get(this.getParentSegment());
+        if (from != null) {
+            Collection<Integer> genomes = from.get(this.getChildSegment());
+            if (genomes != null) {
+                return genomes;
+            }
+        }
+
+        return null;
+    }
+
     /**
      * To string method of a dummy.
+     *
      * @return Dummy representation of a string.
      */
     @Override
@@ -124,10 +144,20 @@ public class DrawableDummy extends DrawableNode {
         return this.child.getChildSegment();
     }
 
+    @Override
+    public Collection<Integer> getParentGenomes() {
+        return parent.getParentGenomes();
+    }
+
+    @Override
+    public Collection<Integer> getChildGenomes() {
+        return child.getChildGenomes();
+    }
+
     /**
      * Set the size of this drawing.
      */
     @Override
-    protected void setDrawDimensions() {
+    protected void setDrawDimensions(double zoomLevel) {
     }
 }

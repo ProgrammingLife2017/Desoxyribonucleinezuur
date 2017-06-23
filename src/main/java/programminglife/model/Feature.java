@@ -16,6 +16,7 @@ public class Feature {
 
     /**
      * Create a Feature from an {@link Annotation}. The Annotation will be added to this feature.
+     *
      * @param annotation The Annotation to create this Feature from.
      */
     public Feature(Annotation annotation) {
@@ -25,7 +26,8 @@ public class Feature {
 
     /**
      * Constructor for a Feature.
-     * @param id The ID of this feature
+     *
+     * @param id   The ID of this feature
      * @param file The file of this Feature.
      */
     public Feature(String id, File file) {
@@ -34,7 +36,8 @@ public class Feature {
 
     /**
      * Create a Feature from an ID and a filename.
-     * @param id The ID for this Feature.
+     *
+     * @param id       The ID for this Feature.
      * @param fileName The fileName for this Feature.
      */
     private Feature(String id, String fileName) {
@@ -64,6 +67,7 @@ public class Feature {
 
     /**
      * Add an annotation to this Feature. This Annotation should have the same ID as the Annotation.
+     *
      * @param annotation The annotation to add.
      */
     public void add(Annotation annotation) {

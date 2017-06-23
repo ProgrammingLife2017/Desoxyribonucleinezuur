@@ -9,10 +9,11 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 /**
- * Created by toinehartman on 19/06/2017.
+ * A subclass of {@link DrawableNode} representing Singular Nucleotide Polymorphism.
+ * Class representing a SNP.
+ * Contains from 2 to 4 nodes.
  */
 public class DrawableSNP extends DrawableNode {
-//    private static final int SNP_WIDTH = 11;
 
     private DrawableNode parent;
     private DrawableNode child;
@@ -20,12 +21,14 @@ public class DrawableSNP extends DrawableNode {
 
     /**
      * Construct a {@link DrawableNode}.
-     * @param parent the parent Segment of the mutations/SNP
-     * @param child the child Segment of the mutations/SNP
+     *
+     * @param parent    the parent Segment of the mutations/SNP
+     * @param child     the child Segment of the mutations/SNP
      * @param mutations the Segments in this bubble
+     * @param zoomLevel double of the zoomLevel.
      */
-    DrawableSNP(DrawableNode parent, DrawableNode child, Collection<DrawableSegment> mutations) {
-        super(mutations.iterator().next().getGraph(), -mutations.hashCode());
+    DrawableSNP(DrawableNode parent, DrawableNode child, Collection<DrawableSegment> mutations, double zoomLevel) {
+        super(mutations.iterator().next().getGraph(), DrawableNode.getUniqueId());
 
         this.parent = parent;
         this.child = child;
@@ -34,7 +37,7 @@ public class DrawableSNP extends DrawableNode {
         this.parent.getChildren().add(this.getIdentifier());
         this.child.getParents().add(this.getIdentifier());
 
-        this.setDrawDimensions();
+        this.setDrawDimensions(zoomLevel);
     }
 
     /**
@@ -112,28 +115,35 @@ public class DrawableSNP extends DrawableNode {
      * @param sg the {@link SubGraph} this {@link DrawableNode} is in
      */
     @Override
-    public void colorize(SubGraph sg, double zoomLevel) {
+    public void colorize(SubGraph sg) {
         this.setColors(Color.BLANCHEDALMOND, Color.DARKRED);
-        this.setStrokeWidth(3.5 * zoomLevel);
+        this.setStrokeWidth(3.5 * sg.getZoomLevel());
+    }
+
+    @Override
+    public Collection<Integer> getGenomes() {
+        return mutations.stream()
+                .map(DrawableNode::getGenomes)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toSet());
     }
 
     /**
      * Set the size of this drawing.
      */
     @Override
-    protected void setDrawDimensions() {
-        this.setSize(new XYCoordinate(NODE_HEIGHT, NODE_HEIGHT));
-        this.setDrawDimensionsUpToDate();
+    protected void setDrawDimensions(double zoomLevel) {
+        this.setSize(new XYCoordinate(NODE_HEIGHT * zoomLevel, NODE_HEIGHT));
     }
 
     /**
      * Set the size of this {@link Drawable}.
+     *
      * @param size the preferred size
      */
     private void setSize(XYCoordinate size) {
         this.setWidth(size.getX());
         this.setHeight(size.getY());
-        this.setDrawDimensionsUpToDate();
     }
 
     @Override
@@ -147,11 +157,13 @@ public class DrawableSNP extends DrawableNode {
     }
 
     @Override
-    public Collection<Integer> getGenomes() {
-        return this.mutations.stream()
-                            .map(DrawableSegment::getGenomes)
-                            .flatMap(Collection::stream)
-                            .collect(Collectors.toSet());
+    public Collection<Integer> getParentGenomes() {
+        return this.getGenomes();
+    }
+
+    @Override
+    public Collection<Integer> getChildGenomes() {
+        return this.getGenomes();
     }
 
     public Collection<DrawableSegment> getMutations() {

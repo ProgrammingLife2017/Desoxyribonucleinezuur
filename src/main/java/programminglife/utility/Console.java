@@ -20,7 +20,8 @@ public final class Console {
 
     /**
      * Prints the arguments given in the console.
-     * @param f String to be printed.
+     *
+     * @param f    String to be printed.
      * @param args Given with the string.
      */
     public static void println(String f, Object... args) {
@@ -29,7 +30,8 @@ public final class Console {
 
     /**
      * Prints the arguments given in the console.
-     * @param f String to be printed.
+     *
+     * @param f    String to be printed.
      * @param args Given with the string.
      */
     public static void print(String f, Object... args) {
