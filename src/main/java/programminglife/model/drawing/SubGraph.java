@@ -898,19 +898,6 @@ public class SubGraph {
     }
 
 
-    /**
-     * Set the radius of this SubGraph.
-     * Nodes that are now outside the radius of this SubGraph will be removed,
-     * and Nodes that are now inside will be added.
-     *
-     * @param radius The new radius.
-     */
-    public void setRadius(int radius) {
-        // TODO
-        // when getting bigger: include new nodes
-        // when getting smaller: drop nodes outside new radius.
-    }
-
     public LinkedHashMap<Integer, DrawableNode> getNodes() {
         return this.nodes;
     }
