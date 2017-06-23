@@ -15,7 +15,7 @@ public class DrawableDummy extends DrawableNode {
     private DrawableNode parent;
     private DrawableNode child;
 
-    private SubGraph subGraph;
+    private final SubGraph subGraph;
 
     /**
      * Create a dummy node.

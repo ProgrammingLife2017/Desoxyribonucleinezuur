@@ -81,12 +81,8 @@ public class GuiLoadBookmarkController implements Observer {
             if (guiController.getFile() == null
                     || !bookmark.getPath().equals(guiController.getFile().getAbsolutePath())) {
                 File file = new File(bookmark.getPath());
-                try {
-                    guiController.setFile(file);
-                    guiController.openFile(file).addObserver(this);
-                } catch (IOException e) {
-                    Alerts.error("File location has changed");
-                }
+                guiController.setFile(file);
+                guiController.openFile(file).addObserver(this);
             } else {
                 guiController.draw();
             }
@@ -236,10 +232,9 @@ public class GuiLoadBookmarkController implements Observer {
 
     /**
      * Sets the create bookmark button to active when a file is opened.
-     * @param active true for active, false for inactive
      */
-    public void setBtnCreateBookmarkActive(Boolean active) {
-        btnCreateBookmark.setDisable(!active);
+    public void setBtnCreateBookmarkActive() {
+        btnCreateBookmark.setDisable(false);
     }
 
     /**

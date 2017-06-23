@@ -95,7 +95,7 @@ public class DrawableSegment extends DrawableNode {
      * Setter for the dimension of the node.
      */
     @Override
-    public void setDrawDimensions() {
+    protected void setDrawDimensions() {
         int segmentLength = this.getSequenceLength();
         double width, height;
 
@@ -167,7 +167,7 @@ public class DrawableSegment extends DrawableNode {
         }
     }
 
-    public double getGenomeFraction() {
+    private double getGenomeFraction() {
         return this.getGraph().getGenomeFraction(this.getIdentifier());
     }
 

@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
  * The class that handles the genome graph.
  */
 public class GenomeGraph {
-    private String id;
+    private final String id;
     private Cache cache;
 
     /**
@@ -50,7 +50,7 @@ public class GenomeGraph {
      * @param children the new children
      * @param parents the new parents
      */
-    public void replaceNode(int nodeID, int[] children, int[] parents) {
+    private void replaceNode(int nodeID, int[] children, int[] parents) {
         this.cache.getChildrenAdjacencyMap().put(nodeID, children);
         this.cache.getParentsAdjacencyMap().put(nodeID, parents);
     }
@@ -260,13 +260,6 @@ public class GenomeGraph {
     }
 
     /**
-     * Commit all changes to the cache.
-     */
-    public void commit() {
-        this.cache.commit();
-    }
-
-    /**
      * Remove the cache file for this {@link GenomeGraph}.
      * @throws IOException if something strange happens
      */
@@ -293,7 +286,7 @@ public class GenomeGraph {
     private int[] append(int[] oldArray, List<Integer> newList) {
         int[] newArray;
         if (oldArray == null) {
-            newArray = oldArray;
+            newArray = null;
         } else {
             newArray = ArrayUtils.addAll(oldArray, newList.stream().mapToInt(i -> i).toArray());
         }

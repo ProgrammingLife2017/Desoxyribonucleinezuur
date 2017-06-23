@@ -18,9 +18,9 @@ public class DrawableEdge implements Drawable {
     private double strokeWidth;
     private Color strokeColor;
 
-    private DrawableNode parent;
-    private DrawableNode child;
-    private Collection<Integer> genomes;
+    private final DrawableNode parent;
+    private final DrawableNode child;
+    private final Collection<Integer> genomes;
 
     /**
      * Create a Drawable edge.
@@ -41,24 +41,6 @@ public class DrawableEdge implements Drawable {
 
     public DrawableNode getEnd() {
         return child;
-    }
-
-    /**
-     * Set the starting location of this edge.
-     * @param startNode The {@link XYCoordinate} to start drawing from.
-     */
-    public void setStartNode(DrawableNode startNode) {
-        XYCoordinate rightBorderCenter = startNode.getRightBorderCenter();
-        this.startLocation = new XYCoordinate(rightBorderCenter.getX(), rightBorderCenter.getY());
-    }
-
-    /**
-     * Set the end location of this edge.
-     * @param endNode The {@link XYCoordinate} to end the drawing at.
-     */
-    public void setEndNode(DrawableNode endNode) {
-        XYCoordinate leftBorderCenter = endNode.getLeftBorderCenter();
-        this.endLocation = new XYCoordinate(leftBorderCenter.getX(), leftBorderCenter.getY());
     }
 
     @Override

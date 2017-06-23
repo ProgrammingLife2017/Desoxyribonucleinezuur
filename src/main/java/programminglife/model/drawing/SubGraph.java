@@ -77,7 +77,7 @@ public class SubGraph {
      * and then another 2radius steps to a child, and symmetrically the same with children / parents reversed.
      *  @param centerNode The centerNode
      * @param radius     The radius
-     * @param replaceSNPs
+     * @param replaceSNPs flag if SNPs should be collapsed
      */
     public SubGraph(DrawableSegment centerNode, int radius, boolean replaceSNPs) {
         this(centerNode, 1, MIN_RADIUS_DEFAULT, Math.max(radius, MIN_RADIUS_DEFAULT), replaceSNPs);
@@ -97,9 +97,9 @@ public class SubGraph {
      *  @param centerNode The centerNode
      * @param minRadius  The minimum radius.
      * @param radius     The radius
-     * @param replaceSNPs
+     * @param replaceSNPs flag if SNPs should be collapsed
      */
-    SubGraph(DrawableSegment centerNode, double zoomLevel, int minRadius, int radius, boolean replaceSNPs) {
+    private SubGraph(DrawableSegment centerNode, double zoomLevel, int minRadius, int radius, boolean replaceSNPs) {
         assert (minRadius <= radius);
 
         this.graph = centerNode.getGraph();
@@ -125,7 +125,7 @@ public class SubGraph {
     /**
      * Detect SNPs and replace them.
      */
-    public void replaceSNPs() {
+    private void replaceSNPs() {
         Map<Integer, DrawableNode> nodesCopy = new LinkedHashMap<>(this.nodes);
         for (Map.Entry<Integer, DrawableNode> entry : nodesCopy.entrySet()) {
             DrawableNode parent = entry.getValue();
@@ -323,8 +323,8 @@ public class SubGraph {
          * Whether a node was found from a parent or a child.
          */
         private enum FoundFrom { PARENT, CHILD }
-        private DrawableNode node;
-        private FoundFrom foundFrom;
+        private final DrawableNode node;
+        private final FoundFrom foundFrom;
 
         /**
          * simple constructor for a FoundNode.
@@ -354,7 +354,7 @@ public class SubGraph {
      * @param y The y coordinate
      * @return The {@link Drawable} that is on top at the given location.
      */
-    public Drawable atLocation(double x, double y) {
+    private Drawable atLocation(double x, double y) {
         int layerIndex = getLayerIndex(this.layers, x);
 
         // TODO: implement;
@@ -372,6 +372,7 @@ public class SubGraph {
      * @param layers The list of layers to look through.
      * @return The index of the closest layer.
      */
+    @SuppressWarnings("UnnecessaryLocalVariable")
     private int getLayerIndex(List<Layer> layers, double x) {
         int resultIndex = Collections.binarySearch(layers, x);
         if (resultIndex >= layers.size()) {
@@ -402,7 +403,7 @@ public class SubGraph {
     /**
      * Lay out the {@link Drawable Drawables} in this SubGraph.
      */
-    public void layout() {
+    private void layout() {
         createLayers();
 
         int minimumLayerIndex = findMinimumNodesLayerIndex(this.layers);
@@ -425,7 +426,7 @@ public class SubGraph {
      * @param setLayerIndex The index of the Layer to start from (exclusive,
      *                      so coordinates are not set for this layer).
      */
-    public void setRightDrawLocations(ArrayList<Layer> layers, int setLayerIndex) {
+    private void setRightDrawLocations(ArrayList<Layer> layers, int setLayerIndex) {
         ListIterator<Layer> layerIterator = layers.listIterator(setLayerIndex);
         Layer setLayer = layerIterator.next();
         double x = setLayer.getX() + setLayer.getWidth();
@@ -454,7 +455,7 @@ public class SubGraph {
      * @param setLayerIndex The index of the Layer to start from (exclusive,
      *                      so coordinates are not set for this layer).
      */
-    public void setLeftDrawLocations(ArrayList<Layer> layers, int setLayerIndex) {
+    private void setLeftDrawLocations(ArrayList<Layer> layers, int setLayerIndex) {
         ListIterator<Layer> layerIterator = layers.listIterator(setLayerIndex + 1);
         Layer setLayer = layerIterator.previous();
         double x = setLayer.getX();
@@ -712,7 +713,7 @@ public class SubGraph {
      * @param parent find all genomes through edges from this parent
      * @return a {@link Map} of  collections of genomes through links
      */
-    Map<DrawableNode, Collection<Integer>> calculateGenomes(DrawableNode parent) {
+    private Map<DrawableNode, Collection<Integer>> calculateGenomes(DrawableNode parent) {
         Map<DrawableNode, Collection<Integer>> outgoingGenomes = new LinkedHashMap<>();
 
         // Create set of parent genomes
@@ -775,7 +776,7 @@ public class SubGraph {
      * Add nodes from the {@link #endNodes}.
      * @param radius The number of steps to take from the endNodes before stopping the search.
      */
-    public void addFromEndNodes(int radius) {
+    private void addFromEndNodes(int radius) {
         if (this.endNodes.isEmpty()) {
             return;
         }
@@ -822,11 +823,9 @@ public class SubGraph {
 
 
         // TODO: find DummyNodes between subgraphs. Just use findDummyNodes on full graph?
-        rightSubGraph.genomes.forEach((parent, childMap) -> {
-            this.genomes
-                    .computeIfAbsent(parent, parentId -> new LinkedHashMap<>())
-                    .putAll(childMap);
-        });
+        rightSubGraph.genomes.forEach((parent, childMap) -> this.genomes
+                .computeIfAbsent(parent, parentId -> new LinkedHashMap<>())
+                .putAll(childMap));
         rightSubGraph.colorize();
 
         this.sortLayersRightFrom(oldLastIndex);
@@ -867,11 +866,9 @@ public class SubGraph {
 
 
         // TODO: find DummyNodes between subgraphs. Just use findDummyNodes on full graph?
-        leftSubGraph.genomes.forEach((parent, childMap) -> {
-            this.genomes
-                    .computeIfAbsent(parent, parentId -> new LinkedHashMap<>())
-                    .putAll(childMap);
-        });
+        leftSubGraph.genomes.forEach((parent, childMap) -> this.genomes
+                .computeIfAbsent(parent, parentId -> new LinkedHashMap<>())
+                .putAll(childMap));
         leftSubGraph.colorize();
 
         this.sortLayersLeftFrom(oldFirstIndex);
@@ -896,7 +893,7 @@ public class SubGraph {
         return this.nodes;
     }
 
-    public GenomeGraph getGraph() {
+    private GenomeGraph getGraph() {
         return graph;
     }
 

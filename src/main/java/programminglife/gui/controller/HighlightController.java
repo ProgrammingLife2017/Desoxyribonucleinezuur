@@ -21,8 +21,6 @@ import java.util.stream.Collectors;
 public class HighlightController {
 
     private static final Color HIGHLIGHT_MIN_MAX_COLOR = Color.HOTPINK;
-    private static DrawableSegment highlightClick;
-    private static DrawableSegment highlightShiftClick;
     private GraphController graphController;
     private GuiController guiController;
 

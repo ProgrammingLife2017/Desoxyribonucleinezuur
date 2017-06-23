@@ -43,7 +43,6 @@ import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Map;
@@ -101,8 +100,8 @@ public class GuiController implements Observer {
     private RecentFileController recentFileControllerGFF;
     private MiniMapController miniMapController;
     private File file;
-    private File recentFileGFA = new File("RecentGFA.txt");
-    private File recentFileGFF = new File("RecentGFF.txt");
+    private final File recentFileGFA = new File("RecentGFA.txt");
+    private final File recentFileGFF = new File("RecentGFF.txt");
     private Map<String, Feature> features;
     private Thread parseThread;
 
@@ -120,7 +119,7 @@ public class GuiController implements Observer {
     @FXML
     @SuppressWarnings("unused")
     private void initialize() {
-        this.graphController = new GraphController(null, this.canvas, this.anchorGraphInfo);
+        this.graphController = new GraphController(this.canvas);
         this.scale = 1;
 
         this.recentFileControllerGFA = new RecentFileController(this.recentFileGFA, this.menuRecentGFA);
@@ -143,7 +142,7 @@ public class GuiController implements Observer {
      * @throws IOException if the {@link File} is not found.
      * @return the parser to be notified when it is finished
      */
-    public GraphParser openFile(File file) throws IOException {
+    public GraphParser openFile(File file) {
         if (file != null) {
             if (this.graphController != null && this.graphController.getGraph() != null) {
                 this.graphController.getGraph().close();
@@ -175,7 +174,7 @@ public class GuiController implements Observer {
      * @throws IOException if the {@link File} is not found.
      * @return AnnotationParser to be notified when finished.
      */
-    private AnnotationParser openAnnotationFile(File file) throws IOException {
+    private AnnotationParser openAnnotationFile(File file) {
         AnnotationParser annotationParser = null;
         if (file != null) {
             Console.println("Opening annotation " + file);
@@ -228,7 +227,7 @@ public class GuiController implements Observer {
      * Set the graph for this GUIController.
      * @param graph {@link GenomeGraph} to use.
      */
-    public void setGraph(GenomeGraph graph) {
+    private void setGraph(GenomeGraph graph) {
         this.graphController.setGraph(graph);
         disableGraphUIElements(graph == null);
         searchTab.setDisable(graph == null);
@@ -259,27 +258,21 @@ public class GuiController implements Observer {
             File existDirectory = file.getParentFile();
             fileChooser.setInitialDirectory(existDirectory);
         }
-        try {
-            file = fileChooser.showOpenDialog(ProgrammingLife.getStage());
-            if (file != null) {
-                if (isGFA) {
-                    this.openFile(file);
-                    Platform.runLater(() -> {
-                        File recentFileGFA = recentFileControllerGFA.getRecentFile();
-                        recentFileControllerGFA.updateRecent(recentFileGFA, file);
-                    });
-                } else {
-                    this.openAnnotationFile(file);
-                    Platform.runLater(() -> {
-                        File recentFileGFF = recentFileControllerGFA.getRecentFile();
-                        recentFileControllerGFF.updateRecent(recentFileGFF, file);
-                    });
-                }
+        file = fileChooser.showOpenDialog(ProgrammingLife.getStage());
+        if (file != null) {
+            if (isGFA) {
+                this.openFile(file);
+                Platform.runLater(() -> {
+                    File recentFileGFA = recentFileControllerGFA.getRecentFile();
+                    recentFileControllerGFA.updateRecent(recentFileGFA, file);
+                });
+            } else {
+                this.openAnnotationFile(file);
+                Platform.runLater(() -> {
+                    File recentFileGFF = recentFileControllerGFA.getRecentFile();
+                    recentFileControllerGFF.updateRecent(recentFileGFF, file);
+                });
             }
-        } catch (FileNotFoundException e) {
-            Alerts.error("This GFA file can't be found");
-        } catch (IOException e) {
-            Alerts.error("This GFA file can't be opened");
         }
     }
 
@@ -324,7 +317,7 @@ public class GuiController implements Observer {
                 gc.setGuiController(this);
                 gc.initBookmarks();
                 if (this.graphController.getGraph() != null) {
-                    gc.setBtnCreateBookmarkActive(true);
+                    gc.setBtnCreateBookmarkActive();
                 }
                 Scene scene = new Scene(page);
                 Stage bookmarkDialogStage = new Stage();
@@ -471,7 +464,7 @@ public class GuiController implements Observer {
             event.consume();
         });
         anchorGraphPanel.addEventHandler(ScrollEvent.SCROLL, event ->
-                zoom(event.getDeltaX(), event.getDeltaY(), event.getSceneX(), event.getSceneY(), ZOOM_FACTOR));
+                zoom(event.getDeltaX(), event.getDeltaY(), event.getSceneX(), event.getSceneY()));
     }
 
     /**
@@ -498,18 +491,17 @@ public class GuiController implements Observer {
      * @param deltaY The scroll amount in the Y direction. See {@link ScrollEvent#getDeltaY()}
      * @param sceneX double for the x location.
      * @param sceneY double for the y location.
-     * @param delta double the factor by which is zoomed.
      */
-    private void zoom(double deltaX, double deltaY, double sceneX, double sceneY, double delta) {
+    private void zoom(double deltaX, double deltaY, double sceneX, double sceneY) {
         double oldScale = scale;
 
         if (deltaX < 0 || deltaY < 0) {
-            scale *= delta;
+            scale *= ZOOM_FACTOR;
         } else {
-            scale /= delta;
+            scale /= ZOOM_FACTOR;
         }
 
-        scale = clamp(scale, MIN_SCALE, MAX_SCALE);
+        scale = clamp(scale);
         double factor = (scale / oldScale) - 1;
 
         graphController.zoom(factor + 1);
@@ -525,16 +517,14 @@ public class GuiController implements Observer {
     /**
      * Clamp function used for zooming in and out.
      * @param value double current scale.
-     * @param min double min scale value.
-     * @param max double max scale value.
      * @return double scale value.
      */
-    private static double clamp(double value, double min, double max) {
-        if (Double.compare(value, min) < 0) {
-            return min;
+    private static double clamp(double value) {
+        if (Double.compare(value, GuiController.MIN_SCALE) < 0) {
+            return GuiController.MIN_SCALE;
         }
-        if (Double.compare(value, max) > 0) {
-            return max;
+        if (Double.compare(value, GuiController.MAX_SCALE) > 0) {
+            return GuiController.MAX_SCALE;
         }
         return value;
     }

@@ -80,11 +80,6 @@ public class Bookmark {
         this.nodeID = nodeID;
     }
 
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
-
     public String getGraphName() {
         return graphName;
     }

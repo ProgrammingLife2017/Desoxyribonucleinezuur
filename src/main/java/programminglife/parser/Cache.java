@@ -33,7 +33,7 @@ public final class Cache {
     private static final String PARENTS_ADJACENCY_MAP_NAME = "parentsNamesMap";
     private static final String NUMBER_OF_NODES_INT_NAME = "numberOfNodes";
 
-    private String dbFileName;
+    private final String dbFileName;
     private DB db;
 
     private Map<Integer, String> sequenceMap;
@@ -157,7 +157,7 @@ public final class Cache {
      * Get the HTreeMap cache for the cached genomes.
      * @return the HTreeMap cache for the sequences.
      */
-    public Map<Integer, String> getGenomeIdNamesMap() {
+    private Map<Integer, String> getGenomeIdNamesMap() {
         return this.genomeIdNamesMap;
     }
 
@@ -311,10 +311,10 @@ public final class Cache {
      * @return true if the file was removed, false if it did not exist
      * @throws IOException when something strange happens during deletion
      */
-    public boolean removeDB() throws IOException {
+    public void removeDB() throws IOException {
         Console.println("[%s] Removing database %s", Thread.currentThread().getName(), this.dbFileName);
         close();
-        return Files.deleteIfExists(Paths.get(this.dbFileName));
+        Files.deleteIfExists(Paths.get(this.dbFileName));
     }
 
     /**

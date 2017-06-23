@@ -22,7 +22,7 @@ public class AutoCompleteTextField extends TextField {
     //entries to autocomplete
     private final SortedSet<String> entries;
     //popup GUI
-    private ContextMenu entriesPopup;
+    private final ContextMenu entriesPopup;
 
 
     /**
@@ -115,7 +115,7 @@ public class AutoCompleteTextField extends TextField {
      * @param filter - string to select in text
      * @return - TextFlow
      */
-    public static TextFlow buildTextFlow(String text, String filter) {
+    private static TextFlow buildTextFlow(String text, String filter) {
         int filterIndex = text.toLowerCase().indexOf(filter.toLowerCase());
         Text textBefore = new Text(text.substring(0, filterIndex));
         Text textAfter = new Text(text.substring(filterIndex + filter.length()));

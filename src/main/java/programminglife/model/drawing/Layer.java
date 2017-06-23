@@ -12,7 +12,7 @@ import java.util.*;
  */
 public class Layer implements Iterable<DrawableNode>, Comparable<Double> {
     private double x;
-    private List<DrawableNode> nodes;
+    private final List<DrawableNode> nodes;
 
     private static final int LINE_PADDING = 30;
 
@@ -127,7 +127,7 @@ public class Layer implements Iterable<DrawableNode>, Comparable<Double> {
      * @param node {@link DrawableNode} to get the index of.
      * @return the index of the node, or -1 if this Layer does not contain the node.
      */
-    public int indexOf(DrawableNode node) {
+    private int indexOf(DrawableNode node) {
         return nodes.indexOf(node);
     }
 

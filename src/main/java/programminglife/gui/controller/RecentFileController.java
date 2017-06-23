@@ -13,10 +13,10 @@ import java.util.Scanner;
 /**
  * Class that handles the recentFiles menuItem.
  */
-public class RecentFileController {
+class RecentFileController {
     private GuiController guiController;
-    private File recentFile;
-    private Menu menuRecent;
+    private final File recentFile;
+    private final Menu menuRecent;
     private File file;
     private String recentItems = "";
     private int lineAmount;
@@ -105,26 +105,20 @@ public class RecentFileController {
             Alerts.error("Recent.txt can't be opened");
             return;
         }
-        if (recentFile != null) {
-            try (Scanner sc = new Scanner(recentFile)) {
-                menuRecent.getItems().clear();
-                while (sc.hasNextLine()) {
-                    String next = sc.nextLine();
-                    MenuItem mi = new MenuItem(next);
-                    mi.setOnAction(event -> {
-                        try {
-                            file = new File(mi.getText());
-                            guiController.openFile(file);
-                        } catch (IOException e) {
-                            Alerts.error("Recent.txt can't be opened");
-                        }
-                    });
-                    menuRecent.getItems().add(mi);
-                    recentItems = recentItems.concat(next + System.getProperty("line.separator"));
-                }
-            } catch (FileNotFoundException e) {
-                Alerts.error("Recent.txt can't be found.");
+        try (Scanner sc = new Scanner(recentFile)) {
+            menuRecent.getItems().clear();
+            while (sc.hasNextLine()) {
+                String next = sc.nextLine();
+                MenuItem mi = new MenuItem(next);
+                mi.setOnAction(event -> {
+                    file = new File(mi.getText());
+                    guiController.openFile(file);
+                });
+                menuRecent.getItems().add(mi);
+                recentItems = recentItems.concat(next + System.getProperty("line.separator"));
             }
+        } catch (FileNotFoundException e) {
+            Alerts.error("Recent.txt can't be found.");
         }
     }
 

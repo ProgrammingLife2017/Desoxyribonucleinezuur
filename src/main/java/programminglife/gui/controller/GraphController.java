@@ -3,7 +3,6 @@ package programminglife.gui.controller;
 import javafx.geometry.Bounds;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import programminglife.gui.ResizableCanvas;
 import programminglife.model.GenomeGraph;
@@ -17,16 +16,15 @@ import java.util.LinkedList;
 /**
  * Controller for drawing the graph.
  */
-public class GraphController {
+class GraphController {
 
     private GenomeGraph graph;
     private double locationCenterY;
     private double locationCenterX;
     private LinkedList<DrawableNode> oldMinMaxList = new LinkedList<>();
     private SubGraph subGraph;
-    private AnchorPane anchorGraphInfo;
     private LinkedList<DrawableNode> oldGenomeList = new LinkedList<>();
-    private ResizableCanvas canvas;
+    private final ResizableCanvas canvas;
 
     private double zoomLevel = 1;
 
@@ -37,14 +35,11 @@ public class GraphController {
 
     /**
      * Initialize controller object.
-     * @param graph The genome graph to control
      * @param canvas the {@link Canvas} to draw in
-     * @param anchorGraphInfo the {@link AnchorPane} were to show the info of a node or edge.
      */
-    public GraphController(GenomeGraph graph, ResizableCanvas canvas, AnchorPane anchorGraphInfo) {
-        this.graph = graph;
+    public GraphController(ResizableCanvas canvas) {
+        this.graph = null;
         this.canvas = canvas;
-        this.anchorGraphInfo = anchorGraphInfo;
     }
 
     public int getCenterNodeInt() {
@@ -77,9 +72,7 @@ public class GraphController {
 
             time("Colorize", this::colorize);
 
-            time("Drawing", () -> {
-                draw(gc);
-            });
+            time("Drawing", () -> draw(gc));
 
             centerOnNodeId(center);
             highlightNode(center, Color.DARKORANGE);
@@ -120,7 +113,7 @@ public class GraphController {
      * @param nodeID the nodeID of the node to highlight.
      * @param color the {@link Color} to highlight with.
      */
-    public void highlightNode(int nodeID, Color color) {
+    private void highlightNode(int nodeID, Color color) {
         DrawableNode node = subGraph.getNodes().get(nodeID);
         highlightNode(node, color);
     }
@@ -130,7 +123,7 @@ public class GraphController {
      * @param node {@link DrawableNode} to highlight.
      * @param color {@link Color} to color with.
      */
-    public void highlightNode(DrawableNode node, Color color) {
+    private void highlightNode(DrawableNode node, Color color) {
         node.setStrokeColor(color);
         node.setStrokeWidth(5.0);
         drawNode(canvas.getGraphicsContext2D(), node);
@@ -179,7 +172,7 @@ public class GraphController {
      * @param gc {@link GraphicsContext} is the GraphicsContext required to draw.
      * @param drawableNode {@link DrawableNode} is the node to be drawn.
      */
-    public void drawNode(GraphicsContext gc, DrawableNode drawableNode) {
+    private void drawNode(GraphicsContext gc, DrawableNode drawableNode) {
         gc.setStroke(drawableNode.getStrokeColor());
         gc.setFill(drawableNode.getFillColor());
         gc.setLineWidth(drawableNode.getStrokeWidth());
@@ -244,7 +237,7 @@ public class GraphController {
      * Centers on the given node.
      * @param nodeId is the node to center on.
      */
-    public void centerOnNodeId(int nodeId) {
+    private void centerOnNodeId(int nodeId) {
         DrawableNode drawableCenterNode = subGraph.getNodes().get(nodeId);
         double xCoordinate = drawableCenterNode.getCenter().getX();
 
@@ -283,7 +276,7 @@ public class GraphController {
      * Draw method for the whole subgraph. Calls draw node and draw Edge for every node and edge.
      * @param gc is the {@link GraphicsContext} required to draw.
      */
-    public void draw(GraphicsContext gc) {
+    private void draw(GraphicsContext gc) {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
         subGraph.checkDynamicLoad(0, canvas.getWidth());

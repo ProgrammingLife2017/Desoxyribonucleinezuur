@@ -7,10 +7,10 @@ import javafx.scene.paint.Color;
 /**
  * Controller that shows a MiniMap in the gui.
  */
-public class MiniMapController {
+class MiniMapController {
 
-    private Canvas miniMap;
-    private int size;
+    private final Canvas miniMap;
+    private final int size;
 
     private boolean visible = false;
 

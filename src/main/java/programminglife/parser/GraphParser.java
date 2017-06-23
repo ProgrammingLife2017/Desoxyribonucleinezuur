@@ -16,11 +16,11 @@ import java.util.Observable;
  * The class that handles the parsing of the graphs.
  */
 public class GraphParser extends Observable implements Runnable {
-    private GenomeGraph graph;
-    private File graphFile;
-    private String name;
-    private ProgressCounter progressCounter;
-    private boolean isCached;
+    private final GenomeGraph graph;
+    private final File graphFile;
+    private final String name;
+    private final ProgressCounter progressCounter;
+    private final boolean isCached;
 
 
     /**

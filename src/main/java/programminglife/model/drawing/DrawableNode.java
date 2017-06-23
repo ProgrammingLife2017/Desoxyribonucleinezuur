@@ -32,7 +32,7 @@ public abstract class DrawableNode implements Drawable {
      *           graph ({@link DrawableSegment}), and negative for Nodes that are not in the
      *           graph ({@link DrawableDummy}).
      */
-    public DrawableNode(GenomeGraph graph, int id) {
+    DrawableNode(GenomeGraph graph, int id) {
         this.graph = graph;
         this.id = id;
 
@@ -42,14 +42,8 @@ public abstract class DrawableNode implements Drawable {
 
     @Override
     public final boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
+        return this == o || this.getClass().equals(o.getClass()) && this.getIdentifier() == ((DrawableNode) o).getIdentifier();
 
-        if (!this.getClass().equals(o.getClass())) {
-            return false;
-        }
-        return this.getIdentifier() == ((DrawableNode) o).getIdentifier();
     }
 
     @Override
@@ -292,5 +286,5 @@ public abstract class DrawableNode implements Drawable {
     }
 
     public abstract Collection<Integer> getParentGenomes();
-    public abstract Collection<Integer> getChildGenomes();
+    protected abstract Collection<Integer> getChildGenomes();
 }

@@ -85,7 +85,7 @@ public final class ProgrammingLife extends Application {
      * The event handler for when the application is closed.
      * It will give show a confirmation box if the user wants to exit the application.
      */
-    private EventHandler<WindowEvent> confirmCloseEventHandler = event -> {
+    private final EventHandler<WindowEvent> confirmCloseEventHandler = event -> {
         Alert closeConfirmation = new Alert(Alert.AlertType.CONFIRMATION, "Do you really want to exit?");
         Button exitButton = (Button) closeConfirmation.getDialogPane().lookupButton(ButtonType.OK);
         exitButton.setText("Exit");

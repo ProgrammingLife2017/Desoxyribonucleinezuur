@@ -13,9 +13,9 @@ import java.util.*;
  * A Parser for {@link Annotation Annotations}.
  */
 public class AnnotationParser extends Observable implements Runnable {
-    private File file;
+    private final File file;
     private Map<String, Feature> features;
-    private ProgressCounter progressCounter;
+    private final ProgressCounter progressCounter;
 
     /**
      * Constructor for an AnnotationParser.
@@ -56,6 +56,7 @@ public class AnnotationParser extends Observable implements Runnable {
             reader.lines().forEach(Errors.rethrow().wrap(line -> {
                 Annotation annotation = parseLine(line);
 
+                assert annotation != null;
                 features.computeIfAbsent(annotation.getId(), name -> new Feature(annotation)).add(annotation);
 
                 progressCounter.count();

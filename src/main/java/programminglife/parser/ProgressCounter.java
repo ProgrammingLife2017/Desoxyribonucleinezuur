@@ -8,24 +8,15 @@ import java.util.Observable;
 public class ProgressCounter extends Observable {
     private int progress;
     private int total;
-    private String description;
-
-    /**
-     * Constructor with description.
-     * @param description String.
-     */
-    public ProgressCounter(String description) {
-        this(Integer.MAX_VALUE, description);
-    }
+    private final String description;
 
     /**
      * Constructor with description and integer of line count.
-     * @param total int.
      * @param description String.
      */
-    public ProgressCounter(int total, String description) {
+    ProgressCounter(String description) {
         this.progress = 0;
-        this.total = total;
+        this.total = Integer.MAX_VALUE;
         this.description = description;
 
         this.setChanged();

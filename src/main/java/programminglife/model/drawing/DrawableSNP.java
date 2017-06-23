@@ -9,7 +9,7 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 /**
- * Created by toinehartman on 19/06/2017.
+ * A subclass of {@link DrawableNode} representing Singular Nucleotide Polymorphism.
  */
 public class DrawableSNP extends DrawableNode {
 //    private static final int SNP_WIDTH = 11;
@@ -130,6 +130,7 @@ public class DrawableSNP extends DrawableNode {
      */
     @Override
     protected void setDrawDimensions() {
+        //noinspection SuspiciousNameCombination
         this.setSize(new XYCoordinate(NODE_HEIGHT, NODE_HEIGHT));
         this.setDrawDimensionsUpToDate();
     }

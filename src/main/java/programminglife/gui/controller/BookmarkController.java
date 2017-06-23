@@ -190,7 +190,7 @@ public final class BookmarkController {
      * @param fileName The name of the file where the bookmarks reside.
      * @return A DOM Element containing all graphs and bookmarks.
      */
-    static Element loadDoc(String fileName) {
+    private static Element loadDoc(String fileName) {
         checkFile(fileName);
         Document dom;
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
