@@ -65,7 +65,8 @@ public class SubGraph {
         this.nodes = nodes;
         this.rootNodes = rootNodes;
         this.endNodes = endNodes;
-
+        this.genomes = new LinkedHashMap<>();
+        this.calculateGenomes();
         this.createLayers();
     }
 
@@ -264,7 +265,6 @@ public class SubGraph {
         if (amountOfLayersRight > 3 * BORDER_BUFFER) {
             removeRightLayers(BORDER_BUFFER);
         }
-        System.out.println(this.nodes.size());
     }
 
     /**
@@ -747,6 +747,7 @@ public class SubGraph {
         findNodes(subGraph, rootNodes.values(), this.nodes, radius);
         subGraph.createLayers();
 
+        subGraph.calculateGenomes();
         this.mergeLeftSubGraphIntoThisSubGraph(subGraph);
     }
 
@@ -768,6 +769,7 @@ public class SubGraph {
         findNodes(subGraph, endNodes.values(), this.nodes, radius);
         subGraph.createLayers();
 
+        subGraph.calculateGenomes();
         this.mergeRightSubGraphIntoThisSubGraph(subGraph);
     }
 

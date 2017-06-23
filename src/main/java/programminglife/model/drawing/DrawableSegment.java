@@ -30,11 +30,13 @@ public class DrawableSegment extends DrawableNode {
 
         assert (nodeID >= 0);
 
-        parents = Arrays.stream(graph.getParentIDs(nodeID)).boxed().collect(Collectors.toSet());
-        children = Arrays.stream(graph.getChildIDs(nodeID)).boxed().collect(Collectors.toSet());
-        genomes = (Arrays.stream(graph.getGenomes(nodeID)).boxed().collect(Collectors.toSet()));
+        if (nodeID >= 0) {
+            parents = Arrays.stream(graph.getParentIDs(nodeID)).boxed().collect(Collectors.toSet());
+            children = Arrays.stream(graph.getChildIDs(nodeID)).boxed().collect(Collectors.toSet());
+            genomes = (Arrays.stream(graph.getGenomes(nodeID)).boxed().collect(Collectors.toSet()));
+            this.setDrawDimensions();
+        }
 
-        this.setDrawDimensions();
     }
 
     /**
