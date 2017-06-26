@@ -22,9 +22,7 @@ class GraphController {
     private GenomeGraph graph;
     private double locationCenterY;
     private double locationCenterX;
-    private LinkedList<DrawableNode> oldMinMaxList = new LinkedList<>();
     private SubGraph subGraph;
-    private LinkedList<DrawableNode> oldGenomeList = new LinkedList<>();
     private final ResizableCanvas canvas;
     private final int archFactor = 5;
 
@@ -365,8 +363,6 @@ class GraphController {
     public void highlightMinMax(int min, int max, Color color) {
         LinkedList<DrawableNode> drawNodeList = new LinkedList<>();
 
-        removeHighlight(oldMinMaxList);
-        removeHighlight(oldGenomeList);
         for (DrawableNode drawableNode : subGraph.getNodes().values()) {
             if (drawableNode != null && !(drawableNode instanceof DrawableDummy)) {
                 int genomeCount = drawableNode.getGenomes().size();
@@ -375,18 +371,17 @@ class GraphController {
                 }
             }
         }
-        oldMinMaxList = drawNodeList;
         highlightNodes(drawNodeList, color);
     }
 
     /**
      * Resets the node highlighting to remove highlights.
-     *
-     * @param nodes are the nodes to remove the highlight from.
      */
-    private void removeHighlight(Collection<DrawableNode> nodes) {
-        for (DrawableNode node: nodes) {
-            node.colorize(subGraph);
+    void removeHighlight() {
+        try {
+            subGraph.forEach(node -> node.colorize(subGraph));
+        } catch (NullPointerException n) {
+            // Occurs when the subgraph is cleared upon opening another graph, nothing on the hand!
         }
         this.draw(canvas.getGraphicsContext2D());
     }
@@ -397,10 +392,8 @@ class GraphController {
      *
      * @param genomeID the GenomeID to highlight on.
      */
-    public void highlightByGenome(int genomeID) {
+    public void highlightByGenome(int genomeID, Color color) {
         LinkedList<DrawableNode> drawNodeList = new LinkedList<>();
-        removeHighlight(oldGenomeList);
-        removeHighlight(oldMinMaxList);
         for (DrawableNode drawableNode : subGraph.getNodes().values()) {
             Collection<Integer> genomes = drawableNode.getGenomes();
             for (int genome : genomes) {
@@ -409,8 +402,7 @@ class GraphController {
                 }
             }
         }
-        oldGenomeList = drawNodeList;
-        highlightNodes(drawNodeList, Color.YELLOW);
+        highlightNodes(drawNodeList, color);
     }
 
     /**

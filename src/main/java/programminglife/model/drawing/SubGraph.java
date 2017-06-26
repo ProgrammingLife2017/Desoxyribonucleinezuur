@@ -1,6 +1,7 @@
 package programminglife.model.drawing;
 
 import org.eclipse.collections.impl.factory.Sets;
+import org.jetbrains.annotations.NotNull;
 import programminglife.model.GenomeGraph;
 import programminglife.model.XYCoordinate;
 import programminglife.utility.Console;
@@ -12,7 +13,7 @@ import java.util.*;
  * Roughly, every node reachable within radius steps from centerNode is included in this graph.
  * When updating the centerNode or the radius, it also updates the Nodes within this SubGraph.
  */
-public class SubGraph {
+public class SubGraph implements Iterable<DrawableNode> {
     private static final int DEFAULT_DYNAMIC_RADIUS = 50;
     private static final int DEFAULT_NODE_Y = 50;
     private static final int BORDER_BUFFER = 40;
@@ -399,6 +400,17 @@ public class SubGraph {
         }
 //        System.out.println("FALSE EdgY = " + edgeY);
         return false;
+    }
+
+    /**
+     * Returns an iterator over elements of type {@code T}.
+     *
+     * @return an Iterator.
+     */
+    @NotNull
+    @Override
+    public Iterator<DrawableNode> iterator() {
+        return this.nodes.values().iterator();
     }
 
     /**
