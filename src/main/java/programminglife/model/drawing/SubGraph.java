@@ -311,40 +311,32 @@ public class SubGraph {
      * @return Drawable on which clicked. if nothing null.
      */
     public Drawable onClick(double x, double y) {
-        Drawable clicked = null;
-        System.out.println(x + " "+ y);
+        Drawable clicked;
+//        System.out.println(x + " "+ y);
         //TODO implement this with a tree instead of iterating.
-        if (this == null) {
-            return null;
-        }
-
         for (DrawableNode drawableNode : this.getNodes().values()) {
             if (x >= drawableNode.getLocation().getX() && y >= drawableNode.getLocation().getY()
                     && x <= drawableNode.getLocation().getX() + drawableNode.getWidth()
                     && y <= drawableNode.getLocation().getY() + drawableNode.getHeight()) {
-                clicked = drawableNode;
-                return clicked;
+                    return drawableNode;
             }
         }
 
-        clicked = onClickEdge(x, y);
-
-        return clicked;
+        return onClickEdge(x, y);
     }
 
     /**
      * check if clicked on an edge.
      *
-     * @param x locatie
-     * @param y locatie
+     * @param x location
+     * @param y location
      * @return DrawableEdge
      */
     private DrawableEdge onClickEdge(double x, double y) {
 
         //Find layers on the left and the right of the clicked location.
         int foundLayerIndex = getLayerIndex(layers, x);
-        int leftLayerIndex = 0;
-
+        int leftLayerIndex;
 
         if (layers.get(foundLayerIndex).getX() > x) {
             leftLayerIndex = foundLayerIndex - 1;
@@ -365,7 +357,6 @@ public class SubGraph {
                 }
             }
 
-        System.out.println("=====================");
         return null;
     }
 
@@ -385,8 +376,8 @@ public class SubGraph {
         start.setX(leftLayerEnd); //make the start the layer end since this is where the edge starts to move.
         XYCoordinate end = right.getLeftBorderCenter();
 
-        System.out.println("Start Location:  " + start);
-        System.out.println("End Location: " + end);
+//        System.out.println("Start Location:  " + start);
+//        System.out.println("End Location: " + end);
 
         //calculate differences.
         double differenceX = end.getX() - start.getX();
@@ -403,10 +394,10 @@ public class SubGraph {
         //TODO change these numbers to edgethickness * zoom or something to make it work when zoomed in and zoomed out a lot.
         //TODO when this is fixed make it a simple return (calculation).
         if (edgeY - 20 < y && edgeY + 20 > y){
-            System.out.println("TRUE EdgY = " + edgeY);
+//            System.out.println("TRUE EdgY = " + edgeY);
             return true;
         }
-        System.out.println("FALSE EdgY = " + edgeY);
+//        System.out.println("FALSE EdgY = " + edgeY);
         return false;
     }
 

@@ -461,8 +461,4 @@ class GraphController {
     public void resetZoom() {
         this.subGraph.setZoomLevel(1);
     }
-
-    public SubGraph getSubGraph() {
-        return subGraph;
-    }
 }
