@@ -25,6 +25,7 @@ class GraphController {
     private SubGraph subGraph;
     private LinkedList<DrawableNode> oldGenomeList = new LinkedList<>();
     private final ResizableCanvas canvas;
+    private final int archFactor = 5;
 
 
     private int centerNodeInt;
@@ -204,8 +205,8 @@ class GraphController {
             gc.fillRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height);
 
         } else {
-            gc.strokeRoundRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height, 5, 5);
-            gc.fillRoundRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height, 5, 5);
+            gc.strokeRoundRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height, archFactor, archFactor);
+            gc.fillRoundRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height, archFactor, archFactor);
         }
 
     }
@@ -231,7 +232,7 @@ class GraphController {
 
         int size = drawableSNP.getMutations().size();
         int seqNumber = 0;
-        gc.strokeRoundRect(locX, locY, width, height, 5, 5);
+        gc.strokeRoundRect(locX, locY, width, height, archFactor, archFactor);
 
         for (DrawableSegment drawableSegment : drawableSNP.getMutations()) {
             String seqChar = drawableSegment.getSequence();
