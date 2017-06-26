@@ -382,7 +382,7 @@ class GraphController {
      * @param y position vertically where clicked
      * @return nodeClicked {@link DrawableNode} returns null if no node is clicked.
      */
-    public DrawableNode onClick(double x, double y) {
+    public Drawable onClick(double x, double y) {
         return subGraph.onClick(x, y);
 
     }
