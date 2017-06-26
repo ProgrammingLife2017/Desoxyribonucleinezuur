@@ -173,4 +173,8 @@ public class DrawableSNP extends DrawableNode {
     public DrawableNode getChild() {
         return child;
     }
+
+    public DrawableNode getParent() {
+        return parent;
+    }
 }

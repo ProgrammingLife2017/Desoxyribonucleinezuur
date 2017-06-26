@@ -12,6 +12,7 @@ import programminglife.utility.Console;
 
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.Map;
 
 /**
  * Controller for drawing the graph.
@@ -460,5 +461,19 @@ class GraphController {
      */
     public void resetZoom() {
         this.subGraph.setZoomLevel(1);
+    }
+
+    /**
+     *
+     * @param edge
+     * @return
+     */
+    public Collection<Integer> getGenomesEdge(DrawableEdge edge) {
+        Map<DrawableNode, Collection<Integer>> from = subGraph.getGenomes().get(edge.getStart().getParentSegment());
+        if (from != null) {
+            Collection<Integer> genomes = from.get(edge.getEnd().getChildSegment());
+            return genomes;
+        }
+        return null;
     }
 }
