@@ -131,7 +131,7 @@ class GraphController {
      */
     private void highlightNode(DrawableNode node, Color color) {
         node.setStrokeColor(color);
-        node.setStrokeWidth(5.0);
+        node.setStrokeWidth(5.0 * subGraph.getZoomLevel());
         drawNode(canvas.getGraphicsContext2D(), node);
     }
 
@@ -197,21 +197,58 @@ class GraphController {
         double locY = drawableNode.getLocation().getY();
 
         if (drawableNode instanceof DrawableSNP) {
-            gc.save();
+            int size = ((DrawableSNP) drawableNode).getMutations().size();
+            drawSNP(gc, (DrawableSNP) drawableNode, size);
 
-            gc.translate(locX, locY);
-            gc.rotate(45);
-            gc.translate(-locX, -locY);
-
-            gc.strokeRect(locX, locY, width, height);
-            gc.fillRect(locX, locY, width, height);
-
-            gc.restore();
-        } else {
+        } else if (drawableNode instanceof DrawableDummy) {
             gc.strokeRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height);
             gc.fillRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height);
+
+        } else {
+            gc.strokeRoundRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height, 5, 5);
+            gc.fillRoundRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height, 5, 5);
         }
 
+    }
+
+    private void drawSNP(GraphicsContext gc, DrawableSNP drawableNode, int size) {
+        double width = drawableNode.getWidth();
+        double height = drawableNode.getHeight();
+        double locX = drawableNode.getLocation().getX();
+        double locY = drawableNode.getLocation().getY();
+
+        gc.save();
+
+        gc.setStroke(Color.BLACK);
+        gc.translate(drawableNode.getCenter().getX(), drawableNode.getCenter().getY());
+        gc.rotate(45);
+        gc.translate(-drawableNode.getCenter().getX(), -drawableNode.getCenter().getY());
+
+        int seqNumber = 0;
+        gc.strokeRoundRect(locX, locY, width, height, 5, 5);
+
+        for (DrawableSegment drawableSegment : drawableNode.getMutations()) {
+            String seqChar = drawableSegment.getSequence();
+            switch (seqChar) {
+                case "A":
+                    gc.setFill(Color.GREEN);
+                    break;
+                case "C":
+                    gc.setFill(Color.BLUE);
+                    break;
+                case "G":
+                    gc.setFill(Color.ORANGE);
+                    break;
+                case "T":
+                    gc.setFill(Color.RED);
+                    break;
+            }
+            if (seqNumber < size) {
+                seqNumber++;
+                gc.fillRect(locX - width / size + (width / size) * seqNumber, locY, width / size, height);
+            }
+        }
+        gc.restore();
     }
 
     /**
