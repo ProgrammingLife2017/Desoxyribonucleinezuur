@@ -40,10 +40,6 @@ public class SubGraph {
     private int numberOfGenomes;
     private boolean replaceSNPs;
 
-    // TODO: cache topological sorting (inside topoSort(), only recalculate when adding / removing nodes)
-    // important: directly invalidate cache (set to null), because otherwise removed nodes
-    // can't be garbage collected until next call to topoSort()
-
     /**
      * Create a SubGraph from a graph, without any nodes initially.
      *
@@ -150,10 +146,6 @@ public class SubGraph {
             }
         }
     }
-
-    // TODO: change findParents and findChildren to reliably only find nodes with a *longest* path of at most radius.
-    // (maybe give that their own method, or possibly two methods with a
-    // boolean flag for using longest or shortest path as determining factor for the radius)
 
     /**
      * Find nodes within radius steps from centerNode.
@@ -642,10 +634,9 @@ public class SubGraph {
     }
 
     /**
-     * Topologically sort the nodes from this graph. <br />
-     * <p>
-     * Assumption: graph is a DAG.
+     * Topologically sort the nodes from this graph.
      *
+     * Assumption: graph is a DAG.
      * @return a topologically sorted list of nodes
      */
     public List<DrawableNode> topoSort() {
@@ -668,21 +659,6 @@ public class SubGraph {
             }
             topoSortFromNode(res, found, n);
         }
-
-        // TODO: use better strategy
-        // 1 O(1) create sorted set of (number, node) pairs (sort by number)
-        // 2 O(n) for each node, add to set as (node.parents.size(), node)
-        // 3 O(n+m) for each node in the list {
-        //   3.1 O(1) remove first pair from list (assert that number = 0), add node to resultList.
-        //   3.2 O((deg(v)) for each child of node, decrease number by one (make sure that list is still sorted!).
-        // }
-        // done.
-
-        // TODO: add a test that this works. see assert below.
-        // assert that list is sorted?
-        // create set found
-        // for each node: add to found, check if any of children in found. If yes, fail.
-        // if none of the children for all nodes were in found: pass.
 
         assert (res.size() == this.nodes.size());
         return res;

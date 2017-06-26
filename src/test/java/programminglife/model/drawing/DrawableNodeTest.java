@@ -39,8 +39,6 @@ public class DrawableNodeTest {
     }
 
 
-    // TODO: implement other tests
-
     @Test
     public void sizeTest() {
         node.setSize(3, 4);
