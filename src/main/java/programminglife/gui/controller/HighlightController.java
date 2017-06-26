@@ -94,18 +94,14 @@ public class HighlightController {
         for (int i = 0; i < numberOfGenomes; i++) {
             String genomeName = lstSelectedGenomes.getItems().get(i);
             int genomeID = graphController.getGraph().getGenomeID(genomeName);
-
-            System.out.println("Highlighting " + genomeName + " (" + genomeID + ") with color " + colors[i]);
             graphController.highlightByGenome(genomeID, colors[i]);
         }
     }
 
-    private Color[] generateColors(int n)
-    {
+    private Color[] generateColors(int n) {
         Color[] colors = new Color[n];
         for(int i = 0; i < n; i++) {
-            colors[i] = Color.hsb(i / (double) n, 0.85f, 1.0f);
-            System.out.println("Color " + i + " " + colors[i]);
+            colors[i] = Color.hsb(i * 360.d / n, 0.85f, 1.0f);
         }
         return colors;
     }
