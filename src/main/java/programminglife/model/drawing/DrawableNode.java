@@ -204,7 +204,7 @@ public abstract class DrawableNode implements Drawable {
     /**
      * Getter for the collection of genomes.
      *
-     * @return Collection<Integer> containing the genomes.
+     * @return Collection containing the genomes.
      */
     public abstract Collection<Integer> getGenomes();
 
@@ -294,14 +294,14 @@ public abstract class DrawableNode implements Drawable {
     /**
      * getter for the genomes of the parents.
      *
-     * @return Collection<Integer> of the genomes of the parents.
+     * @return Collection of the genomes of the parents.
      */
     public abstract Collection<Integer> getParentGenomes();
 
     /**
      * getter for the genomes of the children.
      *
-     * @return Collection<Integer> of the genomes of the children.
+     * @return Collection of the genomes of the children.
      */
     protected abstract Collection<Integer> getChildGenomes();
 }

@@ -634,10 +634,9 @@ public class SubGraph {
     }
 
     /**
-     * Topologically sort the nodes from this graph. <br />
-     * <p>
-     * Assumption: graph is a DAG.
+     * Topologically sort the nodes from this graph.
      *
+     * Assumption: graph is a DAG.
      * @return a topologically sorted list of nodes
      */
     public List<DrawableNode> topoSort() {
