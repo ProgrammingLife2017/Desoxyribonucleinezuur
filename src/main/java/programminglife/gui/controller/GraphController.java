@@ -428,7 +428,7 @@ class GraphController {
      * @return nodeClicked {@link DrawableNode} returns null if no node is clicked.
      */
     public Drawable onClick(double x, double y) {
-        return subGraph.onClick(x, y);
+        return subGraph.onClick(x, y, canvas.getGraphicsContext2D());
     }
 
     /**

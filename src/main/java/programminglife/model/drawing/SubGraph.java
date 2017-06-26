@@ -1,5 +1,7 @@
 package programminglife.model.drawing;
 
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 import org.eclipse.collections.impl.factory.Sets;
 import programminglife.model.GenomeGraph;
 import programminglife.model.XYCoordinate;
@@ -310,7 +312,7 @@ public class SubGraph {
      * @param y location
      * @return Drawable on which clicked. if nothing null.
      */
-    public Drawable onClick(double x, double y) {
+    public Drawable onClick(double x, double y, GraphicsContext gc) {
         Drawable clicked;
 //        System.out.println(x + " "+ y);
         //TODO implement this with a tree instead of iterating.
@@ -322,7 +324,7 @@ public class SubGraph {
             }
         }
 
-        return onClickEdge(x, y);
+        return onClickEdge(x, y, gc);
     }
 
     /**
@@ -332,7 +334,7 @@ public class SubGraph {
      * @param y location
      * @return DrawableEdge
      */
-    private DrawableEdge onClickEdge(double x, double y) {
+    private DrawableEdge onClickEdge(double x, double y, GraphicsContext gc) {
 
         //Find layers on the left and the right of the clicked location.
         int foundLayerIndex = getLayerIndex(layers, x);
@@ -349,7 +351,7 @@ public class SubGraph {
 
         for (DrawableNode left : leftLayer.getNodes()) {
             for (DrawableNode right : this.getChildren(left)) {
-                    if (calculateEdge(left, right, x, y)) {
+                    if (calculateEdge(left, right, x, y, gc)) {
 
                        return new DrawableEdge(left, right);
                     }
@@ -369,7 +371,7 @@ public class SubGraph {
      * @param y location
      * @return true if clicked on edge, false if not
      */
-    private boolean calculateEdge(DrawableNode left, DrawableNode right, double x, double y) {
+    private boolean calculateEdge(DrawableNode left, DrawableNode right, double x, double y, GraphicsContext gc) {
         //calculate edge start
         double leftLayerEnd = left.getLayer().getX() + left.getLayer().getWidth();
         XYCoordinate start = left.getRightBorderCenter();
@@ -393,12 +395,32 @@ public class SubGraph {
         double edgeY = startY + (deltaY * (x - startX));
         //TODO change these numbers to edgethickness * zoom or something to make it work when zoomed in and zoomed out a lot.
         //TODO when this is fixed make it a simple return (calculation).
-        if (edgeY - 20 < y && edgeY + 20 > y){
+
+        double genomeFraction = getGenomesEdge(left.getParentSegment(), right.getParentSegment()).size() / (double) this.getNumberOfGenomes();
+        double minStrokeWidth = 1.d, maxStrokeWidth = 6.5;
+        double strokeWidth = minStrokeWidth + genomeFraction * (maxStrokeWidth - minStrokeWidth);
+
+        gc.setStroke(Color.RED);
+        gc.setLineWidth(1 * zoomLevel);
+        gc.strokeLine(x - 1, edgeY - strokeWidth * zoomLevel, x + 1, edgeY - strokeWidth * zoomLevel);
+        gc.strokeLine(x - 1, edgeY + strokeWidth * zoomLevel, x + 1, edgeY + strokeWidth * zoomLevel);
+
+        if (edgeY - strokeWidth * zoomLevel < y && edgeY + strokeWidth * zoomLevel > y){
 //            System.out.println("TRUE EdgY = " + edgeY);
             return true;
         }
 //        System.out.println("FALSE EdgY = " + edgeY);
         return false;
+    }
+
+    public Collection<Integer> getGenomesEdge(DrawableNode parent, DrawableNode child){
+        Map<DrawableNode, Collection<Integer>> from = this.getGenomes().get(parent);
+                if (from != null) {
+                    Collection<Integer> genomes = from.get(child);
+                    return genomes;
+                }
+        return null;
+
     }
 
     /**
