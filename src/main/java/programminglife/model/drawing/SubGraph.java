@@ -1,6 +1,5 @@
 package programminglife.model.drawing;
 
-import com.sun.org.apache.xpath.internal.SourceTree;
 import org.eclipse.collections.impl.factory.Sets;
 import programminglife.model.GenomeGraph;
 import programminglife.model.XYCoordinate;
@@ -384,7 +383,7 @@ public class SubGraph {
         //calculate differences.
 
         double differenceX = end.getX() - start.getX();
-        double differenceY = start.getY() - end.getY(); //Negative is line is going down, positive if line is going up.
+        double differenceY = end.getY() - start.getY(); //Negative if line is going up, positive if line is going down.
 
         //calculate a out of the ax+b formula;
         double deltaY = differenceY / differenceX;
@@ -395,7 +394,7 @@ public class SubGraph {
 
         double edgeY = startY + (deltaY * (x - startX));
 
-        if (edgeY - 2 < y && edgeY + 2 > y){
+        if (edgeY - 20 < y && edgeY + 20 > y){
             System.out.println("TRUE EdgY = " + edgeY);
             return true;
         }
