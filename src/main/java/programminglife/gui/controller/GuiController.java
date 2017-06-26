@@ -446,7 +446,6 @@ public class GuiController implements Observer {
             }
             else if (clickedOn instanceof DrawableEdge) {
                 DrawableEdge edge = (DrawableEdge) clickedOn;
-                System.out.println("JEmoeder");
                 if (shiftPressed) {
                     showInfoEdge(edge, 240);
                 } else {

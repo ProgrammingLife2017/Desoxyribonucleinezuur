@@ -187,7 +187,6 @@ public class GenomeGraph {
      */
     private void addParent(int nodeID, int parentID) {
         int[] oldParents = this.getParentIDs(nodeID);
-        //TODO find a way to do this more efficiently
         int[] newParents = Arrays.copyOf(oldParents, oldParents.length + 1);
         newParents[newParents.length - 1] = parentID;
         this.cache.getParentsAdjacencyMap().put(nodeID, newParents);
