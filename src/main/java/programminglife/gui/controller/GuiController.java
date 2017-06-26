@@ -27,11 +27,7 @@ import programminglife.gui.Alerts;
 import programminglife.gui.NumbersOnlyListener;
 import programminglife.gui.ResizableCanvas;
 import programminglife.model.GenomeGraph;
-import programminglife.model.drawing.Drawable;
-import programminglife.model.drawing.DrawableEdge;
-import programminglife.model.drawing.DrawableNode;
-import programminglife.model.drawing.DrawableSNP;
-import programminglife.model.drawing.DrawableSegment;
+import programminglife.model.drawing.*;
 import programminglife.parser.GraphParser;
 import programminglife.parser.ProgressCounter;
 import programminglife.utility.Console;
@@ -447,8 +443,7 @@ public class GuiController implements Observer {
                     showInfoNode(segment, 10);
                 }
                 graphController.highlightClicked(segment, shiftPressed);
-            }
-            else if (clickedOn instanceof DrawableEdge) {
+            } else if (clickedOn instanceof DrawableEdge) {
                 DrawableEdge edge = (DrawableEdge) clickedOn;
                 if (shiftPressed) {
                     showInfoEdge(edge, 240);
@@ -609,22 +604,29 @@ public class GuiController implements Observer {
     private void showInfoEdge(DrawableEdge edge, int x) {
         anchorGraphInfo.getChildren().removeIf(node1 -> node1.getLayoutX() == x);
 
-        Text idText = new Text("Genomes: ");
-        idText.setLayoutX(x);
-        idText.setLayoutY(65);
         Text parentsText = new Text("Parent: ");
         parentsText.setLayoutX(x);
-        parentsText.setLayoutY(115);
+        parentsText.setLayoutY(65);
         Text childrenText = new Text("Child: ");
         childrenText.setLayoutX(x);
-        childrenText.setLayoutY(165);
+        childrenText.setLayoutY(105);
+        Text idText = new Text("Genomes: ");
+        idText.setLayoutX(x);
+        idText.setLayoutY(145);
 
-        TextField id = getTextField("Genomes: ", x, 70,
-                graphController.getGraph().getGenomeNames(edge.getGenomes()).toString());
-        TextField parent = getTextField("Parent Node: ", x, 120, Integer.toString(edge.getStart().getIdentifier()));
-        TextField child = getTextField("Child Node: ", x, 170, Integer.toString(edge.getEnd().getIdentifier()));
+        TextField parent = getTextField("Parent Node: ", x, 70, Integer.toString(edge.getStart().getIdentifier()));
+        TextField child = getTextField("Child Node: ", x, 110, Integer.toString(edge.getEnd().getIdentifier()));
 
-        anchorGraphInfo.getChildren().addAll(idText, parentsText, childrenText, id, parent, child);
+
+        Collection<Integer> genomesEdge = graphController.getGenomesEdge(edge);
+        TextArea genomes = null;
+        if (genomesEdge != null) {
+            String result = graphController.getGraph().getGenomeNames(genomesEdge).toString();
+            genomes = getTextArea("Genomes: ", x, 150, result.substring(1, result.length() - 1), 80);
+            genomes.setWrapText(true);
+        }
+
+        anchorGraphInfo.getChildren().addAll(idText, parentsText, childrenText, genomes, parent, child);
     }
 
 
@@ -723,8 +725,8 @@ public class GuiController implements Observer {
                 Integer.toString(snp.getParent().getIdentifier()));
         TextField childTextField = getTextField("Child: ", x, 110,
                 Integer.toString(snp.getChild().getIdentifier()));
-        TextField mutationTextField = getTextField("ID: ", x,
-                150, c.toString().substring(1, c.toString().length() - 1));
+        TextField mutationTextField = getTextField("ID: ", x, 150,
+                c.toString().substring(1, c.toString().length() - 1));
 
         anchorGraphInfo.getChildren().addAll(idParent, idChild, idMutation,
                 mutationTextField, parentTextField, childTextField);
