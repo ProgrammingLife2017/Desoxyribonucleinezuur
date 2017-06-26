@@ -255,6 +255,7 @@ public class GuiController implements Observer {
         btnSNP.setAccelerator(new KeyCodeCombination(KeyCode.G, KeyCodeCombination.CONTROL_DOWN));
 
         btnDark.setOnAction(event -> ProgrammingLife.toggleCSS());
+        btnDark.setAccelerator(new KeyCodeCombination(KeyCode.Z, KeyCodeCombination.CONTROL_DOWN));
     }
 
 
@@ -751,9 +752,6 @@ public class GuiController implements Observer {
         textField.setLayoutX(x);
         textField.setLayoutY(y);
         textField.setEditable(false);
-        textField.setStyle("-fx-text-box-border: transparent;-fx-background-color: none; -fx-background-insets: 0;"
-                + " -fx-padding: 1 3 1 3; -fx-focus-color: transparent; "
-                + "-fx-faint-focus-color: transparent;");
         textField.setPrefSize(220, 20);
 
         return textField;

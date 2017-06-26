@@ -44,7 +44,7 @@ public final class ProgrammingLife extends Application {
     public void start(Stage stage) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/Basic_Gui.fxml"));
         root = loader.load();
-        root.getStylesheets().add("LightTheme.css");
+        root.getStylesheets().add("/LightTheme.css");
         primaryStage = stage;
         primaryStage.setTitle("Programming Life");
         primaryStage.setScene(new Scene(root));
@@ -116,11 +116,11 @@ public final class ProgrammingLife extends Application {
         showCSS = !showCSS;
         Platform.runLater(() -> {
             if (showCSS) {
-                root.getStylesheets().remove("LightTheme.css");
-                root.getStylesheets().add("DarkTheme.css");
+                root.getStylesheets().remove("/LightTheme.css");
+                root.getStylesheets().add("/DarkTheme.css");
             } else {
-                root.getStylesheets().remove("DarkTheme.css");
-                root.getStylesheets().add("LightTheme.css");
+                root.getStylesheets().remove("/DarkTheme.css");
+                root.getStylesheets().add("/LightTheme.css");
             }
         });
     }

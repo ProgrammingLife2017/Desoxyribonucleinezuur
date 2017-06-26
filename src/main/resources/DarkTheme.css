@@ -1,6 +1,6 @@
 .root {
     -fx-background-color: #1d1d1d;
-    -fx-font-family: Palatino Linotype;
+    -fx-font-family: Futura;
     -fx-font-size: 10pt;
 }
 
@@ -8,15 +8,45 @@
     -fx-background-color: #1d1d1d;
 }
 
+.text-field {
+    -fx-text-box-border: transparent;
+    -fx-background-color: transparent;
+    -fx-font-family: monospace;
+    -fx-font-size: 10pt;
+    -fx-text-fill: white;
+}
+
 .text-area {
     -fx-font-family: monospace;
     -fx-font-size: 10pt;
-    -fx-text-box-border: transparent;
-    -fx-background-color: none;
-    -fx-background-insets: 0;
-    -fx-padding: 1 1 1 1;
-    -fx-focus-color: transparent;
-    -fx-faint-focus-color: transparent;
+    -fx-text-fill: white;
+    -fx-background-color: #696969;
+}
+
+.text-area .content {
+    -fx-text-box-border: #696969;
+    -fx-background-color: #696969;
+    -fx-background-color: transparent;
+}
+
+.text-area .scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.text-area .scroll-pane .viewport{
+    -fx-background-color: transparent;
+}
+
+.text-area .scroll-pane .content{
+    -fx-background-color: transparent;
+}
+
+#anchorTabPanel {
+    -fx-background-color: #696969;
+}
+
+#anchorLeftControlPanel {
+    -fx-background-color: #696969;
 }
 
 #txtCenter {

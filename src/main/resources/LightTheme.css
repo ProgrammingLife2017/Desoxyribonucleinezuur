@@ -1,21 +1,52 @@
 .root {
-    -fx-font-family: Palatino Linotype;
+    -fx-font-family: Futura;
     -fx-font-size: 10pt;
+    -fx-font-color: black;
 }
 
 .split-pane-divider {
 }
 
-.text-area {
+.text-field {
+    -fx-text-box-border: transparent;
+    -fx-background-color: transparent;
     -fx-font-family: monospace;
     -fx-font-size: 10pt;
-    -fx-text-box-border: transparent;
-    -fx-background-color: none;
+    -fx-text-fill: black;
+}
+
+.text-field .content {
     -fx-background-insets: 0;
     -fx-padding: 1 1 1 1;
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
 }
+
+.text-area {
+    -fx-font-family: monospace;
+    -fx-font-size: 10pt;
+    -fx-text-fill: black;
+    -fx-background-color: white;
+}
+
+.text-area .content {
+    -fx-text-box-border: white;
+    -fx-background-color: white;
+    -fx-background-color: transparent;
+}
+
+.text-area .scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.text-area .scroll-pane .viewport{
+    -fx-background-color: transparent;
+}
+
+.text-area .scroll-pane .content{
+    -fx-background-color: transparent;
+}
+
 
 #txtCenter {
     -fx-text-box-border: transparent;
