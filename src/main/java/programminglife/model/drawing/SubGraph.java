@@ -305,6 +305,103 @@ public class SubGraph {
     }
 
     /**
+     * On click method
+     * @param x location
+     * @param y location
+     * @return Drawable on which clicked. if nothing null.
+     */
+    public Drawable onClick(double x, double y) {
+        Drawable clicked;
+//        System.out.println(x + " "+ y);
+        //TODO implement this with a tree instead of iterating.
+        for (DrawableNode drawableNode : this.getNodes().values()) {
+            if (x >= drawableNode.getLocation().getX() && y >= drawableNode.getLocation().getY()
+                    && x <= drawableNode.getLocation().getX() + drawableNode.getWidth()
+                    && y <= drawableNode.getLocation().getY() + drawableNode.getHeight()) {
+                    return drawableNode;
+            }
+        }
+
+        return onClickEdge(x, y);
+    }
+
+    /**
+     * check if clicked on an edge.
+     *
+     * @param x location
+     * @param y location
+     * @return DrawableEdge
+     */
+    private DrawableEdge onClickEdge(double x, double y) {
+
+        //Find layers on the left and the right of the clicked location.
+        int foundLayerIndex = getLayerIndex(layers, x);
+        int leftLayerIndex;
+
+        if (layers.get(foundLayerIndex).getX() > x) {
+            leftLayerIndex = foundLayerIndex - 1;
+        } else {
+            leftLayerIndex = foundLayerIndex;
+        }
+
+        //get the corresponding layers.
+        Layer leftLayer = layers.get(leftLayerIndex);
+
+        for (DrawableNode left : leftLayer.getNodes()) {
+            for (DrawableNode right : this.getChildren(left)) {
+                    if (calculateEdge(left, right, x, y)) {
+
+                       return new DrawableEdge(left, right);
+                    }
+
+                }
+            }
+
+        return null;
+    }
+
+
+    /**
+     * Cacluclates the edges and see if the onclick is on line
+     * @param left node of the edge.
+     * @param right node of the edge.
+     * @param x location
+     * @param y location
+     * @return true if clicked on edge, false if not
+     */
+    private boolean calculateEdge(DrawableNode left, DrawableNode right, double x, double y) {
+        //calculate edge start
+        double leftLayerEnd = left.getLayer().getX() + left.getLayer().getWidth();
+        XYCoordinate start = left.getRightBorderCenter();
+        start.setX(leftLayerEnd); //make the start the layer end since this is where the edge starts to move.
+        XYCoordinate end = right.getLeftBorderCenter();
+
+//        System.out.println("Start Location:  " + start);
+//        System.out.println("End Location: " + end);
+
+        //calculate differences.
+        double differenceX = end.getX() - start.getX();
+        double differenceY = end.getY() - start.getY(); //Negative if line is going up, positive if line is going down.
+
+        //calculate a out of the ax+b formula;
+        double deltaY = differenceY / differenceX;
+//        System.out.println("DeltaY is: " + deltaY);
+
+        double startX = start.getX();
+        double startY = start.getY();
+
+        double edgeY = startY + (deltaY * (x - startX));
+        //TODO change these numbers to edgethickness * zoom or something to make it work when zoomed in and zoomed out a lot.
+        //TODO when this is fixed make it a simple return (calculation).
+        if (edgeY - 20 < y && edgeY + 20 > y){
+//            System.out.println("TRUE EdgY = " + edgeY);
+            return true;
+        }
+//        System.out.println("FALSE EdgY = " + edgeY);
+        return false;
+    }
+
+    /**
      * A class for keeping track of how a Node was found. Only used within {@link SubGraph#findNodes}.
      */
     private static final class FoundNode {
@@ -928,3 +1025,4 @@ public class SubGraph {
         return zoomLevel;
     }
 }
+
