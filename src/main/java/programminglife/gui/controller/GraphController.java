@@ -300,10 +300,13 @@ class GraphController {
         subGraph.checkDynamicLoad(0, canvas.getWidth());
 
         for (DrawableNode drawableNode : subGraph.getNodes().values()) {
-            drawNode(gc, drawableNode);
             for (DrawableNode child : subGraph.getChildren(drawableNode)) {
                 drawEdge(gc, drawableNode, child);
             }
+        }
+
+        for (DrawableNode drawableNode : subGraph.getNodes().values()) {
+            drawNode(gc, drawableNode);
         }
     }
 
