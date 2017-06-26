@@ -25,6 +25,7 @@ class GraphController {
     private SubGraph subGraph;
     private LinkedList<DrawableNode> oldGenomeList = new LinkedList<>();
     private final ResizableCanvas canvas;
+    private final int archFactor = 5;
 
 
     private int centerNodeInt;
@@ -131,7 +132,7 @@ class GraphController {
      */
     private void highlightNode(DrawableNode node, Color color) {
         node.setStrokeColor(color);
-        node.setStrokeWidth(5.0);
+        node.setStrokeWidth(5.0 * subGraph.getZoomLevel());
         drawNode(canvas.getGraphicsContext2D(), node);
     }
 
@@ -197,21 +198,64 @@ class GraphController {
         double locY = drawableNode.getLocation().getY();
 
         if (drawableNode instanceof DrawableSNP) {
-            gc.save();
+            drawSNP(gc, (DrawableSNP) drawableNode);
 
-            gc.translate(locX, locY);
-            gc.rotate(45);
-            gc.translate(-locX, -locY);
-
-            gc.strokeRect(locX, locY, width, height);
-            gc.fillRect(locX, locY, width, height);
-
-            gc.restore();
-        } else {
+        } else if (drawableNode instanceof DrawableDummy) {
             gc.strokeRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height);
             gc.fillRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height);
+
+        } else {
+            gc.strokeRoundRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height, archFactor, archFactor);
+            gc.fillRoundRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height, archFactor, archFactor);
         }
 
+    }
+
+    /**
+     * Draws an SNP node on the location it has.
+     *
+     * @param gc {@link GraphicsContext} is the GraphicsContext required to draw.
+     * @param drawableSNP {@link DrawableSNP} is the node to be drawn.
+     */
+    private void drawSNP(GraphicsContext gc, DrawableSNP drawableSNP) {
+        double width = drawableSNP.getWidth();
+        double height = drawableSNP.getHeight();
+        double locX = drawableSNP.getLocation().getX();
+        double locY = drawableSNP.getLocation().getY();
+
+        gc.save();
+
+        gc.setStroke(Color.BLACK);
+        gc.translate(drawableSNP.getCenter().getX(), drawableSNP.getCenter().getY());
+        gc.rotate(45);
+        gc.translate(-drawableSNP.getCenter().getX(), -drawableSNP.getCenter().getY());
+
+        int size = drawableSNP.getMutations().size();
+        int seqNumber = 0;
+        gc.strokeRoundRect(locX, locY, width, height, archFactor, archFactor);
+
+        for (DrawableSegment drawableSegment : drawableSNP.getMutations()) {
+            String seqChar = drawableSegment.getSequence();
+            switch (seqChar) {
+                default:
+                    throw new IllegalArgumentException("This is not a valid mutation.");
+                case "A":
+                    gc.setFill(Color.GREEN);
+                    break;
+                case "C":
+                    gc.setFill(Color.BLUE);
+                    break;
+                case "G":
+                    gc.setFill(Color.ORANGE);
+                    break;
+                case "T":
+                    gc.setFill(Color.RED);
+                    break;
+            }
+            gc.fillRect(locX + (width / size) * seqNumber, locY, width / size, height);
+            seqNumber++;
+        }
+        gc.restore();
     }
 
     /**
