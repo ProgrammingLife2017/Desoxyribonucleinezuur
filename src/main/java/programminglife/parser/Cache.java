@@ -377,7 +377,6 @@ public final class Cache {
      * @return a {@link Collection} of IDs
      */
     public Collection<Integer> getGenomeNodeIDs(int genomeID) {
-        // TODO assumption: nodes ordered by ID in genome
         Set<Integer> nodeIDs = new TreeSet<>();
         for (Map.Entry<Integer, int[]> entry : this.getNodeIdGenomesMap().entrySet()) {
             if (ArrayUtils.contains(entry.getValue(), genomeID)) {
