@@ -197,8 +197,7 @@ class GraphController {
         double locY = drawableNode.getLocation().getY();
 
         if (drawableNode instanceof DrawableSNP) {
-            int size = ((DrawableSNP) drawableNode).getMutations().size();
-            drawSNP(gc, (DrawableSNP) drawableNode, size);
+            drawSNP(gc, (DrawableSNP) drawableNode);
 
         } else if (drawableNode instanceof DrawableDummy) {
             gc.strokeRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height);
@@ -211,25 +210,34 @@ class GraphController {
 
     }
 
-    private void drawSNP(GraphicsContext gc, DrawableSNP drawableNode, int size) {
-        double width = drawableNode.getWidth();
-        double height = drawableNode.getHeight();
-        double locX = drawableNode.getLocation().getX();
-        double locY = drawableNode.getLocation().getY();
+    /**
+     * Draws an SNP node on the location it has.
+     *
+     * @param gc {@link GraphicsContext} is the GraphicsContext required to draw.
+     * @param drawableSNP {@link DrawableSNP} is the node to be drawn.
+     */
+    private void drawSNP(GraphicsContext gc, DrawableSNP drawableSNP) {
+        double width = drawableSNP.getWidth();
+        double height = drawableSNP.getHeight();
+        double locX = drawableSNP.getLocation().getX();
+        double locY = drawableSNP.getLocation().getY();
 
         gc.save();
 
         gc.setStroke(Color.BLACK);
-        gc.translate(drawableNode.getCenter().getX(), drawableNode.getCenter().getY());
+        gc.translate(drawableSNP.getCenter().getX(), drawableSNP.getCenter().getY());
         gc.rotate(45);
-        gc.translate(-drawableNode.getCenter().getX(), -drawableNode.getCenter().getY());
+        gc.translate(-drawableSNP.getCenter().getX(), -drawableSNP.getCenter().getY());
 
+        int size = drawableSNP.getMutations().size();
         int seqNumber = 0;
         gc.strokeRoundRect(locX, locY, width, height, 5, 5);
 
-        for (DrawableSegment drawableSegment : drawableNode.getMutations()) {
+        for (DrawableSegment drawableSegment : drawableSNP.getMutations()) {
             String seqChar = drawableSegment.getSequence();
             switch (seqChar) {
+                default:
+                    throw new IllegalArgumentException("This is not a valid mutation.");
                 case "A":
                     gc.setFill(Color.GREEN);
                     break;
@@ -243,10 +251,8 @@ class GraphController {
                     gc.setFill(Color.RED);
                     break;
             }
-            if (seqNumber < size) {
-                seqNumber++;
-                gc.fillRect(locX - width / size + (width / size) * seqNumber, locY, width / size, height);
-            }
+            seqNumber++;
+            gc.fillRect(locX - width / size + (width / size) * seqNumber, locY, width / size, height);
         }
         gc.restore();
     }
