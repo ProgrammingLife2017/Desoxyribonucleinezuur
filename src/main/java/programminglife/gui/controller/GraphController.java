@@ -171,9 +171,13 @@ class GraphController {
         gc.setStroke(edge.getStrokeColor());
 
         XYCoordinate startLocation = edge.getStartLocation();
+        XYCoordinate endLayerLocation = new XYCoordinate(
+                parent.getLeftBorderCenter().getX() + parent.getLayer().getWidth(),
+                parent.getLeftBorderCenter().getY());
         XYCoordinate endLocation = edge.getEndLocation();
 
-        gc.strokeLine(startLocation.getX(), startLocation.getY(), endLocation.getX(), endLocation.getY());
+        gc.strokeLine(startLocation.getX(), startLocation.getY(), endLayerLocation.getX(), endLayerLocation.getY());
+        gc.strokeLine(endLayerLocation.getX(), endLayerLocation.getY(), endLocation.getX(), endLocation.getY());
     }
 
     /**
