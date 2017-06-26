@@ -1,20 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Text?>
-<?import programminglife.gui.AutoCompleteTextField?>
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="455.0" prefWidth="445.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="programminglife.gui.controller.HighlightController">
+    <!-- Genome substring search -->
+    <Text strokeWidth="0.0" text="Select genomes to highlight" underline="true" AnchorPane.leftAnchor="15" AnchorPane.topAnchor="15" />
+    <Label layoutX="14.0" layoutY="45.0" text="Search" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="45.0" />
+    <TextField prefHeight="27.0" prefWidth="130.0" promptText="substring" AnchorPane.leftAnchor="65.0" AnchorPane.rightAnchor="250.0" AnchorPane.topAnchor="40.0" />
+    <Label layoutX="302.0" layoutY="47.0" text="Selected genomes" AnchorPane.leftAnchor="250.0" AnchorPane.topAnchor="75.0" />
+    <ListView maxHeight="250.0" maxWidth="180.0" minHeight="250.0" minWidth="180.0" AnchorPane.leftAnchor="15" AnchorPane.rightAnchor="250.0" AnchorPane.topAnchor="95.0" />
+    <Label layoutX="292.0" layoutY="37.0" text="Unselected genomes" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="75.0" />
+    <ListView maxHeight="250.0" maxWidth="180.0" minHeight="250.0" minWidth="180.0" AnchorPane.leftAnchor="250.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="95.0" />
+    <Button text="-&gt;" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="200.0" AnchorPane.topAnchor="95.0" />
+    <Button text="&lt;-" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="200.0" AnchorPane.topAnchor="125.0" />
 
-<!--suppress ALL -->
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="programminglife.gui.controller.HighlightController">
-   <Text layoutX="45.0" layoutY="20.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Select annotations" underline="true" />
-   <AutoCompleteTextField fx:id="txtAnnotations" layoutX="35.0" layoutY="65" prefHeight="25.0" prefWidth="140.0" promptText="Highlight annotation" />
-   <Button fx:id="btnHighlight" layoutX="80" layoutY="400.0" mnemonicParsing="false" text="Highlight" />
-   <AutoCompleteTextField fx:id="txtGenome" layoutX="35.0" layoutY="317" prefHeight="25.0" prefWidth="140.0" promptText="Highlight genome" />
-   <Text layoutX="35" layoutY="300" strokeType="OUTSIDE" strokeWidth="0.0" text="Select genomes to highlight" underline="true" />
-   <TextField fx:id="txtMin" layoutX="90" layoutY="163.0" prefHeight="25.0" prefWidth="59.0" />
-   <Text layoutX="35" layoutY="150.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Number of genomes" underline="true" />
-   <CheckBox fx:id="checkMin" layoutX="20" layoutY="167.0" mnemonicParsing="false" text="Min:" />
-   <TextField fx:id="txtMax" layoutX="90" layoutY="201.0" prefHeight="25.0" prefWidth="59.0" />
-   <CheckBox fx:id="checkMax" layoutX="20" layoutY="205.0" mnemonicParsing="false" text="Max:" />
+    <!-- Genome min/max highlight -->
+    <Text text="Select nodes with # of genomes" underline="true" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="350.0" />
+    <TextField fx:id="txtMax" maxWidth="50.0" minWidth="50.0" AnchorPane.leftAnchor="205.0" AnchorPane.topAnchor="372.5" />
+    <CheckBox fx:id="checkMax" text="Max:" AnchorPane.leftAnchor="150.0" AnchorPane.topAnchor="375.0" />
+    <TextField fx:id="txtMin" maxWidth="50.0" minWidth="50.0" AnchorPane.leftAnchor="70.0" AnchorPane.topAnchor="372.5" />
+    <CheckBox fx:id="checkMin" text="Min:" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="375.0" />
 </AnchorPane>
