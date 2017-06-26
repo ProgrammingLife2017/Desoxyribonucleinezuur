@@ -1,5 +1,6 @@
 package programminglife.model.drawing;
 
+import com.sun.org.apache.xpath.internal.SourceTree;
 import org.eclipse.collections.impl.factory.Sets;
 import programminglife.model.GenomeGraph;
 import programminglife.model.XYCoordinate;
@@ -310,6 +311,99 @@ public class SubGraph {
 
     public void setZoomLevel(double zoomLevel) {
         this.zoomLevel = zoomLevel;
+    }
+
+    public DrawableNode onClick(double x, double y) {
+        DrawableNode nodeClicked = null;
+        System.out.println(x + " "+ y);
+        //TODO implement this with a tree instead of iterating.
+        if (this == null) {
+            return null;
+        }
+
+        for (DrawableNode drawableNode : this.getNodes().values()) {
+            if (x >= drawableNode.getLocation().getX() && y >= drawableNode.getLocation().getY()
+                    && x <= drawableNode.getLocation().getX() + drawableNode.getWidth()
+                    && y <= drawableNode.getLocation().getY() + drawableNode.getHeight()) {
+                nodeClicked = drawableNode;
+                return nodeClicked;
+            }
+        }
+
+        onClickEdge(x, y);
+
+        return nodeClicked;
+    }
+
+    private DrawableEdge onClickEdge(double x, double y) {
+
+        //Find layers on the left and the right of the clicked location.
+        int foundLayerIndex = getLayerIndex(layers, x);
+        int leftLayerIndex = 0;
+
+
+        if (layers.get(foundLayerIndex).getX() > x) {
+            leftLayerIndex = foundLayerIndex - 1;
+        } else {
+            leftLayerIndex = foundLayerIndex;
+        }
+
+        //get the corresponding layers.
+        Layer leftLayer = layers.get(leftLayerIndex);
+
+        for (DrawableNode left : leftLayer.getNodes()) {
+            for (DrawableNode right : this.getChildren(left)) {
+                if (left.getLocation().getY() > y && right.getLocation().getY() < y) {
+                    calculateEdge(left, right, x, y);
+                }
+                if (left.getLocation().getY() < y && right.getLocation().getY() > y) {
+                    calculateEdge(left, right, x, y);
+                }
+            }
+        }
+
+        return null;
+    }
+
+
+
+    private boolean calculateEdge(DrawableNode left, DrawableNode right, double x, double y) {
+        //calculate edge start
+        double leftLayerEnd = left.getLayer().getX() + left.getLayer().getWidth();
+        XYCoordinate start = left.getRightBorderCenter();
+        start.setX(leftLayerEnd); //make the start the layer end since this is where the edge starts to move.
+        XYCoordinate end = right.getLeftBorderCenter();
+
+        System.out.println("Start Location:  " + start);
+//        System.out.println("Left location: " + left.getLocation());
+        System.out.println("End Location: " + end);
+//        System.out.println("Right location: " + right.getLocation());
+
+
+
+        //calculate differences.
+
+        double differenceX = end.getX() - start.getX();
+        double differenceY = start.getY() - end.getY(); //Negative is line is going down, positive if line is going up.
+
+        //calculate a out of the ax+b formula;
+        double deltaY = differenceY / differenceX;
+//        System.out.println("DeltaY is: " + deltaY);
+
+        double startX = start.getX();
+        double startY = start.getY();
+
+        double edgeY = startY + (deltaY * (x - startX));
+
+        if (edgeY - 2 < y && edgeY + 2 > y){
+            System.out.println("TRUE EdgY = " + edgeY);
+            return true;
+        }
+        System.out.println("FALSE EdgY = " + edgeY);
+        return false;
+
+
+
     }
 
     /**
@@ -952,3 +1046,4 @@ public class SubGraph {
         return zoomLevel;
     }
 }
+

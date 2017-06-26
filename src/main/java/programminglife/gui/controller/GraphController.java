@@ -383,21 +383,8 @@ class GraphController {
      * @return nodeClicked {@link DrawableNode} returns null if no node is clicked.
      */
     public DrawableNode onClick(double x, double y) {
-        DrawableNode nodeClicked = null;
-        //TODO implement this with a tree instead of iterating.
-        if (subGraph == null) {
-            return null;
-        }
+        return subGraph.onClick(x, y);
 
-        for (DrawableNode drawableNode : subGraph.getNodes().values()) {
-            if (x >= drawableNode.getLocation().getX() && y >= drawableNode.getLocation().getY()
-                    && x <= drawableNode.getLocation().getX() + drawableNode.getWidth()
-                    && y <= drawableNode.getLocation().getY() + drawableNode.getHeight()) {
-                nodeClicked = drawableNode;
-                break;
-            }
-        }
-        return nodeClicked;
     }
 
     /**
@@ -430,5 +417,9 @@ class GraphController {
      */
     public void resetZoom() {
         this.subGraph.setZoomLevel(1);
+    }
+
+    public SubGraph getSubGraph() {
+        return subGraph;
     }
 }
