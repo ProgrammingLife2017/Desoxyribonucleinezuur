@@ -1,17 +1,12 @@
 package programminglife.gui.controller;
 
 import javafx.beans.Observable;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import org.jetbrains.annotations.Nullable;
+import javafx.scene.text.Text;
 import programminglife.gui.NumbersOnlyListener;
 
 import java.util.*;
@@ -21,7 +16,7 @@ import java.util.stream.Collectors;
  * Controller class for the highlights.
  */
 public class HighlightController {
-    private static final Color HIGHLIGHT_MIN_MAX_COLOR = Color.HOTPINK;
+    private static final Color HIGHLIGHT_MIN_MAX_COLOR = Color.YELLOW;
 
     private GraphController graphController;
 
@@ -48,6 +43,7 @@ public class HighlightController {
         btnUnselectGenomes.setDisable(true);
 
         lstUnselectedGenomes.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        lstSelectedGenomes.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
         lstSelectedGenomes.setOnMouseClicked(event -> {
             lstUnselectedGenomes.getSelectionModel().clearSelection();
@@ -81,6 +77,10 @@ public class HighlightController {
             }
         });
 
+        txtMax.textProperty().addListener((observable, oldValue, newValue) -> this.highlight());
+        txtMin.textProperty().addListener((observable, oldValue, newValue) -> this.highlight());
+        checkMax.selectedProperty().addListener((observable, oldValue, newValue) -> this.highlight());
+        checkMin.selectedProperty().addListener((observable, oldValue, newValue) -> this.highlight());
         txtSearchGenomes.textProperty().addListener(this::search);
         btnSelectGenomes.setOnMouseClicked(this::selectGenomes);
         btnUnselectGenomes.setOnMouseClicked(this::unselectGenomes);
@@ -96,6 +96,8 @@ public class HighlightController {
             int genomeID = graphController.getGraph().getGenomeID(genomeName);
             graphController.highlightByGenome(genomeID, colors[i]);
         }
+
+        highlightMinMax();
     }
 
     private Color[] generateColors(int n) {
