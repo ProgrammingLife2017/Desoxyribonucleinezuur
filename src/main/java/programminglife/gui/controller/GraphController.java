@@ -252,8 +252,8 @@ class GraphController {
                     gc.setFill(Color.RED);
                     break;
             }
+            gc.fillRect(locX + (width / size) * seqNumber, locY, width / size, height);
             seqNumber++;
-            gc.fillRect(locX - width / size + (width / size) * seqNumber, locY, width / size, height);
         }
         gc.restore();
     }
