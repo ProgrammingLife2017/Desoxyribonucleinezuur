@@ -14,10 +14,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.*;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.ScrollEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -32,6 +29,7 @@ import programminglife.gui.ResizableCanvas;
 import programminglife.model.GenomeGraph;
 import programminglife.model.drawing.DrawableEdge;
 import programminglife.model.drawing.DrawableNode;
+import programminglife.model.drawing.DrawableSNP;
 import programminglife.model.drawing.DrawableSegment;
 import programminglife.parser.GraphParser;
 import programminglife.parser.ProgressCounter;
@@ -43,9 +41,8 @@ import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Observable;
-import java.util.Observer;
-import java.util.Random;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * The controller for the GUI that is used in the application.
@@ -406,7 +403,7 @@ public class GuiController implements Observer {
             orgSceneY = event.getSceneY();
         });
         canvas.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-            if (event.isShiftDown()) {
+            if (event.isShiftDown() || event.getButton() == MouseButton.SECONDARY) {
                 mouseClick(event.getX(), event.getY(), true);
             } else {
                 mouseClick(event.getX(), event.getY(), false);
@@ -434,7 +431,14 @@ public class GuiController implements Observer {
     private void mouseClick(double x, double y, boolean shiftPressed) {
         DrawableNode clickedOn = graphController.onClick(x, y);
         if (clickedOn != null) {
-            if (clickedOn instanceof DrawableSegment) {
+            if (clickedOn instanceof DrawableSNP) {
+                DrawableSNP snp = (DrawableSNP) clickedOn;
+                if (shiftPressed) {
+                    showInfoSNP(snp, 240);
+                } else {
+                    showInfoSNP(snp, 10);
+                }
+            } else if (clickedOn instanceof DrawableSegment) {
                 DrawableSegment segment = (DrawableSegment) clickedOn;
                 if (shiftPressed) {
                     showInfoNode(segment, 240);
@@ -685,6 +689,36 @@ public class GuiController implements Observer {
         anchorGraphInfo.getChildren().addAll(idTextField, parents, children, inEdges, outEdges, genome, seqLength, seq);
     }
 
+    /**
+     * Method to show the information of an SNP.
+     *
+     * @param snp  DrawableSegment the node which has been clicked on.
+     * @param x    int the x location of the TextField.
+     */
+    private void showInfoSNP(DrawableSNP snp, int x) {
+        Text idParent = new Text("Parent: ");
+        idParent.setLayoutX(x);
+        idParent.setLayoutY(65);
+        Text idChild = new Text("Child: ");
+        idChild.setLayoutX(x);
+        idChild.setLayoutY(105);
+        Text idMutation = new Text("Mutation: ");
+        idMutation.setLayoutX(x);
+        idMutation.setLayoutY(145);
+
+        anchorGraphInfo.getChildren().removeIf(node1 -> node1.getLayoutX() == x);
+
+        Set<String> c = snp.getMutations().stream().map(DrawableSegment::getSequence).collect(Collectors.toSet());
+        TextField parentTextField = getTextField("Parent: ", x, 70,
+                Integer.toString(snp.getParent().getIdentifier()));
+        TextField childTextField = getTextField("Child: ", x, 110,
+                Integer.toString(snp.getChild().getIdentifier()));
+        TextField mutationTextField = getTextField("ID: ", x,
+                150, c.toString().substring(1, c.toString().length() - 1));
+
+        anchorGraphInfo.getChildren().addAll(idParent, idChild, idMutation,
+                mutationTextField, parentTextField, childTextField);
+    }
 
     /**
      * Returns a textField to be used by the edge and node information show panel.
