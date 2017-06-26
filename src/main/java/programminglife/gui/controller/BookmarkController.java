@@ -21,7 +21,7 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -224,7 +224,7 @@ public final class BookmarkController {
      * @return A map of lists containing all bookmarks
      */
     static Map<String, List<Bookmark>> loadAllBookmarks(String fileName) {
-        Map<String, List<Bookmark>> result = new HashMap<>();
+        Map<String, List<Bookmark>> result = new LinkedHashMap<>();
         Element doc = loadDoc(fileName);
         assert doc != null;
         NodeList graphs = doc.getElementsByTagName("graph");
