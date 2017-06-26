@@ -27,6 +27,7 @@ import programminglife.gui.Alerts;
 import programminglife.gui.NumbersOnlyListener;
 import programminglife.gui.ResizableCanvas;
 import programminglife.model.GenomeGraph;
+import programminglife.model.drawing.Drawable;
 import programminglife.model.drawing.DrawableEdge;
 import programminglife.model.drawing.DrawableNode;
 import programminglife.model.drawing.DrawableSNP;
@@ -429,7 +430,7 @@ public class GuiController implements Observer {
      * @param shiftPressed boolean if shift is pressed it should be displayed in panel 2.
      */
     private void mouseClick(double x, double y, boolean shiftPressed) {
-        DrawableNode clickedOn = graphController.onClick(x, y);
+        Drawable clickedOn = graphController.onClick(x, y);
         if (clickedOn != null) {
             if (clickedOn instanceof DrawableSNP) {
                 DrawableSNP snp = (DrawableSNP) clickedOn;
@@ -446,6 +447,15 @@ public class GuiController implements Observer {
                     showInfoNode(segment, 10);
                 }
                 graphController.highlightClicked(segment, shiftPressed);
+            }
+            else if (clickedOn instanceof DrawableEdge) {
+                DrawableEdge edge = (DrawableEdge) clickedOn;
+                if (shiftPressed) {
+                    showInfoEdge(edge, 240);
+                } else {
+                    showInfoEdge(edge, 10);
+                }
+               // graphController.highlightClicked(edge, shiftPressed); TODO FIX.
             }
         }
     }

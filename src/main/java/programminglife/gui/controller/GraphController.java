@@ -426,21 +426,8 @@ class GraphController {
      * @param y position vertically where clicked
      * @return nodeClicked {@link DrawableNode} returns null if no node is clicked.
      */
-    public DrawableNode onClick(double x, double y) {
-        DrawableNode nodeClicked = null;
-        if (subGraph == null) {
-            return null;
-        }
-
-        for (DrawableNode drawableNode : subGraph.getNodes().values()) {
-            if (x >= drawableNode.getLocation().getX() && y >= drawableNode.getLocation().getY()
-                    && x <= drawableNode.getLocation().getX() + drawableNode.getWidth()
-                    && y <= drawableNode.getLocation().getY() + drawableNode.getHeight()) {
-                nodeClicked = drawableNode;
-                break;
-            }
-        }
-        return nodeClicked;
+    public Drawable onClick(double x, double y) {
+        return subGraph.onClick(x, y);
     }
 
     /**
