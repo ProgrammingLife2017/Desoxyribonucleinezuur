@@ -523,7 +523,7 @@ public class SubGraph {
         long millisecondTime = differenceTime / 1000000;
         Console.println("TIME OF TOPOSORT:  " + millisecondTime);
         Console.println("Amount of nodes: " + sorted.size());
-        Map<DrawableNode, Integer> nodeLevel = new HashMap<>();
+        Map<DrawableNode, Integer> nodeLevel = new LinkedHashMap<>();
         ArrayList<Layer> layerList = new ArrayList<>();
 
         for (DrawableNode node : sorted) {
