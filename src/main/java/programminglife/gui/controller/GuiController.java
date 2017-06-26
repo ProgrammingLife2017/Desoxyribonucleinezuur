@@ -58,6 +58,7 @@ public class GuiController implements Observer {
     @FXML private MenuItem btnInstructions;
     @FXML private Menu menuRecentGFA;
 
+    @FXML private RadioMenuItem btnDark;
     @FXML private RadioMenuItem btnSNP;
     @FXML private RadioMenuItem btnConsole;
     @FXML private RadioMenuItem btnMiniMap;
@@ -252,6 +253,8 @@ public class GuiController implements Observer {
             Platform.runLater(this::draw);
         });
         btnSNP.setAccelerator(new KeyCodeCombination(KeyCode.G, KeyCodeCombination.CONTROL_DOWN));
+
+        btnDark.setOnAction(event -> ProgrammingLife.toggleCSS());
     }
 
 
@@ -689,7 +692,7 @@ public class GuiController implements Observer {
         }
 
         String genomesString = graphController.getGraph().getGenomeNames(node.getGenomes()).toString();
-        String sequenceString = node.getSequence().replaceAll("(.{24})", "$1" + System.getProperty("line.separator"));
+        String sequenceString = node.getSequence().replaceAll("(.{23})", "$1" + System.getProperty("line.separator"));
         TextField inEdges = getTextField("Incoming Edges: ", x, 190, Integer.toString(node.getParents().size()));
         TextField outEdges = getTextField("Outgoing Edges: ", x, 230, Integer.toString(node.getChildren().size()));
         TextField seqLength = getTextField("Sequence Length: ", x, 270, Integer.toString(node.getSequence().length()));
@@ -750,7 +753,7 @@ public class GuiController implements Observer {
         textField.setEditable(false);
         textField.setStyle("-fx-text-box-border: transparent;-fx-background-color: none; -fx-background-insets: 0;"
                 + " -fx-padding: 1 3 1 3; -fx-focus-color: transparent; "
-                + "-fx-faint-focus-color: transparent; -fx-font-family: monospace;");
+                + "-fx-faint-focus-color: transparent;");
         textField.setPrefSize(220, 20);
 
         return textField;
@@ -773,9 +776,6 @@ public class GuiController implements Observer {
         textArea.setLayoutX(x);
         textArea.setLayoutY(y);
         textArea.setEditable(false);
-        textArea.setStyle("-fx-text-box-border: transparent;-fx-background-color: none; -fx-background-insets: 0;"
-                + " -fx-padding: 1 3 1 3; -fx-focus-color: transparent; "
-                + "-fx-faint-focus-color: transparent; -fx-font-family: monospace;");
         textArea.setPrefSize(225, height);
 
         return textArea;

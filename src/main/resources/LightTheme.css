@@ -1,0 +1,38 @@
+.root {
+    -fx-font-family: Palatino Linotype;
+    -fx-font-size: 10pt;
+}
+
+.split-pane-divider {
+}
+
+.text-area {
+    -fx-font-family: monospace;
+    -fx-font-size: 10pt;
+    -fx-text-box-border: transparent;
+    -fx-background-color: none;
+    -fx-background-insets: 0;
+    -fx-padding: 1 1 1 1;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+#txtCenter {
+    -fx-text-box-border: transparent;
+    -fx-background-color: none;
+    -fx-background-insets: 0;
+    -fx-padding: 1 3 1 3;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-font-family: monospace;
+}
+
+#txtRadius {
+    -fx-text-box-border: transparent;
+    -fx-background-color: none;
+    -fx-background-insets: 0;
+    -fx-padding: 1 3 1 3;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-font-family: monospace;
+}
