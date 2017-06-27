@@ -1,29 +1,37 @@
 package programminglife.gui.controller;
 
+import javafx.beans.Observable;
+import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import programminglife.gui.AutoCompleteTextField;
+import javafx.scene.text.Text;
 import programminglife.gui.NumbersOnlyListener;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Controller class for the highlights.
  */
 public class HighlightController {
+    private static final Color HIGHLIGHT_MIN_MAX_COLOR = Color.YELLOW;
 
-    private static final Color HIGHLIGHT_MIN_MAX_COLOR = Color.HOTPINK;
     private GraphController graphController;
-    private GuiController guiController;
 
-    @FXML private Button btnHighlight;
-    @FXML private AutoCompleteTextField txtGenome;
+    @FXML private TextField txtSearchGenomes;
+    @FXML private ListView<String> lstUnselectedGenomes;
+    @FXML private ListView<String> lstSelectedGenomes;
+    @FXML private Button btnSelectGenomes;
+    @FXML private Button btnUnselectGenomes;
+
     @FXML private TextField txtMin;
     @FXML private TextField txtMax;
     @FXML private CheckBox checkMin;
     @FXML private CheckBox checkMax;
 
+    private Collection<String> genomes;
 
     /**
      * Initialize method for HighlightController.
@@ -31,40 +39,137 @@ public class HighlightController {
     @FXML
     @SuppressWarnings("unused")
     public void initialize() {
-        initButtons();
+        genomes = new ArrayList<>();
+        btnUnselectGenomes.setDisable(true);
+
+        lstUnselectedGenomes.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        lstSelectedGenomes.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+        lstSelectedGenomes.setOnMouseClicked(event -> {
+            lstUnselectedGenomes.getSelectionModel().clearSelection();
+            if (event.getClickCount() >= 2) {
+                unselectGenomes(event);
+            }
+        });
+
+        lstUnselectedGenomes.setOnMouseClicked(event -> {
+            lstSelectedGenomes.getSelectionModel().clearSelection();
+            if (event.getClickCount() >= 2) {
+                selectGenomes(event);
+            }
+        });
+
+        lstSelectedGenomes.getItems().addListener((ListChangeListener<String>) c -> {
+           if (lstSelectedGenomes.getItems().isEmpty()) {
+               btnUnselectGenomes.setDisable(true);
+           } else {
+               btnUnselectGenomes.setDisable(false);
+           }
+
+           this.highlight();
+        });
+
+        lstUnselectedGenomes.getItems().addListener((ListChangeListener<String>) c -> {
+            if (lstUnselectedGenomes.getItems().isEmpty()) {
+                btnSelectGenomes.setDisable(true);
+            } else {
+                btnSelectGenomes.setDisable(false);
+            }
+        });
+
+        txtMax.textProperty().addListener((observable, oldValue, newValue) -> this.highlight());
+        txtMin.textProperty().addListener((observable, oldValue, newValue) -> this.highlight());
+        checkMax.selectedProperty().addListener((observable, oldValue, newValue) -> this.highlight());
+        checkMin.selectedProperty().addListener((observable, oldValue, newValue) -> this.highlight());
+        txtSearchGenomes.textProperty().addListener(this::search);
+        btnSelectGenomes.setOnMouseClicked(this::selectGenomes);
+        btnUnselectGenomes.setOnMouseClicked(this::unselectGenomes);
     }
 
+    private void highlight() {
+        // Highlight multiple genomes
+        int numberOfGenomes = lstSelectedGenomes.getItems().size();
+        Color[] colors = generateColors(numberOfGenomes);
+        graphController.removeHighlight();
+        for (int i = 0; i < numberOfGenomes; i++) {
+            String genomeName = lstSelectedGenomes.getItems().get(i);
+            int genomeID = graphController.getGraph().getGenomeID(genomeName);
+            graphController.highlightByGenome(genomeID, colors[i]);
+        }
+
+        highlightMinMax();
+    }
+
+    private Color[] generateColors(int n) {
+        Color[] colors = new Color[n];
+        for(int i = 0; i < n; i++) {
+            colors[i] = Color.hsb(i * 360.d / n, 0.85f, 1.0f);
+        }
+        return colors;
+    }
+
+    private void unselectGenomes(MouseEvent mouseEvent) {
+        List<String> selection = lstSelectedGenomes.getSelectionModel().getSelectedItems();
+        lstSelectedGenomes.getItems().removeAll(selection);
+
+        this.search(txtSearchGenomes.textProperty(), null, this.txtSearchGenomes.getText());
+    }
+
+    private void selectGenomes(MouseEvent mouseEvent) {
+        List<String> selection = lstUnselectedGenomes.getSelectionModel().getSelectedItems();
+        lstSelectedGenomes.getItems().addAll(selection);
+        lstUnselectedGenomes.getItems().removeAll(selection);
+    }
+
+    private void search(Observable o, String oldValue, String query) {
+        lstUnselectedGenomes.getItems().clear();
+
+        Set<String> unselected = new LinkedHashSet<>(genomes);
+        unselected.removeAll(lstSelectedGenomes.getItems());
+
+        if (query == null || query.isEmpty()) {
+            lstUnselectedGenomes.getItems().addAll(unselected);
+        } else {
+            lstUnselectedGenomes.getItems().addAll(unselected.stream()
+                    .filter(s -> match(query, s))
+                    .collect(Collectors.toList()));
+        }
+    }
+
+    private boolean match(String query, String element) {
+        return element != null && element.contains(query);
+    }
 
     /**
      * Initializes the buttons.
      */
-    private void initButtons() {
-
-        btnHighlight.setOnAction(event -> {
-            if (txtGenome.getText().isEmpty()) {
-                highlightMinMax();
-            } else {
-                if (txtGenome.getEntries().contains(txtGenome.getText())) {
-                    int genomeID = graphController.getGraph().getGenomeID(txtGenome.getText());
-                    graphController.highlightByGenome(genomeID);
-                }
-            }
-        });
-
-    }
+//    private void initButtons() {
+//        btnHighlight.setOnAction(event -> {
+//            if (txtGenome.getText().isEmpty()) {
+//                highlightMinMax();
+//            } else {
+//                if (txtGenome.getEntries().contains(txtGenome.getText())) {
+//                    int genomeID = graphController.getGraph().getGenomeID(txtGenome.getText());
+//                    graphController.highlightByGenome(genomeID);
+//                }
+//            }
+//        });
+//    }
 
     /**
      * Initializes the genomes.
      */
     public void initGenome() {
-        txtGenome.getEntries().addAll(graphController.getGraph().getGenomeNames());
+        genomes = this.graphController.getGraph().getGenomeNames();
+        lstSelectedGenomes.getItems().clear();
+        txtSearchGenomes.setText("");
+        search(txtSearchGenomes.textProperty(), null, txtSearchGenomes.getText());
     }
 
     /**
      * Initializes the Min and Max field + checkbox.
      */
     public void initMinMax() {
-
         checkMax.selectedProperty().addListener((observable, oldValue, newValue) ->
                 txtMax.setDisable(!checkMax.isSelected()));
 
@@ -78,7 +183,6 @@ public class HighlightController {
         txtMin.setDisable(true);
         txtMin.textProperty().addListener(new NumbersOnlyListener(txtMin));
         txtMin.setText("0");
-
     }
 
     /**
@@ -110,9 +214,5 @@ public class HighlightController {
      */
     void setGraphController(GraphController graphController) {
         this.graphController = graphController;
-    }
-
-    void setGUIController(GuiController guiController) {
-        this.guiController = guiController;
     }
 }

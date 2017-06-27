@@ -22,12 +22,12 @@ class GraphController {
     private GenomeGraph graph;
     private double locationCenterY;
     private double locationCenterX;
-    private LinkedList<DrawableNode> oldMinMaxList = new LinkedList<>();
     private SubGraph subGraph;
-    private LinkedList<DrawableNode> oldGenomeList = new LinkedList<>();
     private final ResizableCanvas canvas;
     private final int archFactor = 5;
 
+    private DrawableSegment clicked1;
+    private DrawableSegment clicked2;
 
     private int centerNodeInt;
     private boolean drawSNP = false;
@@ -226,13 +226,13 @@ class GraphController {
 
         gc.save();
 
-        gc.setStroke(Color.BLACK);
         gc.translate(drawableSNP.getCenter().getX(), drawableSNP.getCenter().getY());
         gc.rotate(45);
         gc.translate(-drawableSNP.getCenter().getX(), -drawableSNP.getCenter().getY());
 
         int size = drawableSNP.getMutations().size();
         int seqNumber = 0;
+        
         gc.strokeRoundRect(locX, locY, width, height, archFactor, archFactor);
 
         for (DrawableSegment drawableSegment : drawableSNP.getMutations()) {
@@ -252,6 +252,8 @@ class GraphController {
                 case "T":
                     gc.setFill(Color.RED);
                     break;
+                case "N":
+                    gc.setFill(Color.WHITE);
             }
             gc.fillRect(locX + (width / size) * seqNumber, locY, width / size, height);
             seqNumber++;
@@ -342,6 +344,19 @@ class GraphController {
     private void draw(GraphicsContext gc) {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
+        if (clicked1 != null) {
+            highlightNode(clicked1, Color.DARKTURQUOISE);
+            clicked1.setStrokeWidth(5.0 * subGraph.getZoomLevel());
+        }
+        if (clicked2 != null) {
+            highlightNode(clicked2, Color.PURPLE);
+            clicked2.setStrokeWidth(5.0 * subGraph.getZoomLevel());
+        }
+        if (clicked1 == clicked2 && clicked1 != null && clicked2 != null) {
+            highlightNode(clicked1, Color.DARKCYAN);
+            clicked1.setStrokeWidth(5.0 * subGraph.getZoomLevel());
+        }
+
         subGraph.checkDynamicLoad(0, canvas.getWidth());
 
         for (DrawableNode drawableNode : subGraph.getNodes().values()) {
@@ -365,8 +380,6 @@ class GraphController {
     public void highlightMinMax(int min, int max, Color color) {
         LinkedList<DrawableNode> drawNodeList = new LinkedList<>();
 
-        removeHighlight(oldMinMaxList);
-        removeHighlight(oldGenomeList);
         for (DrawableNode drawableNode : subGraph.getNodes().values()) {
             if (drawableNode != null && !(drawableNode instanceof DrawableDummy)) {
                 int genomeCount = drawableNode.getGenomes().size();
@@ -375,18 +388,17 @@ class GraphController {
                 }
             }
         }
-        oldMinMaxList = drawNodeList;
         highlightNodes(drawNodeList, color);
     }
 
     /**
      * Resets the node highlighting to remove highlights.
-     *
-     * @param nodes are the nodes to remove the highlight from.
      */
-    private void removeHighlight(Collection<DrawableNode> nodes) {
-        for (DrawableNode node: nodes) {
-            node.colorize(subGraph);
+    void removeHighlight() {
+        try {
+            subGraph.forEach(node -> node.colorize(subGraph));
+        } catch (NullPointerException n) {
+            // Occurs when the subgraph is cleared upon opening another graph, nothing on the hand!
         }
         this.draw(canvas.getGraphicsContext2D());
     }
@@ -396,11 +408,10 @@ class GraphController {
      * Highlights based on genomeID.
      *
      * @param genomeID the GenomeID to highlight on.
+     * @param color the Color to put on the node.
      */
-    public void highlightByGenome(int genomeID) {
+    public void highlightByGenome(int genomeID, Color color) {
         LinkedList<DrawableNode> drawNodeList = new LinkedList<>();
-        removeHighlight(oldGenomeList);
-        removeHighlight(oldMinMaxList);
         for (DrawableNode drawableNode : subGraph.getNodes().values()) {
             Collection<Integer> genomes = drawableNode.getGenomes();
             for (int genome : genomes) {
@@ -409,8 +420,7 @@ class GraphController {
                 }
             }
         }
-        oldGenomeList = drawNodeList;
-        highlightNodes(drawNodeList, Color.YELLOW);
+        highlightNodes(drawNodeList, color);
     }
 
     /**
@@ -418,6 +428,8 @@ class GraphController {
      */
     void setSNP() {
         drawSNP = !drawSNP;
+        clicked1 = null;
+        clicked2 = null;
     }
 
     /**
@@ -443,6 +455,7 @@ class GraphController {
                 this.highlightSegmentShift.colorize(subGraph);
             }
             this.highlightSegmentShift = segment;
+            this.clicked1 = segment;
             highlightNode(segment, Color.DARKTURQUOISE);
             segment.setStrokeWidth(5.0 * subGraph.getZoomLevel()); //Correct thickness when zoomed
         } else {
@@ -450,6 +463,7 @@ class GraphController {
                 this.highlightSegment.colorize(subGraph);
             }
             this.highlightSegment = segment;
+            this.clicked2 = segment;
             highlightNode(segment, Color.PURPLE);
             segment.setStrokeWidth(5.0 * subGraph.getZoomLevel()); //Correct thickness when zoomed
         }
@@ -464,9 +478,10 @@ class GraphController {
     }
 
     /**
+     * Method to return the genomes in a given edge.
      *
-     * @param edge
-     * @return
+     * @param edge the Drawable edge the check which genomes it contains.
+     * @return Collection<Integer> of the genomes in the edge.
      */
     public Collection<Integer> getGenomesEdge(DrawableEdge edge) {
         Map<DrawableNode, Collection<Integer>> from = subGraph.getGenomes().get(edge.getStart().getParentSegment());

@@ -224,7 +224,7 @@ public class DrawableSegment extends DrawableNode {
         double saturation = minSaturation + genomeFraction * (maxSaturation - minSaturation);
 
         Color fillColor = Color.hsb(227, saturation, 1.d);
-        Color strokeColor = Color.hsb(227, maxSaturation, 1.d);
+        Color strokeColor = Color.BLACK;
         this.setStrokeWidth(DRAWABLE_SEGMENT_STROKE_WIDTH * sg.getZoomLevel());
 
         this.setColors(fillColor, strokeColor);
