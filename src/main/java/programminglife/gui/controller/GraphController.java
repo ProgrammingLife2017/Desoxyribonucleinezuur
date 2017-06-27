@@ -556,7 +556,12 @@ class GraphController {
     Collection<DrawableNode> getChildSegments(DrawableSegment node) {
         return subGraph.getChildSegments(node);
     }
-  
+
+    /**
+     * Setter for the highlight controller.
+     *
+     * @param highlightController the controller to be set.
+     */
     public void setHighlightController(HighlightController highlightController) {
         this.highlightController = highlightController;
     }

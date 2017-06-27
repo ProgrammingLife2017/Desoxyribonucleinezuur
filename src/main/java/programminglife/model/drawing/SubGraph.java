@@ -1,7 +1,5 @@
 package programminglife.model.drawing;
 
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 import org.eclipse.collections.impl.factory.Sets;
 import org.jetbrains.annotations.NotNull;
 import programminglife.model.GenomeGraph;
@@ -237,11 +235,12 @@ public class SubGraph implements Iterable<DrawableNode> {
     }
 
     /**
-     * Checks whether a dynamic load is necessary. This includes both loading new nodes
+     * Checks whether a dynamic load is necessary. This includes both loading new nodes.
      * into the datastructure as well as removing nodes from the datastructure.
      *
      * @param leftBorder  The left border of the canvas.
      * @param rightBorder The right border of the canvas.
+     * @return boolean to check if it is loaded.
      */
     public boolean checkDynamicLoad(int leftBorder, double rightBorder) {
         assert (leftBorder < rightBorder);
@@ -313,7 +312,8 @@ public class SubGraph implements Iterable<DrawableNode> {
     }
 
     /**
-     * On click method
+     * On click method.
+     *
      * @param x location
      * @param y location
      * @return Drawable on which clicked. if nothing null.
@@ -369,7 +369,8 @@ public class SubGraph implements Iterable<DrawableNode> {
 
 
     /**
-     * Cacluclates the edges and see if the onclick is on line
+     * Calculates the edges and see if the onclick is on line.
+     *
      * @param left node of the edge.
      * @param right node of the edge.
      * @param x location
@@ -395,7 +396,8 @@ public class SubGraph implements Iterable<DrawableNode> {
 
         double edgeY = startY + (deltaY * (x - startX));
 
-        double genomeFraction = getGenomesEdge(left.getParentSegment(), right.getChildSegment()).size() / (double) this.getNumberOfGenomes();
+        double genomeFraction = getGenomesEdge(left.getParentSegment(),
+                right.getChildSegment()).size() / (double) this.getNumberOfGenomes();
         double minStrokeWidth = 1.d, maxStrokeWidth = 6.5;
         double strokeWidth = minStrokeWidth + genomeFraction * (maxStrokeWidth - minStrokeWidth);
 
@@ -408,7 +410,7 @@ public class SubGraph implements Iterable<DrawableNode> {
      * @param child node of the edge.
      * @return Collection of Integer which are the id's of the genomes.
      */
-    public Collection<Integer> getGenomesEdge(DrawableNode parent, DrawableNode child){
+    public Collection<Integer> getGenomesEdge(DrawableNode parent, DrawableNode child) {
         Map<DrawableNode, Collection<Integer>> from = this.getGenomes().get(parent);
                 if (from != null) {
                     Collection<Integer> genomes = from.get(child);
@@ -418,10 +420,22 @@ public class SubGraph implements Iterable<DrawableNode> {
 
     }
 
+    /**
+     * Getter for the collection of segments of the parent of a node.
+     *
+     * @param node Drawable segment to check the parents of.
+     * @return Collection<DrawableNode> the collection of segment from a parent.
+     */
     public Collection<DrawableNode> getParentSegments(DrawableSegment node) {
         return this.getParents(node).stream().map(parent -> parent.getParentSegment()).collect(Collectors.toSet());
     }
 
+    /**
+     * Getter for the collection of segments of the child of a node.
+     *
+     * @param node Drawable segment to check the children of.
+     * @return Collection<DrawableNode> the collection of segment from a child.
+     */
     public Collection<DrawableNode> getChildSegments(DrawableSegment node) {
         return this.getChildren(node).stream().map(child -> child.getChildSegment()).collect(Collectors.toSet());
     }
@@ -865,6 +879,7 @@ public class SubGraph implements Iterable<DrawableNode> {
      * Add nodes from the {@link #rootNodes}.
      *
      * @param radius The number of steps to take from the rootNodes before stopping the search.
+     * @return if the rootNodes are added.
      */
     private boolean addFromRootNodes(int radius) {
         if (this.rootNodes.isEmpty()) {
@@ -888,6 +903,7 @@ public class SubGraph implements Iterable<DrawableNode> {
      * Add nodes from the {@link #endNodes}.
      *
      * @param radius The number of steps to take from the endNodes before stopping the search.
+     * @return boolean if the endNodes are added.
      */
     private boolean addFromEndNodes(int radius) {
         if (this.endNodes.isEmpty()) {

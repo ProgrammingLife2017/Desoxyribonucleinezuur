@@ -6,7 +6,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import programminglife.gui.NumbersOnlyListener;
 
 import java.util.*;
@@ -86,6 +85,9 @@ public class HighlightController {
         btnUnselectGenomes.setOnMouseClicked(this::unselectGenomes);
     }
 
+    /**
+     * Method to highlight certain genomes.
+     */
     void highlight() {
         // Highlight multiple genomes
         int numberOfGenomes = lstSelectedGenomes.getItems().size();
@@ -100,14 +102,25 @@ public class HighlightController {
         highlightMinMax();
     }
 
+    /**
+     * Method to generate an array of colours to be used.
+     *
+     * @param n the amount of colours to be generated.
+     * @return Color[] array which contains the colours.
+     */
     private Color[] generateColors(int n) {
         Color[] colors = new Color[n];
-        for(int i = 0; i < n; i++) {
+        for (int i = 0; i < n; i++) {
             colors[i] = Color.hsb(i * 360.d / n, 0.85f, 1.0f);
         }
         return colors;
     }
 
+    /**
+     * Method to remove the item from the list.
+     *
+     * @param mouseEvent MouseEvent where clicked.
+     */
     private void unselectGenomes(MouseEvent mouseEvent) {
         List<String> selection = lstSelectedGenomes.getSelectionModel().getSelectedItems();
         lstSelectedGenomes.getItems().removeAll(selection);
@@ -115,12 +128,24 @@ public class HighlightController {
         this.search(txtSearchGenomes.textProperty(), null, this.txtSearchGenomes.getText());
     }
 
+    /**
+     * Method to add the item to the list.
+     *
+     * @param mouseEvent MouseEvent where clicked.
+     */
     private void selectGenomes(MouseEvent mouseEvent) {
         List<String> selection = lstUnselectedGenomes.getSelectionModel().getSelectedItems();
         lstSelectedGenomes.getItems().addAll(selection);
         lstUnselectedGenomes.getItems().removeAll(selection);
     }
 
+    /**
+     * Method to search through the items selected.
+     *
+     * @param o Observable to keep track of what happens.
+     * @param oldValue String of the previous value.
+     * @param query Query of the String.
+     */
     private void search(Observable o, String oldValue, String query) {
         lstUnselectedGenomes.getItems().clear();
 
@@ -136,6 +161,13 @@ public class HighlightController {
         }
     }
 
+    /**
+     * Method to match the query to the element.
+     *
+     * @param query Query to be processed.
+     * @param element Element to be checked with the query.
+     * @return Boolean if it is a match.
+     */
     private boolean match(String query, String element) {
         return element != null && element.contains(query);
     }
