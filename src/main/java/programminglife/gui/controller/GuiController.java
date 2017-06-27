@@ -567,7 +567,7 @@ public class GuiController implements Observer {
      */
     private void initShowInfoTab() {
         btnClipboard.setOnAction(event -> copyToClipboard(10));
-        btnClipboard2.setOnAction(event -> copyToClipboard(250));
+        btnClipboard2.setOnAction(event -> copyToClipboard(240));
     }
 
     /**
@@ -680,7 +680,7 @@ public class GuiController implements Observer {
         TextField seqLength = getTextField("Sequence Length: ", x, 270, Integer.toString(node.getSequence().length()));
         TextArea genome = getTextArea("Genome: ", x, 310, genomesString.substring(1, genomesString.length() - 1), 40);
         genome.setWrapText(true);
-        TextArea seq = getTextArea("Sequence: ", x, 375, sequenceString, 250);
+        TextArea seq = getTextArea(x + " Sequence: ", x, 375, sequenceString, 250);
 
         anchorGraphInfo.getChildren().addAll(idText, parentText, childText, inEdgeText, outEdgeText, seqLengthText,
                 genomeText, seqText, idTextField, parents, children, inEdges, outEdges, genome, seqLength, seq);
