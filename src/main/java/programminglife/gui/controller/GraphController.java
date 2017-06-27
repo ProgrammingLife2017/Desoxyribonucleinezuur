@@ -26,9 +26,9 @@ class GraphController {
     private final ResizableCanvas canvas;
     private final int archFactor = 5;
 
-    private DrawableSegment clicked1;
+    private DrawableSegment clicked;
     private DrawableSegment clickedShift;
-    private DrawableSNP clickedSNP1;
+    private DrawableSNP clickedSNP;
     private DrawableSNP clickedSNPShift;
 
     private int centerNodeInt;
@@ -346,13 +346,13 @@ class GraphController {
     private void draw(GraphicsContext gc) {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
-        if (clicked1 != null) {
-            highlightNode(clicked1, Color.DARKTURQUOISE);
-            clicked1.setStrokeWidth(5.0 * subGraph.getZoomLevel());
+        if (clicked != null) {
+            highlightNode(clicked, Color.DARKTURQUOISE);
+            clicked.setStrokeWidth(5.0 * subGraph.getZoomLevel());
         }
-        if (clickedSNP1 != null) {
-            highlightNode(clickedSNP1, Color.DARKTURQUOISE);
-            clickedSNP1.setStrokeWidth(5.0 * subGraph.getZoomLevel());
+        if (clickedSNP != null) {
+            highlightNode(clickedSNP, Color.DARKTURQUOISE);
+            clickedSNP.setStrokeWidth(5.0 * subGraph.getZoomLevel());
         }
         if (clickedShift != null) {
             highlightNode(clickedShift, Color.PURPLE);
@@ -362,13 +362,13 @@ class GraphController {
             highlightNode(clickedSNPShift, Color.PURPLE);
             clickedSNPShift.setStrokeWidth(5.0 * subGraph.getZoomLevel());
         }
-        if (clicked1 == clickedShift && clicked1 != null && clickedShift != null) {
-            highlightNode(clicked1, Color.DARKCYAN);
-            clicked1.setStrokeWidth(5.0 * subGraph.getZoomLevel());
+        if (clicked == clickedShift && clicked != null && clickedShift != null) {
+            highlightNode(clicked, Color.DARKCYAN);
+            clicked.setStrokeWidth(5.0 * subGraph.getZoomLevel());
         }
-        if (clickedSNP1 == clickedSNPShift && clickedSNP1 != null && clickedSNPShift != null) {
-            highlightNode(clickedSNP1, Color.DARKCYAN);
-            clickedSNP1.setStrokeWidth(5.0 * subGraph.getZoomLevel());
+        if (clickedSNP == clickedSNPShift && clickedSNP != null && clickedSNPShift != null) {
+            highlightNode(clickedSNP, Color.DARKCYAN);
+            clickedSNP.setStrokeWidth(5.0 * subGraph.getZoomLevel());
         }
 
         boolean didLoad = subGraph.checkDynamicLoad(0, canvas.getWidth());
@@ -452,9 +452,9 @@ class GraphController {
      * Resets which nodes are clicked on.
      */
     void resetClicked() {
-        clicked1 = null;
+        clicked = null;
         clickedShift = null;
-        clickedSNP1 = null;
+        clickedSNP = null;
         clickedSNPShift = null;
     }
 
@@ -478,14 +478,14 @@ class GraphController {
      */
     public void highlightClicked(DrawableSegment segment, DrawableSNP snp, boolean shiftPressed) {
         if (shiftPressed) {
-            if (clicked1 != null) {
-                this.clicked1.colorize(subGraph);
+            if (clicked != null) {
+                this.clicked.colorize(subGraph);
             }
-            if (clickedSNP1 != null) {
-                this.clickedSNP1.colorize(subGraph);
+            if (clickedSNP != null) {
+                this.clickedSNP.colorize(subGraph);
             }
-            this.clicked1 = segment;
-            this.clickedSNP1 = snp;
+            this.clicked = segment;
+            this.clickedSNP = snp;
             if (segment != null) {
                 highlightNode(segment, Color.DARKTURQUOISE);
                 segment.setStrokeWidth(5.0 * subGraph.getZoomLevel()); //Correct thickness when zoomed
