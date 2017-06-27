@@ -441,6 +441,7 @@ public class GuiController implements Observer {
                 } else {
                     showInfoSNP(snp, 10);
                 }
+                graphController.highlightClicked(null, snp, shiftPressed);
             } else if (clickedOn instanceof DrawableSegment) {
                 DrawableSegment segment = (DrawableSegment) clickedOn;
                 if (shiftPressed) {
@@ -448,7 +449,7 @@ public class GuiController implements Observer {
                 } else {
                     showInfoNode(segment, 10);
                 }
-                graphController.highlightClicked(segment, shiftPressed);
+                graphController.highlightClicked(segment, null, shiftPressed);
             } else if (clickedOn instanceof DrawableEdge) {
                 DrawableEdge edge = (DrawableEdge) clickedOn;
                 if (shiftPressed) {
