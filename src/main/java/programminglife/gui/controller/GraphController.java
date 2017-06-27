@@ -252,6 +252,8 @@ class GraphController {
                 case "T":
                     gc.setFill(Color.RED);
                     break;
+                case "N":
+                    gc.setFill(Color.WHITE);
             }
             gc.fillRect(locX + (width / size) * seqNumber, locY, width / size, height);
             seqNumber++;
