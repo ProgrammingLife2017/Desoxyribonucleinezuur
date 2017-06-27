@@ -451,7 +451,9 @@ class GraphController {
                         listColor = nodeGenomeList.get(drawableNode);
                     }
                     drawNodeList.add(drawableNode);
-                    listColor.add(color);
+                    if (!listColor.contains(color)) {
+                        listColor.add(color);
+                    }
                     nodeGenomeList.put(drawableNode, listColor);
                 }
             }
