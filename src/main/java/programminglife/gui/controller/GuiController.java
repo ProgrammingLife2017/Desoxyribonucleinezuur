@@ -64,7 +64,6 @@ public class GuiController implements Observer {
     @FXML private RadioMenuItem btnMiniMap;
 
     @FXML private Button btnZoomReset;
-    @FXML private Button btnTranslateReset;
     @FXML private Button btnDraw;
     @FXML private Button btnDrawRandom;
     @FXML private Button btnBookmark;
@@ -93,7 +92,6 @@ public class GuiController implements Observer {
     private File recentFileGFA = new File("RecentGFA.txt");
     private Thread parseThread;
 
-    private final ExtensionFilter extFilterGFF = new ExtensionFilter("GFF files (*.gff)", "*.GFF");
     private final ExtensionFilter extFilterGFA = new ExtensionFilter("GFA files (*.gfa)", "*.GFA");
 
     private static final double MAX_SCALE = 10.0d;
@@ -305,9 +303,10 @@ public class GuiController implements Observer {
     private void initLeftControlpanelScreenModifiers() {
         disableGraphUIElements(true);
 
-        btnTranslateReset.setOnAction(event -> this.draw());
-
-        btnZoomReset.setOnAction(event -> this.draw());
+        btnZoomReset.setOnAction(event -> {
+            graphController.resetClicked();
+            this.draw();
+        });
     }
 
     /**

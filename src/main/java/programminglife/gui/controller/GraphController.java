@@ -443,6 +443,13 @@ class GraphController {
      */
     void setSNP() {
         drawSNP = !drawSNP;
+        resetClicked();
+    }
+
+    /**
+     * Resets which nodes are clicked on.
+     */
+    public void resetClicked() {
         clicked1 = null;
         clicked2 = null;
         clickedSNP1 = null;
