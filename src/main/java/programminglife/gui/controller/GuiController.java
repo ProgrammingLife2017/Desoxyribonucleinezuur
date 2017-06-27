@@ -129,6 +129,7 @@ public class GuiController implements Observer {
     public GraphParser openFile(File file) {
         if (file != null) {
             if (this.graphController != null && this.graphController.getGraph() != null) {
+                this.graphController.resetClicked();
                 this.graphController.getGraph().close();
                 this.canvas.getGraphicsContext2D().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
             }
