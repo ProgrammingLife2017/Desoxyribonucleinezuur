@@ -10,9 +10,7 @@ import programminglife.model.XYCoordinate;
 import programminglife.model.drawing.*;
 import programminglife.utility.Console;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Controller for drawing the graph.
@@ -30,6 +28,7 @@ class GraphController {
     private DrawableSegment clickedShift;
     private DrawableSNP clickedSNP;
     private DrawableSNP clickedSNPShift;
+    private Map<DrawableNode, List<Color>> nodeGenomeList;
 
     private int centerNodeInt;
     private boolean drawSNP = false;
@@ -45,6 +44,7 @@ class GraphController {
         this.graph = null;
         this.canvas = canvas;
         this.highlightController = null;
+        this.nodeGenomeList = new HashMap<>();
     }
 
     public int getCenterNodeInt() {
@@ -135,7 +135,7 @@ class GraphController {
      * @param color {@link Color} to color with.
      */
     private void highlightNode(DrawableNode node, Color color) {
-        node.setStrokeColor(color);
+//        node.setStrokeColor(color);
         node.setStrokeWidth(5.0 * subGraph.getZoomLevel());
         drawNode(canvas.getGraphicsContext2D(), node);
     }
@@ -208,11 +208,23 @@ class GraphController {
             gc.strokeRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height);
             gc.fillRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height);
 
-        } else {
+        } else if (!nodeGenomeList.containsKey(drawableNode)) {
             gc.strokeRoundRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height, archFactor, archFactor);
             gc.fillRoundRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height, archFactor, archFactor);
-        }
+        } else {
+            int seqNumber = 0;
+            int size = nodeGenomeList.get(drawableNode).size();
+            System.out.println(size);
+            gc.strokeRoundRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height, archFactor, archFactor);
+            gc.save();
 
+            for (Color color : nodeGenomeList.get(drawableNode)) {
+                gc.setFill(color);
+                gc.fillRect(drawableNode.getLeftBorderCenter().getX() + (width / size) * seqNumber, locY, width / size, height);
+                seqNumber++;
+            }
+            gc.restore();
+        }
     }
 
     /**
@@ -429,11 +441,18 @@ class GraphController {
      */
     public void highlightByGenome(int genomeID, Color color) {
         LinkedList<DrawableNode> drawNodeList = new LinkedList<>();
+
         for (DrawableNode drawableNode : subGraph.getNodes().values()) {
             Collection<Integer> genomes = drawableNode.getGenomes();
+            List<Color> listColor = new LinkedList<>();
             for (int genome : genomes) {
                 if (genome == genomeID && !(drawableNode instanceof DrawableDummy)) {
+                    if (nodeGenomeList.containsKey(drawableNode) && drawableNode.getGenomes().contains(genome)) {
+                        listColor = nodeGenomeList.get(drawableNode);
+                    }
                     drawNodeList.add(drawableNode);
+                    listColor.add(color);
+                    nodeGenomeList.put(drawableNode, listColor);
                 }
             }
         }
