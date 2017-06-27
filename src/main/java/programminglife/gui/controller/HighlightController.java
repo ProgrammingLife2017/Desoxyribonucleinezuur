@@ -91,7 +91,7 @@ public class HighlightController {
     void highlight() {
         // Highlight multiple genomes
         int numberOfGenomes = lstSelectedGenomes.getItems().size();
-        Color[] colors = generateColors(numberOfGenomes);
+        Color[] colors = generateColors(graphController.getGraph().getTotalGenomeNumber());
         graphController.removeHighlight();
         for (int i = 0; i < numberOfGenomes; i++) {
             String genomeName = lstSelectedGenomes.getItems().get(i);

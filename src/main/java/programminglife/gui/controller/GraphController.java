@@ -113,7 +113,7 @@ class GraphController {
      */
     private void highlightNodes(Collection<DrawableNode> nodes, Color color) {
         for (DrawableNode drawNode : nodes) {
-            highlightNode(drawNode, color);
+            highlightNode(drawNode, color, false);
         }
     }
 
@@ -125,7 +125,7 @@ class GraphController {
      */
     private void highlightNode(int nodeID, Color color) {
         DrawableNode node = subGraph.getNodes().get(nodeID);
-        highlightNode(node, color);
+        highlightNode(node, color, false);
     }
 
     /**
@@ -134,8 +134,10 @@ class GraphController {
      * @param node  {@link DrawableNode} to highlight.
      * @param color {@link Color} to color with.
      */
-    private void highlightNode(DrawableNode node, Color color) {
-//        node.setStrokeColor(color);
+    private void highlightNode(DrawableNode node, Color color, Boolean clickedOn) {
+        if (clickedOn){
+            node.setStrokeColor(color);
+        }
         node.setStrokeWidth(5.0 * subGraph.getZoomLevel());
         drawNode(canvas.getGraphicsContext2D(), node);
     }
@@ -359,27 +361,27 @@ class GraphController {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
         if (clicked != null) {
-            highlightNode(clicked, Color.DARKTURQUOISE);
+            highlightNode(clicked, Color.DARKTURQUOISE, true);
             clicked.setStrokeWidth(5.0 * subGraph.getZoomLevel());
         }
         if (clickedSNP != null) {
-            highlightNode(clickedSNP, Color.DARKTURQUOISE);
+            highlightNode(clickedSNP, Color.DARKTURQUOISE, true);
             clickedSNP.setStrokeWidth(5.0 * subGraph.getZoomLevel());
         }
         if (clickedShift != null) {
-            highlightNode(clickedShift, Color.PURPLE);
+            highlightNode(clickedShift, Color.PURPLE, true);
             clickedShift.setStrokeWidth(5.0 * subGraph.getZoomLevel());
         }
         if (clickedSNPShift != null) {
-            highlightNode(clickedSNPShift, Color.PURPLE);
+            highlightNode(clickedSNPShift, Color.PURPLE, true);
             clickedSNPShift.setStrokeWidth(5.0 * subGraph.getZoomLevel());
         }
         if (clicked == clickedShift && clicked != null && clickedShift != null) {
-            highlightNode(clicked, Color.DARKCYAN);
+            highlightNode(clicked, Color.DARKCYAN, true);
             clicked.setStrokeWidth(5.0 * subGraph.getZoomLevel());
         }
         if (clickedSNP == clickedSNPShift && clickedSNP != null && clickedSNPShift != null) {
-            highlightNode(clickedSNP, Color.DARKCYAN);
+            highlightNode(clickedSNP, Color.DARKCYAN, true);
             clickedSNP.setStrokeWidth(5.0 * subGraph.getZoomLevel());
         }
 
@@ -508,11 +510,11 @@ class GraphController {
             this.clicked = segment;
             this.clickedSNP = snp;
             if (segment != null) {
-                highlightNode(segment, Color.DARKTURQUOISE);
+                highlightNode(segment, Color.DARKTURQUOISE, true);
                 segment.setStrokeWidth(5.0 * subGraph.getZoomLevel()); //Correct thickness when zoomed
             }
             if (snp != null) {
-                highlightNode(snp, Color.DARKTURQUOISE);
+                highlightNode(snp, Color.DARKTURQUOISE, true);
                 snp.setStrokeWidth(5.0 * subGraph.getZoomLevel()); //Correct thickness when zoomed
             }
         } else {
@@ -525,11 +527,11 @@ class GraphController {
             this.clickedShift = segment;
             this.clickedSNPShift = snp;
             if (segment != null) {
-                highlightNode(segment, Color.PURPLE);
+                highlightNode(segment, Color.PURPLE, true);
                 segment.setStrokeWidth(5.0 * subGraph.getZoomLevel()); //Correct thickness when zoomed
             }
             if (snp != null) {
-                highlightNode(snp, Color.PURPLE);
+                highlightNode(snp, Color.PURPLE, true);
                 snp.setStrokeWidth(5.0 * subGraph.getZoomLevel()); //Correct thickness when zoomed
             }
         }
