@@ -20,6 +20,14 @@
     -fx-background-color: gray;
 }
 
+#txtMin {
+    -fx-background-color: gray;
+}
+
+#txtMax {
+    -fx-background-color: gray;
+}
+
 .text-field {
     -fx-text-box-border: transparent;
     -fx-background-color: transparent;
