@@ -111,7 +111,8 @@ public class DrawableSegment extends DrawableNode {
         int segmentLength = this.getSequenceLength();
         double width, height;
 
-        width = min(10 * segmentLength, 100) + Math.pow(segmentLength * 100, 1.0 / 2);
+        double minValue = min(10 * segmentLength, 100);
+        width = minValue +  Math.pow(segmentLength * minValue, 1.0 / 2);
         height = NODE_HEIGHT;
 
         this.setSize(width * zoomLevel, height * zoomLevel);
