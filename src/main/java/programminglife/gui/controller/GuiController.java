@@ -615,8 +615,8 @@ public class GuiController implements Observer {
         idText.setLayoutX(x);
         idText.setLayoutY(145);
 
-        TextField parent = getTextField("Parent Node: ", x, 70, Integer.toString(edge.getStart().getIdentifier()));
-        TextField child = getTextField("Child Node: ", x, 110, Integer.toString(edge.getEnd().getIdentifier()));
+        TextField parent = getTextField("Parent Node: ", x, 70, Integer.toString(edge.getStart().getParentSegment().getIdentifier()));
+        TextField child = getTextField("Child Node: ", x, 110, Integer.toString(edge.getEnd().getChildSegment().getIdentifier()));
 
 
         Collection<Integer> genomesEdge = graphController.getGenomesEdge(edge);
@@ -668,7 +668,7 @@ public class GuiController implements Observer {
         TextField idTextField = getTextField("ID: ", x, 70, Integer.toString(node.getIdentifier()));
 
         StringBuilder parentSB = new StringBuilder();
-        node.getParents().forEach(id -> parentSB.append(id).append(", "));
+        graphController.getParentSegments(node).forEach(parentNode -> parentSB.append(parentNode.getIdentifier()).append(", "));
         TextField parents;
         if (parentSB.length() > 2) {
             parentSB.setLength(parentSB.length() - 2);
@@ -679,7 +679,7 @@ public class GuiController implements Observer {
         }
 
         StringBuilder childSB = new StringBuilder();
-        node.getChildren().forEach(id -> childSB.append(id).append(", "));
+        graphController.getChildSegments(node).forEach(childNode -> childSB.append(childNode.getIdentifier()).append(", "));
         TextField children;
         if (childSB.length() > 2) {
             childSB.setLength(childSB.length() - 2);
@@ -723,9 +723,9 @@ public class GuiController implements Observer {
 
         Set<String> c = snp.getMutations().stream().map(DrawableSegment::getSequence).collect(Collectors.toSet());
         TextField parentTextField = getTextField("Parent: ", x, 70,
-                Integer.toString(snp.getParent().getIdentifier()));
+                Integer.toString(snp.getParent().getParentSegment().getIdentifier()));
         TextField childTextField = getTextField("Child: ", x, 110,
-                Integer.toString(snp.getChild().getIdentifier()));
+                Integer.toString(snp.getChild().getChildSegment().getIdentifier()));
         TextField mutationTextField = getTextField("ID: ", x, 150,
                 c.toString().substring(1, c.toString().length() - 1));
 
