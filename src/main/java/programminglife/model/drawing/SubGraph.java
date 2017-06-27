@@ -396,14 +396,15 @@ public class SubGraph {
         //TODO change these numbers to edgethickness * zoom or something to make it work when zoomed in and zoomed out a lot.
         //TODO when this is fixed make it a simple return (calculation).
 
-        double genomeFraction = getGenomesEdge(left.getParentSegment(), right.getParentSegment()).size() / (double) this.getNumberOfGenomes();
+        double genomeFraction = getGenomesEdge(left.getParentSegment(), right.getChildSegment()).size() / (double) this.getNumberOfGenomes();
         double minStrokeWidth = 1.d, maxStrokeWidth = 6.5;
         double strokeWidth = minStrokeWidth + genomeFraction * (maxStrokeWidth - minStrokeWidth);
+        double easyness = 1.0; //How easy you want it to be click.
 
         gc.setStroke(Color.RED);
         gc.setLineWidth(1 * zoomLevel);
-        gc.strokeLine(x - 1, edgeY - strokeWidth * zoomLevel, x + 1, edgeY - strokeWidth * zoomLevel);
-        gc.strokeLine(x - 1, edgeY + strokeWidth * zoomLevel, x + 1, edgeY + strokeWidth * zoomLevel);
+        gc.strokeLine(x - 1, edgeY - strokeWidth * easyness * zoomLevel, x + 1, edgeY - strokeWidth * easyness * zoomLevel);
+        gc.strokeLine(x - 1, edgeY + strokeWidth * easyness * zoomLevel, x + 1, edgeY + strokeWidth * easyness * zoomLevel);
 
         if (edgeY - strokeWidth * zoomLevel < y && edgeY + strokeWidth * zoomLevel > y){
 //            System.out.println("TRUE EdgY = " + edgeY);
