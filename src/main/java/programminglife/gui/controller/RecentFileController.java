@@ -102,7 +102,7 @@ class RecentFileController {
         } catch (FileAlreadyExistsException e) {
             //This will always happen if a user has used the program before.
             //Therefore it is unnecessary to handle further.
-            Console.println("Recent file couldn't be found. New one created.");
+            Console.println("Recent file has been found and will be used.");
         } catch (IOException e) {
             Alerts.error("Recent.txt can't be opened");
             return;

@@ -112,7 +112,7 @@ public class DrawableSegment extends DrawableNode {
         width = 10 + Math.pow(segmentLength, 1.0 / 2);
         height = NODE_HEIGHT;
 
-        this.setSize(width, height * zoomLevel);
+        this.setSize(width * zoomLevel, height * zoomLevel);
     }
 
     @Override

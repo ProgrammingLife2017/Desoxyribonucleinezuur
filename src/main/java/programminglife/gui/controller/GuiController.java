@@ -58,12 +58,12 @@ public class GuiController implements Observer {
     @FXML private MenuItem btnInstructions;
     @FXML private Menu menuRecentGFA;
 
+    @FXML private RadioMenuItem btnDark;
     @FXML private RadioMenuItem btnSNP;
     @FXML private RadioMenuItem btnConsole;
     @FXML private RadioMenuItem btnMiniMap;
 
     @FXML private Button btnZoomReset;
-    @FXML private Button btnTranslateReset;
     @FXML private Button btnDraw;
     @FXML private Button btnDrawRandom;
     @FXML private Button btnBookmark;
@@ -92,7 +92,6 @@ public class GuiController implements Observer {
     private File recentFileGFA = new File("RecentGFA.txt");
     private Thread parseThread;
 
-    private final ExtensionFilter extFilterGFF = new ExtensionFilter("GFF files (*.gff)", "*.GFF");
     private final ExtensionFilter extFilterGFA = new ExtensionFilter("GFA files (*.gfa)", "*.GFA");
 
     private static final double MAX_SCALE = 10.0d;
@@ -130,6 +129,7 @@ public class GuiController implements Observer {
     public GraphParser openFile(File file) {
         if (file != null) {
             if (this.graphController != null && this.graphController.getGraph() != null) {
+                this.graphController.resetClicked();
                 this.graphController.getGraph().close();
                 this.canvas.getGraphicsContext2D().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
             }
@@ -255,6 +255,9 @@ public class GuiController implements Observer {
             Platform.runLater(this::draw);
         });
         btnSNP.setAccelerator(new KeyCodeCombination(KeyCode.G, KeyCodeCombination.CONTROL_DOWN));
+
+        btnDark.setOnAction(event -> ProgrammingLife.toggleCSS());
+        btnDark.setAccelerator(new KeyCodeCombination(KeyCode.Z, KeyCodeCombination.CONTROL_DOWN));
     }
 
 
@@ -302,9 +305,10 @@ public class GuiController implements Observer {
     private void initLeftControlpanelScreenModifiers() {
         disableGraphUIElements(true);
 
-        btnTranslateReset.setOnAction(event -> this.draw());
-
-        btnZoomReset.setOnAction(event -> this.draw());
+        btnZoomReset.setOnAction(event -> {
+            graphController.resetClicked();
+            this.draw();
+        });
     }
 
     /**
@@ -438,6 +442,7 @@ public class GuiController implements Observer {
                 } else {
                     showInfoSNP(snp, 10);
                 }
+                graphController.highlightClicked(null, snp, shiftPressed);
             } else if (clickedOn instanceof DrawableSegment) {
                 DrawableSegment segment = (DrawableSegment) clickedOn;
                 if (shiftPressed) {
@@ -445,7 +450,7 @@ public class GuiController implements Observer {
                 } else {
                     showInfoNode(segment, 10);
                 }
-                graphController.highlightClicked(segment, shiftPressed);
+                graphController.highlightClicked(segment, null, shiftPressed);
             } else if (clickedOn instanceof DrawableEdge) {
                 DrawableEdge edge = (DrawableEdge) clickedOn;
                 if (shiftPressed) {
@@ -690,7 +695,7 @@ public class GuiController implements Observer {
         }
 
         String genomesString = graphController.getGraph().getGenomeNames(node.getGenomes()).toString();
-        String sequenceString = node.getSequence().replaceAll("(.{24})", "$1" + System.getProperty("line.separator"));
+        String sequenceString = node.getSequence().replaceAll("(.{23})", "$1" + System.getProperty("line.separator"));
         TextField inEdges = getTextField("Incoming Edges: ", x, 190, Integer.toString(node.getParents().size()));
         TextField outEdges = getTextField("Outgoing Edges: ", x, 230, Integer.toString(node.getChildren().size()));
         TextField seqLength = getTextField("Sequence Length: ", x, 270, Integer.toString(node.getSequence().length()));
@@ -749,9 +754,6 @@ public class GuiController implements Observer {
         textField.setLayoutX(x);
         textField.setLayoutY(y);
         textField.setEditable(false);
-        textField.setStyle("-fx-text-box-border: transparent;-fx-background-color: none; -fx-background-insets: 0;"
-                + " -fx-padding: 1 3 1 3; -fx-focus-color: transparent; "
-                + "-fx-faint-focus-color: transparent; -fx-font-family: monospace;");
         textField.setPrefSize(220, 20);
 
         return textField;
@@ -774,9 +776,6 @@ public class GuiController implements Observer {
         textArea.setLayoutX(x);
         textArea.setLayoutY(y);
         textArea.setEditable(false);
-        textArea.setStyle("-fx-text-box-border: transparent;-fx-background-color: none; -fx-background-insets: 0;"
-                + " -fx-padding: 1 3 1 3; -fx-focus-color: transparent; "
-                + "-fx-faint-focus-color: transparent; -fx-font-family: monospace;");
         textArea.setPrefSize(225, height);
 
         return textArea;

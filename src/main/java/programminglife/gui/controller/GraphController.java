@@ -26,13 +26,13 @@ class GraphController {
     private final ResizableCanvas canvas;
     private final int archFactor = 5;
 
-    private DrawableSegment clicked1;
-    private DrawableSegment clicked2;
+    private DrawableSegment clicked;
+    private DrawableSegment clickedShift;
+    private DrawableSNP clickedSNP;
+    private DrawableSNP clickedSNPShift;
 
     private int centerNodeInt;
     private boolean drawSNP = false;
-    private DrawableSegment highlightSegmentShift;
-    private DrawableSegment highlightSegment;
 
     private HighlightController highlightController;
 
@@ -235,7 +235,6 @@ class GraphController {
 
         int size = drawableSNP.getMutations().size();
         int seqNumber = 0;
-        
         gc.strokeRoundRect(locX, locY, width, height, archFactor, archFactor);
 
         for (DrawableSegment drawableSegment : drawableSNP.getMutations()) {
@@ -347,17 +346,29 @@ class GraphController {
     private void draw(GraphicsContext gc) {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
-        if (clicked1 != null) {
-            highlightNode(clicked1, Color.DARKTURQUOISE);
-            clicked1.setStrokeWidth(5.0 * subGraph.getZoomLevel());
+        if (clicked != null) {
+            highlightNode(clicked, Color.DARKTURQUOISE);
+            clicked.setStrokeWidth(5.0 * subGraph.getZoomLevel());
         }
-        if (clicked2 != null) {
-            highlightNode(clicked2, Color.PURPLE);
-            clicked2.setStrokeWidth(5.0 * subGraph.getZoomLevel());
+        if (clickedSNP != null) {
+            highlightNode(clickedSNP, Color.DARKTURQUOISE);
+            clickedSNP.setStrokeWidth(5.0 * subGraph.getZoomLevel());
         }
-        if (clicked1 == clicked2 && clicked1 != null && clicked2 != null) {
-            highlightNode(clicked1, Color.DARKCYAN);
-            clicked1.setStrokeWidth(5.0 * subGraph.getZoomLevel());
+        if (clickedShift != null) {
+            highlightNode(clickedShift, Color.PURPLE);
+            clickedShift.setStrokeWidth(5.0 * subGraph.getZoomLevel());
+        }
+        if (clickedSNPShift != null) {
+            highlightNode(clickedSNPShift, Color.PURPLE);
+            clickedSNPShift.setStrokeWidth(5.0 * subGraph.getZoomLevel());
+        }
+        if (clicked == clickedShift && clicked != null && clickedShift != null) {
+            highlightNode(clicked, Color.DARKCYAN);
+            clicked.setStrokeWidth(5.0 * subGraph.getZoomLevel());
+        }
+        if (clickedSNP == clickedSNPShift && clickedSNP != null && clickedSNPShift != null) {
+            highlightNode(clickedSNP, Color.DARKCYAN);
+            clickedSNP.setStrokeWidth(5.0 * subGraph.getZoomLevel());
         }
 
         boolean didLoad = subGraph.checkDynamicLoad(0, canvas.getWidth());
@@ -434,8 +445,17 @@ class GraphController {
      */
     void setSNP() {
         drawSNP = !drawSNP;
-        clicked1 = null;
-        clicked2 = null;
+        resetClicked();
+    }
+
+    /**
+     * Resets which nodes are clicked on.
+     */
+    void resetClicked() {
+        clicked = null;
+        clickedShift = null;
+        clickedSNP = null;
+        clickedSNPShift = null;
     }
 
     /**
@@ -450,28 +470,47 @@ class GraphController {
     }
 
     /**
-     * Method to hightlight the node clicked on.
+     * Method to highlight the node clicked on.
      *
      * @param segment      is the {@link DrawableSegment} clicked on.
+     * @param snp          is the {@link DrawableSNP} clicked on.
      * @param shiftPressed boolean true if shift was pressed during the click.
      */
-    public void highlightClicked(DrawableSegment segment, boolean shiftPressed) {
+    public void highlightClicked(DrawableSegment segment, DrawableSNP snp, boolean shiftPressed) {
         if (shiftPressed) {
-            if (highlightSegmentShift != null) {
-                this.highlightSegmentShift.colorize(subGraph);
+            if (clicked != null) {
+                this.clicked.colorize(subGraph);
             }
-            this.highlightSegmentShift = segment;
-            this.clicked1 = segment;
-            highlightNode(segment, Color.DARKTURQUOISE);
-            segment.setStrokeWidth(5.0 * subGraph.getZoomLevel()); //Correct thickness when zoomed
+            if (clickedSNP != null) {
+                this.clickedSNP.colorize(subGraph);
+            }
+            this.clicked = segment;
+            this.clickedSNP = snp;
+            if (segment != null) {
+                highlightNode(segment, Color.DARKTURQUOISE);
+                segment.setStrokeWidth(5.0 * subGraph.getZoomLevel()); //Correct thickness when zoomed
+            }
+            if (snp != null) {
+                highlightNode(snp, Color.DARKTURQUOISE);
+                snp.setStrokeWidth(5.0 * subGraph.getZoomLevel()); //Correct thickness when zoomed
+            }
         } else {
-            if (highlightSegment != null) {
-                this.highlightSegment.colorize(subGraph);
+            if (clickedShift != null) {
+                this.clickedShift.colorize(subGraph);
             }
-            this.highlightSegment = segment;
-            this.clicked2 = segment;
-            highlightNode(segment, Color.PURPLE);
-            segment.setStrokeWidth(5.0 * subGraph.getZoomLevel()); //Correct thickness when zoomed
+            if (clickedSNPShift != null) {
+                this.clickedSNPShift.colorize(subGraph);
+            }
+            this.clickedShift = segment;
+            this.clickedSNPShift = snp;
+            if (segment != null) {
+                highlightNode(segment, Color.PURPLE);
+                segment.setStrokeWidth(5.0 * subGraph.getZoomLevel()); //Correct thickness when zoomed
+            }
+            if (snp != null) {
+                highlightNode(snp, Color.PURPLE);
+                snp.setStrokeWidth(5.0 * subGraph.getZoomLevel()); //Correct thickness when zoomed
+            }
         }
         draw(canvas.getGraphicsContext2D());
     }
@@ -498,11 +537,23 @@ class GraphController {
         return null;
     }
 
-    public Collection<DrawableNode> getParentSegments(DrawableSegment node) {
+    /**
+     * Method to return the segments in a given edge.
+     *
+     * @param node the Drawable segment the check which parent segments it contains.
+     * @return Collection<Integer> of the parents segments in the node.
+     */
+    Collection<DrawableNode> getParentSegments(DrawableSegment node) {
         return subGraph.getParentSegments(node);
     }
 
-    public Collection<DrawableNode> getChildSegments(DrawableSegment node) {
+    /**
+     * Method to return the segments in a given edge.
+     *
+     * @param node the Drawable segment the check which child segments it contains.
+     * @return Collection<Integer> of the child segments in the node.
+     */
+    Collection<DrawableNode> getChildSegments(DrawableSegment node) {
         return subGraph.getChildSegments(node);
     }
   

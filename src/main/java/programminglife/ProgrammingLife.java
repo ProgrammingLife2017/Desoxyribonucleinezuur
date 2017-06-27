@@ -28,6 +28,8 @@ import java.util.Optional;
 public final class ProgrammingLife extends Application {
 
     private static Stage primaryStage;
+    private static boolean showCSS = false;
+    private static AnchorPane root;
 
     /**
      * Main method for the application.
@@ -41,7 +43,8 @@ public final class ProgrammingLife extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/Basic_Gui.fxml"));
-        AnchorPane root = loader.load();
+        root = loader.load();
+        root.getStylesheets().add("/LightTheme.css");
         primaryStage = stage;
         primaryStage.setTitle("Programming Life");
         primaryStage.setScene(new Scene(root));
@@ -105,6 +108,22 @@ public final class ProgrammingLife extends Application {
             }
         });
     };
+
+    /**
+     * Toggles which styleSheets is used for the program.
+     */
+    public static void toggleCSS() {
+        showCSS = !showCSS;
+        Platform.runLater(() -> {
+            if (showCSS) {
+                root.getStylesheets().remove("/LightTheme.css");
+                root.getStylesheets().add("/DarkTheme.css");
+            } else {
+                root.getStylesheets().remove("/DarkTheme.css");
+                root.getStylesheets().add("/LightTheme.css");
+            }
+        });
+    }
 
     /**
      * Returns the Stage if called upon.

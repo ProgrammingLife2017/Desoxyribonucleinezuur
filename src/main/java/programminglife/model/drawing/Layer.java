@@ -168,7 +168,7 @@ public class Layer implements Iterable<DrawableNode>, Comparable<Double> {
      */
     public void setSize(double scale) {
         for (DrawableNode node : nodes) {
-            node.setWidth(node.getWidth() * scale);
+            node.setDrawDimensions(scale);
         }
     }
 
