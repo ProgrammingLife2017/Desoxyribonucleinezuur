@@ -537,11 +537,23 @@ class GraphController {
         return null;
     }
 
-    public Collection<DrawableNode> getParentSegments(DrawableSegment node) {
+    /**
+     * Method to return the segments in a given edge.
+     *
+     * @param node the Drawable segment the check which parent segments it contains.
+     * @return Collection<Integer> of the parents segments in the node.
+     */
+    Collection<DrawableNode> getParentSegments(DrawableSegment node) {
         return subGraph.getParentSegments(node);
     }
 
-    public Collection<DrawableNode> getChildSegments(DrawableSegment node) {
+    /**
+     * Method to return the segments in a given edge.
+     *
+     * @param node the Drawable segment the check which child segments it contains.
+     * @return Collection<Integer> of the child segments in the node.
+     */
+    Collection<DrawableNode> getChildSegments(DrawableSegment node) {
         return subGraph.getChildSegments(node);
     }
   
