@@ -240,16 +240,18 @@ public class SubGraph implements Iterable<DrawableNode> {
      * @param leftBorder  The left border of the canvas.
      * @param rightBorder The right border of the canvas.
      */
-    public void checkDynamicLoad(int leftBorder, double rightBorder) {
+    public boolean checkDynamicLoad(int leftBorder, double rightBorder) {
         assert (leftBorder < rightBorder);
+
+        boolean didLoad = false;
 
         // Note: It checks if layers.size() < BORDER_BUFFER, if so: we definitely need to load.
         // Otherwise, check that there is enough of a buffer outside the borders.
         if (layers.size() <= BORDER_BUFFER || layers.get(BORDER_BUFFER).getX() > leftBorder) {
-            this.addFromRootNodes(SubGraph.DEFAULT_DYNAMIC_RADIUS);
+            didLoad = this.addFromRootNodes(SubGraph.DEFAULT_DYNAMIC_RADIUS);
         }
         if (layers.size() <= BORDER_BUFFER || layers.get(layers.size() - BORDER_BUFFER - 1).getX() < rightBorder) {
-            this.addFromEndNodes(SubGraph.DEFAULT_DYNAMIC_RADIUS);
+            didLoad = this.addFromEndNodes(SubGraph.DEFAULT_DYNAMIC_RADIUS);
         }
 
         int amountOfLayersLeft = 0;
@@ -269,6 +271,8 @@ public class SubGraph implements Iterable<DrawableNode> {
         if (amountOfLayersRight > 3 * BORDER_BUFFER) {
             removeRightLayers(BORDER_BUFFER);
         }
+
+        return didLoad;
     }
 
     /**
@@ -842,9 +846,9 @@ public class SubGraph implements Iterable<DrawableNode> {
      *
      * @param radius The number of steps to take from the rootNodes before stopping the search.
      */
-    private void addFromRootNodes(int radius) {
+    private boolean addFromRootNodes(int radius) {
         if (this.rootNodes.isEmpty()) {
-            return;
+            return false;
         }
 
         Console.println("Increasing graph with radius %d", radius);
@@ -856,6 +860,8 @@ public class SubGraph implements Iterable<DrawableNode> {
         subGraph.createLayers();
         subGraph.calculateGenomes();
         this.mergeLeftSubGraphIntoThisSubGraph(subGraph);
+
+        return true;
     }
 
     /**
@@ -863,9 +869,9 @@ public class SubGraph implements Iterable<DrawableNode> {
      *
      * @param radius The number of steps to take from the endNodes before stopping the search.
      */
-    private void addFromEndNodes(int radius) {
+    private boolean addFromEndNodes(int radius) {
         if (this.endNodes.isEmpty()) {
-            return;
+            return false;
         }
 
         Console.println("Increasing graph with radius %d", radius);
@@ -880,6 +886,8 @@ public class SubGraph implements Iterable<DrawableNode> {
         subGraph.createLayers();
         subGraph.calculateGenomes();
         this.mergeRightSubGraphIntoThisSubGraph(subGraph);
+
+        return true;
     }
 
     /**
