@@ -32,7 +32,6 @@
 .text-area .content {
     -fx-text-box-border: white;
     -fx-background-color: white;
-    -fx-background-color: transparent;
 }
 
 .text-area .scroll-pane {
@@ -58,6 +57,10 @@
     -fx-font-family: monospace;
 }
 
+#txtCenterNode {
+    -fx-background-color: white;
+}
+
 #txtRadius {
     -fx-text-box-border: transparent;
     -fx-background-color: none;
@@ -66,4 +69,8 @@
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
     -fx-font-family: monospace;
+}
+
+#txtMaxDrawDepth {
+    -fx-background-color: white;
 }

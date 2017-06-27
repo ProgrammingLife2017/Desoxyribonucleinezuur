@@ -8,6 +8,14 @@
     -fx-background-color: #1d1d1d;
 }
 
+#txtCenterNode {
+    -fx-background-color: gray;
+}
+
+#txtMaxDrawDepth {
+    -fx-background-color: gray;
+}
+
 .text-field {
     -fx-text-box-border: transparent;
     -fx-background-color: transparent;
@@ -20,13 +28,12 @@
     -fx-font-family: monospace;
     -fx-font-size: 10pt;
     -fx-text-fill: white;
-    -fx-background-color: #696969;
+    -fx-background-color: gray;
 }
 
 .text-area .content {
     -fx-text-box-border: #696969;
-    -fx-background-color: #696969;
-    -fx-background-color: transparent;
+    -fx-background-color: gray;
 }
 
 .text-area .scroll-pane {
