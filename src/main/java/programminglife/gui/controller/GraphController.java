@@ -428,7 +428,7 @@ class GraphController {
      * @return nodeClicked {@link DrawableNode} returns null if no node is clicked.
      */
     public Drawable onClick(double x, double y) {
-        return subGraph.onClick(x, y, canvas.getGraphicsContext2D());
+        return subGraph.onClick(x, y);
     }
 
     /**
@@ -475,5 +475,13 @@ class GraphController {
             return genomes;
         }
         return null;
+    }
+
+    public Collection<DrawableNode> getParentSegments(DrawableSegment node) {
+        return subGraph.getParentSegments(node);
+    }
+
+    public Collection<DrawableNode> getChildSegments(DrawableSegment node) {
+        return subGraph.getChildSegments(node);
     }
 }
