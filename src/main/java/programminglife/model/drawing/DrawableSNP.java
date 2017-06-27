@@ -133,7 +133,7 @@ public class DrawableSNP extends DrawableNode {
      */
     @Override
     protected void setDrawDimensions(double zoomLevel) {
-        this.setSize(new XYCoordinate(NODE_HEIGHT * zoomLevel, NODE_HEIGHT));
+        this.setSize(new XYCoordinate(NODE_HEIGHT * zoomLevel, NODE_HEIGHT * zoomLevel));
     }
 
     /**
