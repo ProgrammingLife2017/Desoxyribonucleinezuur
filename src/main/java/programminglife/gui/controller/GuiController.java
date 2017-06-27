@@ -87,6 +87,7 @@ public class GuiController implements Observer {
     private GraphController graphController;
     private RecentFileController recentFileControllerGFA;
     private MiniMapController miniMapController;
+    private HighlightController highlightController;
     private File file;
     private File recentFileGFA = new File("RecentGFA.txt");
     private Thread parseThread;
@@ -195,6 +196,8 @@ public class GuiController implements Observer {
 
         if (graph != null) {
             this.miniMapController = new MiniMapController(this.miniMap, graph.size());
+            Platform.runLater(() -> highlightController.initGenome());
+            graphController.setHighlightController(highlightController);
             miniMap.setWidth(anchorGraphPanel.getWidth());
             miniMap.setHeight(50.d);
             Console.println("[%s] Graph was set to %s.", Thread.currentThread().getName(), graph.getID());
@@ -540,13 +543,11 @@ public class GuiController implements Observer {
         try {
             FXMLLoader loader = new FXMLLoader(ProgrammingLife.class.getResource("/HighlightWindow.fxml"));
             AnchorPane page = loader.load();
-            final HighlightController highlightController = loader.getController();
+            highlightController = loader.getController();
             highlightController.setGraphController(this.getGraphController());
-            highlightController.setGUIController(this);
             searchTab.setContent(page);
             searchTab.setDisable(true);
             searchTab.setOnSelectionChanged(event -> {
-                highlightController.initGenome();
                 highlightController.initMinMax();
             });
         } catch (IOException e) {

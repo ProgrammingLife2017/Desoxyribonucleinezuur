@@ -116,7 +116,7 @@ public class DrawableSNP extends DrawableNode {
      */
     @Override
     public void colorize(SubGraph sg) {
-        this.setColors(Color.BLANCHEDALMOND, Color.DARKRED);
+        this.setColors(Color.BLANCHEDALMOND, Color.BLACK);
         this.setStrokeWidth(3.5 * sg.getZoomLevel());
     }
 
