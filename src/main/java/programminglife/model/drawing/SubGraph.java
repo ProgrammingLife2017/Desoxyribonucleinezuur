@@ -185,7 +185,7 @@ public class SubGraph implements Iterable<DrawableNode> {
 
             DrawableNode previous;
             if (excludedNodes.containsKey(current.node.getIdentifier())) {
-                if (startNodes.contains(current.node) && !foundNodes.containsKey(current.node.getIdentifier())) {
+                if (startNodes.contains(current.node)) {
                     previous = null; // to signify it did not exist in subGraph.nodes yet.
                 } else {
                     continue; // This is an excluded node, just continue with next
