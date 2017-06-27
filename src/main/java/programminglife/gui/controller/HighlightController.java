@@ -86,7 +86,7 @@ public class HighlightController {
         btnUnselectGenomes.setOnMouseClicked(this::unselectGenomes);
     }
 
-    private void highlight() {
+    void highlight() {
         // Highlight multiple genomes
         int numberOfGenomes = lstSelectedGenomes.getItems().size();
         Color[] colors = generateColors(numberOfGenomes);

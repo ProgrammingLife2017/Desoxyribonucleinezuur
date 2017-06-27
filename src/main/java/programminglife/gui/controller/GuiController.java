@@ -197,6 +197,7 @@ public class GuiController implements Observer {
         if (graph != null) {
             this.miniMapController = new MiniMapController(this.miniMap, graph.size());
             Platform.runLater(() -> highlightController.initGenome());
+            graphController.setHighlightController(highlightController);
             miniMap.setWidth(anchorGraphPanel.getWidth());
             miniMap.setHeight(50.d);
             Console.println("[%s] Graph was set to %s.", Thread.currentThread().getName(), graph.getID());

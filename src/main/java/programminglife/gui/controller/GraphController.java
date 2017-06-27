@@ -34,6 +34,8 @@ class GraphController {
     private DrawableSegment highlightSegmentShift;
     private DrawableSegment highlightSegment;
 
+    private HighlightController highlightController;
+
     /**
      * Initialize controller object.
      *
@@ -42,6 +44,7 @@ class GraphController {
     GraphController(ResizableCanvas canvas) {
         this.graph = null;
         this.canvas = canvas;
+        this.highlightController = null;
     }
 
     public int getCenterNodeInt() {
@@ -357,7 +360,10 @@ class GraphController {
             clicked1.setStrokeWidth(5.0 * subGraph.getZoomLevel());
         }
 
-        subGraph.checkDynamicLoad(0, canvas.getWidth());
+        boolean didLoad = subGraph.checkDynamicLoad(0, canvas.getWidth());
+        if (didLoad && highlightController != null) {
+            highlightController.highlight();
+        }
 
         for (DrawableNode drawableNode : subGraph.getNodes().values()) {
             for (DrawableNode child : subGraph.getChildren(drawableNode)) {
@@ -490,5 +496,9 @@ class GraphController {
             return genomes;
         }
         return null;
+    }
+
+    public void setHighlightController(HighlightController highlightController) {
+        this.highlightController = highlightController;
     }
 }
