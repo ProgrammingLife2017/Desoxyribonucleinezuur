@@ -1,5 +1,7 @@
 package programminglife.model.drawing;
 
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 import org.eclipse.collections.impl.factory.Sets;
 import org.jetbrains.annotations.NotNull;
 import programminglife.model.GenomeGraph;
@@ -7,6 +9,7 @@ import programminglife.model.XYCoordinate;
 import programminglife.utility.Console;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * A part of a {@link programminglife.model.GenomeGraph}. It uses a centerNode and a radius.
@@ -317,7 +320,6 @@ public class SubGraph implements Iterable<DrawableNode> {
      */
     public Drawable onClick(double x, double y) {
         Drawable clicked;
-//        System.out.println(x + " "+ y);
         //TODO implement this with a tree instead of iterating.
         for (DrawableNode drawableNode : this.getNodes().values()) {
             if (x >= drawableNode.getLocation().getX() && y >= drawableNode.getLocation().getY()
@@ -381,29 +383,47 @@ public class SubGraph implements Iterable<DrawableNode> {
         start.setX(leftLayerEnd); //make the start the layer end since this is where the edge starts to move.
         XYCoordinate end = right.getLeftBorderCenter();
 
-//        System.out.println("Start Location:  " + start);
-//        System.out.println("End Location: " + end);
-
         //calculate differences.
         double differenceX = end.getX() - start.getX();
         double differenceY = end.getY() - start.getY(); //Negative if line is going up, positive if line is going down.
 
         //calculate a out of the ax+b formula;
         double deltaY = differenceY / differenceX;
-//        System.out.println("DeltaY is: " + deltaY);
 
         double startX = start.getX();
         double startY = start.getY();
 
         double edgeY = startY + (deltaY * (x - startX));
-        //TODO change these numbers to edgethickness * zoom or something to make it work when zoomed in and zoomed out a lot.
-        //TODO when this is fixed make it a simple return (calculation).
-        if (edgeY - 20 < y && edgeY + 20 > y){
-//            System.out.println("TRUE EdgY = " + edgeY);
-            return true;
-        }
-//        System.out.println("FALSE EdgY = " + edgeY);
-        return false;
+
+        double genomeFraction = getGenomesEdge(left.getParentSegment(), right.getChildSegment()).size() / (double) this.getNumberOfGenomes();
+        double minStrokeWidth = 1.d, maxStrokeWidth = 6.5;
+        double strokeWidth = minStrokeWidth + genomeFraction * (maxStrokeWidth - minStrokeWidth);
+
+        return (edgeY - strokeWidth * zoomLevel < y && edgeY + strokeWidth * zoomLevel > y);
+    }
+
+    /**
+     * Method to get the genomes of an edge.
+     * @param parent  node of the edge
+     * @param child node of the edge.
+     * @return Collection of Integer which are the id's of the genomes.
+     */
+    public Collection<Integer> getGenomesEdge(DrawableNode parent, DrawableNode child){
+        Map<DrawableNode, Collection<Integer>> from = this.getGenomes().get(parent);
+                if (from != null) {
+                    Collection<Integer> genomes = from.get(child);
+                    return genomes;
+                }
+        return null;
+
+    }
+
+    public Collection<DrawableNode> getParentSegments(DrawableSegment node) {
+        return this.getParents(node).stream().map(parent -> parent.getParentSegment()).collect(Collectors.toSet());
+    }
+
+    public Collection<DrawableNode> getChildSegments(DrawableSegment node) {
+        return this.getChildren(node).stream().map(child -> child.getChildSegment()).collect(Collectors.toSet());
     }
 
     /**

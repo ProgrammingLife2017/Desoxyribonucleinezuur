@@ -537,6 +537,14 @@ class GraphController {
         return null;
     }
 
+    public Collection<DrawableNode> getParentSegments(DrawableSegment node) {
+        return subGraph.getParentSegments(node);
+    }
+
+    public Collection<DrawableNode> getChildSegments(DrawableSegment node) {
+        return subGraph.getChildSegments(node);
+    }
+  
     public void setHighlightController(HighlightController highlightController) {
         this.highlightController = highlightController;
     }
