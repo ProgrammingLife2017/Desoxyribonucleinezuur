@@ -428,6 +428,7 @@ class GraphController {
     void removeHighlight() {
         try {
             subGraph.forEach(node -> node.colorize(subGraph));
+            nodeGenomeList.clear();
         } catch (NullPointerException n) {
             // Occurs when the subgraph is cleared upon opening another graph, nothing on the hand!
         }
