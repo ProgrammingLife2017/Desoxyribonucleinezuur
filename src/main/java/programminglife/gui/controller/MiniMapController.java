@@ -1,7 +1,9 @@
 package programminglife.gui.controller;
 
+import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 
 /**
@@ -13,6 +15,10 @@ class MiniMapController {
     private final int size;
 
     private boolean visible = false;
+    private GraphController graphController;
+    private GuiController guiController;
+
+    private final static int SPLIT_PANEL_WIDTH = 15;
 
     /**
      * Constructor for the miniMap.
@@ -22,8 +28,10 @@ class MiniMapController {
      */
     MiniMapController(Canvas miniMap, int size) {
         this.miniMap = miniMap;
+        Platform.runLater(this.miniMap::toFront);
         miniMap.setVisible(visible);
         this.size = size;
+        this.initClick();
     }
 
     /**
@@ -51,6 +59,18 @@ class MiniMapController {
         }
     }
 
+    public void handleMouse(MouseEvent event) {
+        double locX = event.getSceneX() - this.guiController.anchorLeftControlPanel.getWidth() - SPLIT_PANEL_WIDTH;
+        double ratio = locX / miniMap.getBoundsInParent().getMaxX();
+        int centerNodeId = (int) Math.ceil(graphController.getGraph().size() * ratio);
+        System.out.println("clicked");
+        Platform.runLater(() -> graphController.draw(centerNodeId, 10));
+    }
+
+    public void initClick() {
+        miniMap.setOnMousePressed(this::handleMouse);
+    }
+
     /**
      * Shows the position of where you are in the graph (on the screen).
      * It does not handle panning as of now!
@@ -63,5 +83,13 @@ class MiniMapController {
         drawMiniMap();
         gc.setFill(Color.RED);
         gc.fillOval((centerNode / (double) size) * miniMap.getWidth(), 20, 10, 10);
+    }
+
+    public void setGraphController(GraphController graphController) {
+        this.graphController = graphController;
+    }
+
+    public void setGuiController(GuiController guiController) {
+        this.guiController = guiController;
     }
 }

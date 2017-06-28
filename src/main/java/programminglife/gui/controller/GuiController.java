@@ -76,7 +76,7 @@ public class GuiController implements Observer {
     @FXML private TextField txtCenterNode;
 
     @FXML private ResizableCanvas canvas;
-    @FXML private AnchorPane anchorLeftControlPanel;
+    @FXML AnchorPane anchorLeftControlPanel;
     @FXML private AnchorPane anchorGraphPanel;
     @FXML private AnchorPane anchorGraphInfo;
     @FXML private Canvas miniMap;
@@ -106,6 +106,8 @@ public class GuiController implements Observer {
     @SuppressWarnings("unused")
     private void initialize() {
         this.graphController = new GraphController(this.canvas);
+        this.txtMaxDrawDepth.setText(INITIAL_MAX_DRAW_DEPTH);
+        this.graphController.setGuiController(this);
         this.scale = 1;
 
         this.recentFileControllerGFA = new RecentFileController(this.recentFileGFA, this.menuRecentGFA);
@@ -196,6 +198,8 @@ public class GuiController implements Observer {
 
         if (graph != null) {
             this.miniMapController = new MiniMapController(this.miniMap, graph.size());
+            this.miniMapController.setGraphController(this.graphController);
+            this.miniMapController.setGuiController(this);
             Platform.runLater(() -> highlightController.initGenome());
             graphController.setHighlightController(highlightController);
             graphController.setMiniMapController(miniMapController);
@@ -594,11 +598,9 @@ public class GuiController implements Observer {
      * Sets the text field for drawing the graph.
      *
      * @param center The center node
-     * @param radius The radius of the subGraph
      */
-    void setText(int center, int radius) {
+    void setText(int center) {
         txtCenterNode.setText(String.valueOf(center));
-        txtMaxDrawDepth.setText(String.valueOf(radius));
     }
 
     /**

@@ -36,6 +36,7 @@ class GraphController {
 
     private HighlightController highlightController;
     private MiniMapController miniMapController;
+    private GuiController guiController;
 
     /**
      * Initialize controller object.
@@ -377,6 +378,7 @@ class GraphController {
         Bounds bounds = canvas.getParent().getLayoutBounds();
         double centerCanvasX = bounds.getWidth() / 2;
         this.setCenterNode(subGraph.updateCenterNode(centerCanvasX, centerNodeInt));
+        this.guiController.setText(this.centerNodeInt);
         this.miniMapController.showPosition(this.centerNodeInt);
 
         if (didLoad && highlightController != null) {
@@ -579,5 +581,9 @@ class GraphController {
 
     public void setMiniMapController(MiniMapController miniMapController) {
         this.miniMapController = miniMapController;
+    }
+
+    public void setGuiController(GuiController guiController) {
+        this.guiController = guiController;
     }
 }
