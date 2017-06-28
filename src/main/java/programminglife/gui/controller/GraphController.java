@@ -495,14 +495,6 @@ class GraphController {
             }
             this.clicked = segment;
             this.clickedSNP = snp;
-            if (segment != null) {
-                highlightNode(segment, Color.DARKTURQUOISE);
-                segment.setStrokeWidth(5.0 * subGraph.getZoomLevel()); //Correct thickness when zoomed
-            }
-            if (snp != null) {
-                highlightNode(snp, Color.DARKTURQUOISE);
-                snp.setStrokeWidth(5.0 * subGraph.getZoomLevel()); //Correct thickness when zoomed
-            }
         } else {
             if (clickedShift != null) {
                 this.clickedShift.colorize(subGraph);
@@ -512,15 +504,16 @@ class GraphController {
             }
             this.clickedShift = segment;
             this.clickedSNPShift = snp;
-            if (segment != null) {
-                highlightNode(segment, Color.PURPLE);
-                segment.setStrokeWidth(5.0 * subGraph.getZoomLevel()); //Correct thickness when zoomed
-            }
-            if (snp != null) {
-                highlightNode(snp, Color.PURPLE);
-                snp.setStrokeWidth(5.0 * subGraph.getZoomLevel()); //Correct thickness when zoomed
-            }
         }
+        if (segment != null) {
+            highlightNode(segment, Color.PURPLE);
+            segment.setStrokeWidth(5.0 * subGraph.getZoomLevel()); //Correct thickness when zoomed
+        }
+        if (snp != null) {
+            highlightNode(snp, Color.PURPLE);
+            snp.setStrokeWidth(5.0 * subGraph.getZoomLevel()); //Correct thickness when zoomed
+        }
+
         draw(canvas.getGraphicsContext2D());
     }
 

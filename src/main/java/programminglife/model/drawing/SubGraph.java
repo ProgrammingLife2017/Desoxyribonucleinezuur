@@ -355,12 +355,11 @@ public class SubGraph implements Iterable<DrawableNode> {
      * @return Drawable on which clicked. if nothing null.
      */
     public Drawable onClick(double x, double y) {
-        Drawable clicked;
-        //TODO implement this with a tree instead of iterating.
         for (DrawableNode drawableNode : this.getNodes().values()) {
-            if (x >= drawableNode.getLocation().getX() && y >= drawableNode.getLocation().getY()
-                    && x <= drawableNode.getLocation().getX() + drawableNode.getWidth()
-                    && y <= drawableNode.getLocation().getY() + drawableNode.getHeight()) {
+            double edgeThickness = drawableNode.getStrokeWidth() / 2; //Devide by two because only half of the edge is outside the node other half falls on the inside but gets drawn over.
+            if (x >= drawableNode.getLocation().getX() - edgeThickness && y >= drawableNode.getLocation().getY() - edgeThickness
+                    && x <= drawableNode.getLocation().getX() + drawableNode.getWidth() + edgeThickness
+                    && y <= drawableNode.getLocation().getY() + drawableNode.getHeight() + edgeThickness) {
                     return drawableNode;
             }
         }
@@ -369,7 +368,7 @@ public class SubGraph implements Iterable<DrawableNode> {
     }
 
     /**
-     * check if clicked on an edge.
+     * Check if clicked on an edge.
      *
      * @param x location
      * @param y location
