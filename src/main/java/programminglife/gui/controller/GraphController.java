@@ -215,14 +215,15 @@ class GraphController {
             gc.fillRoundRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height, archFactor, archFactor);
         } else {
             int seqNumber = 0;
-            int size = nodeGenomeList.get(drawableNode).size();
-            System.out.println(size);
+            int numberOfGenomes = nodeGenomeList.get(drawableNode).size();
+            double genomeHeight = height / numberOfGenomes;
+
             gc.strokeRoundRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height, archFactor, archFactor);
             gc.save();
 
             for (Color color : nodeGenomeList.get(drawableNode)) {
                 gc.setFill(color);
-                gc.fillRect(drawableNode.getLeftBorderCenter().getX() + (width / size) * seqNumber, locY, width / size, height);
+                gc.fillRect(locX, locY + genomeHeight * seqNumber, width, genomeHeight);
                 seqNumber++;
             }
             gc.restore();
