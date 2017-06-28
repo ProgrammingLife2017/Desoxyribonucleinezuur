@@ -208,6 +208,9 @@ class GraphController {
             int seqNumber = 0;
             int numberOfGenomes = genomesToDraw.size();
             double genomeHeight = edge.getStrokeWidth() / numberOfGenomes;
+            startLocation.setY(startLocation.getY() - (genomeHeight * numberOfGenomes / 2));
+            endLayerLocation.setY(endLayerLocation.getY() - (genomeHeight * numberOfGenomes / 2));
+            endLocation.setY(endLocation.getY() - (genomeHeight * numberOfGenomes / 2));
 
             gc.save();
             gc.setLineWidth(genomeHeight);
@@ -268,8 +271,10 @@ class GraphController {
                 gc.setLineWidth(genomeHeight);
                 for (Color color : genomesToDraw) {
                     gc.setStroke(color);
-                    gc.strokeLine(location.getX(), location.getY() + genomeHeight * seqNumber,
-                            location.getX() + width, location.getY() + genomeHeight * seqNumber);
+                    gc.strokeLine(location.getX(), location.getY() + genomeHeight * seqNumber
+                                    - (genomeHeight * genomesToDraw.size() / 2),
+                            location.getX() + width, location.getY() + genomeHeight * seqNumber
+                                    - (genomeHeight * genomesToDraw.size() / 2));
 
                     seqNumber++;
                 }
