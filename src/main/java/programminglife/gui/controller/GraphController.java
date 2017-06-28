@@ -134,6 +134,7 @@ class GraphController {
      *
      * @param node  {@link DrawableNode} to highlight.
      * @param color {@link Color} to color with.
+     * @param clickedOn boolean to check if the node was clicked on.
      */
     private void highlightNode(DrawableNode node, Color color, Boolean clickedOn) {
         if (clickedOn){
@@ -577,6 +578,7 @@ class GraphController {
             }
             this.clicked = segment;
             this.clickedSNP = snp;
+
             if (segment != null) {
                 highlightNode(segment, Color.DARKTURQUOISE, true);
                 segment.setStrokeWidth(5.0 * subGraph.getZoomLevel()); //Correct thickness when zoomed
@@ -594,6 +596,7 @@ class GraphController {
             }
             this.clickedShift = segment;
             this.clickedSNPShift = snp;
+
             if (segment != null) {
                 highlightNode(segment, Color.PURPLE, true);
                 segment.setStrokeWidth(5.0 * subGraph.getZoomLevel()); //Correct thickness when zoomed

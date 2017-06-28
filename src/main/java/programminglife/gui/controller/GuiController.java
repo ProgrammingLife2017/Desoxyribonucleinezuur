@@ -38,7 +38,10 @@ import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.Collection;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 /**
@@ -341,6 +344,11 @@ public class GuiController implements Observer {
 
         txtCenterNode.textProperty().addListener(new NumbersOnlyListener(txtCenterNode));
         txtCenterNode.setText(INITIAL_CENTER_NODE);
+        txtCenterNode.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                btnDraw.fire();
+            }
+        });
     }
 
     /**
@@ -451,6 +459,13 @@ public class GuiController implements Observer {
                     showInfoNode(segment, 10);
                 }
                 graphController.highlightClicked(segment, null, shiftPressed);
+            } else if (clickedOn instanceof DrawableDummy) {
+                DrawableDummy dummy = (DrawableDummy) clickedOn;
+                if (shiftPressed) {
+                    showInfoEdge(new DrawableEdge(dummy.getParentSegment(), dummy.getChildSegment()), 240);
+                } else {
+                    showInfoEdge(new DrawableEdge(dummy.getParentSegment(), dummy.getChildSegment()), 10);
+                }
             } else if (clickedOn instanceof DrawableEdge) {
                 DrawableEdge edge = (DrawableEdge) clickedOn;
                 if (shiftPressed) {
@@ -653,7 +668,7 @@ public class GuiController implements Observer {
             parentSB.setLength(parentSB.length() - 2);
             parents = makeTextField("Parents: ", x, 110, parentSB.toString());
         } else {
-            parentSB.replace(0, parentSB.length(), "This node has no parent(s)");
+            parentSB.replace(0, parentSB.length(), "This node has no parent");
             parents = makeTextField("Parents: ", x, 110, parentSB.toString());
         }
 
@@ -665,7 +680,7 @@ public class GuiController implements Observer {
             childSB.setLength(childSB.length() - 2);
             children = makeTextField("Children: ", x, 150, childSB.toString());
         } else {
-            childSB.replace(0, childSB.length(), "This node has no child(ren)");
+            childSB.replace(0, childSB.length(), "This node has no child");
             children = makeTextField("Children: ", x, 150, childSB.toString());
         }
 
