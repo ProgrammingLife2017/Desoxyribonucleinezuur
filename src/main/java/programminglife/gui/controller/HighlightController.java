@@ -112,7 +112,7 @@ public class HighlightController {
     }
 
     private String hex(Color c) {
-        return "#" + Integer.toHexString(c.hashCode()).substring(0, 6).toUpperCase();
+        return "#" + Integer.toHexString(c.hashCode()).substring(0, 6).toUpperCase() + "B4";
     }
 
     /**
@@ -140,7 +140,7 @@ public class HighlightController {
     private Color[] generateColors(int n) {
         Color[] colors = new Color[n];
         for (int i = 0; i < n; i++) {
-            colors[i] = Color.hsb(i * 360.d / n, 0.85f, 1.0f);
+            colors[i] = Color.hsb(i * 360.d / n, 0.5d, 1.d);
         }
         return colors;
     }
