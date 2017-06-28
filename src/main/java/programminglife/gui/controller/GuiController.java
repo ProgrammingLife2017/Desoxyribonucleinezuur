@@ -79,7 +79,7 @@ public class GuiController implements Observer {
     @FXML private TextField txtCenterNode;
 
     @FXML private ResizableCanvas canvas;
-    @FXML AnchorPane anchorLeftControlPanel;
+    @FXML private AnchorPane anchorLeftControlPanel;
     @FXML private AnchorPane anchorGraphPanel;
     @FXML private AnchorPane anchorGraphInfo;
     @FXML private Canvas miniMap;
@@ -256,6 +256,7 @@ public class GuiController implements Observer {
         btnInstructions.setOnAction(event -> Alerts.infoInstructionAlert());
         btnInstructions.setAccelerator(new KeyCodeCombination(KeyCode.H, KeyCodeCombination.CONTROL_DOWN));
 
+        btnMiniMap.setSelected(true);
         btnMiniMap.setOnAction(event -> miniMapController.toggleVisibility(graphController.getCenterNodeInt()));
         btnMiniMap.setAccelerator(new KeyCodeCombination(KeyCode.M, KeyCodeCombination.CONTROL_DOWN));
         btnSNP.setOnAction(event -> {
@@ -800,5 +801,9 @@ public class GuiController implements Observer {
 
     GraphController getGraphController() {
         return this.graphController;
+    }
+
+    public AnchorPane getAnchorLeftControlPanel() {
+        return this.anchorLeftControlPanel;
     }
 }

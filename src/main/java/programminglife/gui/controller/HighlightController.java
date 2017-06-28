@@ -82,21 +82,20 @@ public class HighlightController {
         lstSelectedGenomes.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
             @Override
             public ListCell<String> call(ListView<String> param) {
-                ListCell<String> cell = new ListCell<String>() {
+                return new ListCell<String>() {
                     @Override
                     protected void updateItem(String t, boolean bln) {
                         super.updateItem(t, bln);
                         if (t != null) {
                             setText(t);
-                            setStyle(String.format("-fx-background-color: %s;", hex(genomeColors[graphController.getGraph().getGenomeID(t)])));
+                            setStyle(String.format("-fx-background-color: %s;",
+                                    hex(genomeColors[graphController.getGraph().getGenomeID(t)])));
                         } else {
                             setText("");
                             setStyle("");
                         }
                     }
                 };
-
-                return cell;
             }
         });
 
@@ -111,6 +110,12 @@ public class HighlightController {
         btnUnselectGenomes.setOnMouseClicked(this::unselectGenomes);
     }
 
+    /**
+     * Method to return the string of a colour.
+     *
+     * @param c Color to be converted.
+     * @return String of the colour.
+     */
     private String hex(Color c) {
         return "#" + Integer.toHexString(c.hashCode()).substring(0, 6).toUpperCase() + "B4";
     }
