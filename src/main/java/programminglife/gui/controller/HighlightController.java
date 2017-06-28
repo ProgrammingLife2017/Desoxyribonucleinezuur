@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.util.Callback;
 import programminglife.gui.NumbersOnlyListener;
 
 import java.util.*;
@@ -77,6 +78,27 @@ public class HighlightController {
             }
         });
 
+        lstSelectedGenomes.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
+            @Override
+            public ListCell<String> call(ListView<String> param) {
+                ListCell<String> cell = new ListCell<String>() {
+                    @Override
+                    protected void updateItem(String t, boolean bln) {
+                        super.updateItem(t, bln);
+                        if (t != null) {
+                            setText(t);
+                            setStyle(String.format("-fx-background-color: %s;", hex(genomeColors[graphController.getGraph().getGenomeID(t)])));
+                        } else {
+                            setText("");
+                            setStyle("");
+                        }
+                    }
+                };
+
+                return cell;
+            }
+        });
+
         txtMax.textProperty().addListener((observable, oldValue, newValue) -> this.highlight());
         txtMin.textProperty().addListener((observable, oldValue, newValue) -> this.highlight());
         checkMax.selectedProperty().addListener((observable, oldValue, newValue) -> this.highlight());
@@ -84,6 +106,10 @@ public class HighlightController {
         txtSearchGenomes.textProperty().addListener(this::search);
         btnSelectGenomes.setOnMouseClicked(this::selectGenomes);
         btnUnselectGenomes.setOnMouseClicked(this::unselectGenomes);
+    }
+
+    private String hex(Color c) {
+        return "#" + Integer.toHexString(c.hashCode()).substring(0, 6).toUpperCase();
     }
 
     /**
