@@ -215,6 +215,7 @@ class GraphController {
             double genomeHeight = edge.getStrokeWidth() / numberOfGenomes;
 
             gc.save();
+            gc.setLineWidth(genomeHeight);
 
             for (Color color : edgeGenomeList.get(edge)) {
                 gc.setStroke(color);
@@ -262,8 +263,26 @@ class GraphController {
                         .collect(Collectors.toList());
             }
 
-            gc.strokeRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height);
-            gc.fillRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height);
+            if (genomesToDraw != null && genomesToDraw.size() > 0) {
+                int seqNumber = 0;
+                double genomeHeight = drawableNode.getStrokeWidth() / genomesToDraw.size();
+
+                XYCoordinate location = drawableNode.getLocation();
+
+                gc.save();
+                gc.setLineWidth(genomeHeight);
+                for (Color color : genomesToDraw) {
+                    gc.setStroke(color);
+                    gc.strokeLine(location.getX(), location.getY() + genomeHeight * seqNumber,
+                            location.getX() + width, location.getY() + genomeHeight * seqNumber);
+
+                    seqNumber++;
+                }
+                gc.restore();
+            } else {
+                gc.strokeRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height);
+                gc.fillRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height);
+            }
 
         } else if (!nodeGenomeList.containsKey(drawableNode)) {
             gc.strokeRoundRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height, archFactor, archFactor);
