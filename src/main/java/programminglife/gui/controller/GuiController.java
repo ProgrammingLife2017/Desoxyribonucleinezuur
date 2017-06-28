@@ -79,7 +79,7 @@ public class GuiController implements Observer {
     @FXML private TextField txtCenterNode;
 
     @FXML private ResizableCanvas canvas;
-    @FXML private AnchorPane anchorLeftControlPanel;
+    @FXML AnchorPane anchorLeftControlPanel;
     @FXML private AnchorPane anchorGraphPanel;
     @FXML private AnchorPane anchorGraphInfo;
     @FXML private Canvas miniMap;
@@ -109,6 +109,8 @@ public class GuiController implements Observer {
     @SuppressWarnings("unused")
     private void initialize() {
         this.graphController = new GraphController(this.canvas);
+        this.txtMaxDrawDepth.setText(INITIAL_MAX_DRAW_DEPTH);
+        this.graphController.setGuiController(this);
         this.scale = 1;
 
         this.recentFileControllerGFA = new RecentFileController(this.recentFileGFA, this.menuRecentGFA);
@@ -199,8 +201,11 @@ public class GuiController implements Observer {
 
         if (graph != null) {
             this.miniMapController = new MiniMapController(this.miniMap, graph.size());
+            this.miniMapController.setGraphController(this.graphController);
+            this.miniMapController.setGuiController(this);
             Platform.runLater(() -> highlightController.initGenome());
             graphController.setHighlightController(highlightController);
+            graphController.setMiniMapController(miniMapController);
             miniMap.setWidth(anchorGraphPanel.getWidth());
             miniMap.setHeight(50.d);
             Console.println("[%s] Graph was set to %s.", Thread.currentThread().getName(), graph.getID());
@@ -251,10 +256,11 @@ public class GuiController implements Observer {
         btnInstructions.setOnAction(event -> Alerts.infoInstructionAlert());
         btnInstructions.setAccelerator(new KeyCodeCombination(KeyCode.H, KeyCodeCombination.CONTROL_DOWN));
 
-        btnMiniMap.setOnAction(event -> miniMapController.toggleVisibility());
+        btnMiniMap.setOnAction(event -> miniMapController.toggleVisibility(graphController.getCenterNodeInt()));
         btnMiniMap.setAccelerator(new KeyCodeCombination(KeyCode.M, KeyCodeCombination.CONTROL_DOWN));
         btnSNP.setOnAction(event -> {
             graphController.setSNP();
+            this.txtCenterNode.setText(Integer.toString(graphController.getCenterNodeInt()));
             Platform.runLater(this::draw);
         });
         btnSNP.setAccelerator(new KeyCodeCombination(KeyCode.G, KeyCodeCombination.CONTROL_DOWN));
@@ -607,11 +613,9 @@ public class GuiController implements Observer {
      * Sets the text field for drawing the graph.
      *
      * @param center The center node
-     * @param radius The radius of the subGraph
      */
-    void setText(int center, int radius) {
+    void setText(int center) {
         txtCenterNode.setText(String.valueOf(center));
-        txtMaxDrawDepth.setText(String.valueOf(radius));
     }
 
     /**

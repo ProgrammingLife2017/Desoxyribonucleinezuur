@@ -277,6 +277,42 @@ public class SubGraph implements Iterable<DrawableNode> {
         return didLoad;
     }
 
+    public int updateCenterNode(double centerCanvasX, int oldCenterNode) {
+        for (int i = 0; i < layers.size(); i++) {
+            if (layers.get(i).getX() > centerCanvasX) {
+                if (Math.abs(layers.get(i - 1).getX() - centerCanvasX) <
+                    Math.abs(layers.get(i).getX() - centerCanvasX)) {
+                    for (DrawableNode node : layers.get(i - 1)) {
+                        if (node instanceof DrawableSegment &&
+                                ((DrawableSegment) node).getSequence().length() > 1) {
+                            return node.getIdentifier();
+                        }
+                    }
+                    for (DrawableNode node : layers.get(i)) {
+                        if (node instanceof  DrawableSegment &&
+                                ((DrawableSegment) node).getSequence().length() > 1) {
+                            return node.getIdentifier();
+                        }
+                    }
+                } else {
+                    for (DrawableNode node : layers.get(i)) {
+                        if (node instanceof DrawableSegment &&
+                                ((DrawableSegment) node).getSequence().length() > 1) {
+                            return node.getIdentifier();
+                        }
+                    }
+                    for (DrawableNode node : layers.get(i - 1)) {
+                        if (node instanceof  DrawableSegment &&
+                                ((DrawableSegment) node).getSequence().length() > 1) {
+                            return node.getIdentifier();
+                        }
+                    }
+                }
+            }
+        }
+        return oldCenterNode;
+    }
+
     /**
      * Removes layers from the right of the graph.
      *

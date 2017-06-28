@@ -78,7 +78,7 @@ public class GuiLoadBookmarkController implements Observer {
     private void openBookmark() {
         Bookmark bookmark = checkBookmarkSelection();
         if (bookmark != null) {
-            guiController.setText(bookmark.getNodeID(), bookmark.getRadius());
+            guiController.setText(bookmark.getNodeID());
             if (guiController.getFile() == null
                     || !bookmark.getPath().equals(guiController.getFile().getAbsolutePath())) {
                 File file = new File(bookmark.getPath());

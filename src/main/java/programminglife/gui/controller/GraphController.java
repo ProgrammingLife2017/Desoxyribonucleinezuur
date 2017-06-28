@@ -35,6 +35,8 @@ class GraphController {
     private boolean drawSNP = false;
 
     private HighlightController highlightController;
+    private MiniMapController miniMapController;
+    private GuiController guiController;
 
     /**
      * Initialize controller object.
@@ -386,11 +388,12 @@ class GraphController {
      */
     private void centerOnNodeId(int nodeId) {
         DrawableNode drawableCenterNode = subGraph.getNodes().get(nodeId);
-        double xCoordinate = drawableCenterNode.getCenter().getX();
 
         Bounds bounds = canvas.getParent().getLayoutBounds();
         double boundsHeight = bounds.getHeight();
         double boundsWidth = bounds.getWidth();
+
+        double xCoordinate = drawableCenterNode.getCenter().getX();
 
         locationCenterY = boundsHeight / 4;
         locationCenterX = boundsWidth / 2 - xCoordinate;
@@ -454,6 +457,12 @@ class GraphController {
         }
 
         boolean didLoad = subGraph.checkDynamicLoad(0, canvas.getWidth());
+        Bounds bounds = canvas.getParent().getLayoutBounds();
+        double centerCanvasX = bounds.getWidth() / 2;
+        this.setCenterNode(subGraph.updateCenterNode(centerCanvasX, centerNodeInt));
+        this.guiController.setText(this.centerNodeInt);
+        this.miniMapController.showPosition(this.centerNodeInt);
+
         if (didLoad && highlightController != null) {
             highlightController.highlight();
         }
@@ -658,5 +667,17 @@ class GraphController {
      */
     public void setHighlightController(HighlightController highlightController) {
         this.highlightController = highlightController;
+    }
+
+    public void setCenterNode(int id) {
+        this.centerNodeInt = id;
+    }
+
+    public void setMiniMapController(MiniMapController miniMapController) {
+        this.miniMapController = miniMapController;
+    }
+
+    public void setGuiController(GuiController guiController) {
+        this.guiController = guiController;
     }
 }
