@@ -198,6 +198,7 @@ public class GuiController implements Observer {
             this.miniMapController = new MiniMapController(this.miniMap, graph.size());
             Platform.runLater(() -> highlightController.initGenome());
             graphController.setHighlightController(highlightController);
+            graphController.setMiniMapController(miniMapController);
             miniMap.setWidth(anchorGraphPanel.getWidth());
             miniMap.setHeight(50.d);
             Console.println("[%s] Graph was set to %s.", Thread.currentThread().getName(), graph.getID());
@@ -248,7 +249,7 @@ public class GuiController implements Observer {
         btnInstructions.setOnAction(event -> Alerts.infoInstructionAlert());
         btnInstructions.setAccelerator(new KeyCodeCombination(KeyCode.H, KeyCodeCombination.CONTROL_DOWN));
 
-        btnMiniMap.setOnAction(event -> miniMapController.toggleVisibility());
+        btnMiniMap.setOnAction(event -> miniMapController.toggleVisibility(graphController.getCenterNodeInt()));
         btnMiniMap.setAccelerator(new KeyCodeCombination(KeyCode.M, KeyCodeCombination.CONTROL_DOWN));
         btnSNP.setOnAction(event -> {
             graphController.setSNP();

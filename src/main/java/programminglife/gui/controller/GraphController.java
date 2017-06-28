@@ -35,6 +35,7 @@ class GraphController {
     private boolean drawSNP = false;
 
     private HighlightController highlightController;
+    private MiniMapController miniMapController;
 
     /**
      * Initialize controller object.
@@ -376,6 +377,7 @@ class GraphController {
         Bounds bounds = canvas.getParent().getLayoutBounds();
         double centerCanvasX = bounds.getWidth() / 2;
         this.setCenterNode(subGraph.updateCenterNode(centerCanvasX, centerNodeInt));
+        this.miniMapController.showPosition(this.centerNodeInt);
 
         if (didLoad && highlightController != null) {
             highlightController.highlight();
@@ -573,5 +575,9 @@ class GraphController {
 
     public void setCenterNode(int id) {
         this.centerNodeInt = id;
+    }
+
+    public void setMiniMapController(MiniMapController miniMapController) {
+        this.miniMapController = miniMapController;
     }
 }

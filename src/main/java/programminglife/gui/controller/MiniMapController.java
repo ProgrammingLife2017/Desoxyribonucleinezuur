@@ -42,11 +42,12 @@ class MiniMapController {
     /**
      * Toggle the visibility of the MiniMap.
      */
-    public void toggleVisibility() {
+    public void toggleVisibility(int centerNodeId) {
         visible = !visible;
         this.miniMap.setVisible(visible);
         if (visible) {
             drawMiniMap();
+            showPosition(centerNodeId);
         }
     }
 
