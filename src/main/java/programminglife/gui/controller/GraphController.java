@@ -11,6 +11,7 @@ import programminglife.model.drawing.*;
 import programminglife.utility.Console;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Controller for drawing the graph.
@@ -29,6 +30,7 @@ class GraphController {
     private DrawableSNP clickedSNP;
     private DrawableSNP clickedSNPShift;
     private Map<DrawableNode, List<Color>> nodeGenomeList;
+    private Map<DrawableEdge, List<Color>> edgeGenomeList;
 
     private int centerNodeInt;
     private boolean drawSNP = false;
@@ -45,6 +47,7 @@ class GraphController {
         this.canvas = canvas;
         this.highlightController = null;
         this.nodeGenomeList = new HashMap<>();
+        this.edgeGenomeList = new HashMap<>();
     }
 
     public int getCenterNodeInt() {
@@ -172,19 +175,60 @@ class GraphController {
     private void drawEdge(GraphicsContext gc, DrawableNode parent, DrawableNode child) {
         DrawableEdge edge = new DrawableEdge(parent, child);
 
+        Color[] genomeColors = highlightController.getGenomeColors();
+
+        Collection<Integer> genomesEdge = this.getGenomesEdge(edge);
+        Collection<Integer> highlightedGenomes = highlightController.getSelectedGenomes();
+        List<Color> genomesToDraw = null;
+        if (genomesEdge != null) {
+            genomesToDraw = highlightedGenomes.stream()
+                    .filter(genomesEdge::contains)
+                    .map(id -> genomeColors[id])
+                    .collect(Collectors.toList());
+        }
+
+        if (genomesToDraw != null && genomesToDraw.size() > 0) {
+            edgeGenomeList.put(edge, genomesToDraw);
+        } else {
+            edgeGenomeList.remove(edge);
+        }
+
         edge.colorize(subGraph);
 
         gc.setLineWidth(edge.getStrokeWidth());
         gc.setStroke(edge.getStrokeColor());
 
         XYCoordinate startLocation = edge.getStartLocation();
+
         XYCoordinate endLayerLocation = new XYCoordinate(
                 parent.getLeftBorderCenter().getX() + parent.getLayer().getWidth(),
                 parent.getLeftBorderCenter().getY());
+
         XYCoordinate endLocation = edge.getEndLocation();
 
-        gc.strokeLine(startLocation.getX(), startLocation.getY(), endLayerLocation.getX(), endLayerLocation.getY());
-        gc.strokeLine(endLayerLocation.getX(), endLayerLocation.getY(), endLocation.getX(), endLocation.getY());
+        if (!edgeGenomeList.containsKey(edge)) {
+            gc.strokeLine(startLocation.getX(), startLocation.getY(), endLayerLocation.getX(), endLayerLocation.getY());
+            gc.strokeLine(endLayerLocation.getX(), endLayerLocation.getY(), endLocation.getX(), endLocation.getY());
+        } else {
+            int seqNumber = 0;
+            int numberOfGenomes = edgeGenomeList.get(edge).size();
+            double genomeHeight = edge.getStrokeWidth() / numberOfGenomes;
+
+            gc.save();
+
+            for (Color color : edgeGenomeList.get(edge)) {
+                gc.setStroke(color);
+                gc.strokeLine(startLocation.getX(), startLocation.getY() + genomeHeight * seqNumber,
+                        endLayerLocation.getX(), endLayerLocation.getY() + genomeHeight * seqNumber);
+
+                gc.strokeLine(endLayerLocation.getX(), endLayerLocation.getY() + genomeHeight * seqNumber,
+                        endLocation.getX(), endLocation.getY() + genomeHeight * seqNumber);
+
+                seqNumber++;
+            }
+            gc.restore();
+        }
+
     }
 
     /**
@@ -430,6 +474,7 @@ class GraphController {
         try {
             subGraph.forEach(node -> node.colorize(subGraph));
             nodeGenomeList.clear();
+            edgeGenomeList.clear();
         } catch (NullPointerException n) {
             // Occurs when the subgraph is cleared upon opening another graph, nothing on the hand!
         }

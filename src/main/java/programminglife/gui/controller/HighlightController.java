@@ -261,4 +261,14 @@ public class HighlightController {
     void setGraphController(GraphController graphController) {
         this.graphController = graphController;
     }
+
+    public Color[] getGenomeColors() {
+        return genomeColors;
+    }
+
+    public Collection<Integer> getSelectedGenomes() {
+        return lstSelectedGenomes.getItems().stream()
+                .map(graphController.getGraph()::getGenomeID)
+                .collect(Collectors.toSet());
+    }
 }
