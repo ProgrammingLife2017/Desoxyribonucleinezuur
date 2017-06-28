@@ -27,10 +27,7 @@ import programminglife.gui.Alerts;
 import programminglife.gui.NumbersOnlyListener;
 import programminglife.gui.ResizableCanvas;
 import programminglife.model.GenomeGraph;
-import programminglife.model.drawing.Drawable;
-import programminglife.model.drawing.DrawableEdge;
-import programminglife.model.drawing.DrawableSNP;
-import programminglife.model.drawing.DrawableSegment;
+import programminglife.model.drawing.*;
 import programminglife.parser.GraphParser;
 import programminglife.parser.ProgressCounter;
 import programminglife.utility.Console;
@@ -462,6 +459,13 @@ public class GuiController implements Observer {
                     showInfoNode(segment, 10);
                 }
                 graphController.highlightClicked(segment, null, shiftPressed);
+            } else if (clickedOn instanceof DrawableDummy) {
+                DrawableDummy dummy = (DrawableDummy) clickedOn;
+                if (shiftPressed) {
+                    showInfoEdge(new DrawableEdge(dummy.getParentSegment(), dummy.getChildSegment()), 240);
+                } else {
+                    showInfoEdge(new DrawableEdge(dummy.getParentSegment(), dummy.getChildSegment()), 10);
+                }
             } else if (clickedOn instanceof DrawableEdge) {
                 DrawableEdge edge = (DrawableEdge) clickedOn;
                 if (shiftPressed) {
