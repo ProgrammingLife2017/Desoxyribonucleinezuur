@@ -96,7 +96,7 @@ public class HighlightController {
         for (int i = 0; i < numberOfGenomes; i++) {
             String genomeName = lstSelectedGenomes.getItems().get(i);
             int genomeID = graphController.getGraph().getGenomeID(genomeName);
-            graphController.highlightByGenome(genomeID, genomeColors[i]);
+            graphController.highlightByGenome(genomeID, genomeColors[genomeID]);
         }
 
         highlightMinMax();
