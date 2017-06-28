@@ -139,7 +139,7 @@ class GraphController {
      * @param clickedOn boolean to check if the node was clicked on.
      */
     private void highlightNode(DrawableNode node, Color color, Boolean clickedOn) {
-        if (clickedOn){
+        if (clickedOn) {
             node.setStrokeColor(color);
         }
         node.setStrokeWidth(5.0 * subGraph.getZoomLevel());
