@@ -16,6 +16,7 @@
     <Button fx:id="btnSelectGenomes" text="-&gt;" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="200.0" AnchorPane.topAnchor="95.0" />
     <Button fx:id="btnUnselectGenomes" text="&lt;-" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="200.0" AnchorPane.topAnchor="125.0" />
     <TextField fx:id="txtSearchGenomes" prefHeight="27.0" prefWidth="130.0" promptText="substring" AnchorPane.leftAnchor="65.0" AnchorPane.rightAnchor="250.0" AnchorPane.topAnchor="40.0" />
+    <Hyperlink fx:id="lnkClearSearch" text="clear" AnchorPane.leftAnchor="195" AnchorPane.topAnchor="40" />
     <Label text="Search" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="45.0" />
     <Label text="Unselected genomes" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="75.0" />
     <Label text="Selected genomes" AnchorPane.leftAnchor="250.0" AnchorPane.topAnchor="75.0" />

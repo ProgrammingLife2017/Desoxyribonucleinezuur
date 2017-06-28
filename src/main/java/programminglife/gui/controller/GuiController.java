@@ -38,7 +38,10 @@ import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.Collection;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 /**
@@ -76,7 +79,7 @@ public class GuiController implements Observer {
     @FXML private TextField txtCenterNode;
 
     @FXML private ResizableCanvas canvas;
-    @FXML private AnchorPane anchorLeftControlPanel;
+    @FXML AnchorPane anchorLeftControlPanel;
     @FXML private AnchorPane anchorGraphPanel;
     @FXML private AnchorPane anchorGraphInfo;
     @FXML private Canvas miniMap;
@@ -106,6 +109,8 @@ public class GuiController implements Observer {
     @SuppressWarnings("unused")
     private void initialize() {
         this.graphController = new GraphController(this.canvas);
+        this.txtMaxDrawDepth.setText(INITIAL_MAX_DRAW_DEPTH);
+        this.graphController.setGuiController(this);
         this.scale = 1;
 
         this.recentFileControllerGFA = new RecentFileController(this.recentFileGFA, this.menuRecentGFA);
@@ -196,8 +201,11 @@ public class GuiController implements Observer {
 
         if (graph != null) {
             this.miniMapController = new MiniMapController(this.miniMap, graph.size());
+            this.miniMapController.setGraphController(this.graphController);
+            this.miniMapController.setGuiController(this);
             Platform.runLater(() -> highlightController.initGenome());
             graphController.setHighlightController(highlightController);
+            graphController.setMiniMapController(miniMapController);
             miniMap.setWidth(anchorGraphPanel.getWidth());
             miniMap.setHeight(50.d);
             Console.println("[%s] Graph was set to %s.", Thread.currentThread().getName(), graph.getID());
@@ -248,10 +256,11 @@ public class GuiController implements Observer {
         btnInstructions.setOnAction(event -> Alerts.infoInstructionAlert());
         btnInstructions.setAccelerator(new KeyCodeCombination(KeyCode.H, KeyCodeCombination.CONTROL_DOWN));
 
-        btnMiniMap.setOnAction(event -> miniMapController.toggleVisibility());
+        btnMiniMap.setOnAction(event -> miniMapController.toggleVisibility(graphController.getCenterNodeInt()));
         btnMiniMap.setAccelerator(new KeyCodeCombination(KeyCode.M, KeyCodeCombination.CONTROL_DOWN));
         btnSNP.setOnAction(event -> {
             graphController.setSNP();
+            this.txtCenterNode.setText(Integer.toString(graphController.getCenterNodeInt()));
             Platform.runLater(this::draw);
         });
         btnSNP.setAccelerator(new KeyCodeCombination(KeyCode.G, KeyCodeCombination.CONTROL_DOWN));
@@ -341,6 +350,11 @@ public class GuiController implements Observer {
 
         txtCenterNode.textProperty().addListener(new NumbersOnlyListener(txtCenterNode));
         txtCenterNode.setText(INITIAL_CENTER_NODE);
+        txtCenterNode.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                btnDraw.fire();
+            }
+        });
     }
 
     /**
@@ -451,6 +465,13 @@ public class GuiController implements Observer {
                     showInfoNode(segment, 10);
                 }
                 graphController.highlightClicked(segment, null, shiftPressed);
+            } else if (clickedOn instanceof DrawableDummy) {
+                DrawableDummy dummy = (DrawableDummy) clickedOn;
+                if (shiftPressed) {
+                    showInfoEdge(new DrawableEdge(dummy.getParentSegment(), dummy.getChildSegment()), 240);
+                } else {
+                    showInfoEdge(new DrawableEdge(dummy.getParentSegment(), dummy.getChildSegment()), 10);
+                }
             } else if (clickedOn instanceof DrawableEdge) {
                 DrawableEdge edge = (DrawableEdge) clickedOn;
                 if (shiftPressed) {
@@ -592,11 +613,9 @@ public class GuiController implements Observer {
      * Sets the text field for drawing the graph.
      *
      * @param center The center node
-     * @param radius The radius of the subGraph
      */
-    void setText(int center, int radius) {
+    void setText(int center) {
         txtCenterNode.setText(String.valueOf(center));
-        txtMaxDrawDepth.setText(String.valueOf(radius));
     }
 
     /**
@@ -653,7 +672,7 @@ public class GuiController implements Observer {
             parentSB.setLength(parentSB.length() - 2);
             parents = makeTextField("Parents: ", x, 110, parentSB.toString());
         } else {
-            parentSB.replace(0, parentSB.length(), "This node has no parent(s)");
+            parentSB.replace(0, parentSB.length(), "This node has no parent");
             parents = makeTextField("Parents: ", x, 110, parentSB.toString());
         }
 
@@ -665,7 +684,7 @@ public class GuiController implements Observer {
             childSB.setLength(childSB.length() - 2);
             children = makeTextField("Children: ", x, 150, childSB.toString());
         } else {
-            childSB.replace(0, childSB.length(), "This node has no child(ren)");
+            childSB.replace(0, childSB.length(), "This node has no child");
             children = makeTextField("Children: ", x, 150, childSB.toString());
         }
 
