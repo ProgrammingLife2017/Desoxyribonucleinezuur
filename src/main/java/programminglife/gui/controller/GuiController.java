@@ -79,7 +79,7 @@ public class GuiController implements Observer {
     @FXML private TextField txtCenterNode;
 
     @FXML private ResizableCanvas canvas;
-    @FXML AnchorPane anchorLeftControlPanel;
+    @FXML private AnchorPane anchorLeftControlPanel;
     @FXML private AnchorPane anchorGraphPanel;
     @FXML private AnchorPane anchorGraphInfo;
     @FXML private Canvas miniMap;
@@ -800,5 +800,9 @@ public class GuiController implements Observer {
 
     GraphController getGraphController() {
         return this.graphController;
+    }
+
+    public AnchorPane getAnchorLeftControlPanel() {
+        return this.anchorLeftControlPanel;
     }
 }

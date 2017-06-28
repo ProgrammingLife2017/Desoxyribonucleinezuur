@@ -277,33 +277,40 @@ public class SubGraph implements Iterable<DrawableNode> {
         return didLoad;
     }
 
+    /**
+     * Method to update the centerNode.
+     *
+     * @param centerCanvasX double of the x center of the canvas.
+     * @param oldCenterNode int of the old centerNode.
+     * @return int of the new centerNode.
+     */
     public int updateCenterNode(double centerCanvasX, int oldCenterNode) {
         for (int i = 0; i < layers.size(); i++) {
             if (layers.get(i).getX() > centerCanvasX) {
-                if (Math.abs(layers.get(i - 1).getX() - centerCanvasX) <
-                    Math.abs(layers.get(i).getX() - centerCanvasX)) {
+                if (Math.abs(layers.get(i - 1).getX() - centerCanvasX)
+                        < Math.abs(layers.get(i).getX() - centerCanvasX)) {
                     for (DrawableNode node : layers.get(i - 1)) {
-                        if (node instanceof DrawableSegment &&
-                                ((DrawableSegment) node).getSequence().length() > 1) {
+                        if (node instanceof DrawableSegment
+                                && ((DrawableSegment) node).getSequence().length() > 1) {
                             return node.getIdentifier();
                         }
                     }
                     for (DrawableNode node : layers.get(i)) {
-                        if (node instanceof  DrawableSegment &&
-                                ((DrawableSegment) node).getSequence().length() > 1) {
+                        if (node instanceof  DrawableSegment
+                                && ((DrawableSegment) node).getSequence().length() > 1) {
                             return node.getIdentifier();
                         }
                     }
                 } else {
                     for (DrawableNode node : layers.get(i)) {
-                        if (node instanceof DrawableSegment &&
-                                ((DrawableSegment) node).getSequence().length() > 1) {
+                        if (node instanceof DrawableSegment
+                                && ((DrawableSegment) node).getSequence().length() > 1) {
                             return node.getIdentifier();
                         }
                     }
                     for (DrawableNode node : layers.get(i - 1)) {
-                        if (node instanceof  DrawableSegment &&
-                                ((DrawableSegment) node).getSequence().length() > 1) {
+                        if (node instanceof  DrawableSegment
+                                && ((DrawableSegment) node).getSequence().length() > 1) {
                             return node.getIdentifier();
                         }
                     }
@@ -356,8 +363,11 @@ public class SubGraph implements Iterable<DrawableNode> {
      */
     public Drawable onClick(double x, double y) {
         for (DrawableNode drawableNode : this.getNodes().values()) {
-            double edgeThickness = drawableNode.getStrokeWidth() / 2; //Devide by two because only half of the edge is outside the node other half falls on the inside but gets drawn over.
-            if (x >= drawableNode.getLocation().getX() - edgeThickness && y >= drawableNode.getLocation().getY() - edgeThickness
+            //Divide by 2 because only half of the edge is outside the node
+            //the other half falls on the inside but gets drawn over.
+            double edgeThickness = drawableNode.getStrokeWidth() / 2;
+            if (x >= drawableNode.getLocation().getX() - edgeThickness
+                    && y >= drawableNode.getLocation().getY() - edgeThickness
                     && x <= drawableNode.getLocation().getX() + drawableNode.getWidth() + edgeThickness
                     && y <= drawableNode.getLocation().getY() + drawableNode.getHeight() + edgeThickness) {
                     return drawableNode;
