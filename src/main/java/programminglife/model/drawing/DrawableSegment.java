@@ -9,8 +9,6 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static java.lang.Integer.min;
-
 /**
  * A Segment that also Implements {@link Drawable}.
  */
@@ -111,8 +109,7 @@ public class DrawableSegment extends DrawableNode {
         int segmentLength = this.getSequenceLength();
         double width, height;
 
-        double minValue = min(10 * segmentLength, 100);
-        width = minValue +  Math.pow(segmentLength * minValue, 1.0 / 2);
+        width = 10 + Math.pow(segmentLength, 1.0 / 2);
         height = NODE_HEIGHT;
 
         this.setSize(width * zoomLevel, height * zoomLevel);
