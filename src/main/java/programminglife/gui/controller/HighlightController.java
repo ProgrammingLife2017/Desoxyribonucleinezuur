@@ -21,6 +21,7 @@ public class HighlightController {
     private GraphController graphController;
 
     @FXML private TextField txtSearchGenomes;
+    @FXML private Hyperlink lnkClearSearch;
     @FXML private ListView<String> lstUnselectedGenomes;
     @FXML private ListView<String> lstSelectedGenomes;
     @FXML private Button btnSelectGenomes;
@@ -98,6 +99,8 @@ public class HighlightController {
                 return cell;
             }
         });
+
+        lnkClearSearch.setOnMouseClicked(event -> txtSearchGenomes.clear());
 
         txtMax.textProperty().addListener((observable, oldValue, newValue) -> this.highlight());
         txtMin.textProperty().addListener((observable, oldValue, newValue) -> this.highlight());
