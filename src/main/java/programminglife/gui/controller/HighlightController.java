@@ -31,6 +31,7 @@ public class HighlightController {
     @FXML private CheckBox checkMax;
 
     private Collection<String> genomes;
+    private Color[] genomeColors;
 
     /**
      * Initialize method for HighlightController.
@@ -91,12 +92,11 @@ public class HighlightController {
     void highlight() {
         // Highlight multiple genomes
         int numberOfGenomes = lstSelectedGenomes.getItems().size();
-        Color[] colors = generateColors(graphController.getGraph().getTotalGenomeNumber());
         graphController.removeHighlight();
         for (int i = 0; i < numberOfGenomes; i++) {
             String genomeName = lstSelectedGenomes.getItems().get(i);
             int genomeID = graphController.getGraph().getGenomeID(genomeName);
-            graphController.highlightByGenome(genomeID, colors[i]);
+            graphController.highlightByGenome(genomeID, genomeColors[i]);
         }
 
         highlightMinMax();
@@ -193,6 +193,7 @@ public class HighlightController {
      */
     public void initGenome() {
         genomes = this.graphController.getGraph().getGenomeNames();
+        genomeColors = generateColors(graphController.getGraph().getTotalGenomeNumber());
         lstSelectedGenomes.getItems().clear();
         txtSearchGenomes.setText("");
         search(txtSearchGenomes.textProperty(), null, txtSearchGenomes.getText());
