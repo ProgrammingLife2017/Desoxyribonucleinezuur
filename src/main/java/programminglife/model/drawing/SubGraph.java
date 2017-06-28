@@ -573,6 +573,10 @@ public class SubGraph implements Iterable<DrawableNode> {
             // check which of the two layers is closest.
             int insertionPoint = -(resultIndex + 1);
             int rightLayerIndex = insertionPoint;
+            if (rightLayerIndex >= layers.size()) {
+                return layers.size() - 1;
+            }
+
             int leftLayerIndex = insertionPoint - 1;
             Layer rightLayer = layers.get(rightLayerIndex);
             Layer leftLayer = layers.get(leftLayerIndex);
