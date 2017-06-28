@@ -30,7 +30,6 @@ class GraphController {
     private DrawableSNP clickedSNP;
     private DrawableSNP clickedSNPShift;
     private Map<DrawableNode, List<Color>> nodeGenomeList;
-    private Map<DrawableEdge, List<Color>> edgeGenomeList;
 
     private int centerNodeInt;
     private boolean drawSNP = false;
@@ -47,7 +46,6 @@ class GraphController {
         this.canvas = canvas;
         this.highlightController = null;
         this.nodeGenomeList = new HashMap<>();
-        this.edgeGenomeList = new HashMap<>();
     }
 
     public int getCenterNodeInt() {
@@ -187,12 +185,6 @@ class GraphController {
                     .collect(Collectors.toList());
         }
 
-        if (genomesToDraw != null && genomesToDraw.size() > 0) {
-            edgeGenomeList.put(edge, genomesToDraw);
-        } else {
-            edgeGenomeList.remove(edge);
-        }
-
         edge.colorize(subGraph);
 
         gc.setLineWidth(edge.getStrokeWidth());
@@ -206,18 +198,18 @@ class GraphController {
 
         XYCoordinate endLocation = edge.getEndLocation();
 
-        if (!edgeGenomeList.containsKey(edge)) {
+        if (genomesToDraw == null || genomesToDraw.size() == 0) {
             gc.strokeLine(startLocation.getX(), startLocation.getY(), endLayerLocation.getX(), endLayerLocation.getY());
             gc.strokeLine(endLayerLocation.getX(), endLayerLocation.getY(), endLocation.getX(), endLocation.getY());
         } else {
             int seqNumber = 0;
-            int numberOfGenomes = edgeGenomeList.get(edge).size();
+            int numberOfGenomes = genomesToDraw.size();
             double genomeHeight = edge.getStrokeWidth() / numberOfGenomes;
 
             gc.save();
             gc.setLineWidth(genomeHeight);
 
-            for (Color color : edgeGenomeList.get(edge)) {
+            for (Color color : genomesToDraw) {
                 gc.setStroke(color);
                 gc.strokeLine(startLocation.getX(), startLocation.getY() + genomeHeight * seqNumber,
                         endLayerLocation.getX(), endLayerLocation.getY() + genomeHeight * seqNumber);
@@ -504,7 +496,6 @@ class GraphController {
         try {
             subGraph.forEach(node -> node.colorize(subGraph));
             nodeGenomeList.clear();
-            edgeGenomeList.clear();
         } catch (NullPointerException n) {
             // Occurs when the subgraph is cleared upon opening another graph, nothing on the hand!
         }
