@@ -664,7 +664,7 @@ public class GuiController implements Observer {
             parentSB.setLength(parentSB.length() - 2);
             parents = makeTextField("Parents: ", x, 110, parentSB.toString());
         } else {
-            parentSB.replace(0, parentSB.length(), "This node has no parent(s)");
+            parentSB.replace(0, parentSB.length(), "This node has no parent");
             parents = makeTextField("Parents: ", x, 110, parentSB.toString());
         }
 
@@ -676,7 +676,7 @@ public class GuiController implements Observer {
             childSB.setLength(childSB.length() - 2);
             children = makeTextField("Children: ", x, 150, childSB.toString());
         } else {
-            childSB.replace(0, childSB.length(), "This node has no child(ren)");
+            childSB.replace(0, childSB.length(), "This node has no child");
             children = makeTextField("Children: ", x, 150, childSB.toString());
         }
 
