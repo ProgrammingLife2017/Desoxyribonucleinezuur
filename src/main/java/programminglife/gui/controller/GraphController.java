@@ -251,6 +251,17 @@ class GraphController {
             drawSNP(gc, (DrawableSNP) drawableNode);
 
         } else if (drawableNode instanceof DrawableDummy) {
+            Color[] genomeColors = highlightController.getGenomeColors();
+            Collection<Integer> genomesDummy = drawableNode.getGenomes();
+            Collection<Integer> highlightedGenomes = highlightController.getSelectedGenomes();
+            List<Color> genomesToDraw = null;
+            if (genomesDummy != null) {
+                genomesToDraw = highlightedGenomes.stream()
+                        .filter(genomesDummy::contains)
+                        .map(id -> genomeColors[id])
+                        .collect(Collectors.toList());
+            }
+
             gc.strokeRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height);
             gc.fillRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height);
 
