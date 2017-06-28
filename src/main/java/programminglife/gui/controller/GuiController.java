@@ -252,6 +252,7 @@ public class GuiController implements Observer {
         btnMiniMap.setAccelerator(new KeyCodeCombination(KeyCode.M, KeyCodeCombination.CONTROL_DOWN));
         btnSNP.setOnAction(event -> {
             graphController.setSNP();
+            this.txtCenterNode.setText(Integer.toString(graphController.getCenterNodeInt()));
             Platform.runLater(this::draw);
         });
         btnSNP.setAccelerator(new KeyCodeCombination(KeyCode.G, KeyCodeCombination.CONTROL_DOWN));
