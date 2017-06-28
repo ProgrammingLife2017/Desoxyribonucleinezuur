@@ -399,17 +399,48 @@ public class SubGraph implements Iterable<DrawableNode> {
         //get the corresponding layers.
         Layer leftLayer = layers.get(leftLayerIndex);
 
-        for (DrawableNode left : leftLayer.getNodes()) {
-            for (DrawableNode right : this.getChildren(left)) {
+        //click falls in between two layers.
+        if (leftLayer.getX() + leftLayer.getWidth() < x) {
+            System.out.println("between layers");
+            for (DrawableNode left : leftLayer.getNodes()) {
+                for (DrawableNode right : this.getChildren(left)) {
                     if (calculateEdge(left, right, x, y)) {
 
-                       return new DrawableEdge(left, right);
+                        return new DrawableEdge(left, right);
                     }
 
                 }
             }
 
+
+        } else if (leftLayer.getX() + leftLayer.getWidth() > x) { //Edge within a layer.
+            System.out.println("Within layer");
+            for (DrawableNode left : leftLayer.getNodes()) {
+                for (DrawableNode right : this.getChildren(left)) {
+                    if (calculateEdgeInLayer(left, right, x, y)) {
+                        return new DrawableEdge(left, right);
+                    }
+
+                }
+            }
+        }
         return null;
+    }
+
+    private boolean calculateEdgeInLayer(DrawableNode left, DrawableNode right, double x, double y) {
+        double start = left.getRightBorderCenter().getX();
+        Layer layer = left.getParentSegment().getLayer();
+        double end = layer.getX() + layer.getWidth();
+
+        double edgeY = left.getRightBorderCenter().getY(); // Since it is a horizontal line it stays on 1 Y
+
+        double genomeFraction = getGenomesEdge(left.getParentSegment(),
+                right.getChildSegment()).size() / (double) this.getNumberOfGenomes();
+        double minStrokeWidth = 1.d, maxStrokeWidth = 6.5;
+        double strokeWidth = minStrokeWidth + genomeFraction * (maxStrokeWidth - minStrokeWidth);
+
+        return (edgeY - strokeWidth * zoomLevel < y && edgeY + strokeWidth * zoomLevel > y
+                && x > start && x < end);
     }
 
 
