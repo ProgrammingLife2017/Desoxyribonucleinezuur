@@ -256,6 +256,7 @@ public class GuiController implements Observer {
         btnInstructions.setOnAction(event -> Alerts.infoInstructionAlert());
         btnInstructions.setAccelerator(new KeyCodeCombination(KeyCode.H, KeyCodeCombination.CONTROL_DOWN));
 
+        btnMiniMap.setSelected(true);
         btnMiniMap.setOnAction(event -> miniMapController.toggleVisibility(graphController.getCenterNodeInt()));
         btnMiniMap.setAccelerator(new KeyCodeCombination(KeyCode.M, KeyCodeCombination.CONTROL_DOWN));
         btnSNP.setOnAction(event -> {

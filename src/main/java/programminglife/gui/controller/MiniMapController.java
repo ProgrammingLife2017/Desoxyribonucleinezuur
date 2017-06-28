@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 
 /**
@@ -14,7 +15,7 @@ class MiniMapController {
     private final Canvas miniMap;
     private final int size;
 
-    private boolean visible = false;
+    private boolean visible = true;
     private GraphController graphController;
     private GuiController guiController;
 
@@ -28,6 +29,9 @@ class MiniMapController {
      */
     MiniMapController(Canvas miniMap, int size) {
         this.miniMap = miniMap;
+        AnchorPane.setRightAnchor(miniMap, 0.d);
+        AnchorPane.setLeftAnchor(miniMap, 0.d);
+        AnchorPane.setBottomAnchor(miniMap, 0.d);
         Platform.runLater(this.miniMap::toFront);
         miniMap.setVisible(visible);
         this.size = size;
@@ -54,7 +58,7 @@ class MiniMapController {
         }
         for (int i = 0; i < 10; i++) {
             gc.setFill(Color.BLACK);
-            gc.fillText("Node: " + String.valueOf(i * graphController.getGraph().size() / 10),
+            gc.fillText(String.valueOf(i * graphController.getGraph().size() / 10),
                     i * miniMap.getWidth() / 10, 45);
         }
     }
