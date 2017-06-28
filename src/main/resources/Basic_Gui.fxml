@@ -36,7 +36,7 @@
             <TextField fx:id="txtCenterNode" layoutX="20.0" layoutY="100.0" minWidth="100.0" promptText="Origin node" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0"/>
             <Text fx:id="txtRadius" visible="false" layoutX="20.0" layoutY="142.0" text="Radius:"/>
             <TextField fx:id="txtMaxDrawDepth" visible="false" layoutX="20.0" layoutY="145.0" minWidth="100.0" promptText="Max depth" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0"/>
-            <Button fx:id="btnDraw" layoutX="27.0" layoutY="180.0" minWidth="100.0" mnemonicParsing="false" text="Draw" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0"/>
+            <Button fx:id="btnDraw" layoutX="27.0" layoutY="130.0" minWidth="100.0" mnemonicParsing="false" text="Go to node" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0"/>
             <Button fx:id="btnDrawRandom" layoutX="20.0" layoutY="210.0" minWidth="100.0" mnemonicParsing="false" text="Surprise me!" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0"/>
             <Button fx:id="btnBookmark" layoutX="20.0" layoutY="240.0" minWidth="100.0" mnemonicParsing="false" text="Bookmark" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0"/>
         </AnchorPane>

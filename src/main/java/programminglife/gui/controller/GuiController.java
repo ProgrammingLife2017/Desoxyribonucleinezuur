@@ -27,7 +27,10 @@ import programminglife.gui.Alerts;
 import programminglife.gui.NumbersOnlyListener;
 import programminglife.gui.ResizableCanvas;
 import programminglife.model.GenomeGraph;
-import programminglife.model.drawing.*;
+import programminglife.model.drawing.Drawable;
+import programminglife.model.drawing.DrawableEdge;
+import programminglife.model.drawing.DrawableSNP;
+import programminglife.model.drawing.DrawableSegment;
 import programminglife.parser.GraphParser;
 import programminglife.parser.ProgressCounter;
 import programminglife.utility.Console;
@@ -38,7 +41,10 @@ import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.Collection;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 /**
@@ -341,6 +347,11 @@ public class GuiController implements Observer {
 
         txtCenterNode.textProperty().addListener(new NumbersOnlyListener(txtCenterNode));
         txtCenterNode.setText(INITIAL_CENTER_NODE);
+        txtCenterNode.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                btnDraw.fire();
+            }
+        });
     }
 
     /**
