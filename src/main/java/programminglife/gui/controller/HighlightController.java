@@ -173,25 +173,9 @@ public class HighlightController {
     }
 
     /**
-     * Initializes the buttons.
-     */
-//    private void initButtons() {
-//        btnHighlight.setOnAction(event -> {
-//            if (txtGenome.getText().isEmpty()) {
-//                highlightMinMax();
-//            } else {
-//                if (txtGenome.getEntries().contains(txtGenome.getText())) {
-//                    int genomeID = graphController.getGraph().getGenomeID(txtGenome.getText());
-//                    graphController.highlightByGenome(genomeID);
-//                }
-//            }
-//        });
-//    }
-
-    /**
      * Initializes the genomes.
      */
-    public void initGenome() {
+    void initGenome() {
         genomes = this.graphController.getGraph().getGenomeNames();
         genomeColors = generateColors(graphController.getGraph().getTotalGenomeNumber());
         lstSelectedGenomes.getItems().clear();
@@ -202,7 +186,7 @@ public class HighlightController {
     /**
      * Initializes the Min and Max field + checkbox.
      */
-    public void initMinMax() {
+    void initMinMax() {
         checkMax.selectedProperty().addListener((observable, oldValue, newValue) ->
                 txtMax.setDisable(!checkMax.isSelected()));
 
