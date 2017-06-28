@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.util.Callback;
 import programminglife.gui.NumbersOnlyListener;
 
 import java.util.*;
@@ -20,6 +21,7 @@ public class HighlightController {
     private GraphController graphController;
 
     @FXML private TextField txtSearchGenomes;
+    @FXML private Hyperlink lnkClearSearch;
     @FXML private ListView<String> lstUnselectedGenomes;
     @FXML private ListView<String> lstSelectedGenomes;
     @FXML private Button btnSelectGenomes;
@@ -31,6 +33,7 @@ public class HighlightController {
     @FXML private CheckBox checkMax;
 
     private Collection<String> genomes;
+    private Color[] genomeColors;
 
     /**
      * Initialize method for HighlightController.
@@ -76,6 +79,29 @@ public class HighlightController {
             }
         });
 
+        lstSelectedGenomes.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
+            @Override
+            public ListCell<String> call(ListView<String> param) {
+                ListCell<String> cell = new ListCell<String>() {
+                    @Override
+                    protected void updateItem(String t, boolean bln) {
+                        super.updateItem(t, bln);
+                        if (t != null) {
+                            setText(t);
+                            setStyle(String.format("-fx-background-color: %s;", hex(genomeColors[graphController.getGraph().getGenomeID(t)])));
+                        } else {
+                            setText("");
+                            setStyle("");
+                        }
+                    }
+                };
+
+                return cell;
+            }
+        });
+
+        lnkClearSearch.setOnMouseClicked(event -> txtSearchGenomes.clear());
+
         txtMax.textProperty().addListener((observable, oldValue, newValue) -> this.highlight());
         txtMin.textProperty().addListener((observable, oldValue, newValue) -> this.highlight());
         checkMax.selectedProperty().addListener((observable, oldValue, newValue) -> this.highlight());
@@ -85,18 +111,21 @@ public class HighlightController {
         btnUnselectGenomes.setOnMouseClicked(this::unselectGenomes);
     }
 
+    private String hex(Color c) {
+        return "#" + Integer.toHexString(c.hashCode()).substring(0, 6).toUpperCase() + "B4";
+    }
+
     /**
      * Method to highlight certain genomes.
      */
     void highlight() {
         // Highlight multiple genomes
         int numberOfGenomes = lstSelectedGenomes.getItems().size();
-        Color[] colors = generateColors(numberOfGenomes);
         graphController.removeHighlight();
         for (int i = 0; i < numberOfGenomes; i++) {
             String genomeName = lstSelectedGenomes.getItems().get(i);
             int genomeID = graphController.getGraph().getGenomeID(genomeName);
-            graphController.highlightByGenome(genomeID, colors[i]);
+            graphController.highlightByGenome(genomeID, genomeColors[genomeID]);
         }
 
         highlightMinMax();
@@ -111,7 +140,7 @@ public class HighlightController {
     private Color[] generateColors(int n) {
         Color[] colors = new Color[n];
         for (int i = 0; i < n; i++) {
-            colors[i] = Color.hsb(i * 360.d / n, 0.85f, 1.0f);
+            colors[i] = Color.hsb(i * 360.d / n, 0.6d, 1.d);
         }
         return colors;
     }
@@ -173,26 +202,11 @@ public class HighlightController {
     }
 
     /**
-     * Initializes the buttons.
-     */
-//    private void initButtons() {
-//        btnHighlight.setOnAction(event -> {
-//            if (txtGenome.getText().isEmpty()) {
-//                highlightMinMax();
-//            } else {
-//                if (txtGenome.getEntries().contains(txtGenome.getText())) {
-//                    int genomeID = graphController.getGraph().getGenomeID(txtGenome.getText());
-//                    graphController.highlightByGenome(genomeID);
-//                }
-//            }
-//        });
-//    }
-
-    /**
      * Initializes the genomes.
      */
-    public void initGenome() {
+    void initGenome() {
         genomes = this.graphController.getGraph().getGenomeNames();
+        genomeColors = generateColors(graphController.getGraph().getTotalGenomeNumber());
         lstSelectedGenomes.getItems().clear();
         txtSearchGenomes.setText("");
         search(txtSearchGenomes.textProperty(), null, txtSearchGenomes.getText());
@@ -201,7 +215,7 @@ public class HighlightController {
     /**
      * Initializes the Min and Max field + checkbox.
      */
-    public void initMinMax() {
+    void initMinMax() {
         checkMax.selectedProperty().addListener((observable, oldValue, newValue) ->
                 txtMax.setDisable(!checkMax.isSelected()));
 
@@ -246,5 +260,15 @@ public class HighlightController {
      */
     void setGraphController(GraphController graphController) {
         this.graphController = graphController;
+    }
+
+    public Color[] getGenomeColors() {
+        return genomeColors;
+    }
+
+    public Collection<Integer> getSelectedGenomes() {
+        return lstSelectedGenomes.getItems().stream()
+                .map(graphController.getGraph()::getGenomeID)
+                .collect(Collectors.toSet());
     }
 }

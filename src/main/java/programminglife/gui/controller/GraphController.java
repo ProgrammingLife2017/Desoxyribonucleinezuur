@@ -10,9 +10,8 @@ import programminglife.model.XYCoordinate;
 import programminglife.model.drawing.*;
 import programminglife.utility.Console;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Controller for drawing the graph.
@@ -30,6 +29,7 @@ class GraphController {
     private DrawableSegment clickedShift;
     private DrawableSNP clickedSNP;
     private DrawableSNP clickedSNPShift;
+    private Map<DrawableNode, List<Color>> nodeGenomeList;
 
     private int centerNodeInt;
     private boolean drawSNP = false;
@@ -45,6 +45,7 @@ class GraphController {
         this.graph = null;
         this.canvas = canvas;
         this.highlightController = null;
+        this.nodeGenomeList = new HashMap<>();
     }
 
     public int getCenterNodeInt() {
@@ -113,7 +114,7 @@ class GraphController {
      */
     private void highlightNodes(Collection<DrawableNode> nodes, Color color) {
         for (DrawableNode drawNode : nodes) {
-            highlightNode(drawNode, color);
+            highlightNode(drawNode, color, false);
         }
     }
 
@@ -125,7 +126,7 @@ class GraphController {
      */
     private void highlightNode(int nodeID, Color color) {
         DrawableNode node = subGraph.getNodes().get(nodeID);
-        highlightNode(node, color);
+        highlightNode(node, color, false);
     }
 
     /**
@@ -133,9 +134,12 @@ class GraphController {
      *
      * @param node  {@link DrawableNode} to highlight.
      * @param color {@link Color} to color with.
+     * @param clickedOn boolean to check if the node was clicked on.
      */
-    private void highlightNode(DrawableNode node, Color color) {
-        node.setStrokeColor(color);
+    private void highlightNode(DrawableNode node, Color color, Boolean clickedOn) {
+        if (clickedOn){
+            node.setStrokeColor(color);
+        }
         node.setStrokeWidth(5.0 * subGraph.getZoomLevel());
         drawNode(canvas.getGraphicsContext2D(), node);
     }
@@ -170,19 +174,55 @@ class GraphController {
     private void drawEdge(GraphicsContext gc, DrawableNode parent, DrawableNode child) {
         DrawableEdge edge = new DrawableEdge(parent, child);
 
+        Color[] genomeColors = highlightController.getGenomeColors();
+
+        Collection<Integer> genomesEdge = this.getGenomesEdge(edge);
+        Collection<Integer> highlightedGenomes = highlightController.getSelectedGenomes();
+        List<Color> genomesToDraw = null;
+        if (genomesEdge != null) {
+            genomesToDraw = highlightedGenomes.stream()
+                    .filter(genomesEdge::contains)
+                    .map(id -> genomeColors[id])
+                    .collect(Collectors.toList());
+        }
+
         edge.colorize(subGraph);
 
         gc.setLineWidth(edge.getStrokeWidth());
         gc.setStroke(edge.getStrokeColor());
 
         XYCoordinate startLocation = edge.getStartLocation();
+
         XYCoordinate endLayerLocation = new XYCoordinate(
                 parent.getLeftBorderCenter().getX() + parent.getLayer().getWidth(),
                 parent.getLeftBorderCenter().getY());
+
         XYCoordinate endLocation = edge.getEndLocation();
 
-        gc.strokeLine(startLocation.getX(), startLocation.getY(), endLayerLocation.getX(), endLayerLocation.getY());
-        gc.strokeLine(endLayerLocation.getX(), endLayerLocation.getY(), endLocation.getX(), endLocation.getY());
+        if (genomesToDraw == null || genomesToDraw.size() == 0) {
+            gc.strokeLine(startLocation.getX(), startLocation.getY(), endLayerLocation.getX(), endLayerLocation.getY());
+            gc.strokeLine(endLayerLocation.getX(), endLayerLocation.getY(), endLocation.getX(), endLocation.getY());
+        } else {
+            int seqNumber = 0;
+            int numberOfGenomes = genomesToDraw.size();
+            double genomeHeight = edge.getStrokeWidth() / numberOfGenomes;
+
+            gc.save();
+            gc.setLineWidth(genomeHeight);
+
+            for (Color color : genomesToDraw) {
+                gc.setStroke(color);
+                gc.strokeLine(startLocation.getX(), startLocation.getY() + genomeHeight * seqNumber,
+                        endLayerLocation.getX(), endLayerLocation.getY() + genomeHeight * seqNumber);
+
+                gc.strokeLine(endLayerLocation.getX(), endLayerLocation.getY() + genomeHeight * seqNumber,
+                        endLocation.getX(), endLocation.getY() + genomeHeight * seqNumber);
+
+                seqNumber++;
+            }
+            gc.restore();
+        }
+
     }
 
     /**
@@ -205,14 +245,56 @@ class GraphController {
             drawSNP(gc, (DrawableSNP) drawableNode);
 
         } else if (drawableNode instanceof DrawableDummy) {
-            gc.strokeRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height);
-            gc.fillRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height);
+            Color[] genomeColors = highlightController.getGenomeColors();
+            Collection<Integer> genomesDummy = drawableNode.getGenomes();
+            Collection<Integer> highlightedGenomes = highlightController.getSelectedGenomes();
+            List<Color> genomesToDraw = null;
+            if (genomesDummy != null) {
+                genomesToDraw = highlightedGenomes.stream()
+                        .filter(genomesDummy::contains)
+                        .map(id -> genomeColors[id])
+                        .collect(Collectors.toList());
+            }
 
-        } else {
+            if (genomesToDraw != null && genomesToDraw.size() > 0) {
+                int seqNumber = 0;
+                double genomeHeight = drawableNode.getStrokeWidth() / genomesToDraw.size();
+
+                XYCoordinate location = drawableNode.getLocation();
+
+                gc.save();
+                gc.setLineWidth(genomeHeight);
+                for (Color color : genomesToDraw) {
+                    gc.setStroke(color);
+                    gc.strokeLine(location.getX(), location.getY() + genomeHeight * seqNumber,
+                            location.getX() + width, location.getY() + genomeHeight * seqNumber);
+
+                    seqNumber++;
+                }
+                gc.restore();
+            } else {
+                gc.strokeRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height);
+                gc.fillRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height);
+            }
+
+        } else if (!nodeGenomeList.containsKey(drawableNode)) {
             gc.strokeRoundRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height, archFactor, archFactor);
             gc.fillRoundRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height, archFactor, archFactor);
-        }
+        } else {
+            int seqNumber = 0;
+            int numberOfGenomes = nodeGenomeList.get(drawableNode).size();
+            double genomeHeight = height / numberOfGenomes;
 
+            gc.strokeRoundRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height, archFactor, archFactor);
+            gc.save();
+
+            for (Color color : nodeGenomeList.get(drawableNode)) {
+                gc.setFill(color);
+                gc.fillRect(locX, locY + genomeHeight * seqNumber, width, genomeHeight);
+                seqNumber++;
+            }
+            gc.restore();
+        }
     }
 
     /**
@@ -347,27 +429,27 @@ class GraphController {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
         if (clicked != null) {
-            highlightNode(clicked, Color.DARKTURQUOISE);
+            highlightNode(clicked, Color.DARKTURQUOISE, true);
             clicked.setStrokeWidth(5.0 * subGraph.getZoomLevel());
         }
         if (clickedSNP != null) {
-            highlightNode(clickedSNP, Color.DARKTURQUOISE);
+            highlightNode(clickedSNP, Color.DARKTURQUOISE, true);
             clickedSNP.setStrokeWidth(5.0 * subGraph.getZoomLevel());
         }
         if (clickedShift != null) {
-            highlightNode(clickedShift, Color.PURPLE);
+            highlightNode(clickedShift, Color.PURPLE, true);
             clickedShift.setStrokeWidth(5.0 * subGraph.getZoomLevel());
         }
         if (clickedSNPShift != null) {
-            highlightNode(clickedSNPShift, Color.PURPLE);
+            highlightNode(clickedSNPShift, Color.PURPLE, true);
             clickedSNPShift.setStrokeWidth(5.0 * subGraph.getZoomLevel());
         }
         if (clicked == clickedShift && clicked != null && clickedShift != null) {
-            highlightNode(clicked, Color.DARKCYAN);
+            highlightNode(clicked, Color.DARKCYAN, true);
             clicked.setStrokeWidth(5.0 * subGraph.getZoomLevel());
         }
         if (clickedSNP == clickedSNPShift && clickedSNP != null && clickedSNPShift != null) {
-            highlightNode(clickedSNP, Color.DARKCYAN);
+            highlightNode(clickedSNP, Color.DARKCYAN, true);
             clickedSNP.setStrokeWidth(5.0 * subGraph.getZoomLevel());
         }
 
@@ -414,6 +496,7 @@ class GraphController {
     void removeHighlight() {
         try {
             subGraph.forEach(node -> node.colorize(subGraph));
+            nodeGenomeList.clear();
         } catch (NullPointerException n) {
             // Occurs when the subgraph is cleared upon opening another graph, nothing on the hand!
         }
@@ -429,11 +512,20 @@ class GraphController {
      */
     public void highlightByGenome(int genomeID, Color color) {
         LinkedList<DrawableNode> drawNodeList = new LinkedList<>();
+
         for (DrawableNode drawableNode : subGraph.getNodes().values()) {
             Collection<Integer> genomes = drawableNode.getGenomes();
+            List<Color> listColor = new LinkedList<>();
             for (int genome : genomes) {
                 if (genome == genomeID && !(drawableNode instanceof DrawableDummy)) {
+                    if (nodeGenomeList.containsKey(drawableNode) && drawableNode.getGenomes().contains(genome)) {
+                        listColor = nodeGenomeList.get(drawableNode);
+                    }
                     drawNodeList.add(drawableNode);
+                    if (!listColor.contains(color)) {
+                        listColor.add(color);
+                    }
+                    nodeGenomeList.put(drawableNode, listColor);
                 }
             }
         }
@@ -486,6 +578,15 @@ class GraphController {
             }
             this.clicked = segment;
             this.clickedSNP = snp;
+
+            if (segment != null) {
+                highlightNode(segment, Color.DARKTURQUOISE, true);
+                segment.setStrokeWidth(5.0 * subGraph.getZoomLevel()); //Correct thickness when zoomed
+            }
+            if (snp != null) {
+                highlightNode(snp, Color.DARKTURQUOISE, true);
+                snp.setStrokeWidth(5.0 * subGraph.getZoomLevel()); //Correct thickness when zoomed
+            }
         } else {
             if (clickedShift != null) {
                 this.clickedShift.colorize(subGraph);
@@ -495,16 +596,16 @@ class GraphController {
             }
             this.clickedShift = segment;
             this.clickedSNPShift = snp;
-        }
-        if (segment != null) {
-            highlightNode(segment, Color.PURPLE);
-            segment.setStrokeWidth(5.0 * subGraph.getZoomLevel()); //Correct thickness when zoomed
-        }
-        if (snp != null) {
-            highlightNode(snp, Color.PURPLE);
-            snp.setStrokeWidth(5.0 * subGraph.getZoomLevel()); //Correct thickness when zoomed
-        }
 
+            if (segment != null) {
+                highlightNode(segment, Color.PURPLE, true);
+                segment.setStrokeWidth(5.0 * subGraph.getZoomLevel()); //Correct thickness when zoomed
+            }
+            if (snp != null) {
+                highlightNode(snp, Color.PURPLE, true);
+                snp.setStrokeWidth(5.0 * subGraph.getZoomLevel()); //Correct thickness when zoomed
+            }
+        }
         draw(canvas.getGraphicsContext2D());
     }
 
