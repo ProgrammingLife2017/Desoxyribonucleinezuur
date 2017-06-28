@@ -140,7 +140,7 @@ public class HighlightController {
     private Color[] generateColors(int n) {
         Color[] colors = new Color[n];
         for (int i = 0; i < n; i++) {
-            colors[i] = Color.hsb(i * 360.d / n, 0.5d, 1.d);
+            colors[i] = Color.hsb(i * 360.d / n, 0.6d, 1.d);
         }
         return colors;
     }
