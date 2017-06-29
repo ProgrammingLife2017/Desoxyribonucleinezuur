@@ -4,6 +4,7 @@ import javafx.geometry.Bounds;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import programminglife.ProgrammingLife;
 import programminglife.gui.ResizableCanvas;
 import programminglife.model.GenomeGraph;
 import programminglife.model.XYCoordinate;
@@ -192,6 +193,9 @@ class GraphController {
 
         gc.setLineWidth(edge.getStrokeWidth());
         gc.setStroke(edge.getStrokeColor());
+        if (ProgrammingLife.getShowCSS()) {
+            gc.setStroke(Color.WHITE);
+        }
 
         XYCoordinate startLocation = edge.getStartLocation();
 
@@ -260,7 +264,9 @@ class GraphController {
                         .map(id -> genomeColors[id])
                         .collect(Collectors.toList());
             }
-
+            if (ProgrammingLife.getShowCSS()) {
+                gc.setStroke(Color.WHITE);
+            }
             if (genomesToDraw != null && genomesToDraw.size() > 0) {
                 int seqNumber = 0;
                 double genomeHeight = drawableNode.getStrokeWidth() / genomesToDraw.size();

@@ -124,6 +124,11 @@ public class GuiLoadBookmarkController implements Observer {
         try {
             FXMLLoader loader = new FXMLLoader(ProgrammingLife.class.getResource("/CreateBookmarkWindow.fxml"));
             AnchorPane page = loader.load();
+            if (ProgrammingLife.getShowCSS()) {
+                page.getStylesheets().add("/CreateBookmark.css");
+            } else {
+                page.getStylesheets().removeAll();
+            }
             GuiCreateBookmarkController gc = loader.getController();
             gc.setGuiController(guiController);
             Scene scene = new Scene(page);
@@ -146,8 +151,8 @@ public class GuiLoadBookmarkController implements Observer {
         Bookmark bookmark = checkBookmarkSelection();
         if (bookmark != null) {
             Alerts.infoBookmarkAlert(String.format("Name: %s"
-                            + "%nNode ID: %d%nNode radius: %d%nDescription: %s", bookmark.getBookmarkName(),
-                    bookmark.getNodeID(), bookmark.getRadius(), bookmark.getDescription()));
+                            + "%nNode ID: %d%nDescription: %s", bookmark.getBookmarkName(),
+                    bookmark.getNodeID(), bookmark.getDescription()));
         }
     }
 
@@ -206,6 +211,11 @@ public class GuiLoadBookmarkController implements Observer {
      */
     void initBookmarks() {
         accordionBookmark.getPanes().clear();
+        if (ProgrammingLife.getShowCSS()) {
+            accordionBookmark.getParent().getStylesheets().add("/Bookmark.css");
+        } else {
+            accordionBookmark.getParent().getStylesheets().removeAll();
+        }
 
         tableViews = new ArrayList<>();
 

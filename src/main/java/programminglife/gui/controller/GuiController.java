@@ -398,6 +398,11 @@ public class GuiController implements Observer {
         try {
             FXMLLoader loader = new FXMLLoader(ProgrammingLife.class.getResource("/CreateBookmarkWindow.fxml"));
             AnchorPane page = loader.load();
+            if (ProgrammingLife.getShowCSS()) {
+                page.getStylesheets().add("/CreateBookmark.css");
+            } else {
+                page.getStylesheets().removeAll();
+            }
             GuiCreateBookmarkController gc = loader.getController();
             gc.setGuiController(this);
             gc.setText(txtCenterNode.getText(), txtMaxDrawDepth.getText());
@@ -626,25 +631,37 @@ public class GuiController implements Observer {
      * @param x    int the x location of the TextField.
      */
     private void showInfoEdge(DrawableEdge edge, int x) {
+        if (x == 10) {
+            btnClipboard.setVisible(false);
+        } else if (x == 240) {
+            btnClipboard2.setVisible(false);
+        }
         Text parentsText = makeText(x, 65, "Parent: ");
         Text childrenText = makeText(x, 105, "Child: ");
-        Text idText = makeText(x, 145, "Genomes: ");
+        Text genomeAmountText = makeText(x, 145, "Amount of Genomes: ");
+        Text idText = makeText(x, 185, "Genomes: ");
 
-        TextField parent = makeTextField("Parent Node: ", x, 70,
+        TextField parent = makeTextField("Parent Node: ", x, 65,
                 Integer.toString(edge.getStart().getParentSegment().getIdentifier()));
-        TextField child = makeTextField("Child Node: ", x, 110,
+        TextField child = makeTextField("Child Node: ", x, 105,
                 Integer.toString(edge.getEnd().getChildSegment().getIdentifier()));
 
         Collection<Integer> genomesEdge = graphController.getGenomesEdge(edge);
+
+        TextField genomeLength = null;
         TextArea genomes = null;
+        
         if (genomesEdge != null) {
             String result = graphController.getGraph().getGenomeNames(genomesEdge).toString();
-            genomes = makeTextArea("Genomes: ", x, 150, result.substring(1, result.length() - 1), 80);
+            int amount = graphController.getGraph().getGenomeNames(genomesEdge).size();
+            genomeLength = makeTextField("Genome Length: ", x, 145, Integer.toString(amount));
+            genomes = makeTextArea("Genomes: ", x, 190, result.substring(1, result.length() - 1), 80);
             genomes.setWrapText(true);
         }
 
         anchorGraphInfo.getChildren().removeIf(node1 -> node1.getLayoutX() == x);
-        anchorGraphInfo.getChildren().addAll(idText, parentsText, childrenText, genomes, parent, child);
+        anchorGraphInfo.getChildren().addAll(idText, parentsText, childrenText, genomeAmountText,
+                genomeLength, genomes, parent, child);
     }
 
     /**
@@ -654,16 +671,22 @@ public class GuiController implements Observer {
      * @param x    int the x location of the TextField.
      */
     private void showInfoNode(DrawableSegment node, int x) {
+        if (x == 10) {
+            btnClipboard.setVisible(true);
+        } else if (x == 240) {
+            btnClipboard2.setVisible(true);
+        }
         Text idText = makeText(x, 65, "ID: ");
         Text parentText = makeText(x, 105, "Parents: ");
         Text childText = makeText(x, 145, "Children: ");
         Text inEdgeText = makeText(x, 185, "Incoming Edges: ");
         Text outEdgeText = makeText(x, 225, "Outgoing Edges: ");
-        Text seqLengthText = makeText(x, 265, "Sequence Length: ");
+        Text genomeAmountText = makeText(x, 265, "Amount of Genomes: ");
         Text genomeText = makeText(x, 305, "Genomes: ");
-        Text seqText = makeText(x, 370, "Sequence: ");
+        Text seqLengthText = makeText(x, 420, "Sequence Length: ");
+        Text seqText = makeText(x, 460, "Sequence: ");
 
-        TextField idTextField = makeTextField("ID: ", x, 70, Integer.toString(node.getIdentifier()));
+        TextField idTextField = makeTextField("ID: ", x, 65, Integer.toString(node.getIdentifier()));
 
         StringBuilder parentSB = new StringBuilder();
         graphController.getParentSegments(node).forEach(
@@ -671,10 +694,10 @@ public class GuiController implements Observer {
         TextField parents;
         if (parentSB.length() > 2) {
             parentSB.setLength(parentSB.length() - 2);
-            parents = makeTextField("Parents: ", x, 110, parentSB.toString());
+            parents = makeTextField("Parents: ", x, 105, parentSB.toString());
         } else {
             parentSB.replace(0, parentSB.length(), "This node has no parent");
-            parents = makeTextField("Parents: ", x, 110, parentSB.toString());
+            parents = makeTextField("Parents: ", x, 105, parentSB.toString());
         }
 
         StringBuilder childSB = new StringBuilder();
@@ -683,24 +706,26 @@ public class GuiController implements Observer {
         TextField children;
         if (childSB.length() > 2) {
             childSB.setLength(childSB.length() - 2);
-            children = makeTextField("Children: ", x, 150, childSB.toString());
+            children = makeTextField("Children: ", x, 145, childSB.toString());
         } else {
             childSB.replace(0, childSB.length(), "This node has no child");
-            children = makeTextField("Children: ", x, 150, childSB.toString());
+            children = makeTextField("Children: ", x, 145, childSB.toString());
         }
 
         String genomesString = graphController.getGraph().getGenomeNames(node.getGenomes()).toString();
         String sequenceString = node.getSequence().replaceAll("(.{23})", "$1" + System.getProperty("line.separator"));
-        TextField inEdges = makeTextField("Incoming Edges: ", x, 190, Integer.toString(node.getParents().size()));
-        TextField outEdges = makeTextField("Outgoing Edges: ", x, 230, Integer.toString(node.getChildren().size()));
-        TextField seqLength = makeTextField("Sequence Length: ", x, 270, Integer.toString(node.getSequence().length()));
-        TextArea genome = makeTextArea("Genome: ", x, 310, genomesString.substring(1, genomesString.length() - 1), 40);
+        TextField inEdges = makeTextField("Incoming Edges: ", x, 185, Integer.toString(node.getParents().size()));
+        TextField outEdges = makeTextField("Outgoing Edges: ", x, 225, Integer.toString(node.getChildren().size()));
+        TextField genomeLength = makeTextField("Genome Length: ", x, 265, Integer.toString(node.getGenomes().size()));
+        TextArea genome = makeTextArea("Genome: ", x, 310, genomesString.substring(1, genomesString.length() - 1), 90);
         genome.setWrapText(true);
-        TextArea seq = makeTextArea(x + " Sequence: ", x, 375, sequenceString, 250);
+        TextField seqLength = makeTextField("Sequence Length: ", x, 420, Integer.toString(node.getSequence().length()));
+        TextArea seq = makeTextArea(x + " Sequence: ", x, 465, sequenceString, 250);
 
         anchorGraphInfo.getChildren().removeIf(node1 -> node1.getLayoutX() == x);
         anchorGraphInfo.getChildren().addAll(idText, parentText, childText, inEdgeText, outEdgeText, seqLengthText,
-                genomeText, seqText, idTextField, parents, children, inEdges, outEdges, genome, seqLength, seq);
+                genomeAmountText, genomeText, seqText, idTextField, parents, children, inEdges, outEdges,
+                genomeLength, genome, seqLength, seq);
     }
 
     /**
@@ -710,27 +735,34 @@ public class GuiController implements Observer {
      * @param x    int the x location of the TextField.
      */
     private void showInfoSNP(DrawableSNP snp, int x) {
+        if (x == 10) {
+            btnClipboard.setVisible(false);
+        } else if (x == 240) {
+            btnClipboard2.setVisible(false);
+        }
         Text idParent = makeText(x, 65, "Parent: ");
         Text idChild = makeText(x, 105, "Child: ");
         Text idMutation = makeText(x, 145, "Mutation: ");
-        Text idGenome = makeText(x, 185, "Genome: ");
+        Text genomeAmountText = makeText(x, 185, "Amount of Genomes: ");
+        Text idGenome = makeText(x, 225, "Genome: ");
 
-        TextField parentTextField = makeTextField("Parent: ", x, 70,
+        TextField parentTextField = makeTextField("Parent: ", x, 65,
                 Integer.toString(snp.getParent().getParentSegment().getIdentifier()));
-        TextField childTextField = makeTextField("Child: ", x, 110,
+        TextField childTextField = makeTextField("Child: ", x, 105,
                 Integer.toString(snp.getChild().getChildSegment().getIdentifier()));
 
         String c = snp.getMutations().stream().map(DrawableSegment::getSequence).collect(Collectors.toSet()).toString();
-        TextField mutationTextField = makeTextField("Mutation: ", x, 150, c.substring(1, c.length() - 1));
+        TextField mutationTextField = makeTextField("Mutation: ", x, 145, c.substring(1, c.length() - 1));
+        TextField genomeLength = makeTextField("Genome Length: ", x, 185, Integer.toString(snp.getGenomes().size()));
 
         String genomesString = graphController.getGraph().getGenomeNames(snp.getGenomes()).toString();
-        TextArea genomeTextField = makeTextArea("Genome: ", x, 190,
+        TextArea genomeTextField = makeTextArea("Genome: ", x, 230,
                 genomesString.substring(1, genomesString.length() - 1), 80);
         genomeTextField.setWrapText(true);
 
         anchorGraphInfo.getChildren().removeIf(node1 -> node1.getLayoutX() == x);
-        anchorGraphInfo.getChildren().addAll(idParent, idChild, idMutation, idGenome,
-                parentTextField, childTextField, mutationTextField, genomeTextField);
+        anchorGraphInfo.getChildren().addAll(idParent, idChild, idMutation, idGenome, genomeAmountText,
+                genomeLength, parentTextField, childTextField, mutationTextField, genomeTextField);
     }
 
     /**
@@ -745,6 +777,11 @@ public class GuiController implements Observer {
         Text text = new Text(s);
         text.setLayoutX(x);
         text.setLayoutY(y);
+        if (ProgrammingLife.getShowCSS()) {
+            text.getStyleClass().add("text-id");
+        } else {
+            text.getStyleClass().removeAll();
+        }
         return text;
     }
 

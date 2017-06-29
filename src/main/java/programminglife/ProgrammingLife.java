@@ -114,7 +114,6 @@ public final class ProgrammingLife extends Application {
      */
     public static void toggleCSS() {
         showCSS = !showCSS;
-        Platform.runLater(() -> {
             if (showCSS) {
                 root.getStylesheets().remove("/LightTheme.css");
                 root.getStylesheets().add("/DarkTheme.css");
@@ -122,7 +121,6 @@ public final class ProgrammingLife extends Application {
                 root.getStylesheets().remove("/DarkTheme.css");
                 root.getStylesheets().add("/LightTheme.css");
             }
-        });
     }
 
     /**
@@ -132,5 +130,9 @@ public final class ProgrammingLife extends Application {
      */
     public static Stage getStage() {
         return primaryStage;
+    }
+
+    public static boolean getShowCSS() {
+        return showCSS;
     }
 }
