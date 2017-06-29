@@ -91,7 +91,8 @@ public final class Alerts {
             pane.getStylesheets().removeAll();
         }
         a.setTitle("Confirm Exit");
-        a.setHeaderText("Do you really want to exit?");
+        a.setHeaderText("Exit:");
+        a.setContentText("Do you really want to exit?");
         Optional<ButtonType> result = a.showAndWait();
         result.ifPresent(buttonType -> {
             if (buttonType == ButtonType.OK) {
