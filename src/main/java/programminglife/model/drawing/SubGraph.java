@@ -401,7 +401,6 @@ public class SubGraph implements Iterable<DrawableNode> {
 
         //click falls in between two layers.
         if (leftLayer.getX() + leftLayer.getWidth() < x) {
-            System.out.println("between layers");
             for (DrawableNode left : leftLayer.getNodes()) {
                 for (DrawableNode right : this.getChildren(left)) {
                     if (calculateEdge(left, right, x, y)) {
@@ -414,7 +413,6 @@ public class SubGraph implements Iterable<DrawableNode> {
 
 
         } else if (leftLayer.getX() + leftLayer.getWidth() > x) { //Edge within a layer.
-            System.out.println("Within layer");
             for (DrawableNode left : leftLayer.getNodes()) {
                 for (DrawableNode right : this.getChildren(left)) {
                     if (calculateEdgeInLayer(left, right, x, y)) {
@@ -427,6 +425,15 @@ public class SubGraph implements Iterable<DrawableNode> {
         return null;
     }
 
+    /**
+     * Calculates the edges and see if the onclick is on a line. BUT THIS TIME INSIDE A LAYER
+     *
+     * @param left node of the edge.
+     * @param right node of the edge.
+     * @param x location
+     * @param y location
+     * @return true if clicked on edge, false if not
+     */
     private boolean calculateEdgeInLayer(DrawableNode left, DrawableNode right, double x, double y) {
         double start = left.getRightBorderCenter().getX();
         Layer layer = left.getParentSegment().getLayer();
