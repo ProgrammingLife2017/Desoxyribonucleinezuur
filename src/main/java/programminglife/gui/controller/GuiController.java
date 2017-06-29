@@ -560,8 +560,7 @@ public class GuiController implements Observer {
             }
         });
 
-        st.show();
-        btnConsole.setSelected(true);
+        btnConsole.setSelected(false);
         root.visibleProperty().bind(btnConsole.selectedProperty());
 
         Console.setOut(console.getOut());
@@ -650,7 +649,7 @@ public class GuiController implements Observer {
 
         TextField genomeLength = null;
         TextArea genomes = null;
-        
+
         if (genomesEdge != null) {
             String result = graphController.getGraph().getGenomeNames(genomesEdge).toString();
             int amount = graphController.getGraph().getGenomeNames(genomesEdge).size();
