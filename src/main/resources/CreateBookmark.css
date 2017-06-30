@@ -54,7 +54,7 @@
 
 .text-field {
     -fx-text-box-border: transparent;
-    -fx-background-color: gray;
+    -fx-background-color: darkgray;
     -fx-font-size: 10pt;
     -fx-text-fill: white;
 }
@@ -62,12 +62,12 @@
 .text-area {
     -fx-font-size: 10pt;
     -fx-text-fill: white;
-    -fx-background-color: gray;
+    -fx-background-color: darkgray;
 }
 
 .text-area .content {
     -fx-text-box-border: #696969;
-    -fx-background-color: gray;
+    -fx-background-color: darkgray;
 }
 
 .text-area .scroll-pane {

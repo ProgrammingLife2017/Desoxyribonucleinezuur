@@ -41,11 +41,11 @@
             <Button fx:id="btnBookmark" layoutX="20.0" layoutY="240.0" minWidth="100.0" mnemonicParsing="false" text="Bookmark" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0"/>
         </AnchorPane>
         <AnchorPane fx:id="anchorGraphPanel" minHeight="200" minWidth="200" prefHeight="Infinity" prefWidth="Infinity">
-            <Canvas fx:id="miniMap" height="100" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"/>
+            <ResizableCanvas fx:id="miniMap" height="100" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"/>
             <ResizableCanvas fx:id="canvas" height="1000" width="1000" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
             <ProgressBar fx:id="progressBar" minHeight="18.0" minWidth="100.0" progress="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"/>
         </AnchorPane>
-        <AnchorPane fx:id="anchorTabPanel" maxWidth="500.0" minWidth="140.0" prefHeight="800.0" prefWidth="Infinity">
+        <AnchorPane fx:id="anchorTabPanel" maxWidth="500.0" minWidth="500.0" prefHeight="800.0" prefWidth="Infinity">
             <TabPane fx:id="paneTab" maxWidth="500.0" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="100.0" tabMaxWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                 <Tab fx:id="infoTab" text="Graph Info">
                     <AnchorPane fx:id="anchorGraphInfo" minWidth="50.0">

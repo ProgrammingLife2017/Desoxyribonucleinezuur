@@ -30,6 +30,8 @@ class GraphController {
     private DrawableSegment clickedShift;
     private DrawableSNP clickedSNP;
     private DrawableSNP clickedSNPShift;
+    private DrawableEdge clickedEdge;
+    private DrawableEdge clickedEdgeShift;
     private Map<DrawableNode, List<Color>> nodeGenomeList;
 
     private int centerNodeInt;
@@ -431,19 +433,19 @@ class GraphController {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
         if (clicked != null) {
-            highlightNode(clicked, Color.DARKTURQUOISE, true);
+            highlightNode(clicked, Color.CYAN, true);
             clicked.setStrokeWidth(5.0 * subGraph.getZoomLevel());
         }
         if (clickedSNP != null) {
-            highlightNode(clickedSNP, Color.DARKTURQUOISE, true);
+            highlightNode(clickedSNP, Color.CYAN, true);
             clickedSNP.setStrokeWidth(5.0 * subGraph.getZoomLevel());
         }
         if (clickedShift != null) {
-            highlightNode(clickedShift, Color.PURPLE, true);
+            highlightNode(clickedShift, Color.CYAN, true);
             clickedShift.setStrokeWidth(5.0 * subGraph.getZoomLevel());
         }
         if (clickedSNPShift != null) {
-            highlightNode(clickedSNPShift, Color.PURPLE, true);
+            highlightNode(clickedSNPShift, Color.CYAN, true);
             clickedSNPShift.setStrokeWidth(5.0 * subGraph.getZoomLevel());
         }
         if (clicked == clickedShift && clicked != null && clickedShift != null) {
@@ -588,11 +590,11 @@ class GraphController {
             this.clickedSNP = snp;
 
             if (segment != null) {
-                highlightNode(segment, Color.DARKTURQUOISE, true);
+                highlightNode(segment, Color.CYAN, true);
                 segment.setStrokeWidth(5.0 * subGraph.getZoomLevel()); //Correct thickness when zoomed
             }
             if (snp != null) {
-                highlightNode(snp, Color.DARKTURQUOISE, true);
+                highlightNode(snp, Color.CYAN, true);
                 snp.setStrokeWidth(5.0 * subGraph.getZoomLevel()); //Correct thickness when zoomed
             }
         } else {
@@ -606,11 +608,11 @@ class GraphController {
             this.clickedSNPShift = snp;
 
             if (segment != null) {
-                highlightNode(segment, Color.PURPLE, true);
+                highlightNode(segment, Color.CYAN, true);
                 segment.setStrokeWidth(5.0 * subGraph.getZoomLevel()); //Correct thickness when zoomed
             }
             if (snp != null) {
-                highlightNode(snp, Color.PURPLE, true);
+                highlightNode(snp, Color.CYAN, true);
                 snp.setStrokeWidth(5.0 * subGraph.getZoomLevel()); //Correct thickness when zoomed
             }
         }

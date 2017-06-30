@@ -408,7 +408,7 @@ public class GuiController implements Observer {
             }
             GuiCreateBookmarkController gc = loader.getController();
             gc.setGuiController(this);
-            gc.setText(txtCenterNode.getText(), txtMaxDrawDepth.getText());
+            gc.setText(txtCenterNode.getText());
             Scene scene = new Scene(page);
             Stage bookmarkDialogStage = new Stage();
             bookmarkDialogStage.setResizable(false);

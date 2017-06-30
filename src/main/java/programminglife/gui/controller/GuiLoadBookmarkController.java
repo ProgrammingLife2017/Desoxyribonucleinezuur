@@ -100,6 +100,12 @@ public class GuiLoadBookmarkController implements Observer {
         Bookmark bookmark = checkBookmarkSelection();
         if (bookmark != null) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            DialogPane pane = alert.getDialogPane();
+            if (ProgrammingLife.getShowCSS()) {
+                pane.getStylesheets().add("/Alerts.css");
+            } else {
+                pane.getStylesheets().removeAll();
+            }
             alert.setTitle("Confirm Deletion");
             alert.setHeaderText("Do you really want to delete bookmark: \"" + bookmark.getBookmarkName() + "\"?");
             Optional<ButtonType> result = alert.showAndWait();
