@@ -31,7 +31,7 @@ You can open bookmarks with Bookmarks -> Open Bookmark (CTRL+B). It will show a 
 ### Misc features
 - Dark theme: use view -> Toggle Dark or CTRL + Z to switch to a dark theme.
 - Console: use view -> Toggle console to show a console with a bit of debugging information.
-- Instructions: Some text with basic instructions on using the program. 
+- Instructions: Use help -> instructions to get some text with basic instructions on using the program. 
 - About: In help -> about, there is some basic information about the program and its creators.
 
 ## About this project
