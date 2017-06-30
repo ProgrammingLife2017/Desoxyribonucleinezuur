@@ -108,8 +108,12 @@ public class DrawableSegment extends DrawableNode {
     protected void setDrawDimensions(double zoomLevel) {
         int segmentLength = this.getSequenceLength();
         double width, height;
+        double linearUntil = 10;
 
-        width = Math.log(Math.max(segmentLength - 9, 1)) / Math.log(1.15) * 10 + Math.min(10 * segmentLength, 100);
+        width  = Math.log(Math.max(segmentLength - linearUntil + 1, 1)) / Math.log(1.15);
+        width += Math.min(segmentLength, linearUntil);
+        width *= NUCLEOTIDE_WIDTH;
+
         height = NODE_HEIGHT;
 
         this.setSize(width * zoomLevel, height * zoomLevel);
