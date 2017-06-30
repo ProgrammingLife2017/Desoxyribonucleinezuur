@@ -2,12 +2,10 @@
 
 <!--suppress ALL -->
 
-<?import java.lang.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-
 <!--suppress ALL -->
 
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <AnchorPane fx:id="bookmarkCreator" maxHeight="Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="323.0" prefWidth="462.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="programminglife.gui.controller.GuiCreateBookmarkController">
    <children>
        <GridPane layoutX="228.0" layoutY="32.0" prefHeight="205.0" prefWidth="442.0" AnchorPane.bottomAnchor="58.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="32.0">

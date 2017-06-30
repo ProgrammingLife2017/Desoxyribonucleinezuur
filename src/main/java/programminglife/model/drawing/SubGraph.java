@@ -131,7 +131,7 @@ public class SubGraph implements Iterable<DrawableNode> {
     /**
      * Detect SNPs and replace them.
      */
-    public void replaceSNPs() {
+    private void replaceSNPs() {
         if (this.replaceSNPs) {
             Map<Integer, DrawableNode> nodesCopy = new LinkedHashMap<>(this.nodes);
             for (Map.Entry<Integer, DrawableNode> entry : nodesCopy.entrySet()) {
@@ -493,11 +493,10 @@ public class SubGraph implements Iterable<DrawableNode> {
      * @param child node of the edge.
      * @return Collection of Integer which are the id's of the genomes.
      */
-    public Collection<Integer> getGenomesEdge(DrawableNode parent, DrawableNode child) {
+    private Collection<Integer> getGenomesEdge(DrawableNode parent, DrawableNode child) {
         Map<DrawableNode, Collection<Integer>> from = this.getGenomes().get(parent);
                 if (from != null) {
-                    Collection<Integer> genomes = from.get(child);
-                    return genomes;
+                    return from.get(child);
                 }
         return null;
 
@@ -510,7 +509,7 @@ public class SubGraph implements Iterable<DrawableNode> {
      * @return Collection<DrawableNode> the collection of segment from a parent.
      */
     public Collection<DrawableNode> getParentSegments(DrawableSegment node) {
-        return this.getParents(node).stream().map(parent -> parent.getParentSegment()).collect(Collectors.toSet());
+        return this.getParents(node).stream().map(DrawableNode::getParentSegment).collect(Collectors.toSet());
     }
 
     /**
@@ -520,7 +519,7 @@ public class SubGraph implements Iterable<DrawableNode> {
      * @return Collection<DrawableNode> the collection of segment from a child.
      */
     public Collection<DrawableNode> getChildSegments(DrawableSegment node) {
-        return this.getChildren(node).stream().map(child -> child.getChildSegment()).collect(Collectors.toSet());
+        return this.getChildren(node).stream().map(DrawableNode::getChildSegment).collect(Collectors.toSet());
     }
 
     /**
@@ -1101,7 +1100,7 @@ public class SubGraph implements Iterable<DrawableNode> {
         return this.nodes;
     }
 
-    public GenomeGraph getGraph() {
+    private GenomeGraph getGraph() {
         return graph;
     }
 

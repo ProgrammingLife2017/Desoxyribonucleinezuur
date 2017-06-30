@@ -32,7 +32,7 @@ class GraphController {
     private DrawableSNP clickedSNPShift;
     private DrawableEdge clickedEdge;
     private DrawableEdge clickedEdgeShift;
-    private Map<DrawableNode, List<Color>> nodeGenomeList;
+    private final Map<DrawableNode, List<Color>> nodeGenomeList;
 
     private int centerNodeInt;
     private boolean drawSNP = false;
@@ -98,7 +98,7 @@ class GraphController {
     private void colorize() {
         subGraph.colorize();
     }
-    
+
     /**
      * Method to highlight a collection of nodes.
      *
@@ -635,8 +635,7 @@ class GraphController {
     public Collection<Integer> getGenomesEdge(DrawableEdge edge) {
         Map<DrawableNode, Collection<Integer>> from = subGraph.getGenomes().get(edge.getStart().getParentSegment());
         if (from != null) {
-            Collection<Integer> genomes = from.get(edge.getEnd().getChildSegment());
-            return genomes;
+            return from.get(edge.getEnd().getChildSegment());
         }
         return null;
     }
@@ -670,7 +669,7 @@ class GraphController {
         this.highlightController = highlightController;
     }
 
-    public void setCenterNode(int id) {
+    private void setCenterNode(int id) {
         this.centerNodeInt = id;
     }
 

@@ -135,7 +135,7 @@ public class GraphParser extends Observable implements Runnable {
      * @return The number of lines in the file
      * @throws IOException if the file cannot be found or another problem occurs opening the file.
      */
-    static int countLines(File file) throws IOException {
+    private static int countLines(File file) throws IOException {
         try (InputStream is = new BufferedInputStream(new FileInputStream(file))) {
             byte[] c = new byte[1024];
             int count = 1;

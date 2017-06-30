@@ -15,8 +15,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class SubGraphTest {
-    GenomeGraph graph;
-    DrawableSegment centerNode;
+    private GenomeGraph graph;
+    private DrawableSegment centerNode;
 
     private static String TEST_PATH;
 

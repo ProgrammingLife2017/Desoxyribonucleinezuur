@@ -92,7 +92,7 @@ public class GuiController implements Observer {
     private MiniMapController miniMapController;
     private HighlightController highlightController;
     private File file;
-    private File recentFileGFA = new File("RecentGFA.txt");
+    private final File recentFileGFA = new File("RecentGFA.txt");
     private Thread parseThread;
 
     private final ExtensionFilter extFilterGFA = new ExtensionFilter("GFA files (*.gfa)", "*.GFA");
@@ -268,7 +268,7 @@ public class GuiController implements Observer {
 
         btnDark.setOnAction(event -> {
             ProgrammingLife.toggleCSS();
-            draw();
+            this.draw();
         });
         btnDark.setAccelerator(new KeyCodeCombination(KeyCode.Z, KeyCodeCombination.CONTROL_DOWN));
     }
@@ -318,9 +318,7 @@ public class GuiController implements Observer {
     private void initLeftControlpanelScreenModifiers() {
         disableGraphUIElements(true);
 
-        btnZoomReset.setOnAction(event -> {
-            this.draw();
-        });
+        btnZoomReset.setOnAction(event -> this.draw());
     }
 
     /**
@@ -380,17 +378,19 @@ public class GuiController implements Observer {
         } catch (NumberFormatException e) {
             Alerts.warning("Center node ID is not a number, try again with a number as input.");
         }
-        if (centerNode > getGraphController().getGraph().size()) {
-            centerNode = 1;
-        }
-        if (graphController.getGraph().contains(centerNode)) {
-            this.graphController.clear();
-            this.graphController.draw(centerNode, maxDepth);
-            this.miniMapController.showPosition(centerNode);
-            resetZoom();
-            Console.println("[%s] Graph drawn.", Thread.currentThread().getName());
-        } else {
-            Alerts.warning("The centernode is not a existing node, try again with a number that exists as a node.");
+        if (getGraphController().getGraph() != null) {
+            if (centerNode > getGraphController().getGraph().size()) {
+                centerNode = 1;
+            }
+            if (graphController.getGraph().contains(centerNode)) {
+                this.graphController.clear();
+                this.graphController.draw(centerNode, maxDepth);
+                this.miniMapController.showPosition(centerNode);
+                resetZoom();
+                Console.println("[%s] Graph drawn.", Thread.currentThread().getName());
+            } else {
+                Alerts.warning("The centernode is not a existing node, try again with a number that exists as a node.");
+            }
         }
     }
 

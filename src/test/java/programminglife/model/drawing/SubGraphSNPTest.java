@@ -14,7 +14,7 @@ import static org.junit.Assert.assertNull;
  * Class for the SubGraphSNPTest.
  */
 public class SubGraphSNPTest {
-    GenomeGraph g;
+    private GenomeGraph g;
 
     @BeforeClass
     public static void setUpClass() throws Exception {

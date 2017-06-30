@@ -18,8 +18,8 @@ public class GenomeGraphTest {
 
 
     private static final String TEST_DB = "test.db";
-    GenomeGraph graph;
-    int nodeID;
+    private GenomeGraph graph;
+    private int nodeID;
 
     @BeforeClass
     public static void setUpClass() throws Exception {

@@ -13,11 +13,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class DrawableEdgeTest {
 
-    DrawableSegment parent;
-    DrawableSegment child;
-    DrawableEdge edge;
-    SubGraph subGraph;
-    GenomeGraph graph;
+    private GenomeGraph graph;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -56,7 +52,7 @@ public class DrawableEdgeTest {
         graph.addEdge(3,4);
         graph.cacheLastEdges();
 
-        subGraph = new SubGraph(new DrawableSegment(graph, 3, 1),10,false);
+        SubGraph subGraph = new SubGraph(new DrawableSegment(graph, 3, 1), 10, false);
         DrawableNode seg1 = subGraph.getNodes().get(3);
         DrawableNode seg2 = subGraph.getNodes().get(4);
 

@@ -30,7 +30,6 @@ import static org.junit.Assert.*;
 public class GuiControllerTest extends FxRobot {
     private static final String TEST_DB = "test-gui.gfa.db";
     private static final String TEST_File = "/test-gui.gfa";
-    private static final String TEST_DB2 = "test-gui.db";
 
     private static Stage primaryStage;
     private static String operatingSystem;

@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.canvas.Canvas?>
+<!--suppress ALL -->
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import programminglife.gui.ResizableCanvas?>
-
-<!--suppress ALL -->
 <?import javafx.scene.text.Text?>
+<?import programminglife.gui.ResizableCanvas?>
 <AnchorPane prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="programminglife.gui.controller.GuiController">
     <MenuBar fx:id="menuBar" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <Menu fx:id="menuFile" mnemonicParsing="false" text="File">

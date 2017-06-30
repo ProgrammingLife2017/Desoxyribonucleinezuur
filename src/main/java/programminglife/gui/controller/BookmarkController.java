@@ -28,7 +28,7 @@ import java.util.Map;
 /**
  * This class is a controller for loading storing and deleting bookmarks.
  */
-public final class BookmarkController {
+final class BookmarkController {
     private static final String BOOKMARKPATH = "bookmarks.xml";
 
     /**

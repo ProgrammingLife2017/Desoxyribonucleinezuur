@@ -19,7 +19,7 @@ import static org.junit.Assert.*;
 public class BookmarkControllerTest {
     private Bookmark bookmark;
     private String testPath;
-    private File file = new File("src/test/resources/checkFile.xml");
+    private final File file = new File("src/test/resources/checkFile.xml");
 
 
     @BeforeClass
