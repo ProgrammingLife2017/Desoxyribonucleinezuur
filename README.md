@@ -1,7 +1,7 @@
 # Multi genome visualizer
 
 ## Quick overview
-This is a program for visiualizing the differences between genomes in huge data files. It will represent these as graphs, where each node represent to a nucleotide sequence. Differences in nucleotide sequences are represented with nodes splitting into multiple different nodes, connected by edges. There is support for bookmarks, a minimap for quick navigataion, the highlighting of user-specified genomes, and info about certain nodes.
+This is a program for visualizing the differences between genomes in huge data files. It will represent these as graphs, where each node represent to a nucleotide sequence. Differences in nucleotide sequences are represented with nodes splitting into multiple different nodes, connected by edges. There is support for bookmarks, a minimap for quick navigataion, the highlighting of user-specified genomes, and info about certain nodes.
 You can download a binary (`.jar`) of this program in code -> releases. Note that you need a 64 bit JVM (Java Virtual machine) with Java 8 to run it. You can download the latest Java JVM at this link: https://www.java.com/en/download/.
 
 ## Detailed overview
