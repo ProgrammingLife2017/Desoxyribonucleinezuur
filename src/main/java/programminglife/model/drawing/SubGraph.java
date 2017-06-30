@@ -387,13 +387,15 @@ public class SubGraph implements Iterable<DrawableNode> {
     private DrawableEdge onClickEdge(double x, double y) {
 
         //Find layers on the left and the right of the clicked location.
-        int foundLayerIndex = getLayerIndex(layers, x);
-        int leftLayerIndex;
+        int leftLayerIndex = getLayerIndex(layers, x);
 
-        if (layers.get(foundLayerIndex).getX() > x) {
-            leftLayerIndex = foundLayerIndex - 1;
-        } else {
-            leftLayerIndex = foundLayerIndex;
+        if (layers.get(leftLayerIndex).getX() > x) {
+            if (leftLayerIndex == 0) {
+                // outside graph, no edge can be clicked here.
+                return null;
+            } else {
+                leftLayerIndex--;
+            }
         }
 
         //get the corresponding layers.
@@ -573,11 +575,14 @@ public class SubGraph implements Iterable<DrawableNode> {
             // check which of the two layers is closest.
             int insertionPoint = -(resultIndex + 1);
             int rightLayerIndex = insertionPoint;
+            int leftLayerIndex = insertionPoint - 1;
+
             if (rightLayerIndex >= layers.size()) {
                 return layers.size() - 1;
+            } else if (leftLayerIndex <= 0) {
+                return 0;
             }
 
-            int leftLayerIndex = insertionPoint - 1;
             Layer rightLayer = layers.get(rightLayerIndex);
             Layer leftLayer = layers.get(leftLayerIndex);
 
