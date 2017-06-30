@@ -54,21 +54,10 @@
     -fx-padding: 1 3 1 3;
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
-    -fx-font-family: monospace;
 }
 
 #txtCenterNode {
     -fx-background-color: white;
-}
-
-#txtRadius {
-    -fx-text-box-border: transparent;
-    -fx-background-color: none;
-    -fx-background-insets: 0;
-    -fx-padding: 1 3 1 3;
-    -fx-focus-color: transparent;
-    -fx-faint-focus-color: transparent;
-    -fx-font-family: monospace;
 }
 
 #txtMaxDrawDepth {
@@ -85,4 +74,20 @@
 
 #txtMax {
     -fx-background-color: white;
+}
+
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-opacity: 0;
+}
+
+.tab-pane {
+    -fx-tab-min-width:90px;
+}
+
+.tab .tab-label {
+    -fx-alignment: CENTER;
+}
+
+.tab:selected .tab-label {
+    -fx-alignment: CENTER;
 }
