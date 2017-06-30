@@ -30,7 +30,7 @@ class GraphController {
     private DrawableSegment clickedShift;
     private DrawableSNP clickedSNP;
     private DrawableSNP clickedSNPShift;
-    private Map<DrawableNode, List<Color>> nodeGenomeList;
+    private final Map<DrawableNode, List<Color>> nodeGenomeList;
 
     private int centerNodeInt;
     private boolean drawSNP = false;
@@ -51,7 +51,7 @@ class GraphController {
         this.nodeGenomeList = new HashMap<>();
     }
 
-    public int getCenterNodeInt() {
+    int getCenterNodeInt() {
         return this.centerNodeInt;
     }
 
@@ -73,7 +73,7 @@ class GraphController {
      * @param center the node of which the radius starts.
      * @param radius the amount of layers to be drawn.
      */
-    public void draw(int center, int radius) {
+    void draw(int center, int radius) {
         time("Total drawing", () -> {
             DrawableSegment centerNode = new DrawableSegment(graph, center, 1);
             centerNodeInt = centerNode.getIdentifier();
@@ -96,7 +96,7 @@ class GraphController {
     private void colorize() {
         subGraph.colorize();
     }
-    
+
     /**
      * Method to highlight a collection of nodes.
      *
@@ -367,7 +367,7 @@ class GraphController {
     /**
      * Clear the draw area.
      */
-    public void clear() {
+    void clear() {
         this.canvas.getGraphicsContext2D().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
     }
 
@@ -406,7 +406,7 @@ class GraphController {
      * @param xDifference double with the value of the change in the X (horizontal) direction.
      * @param yDifference double with the value of the change in the Y (vertical) direction.
      */
-    public void translate(double xDifference, double yDifference) {
+    void translate(double xDifference, double yDifference) {
         subGraph.translate(xDifference, yDifference);
         draw(canvas.getGraphicsContext2D());
     }
@@ -417,7 +417,7 @@ class GraphController {
      * @param scale double with the value of the increase of the nodes. Value higher than 1 means that the node size
      *              decreases, value below 1 means that the node size increases.
      */
-    public void zoom(double scale) {
+    void zoom(double scale) {
         subGraph.zoom(scale);
         draw(canvas.getGraphicsContext2D());
     }
@@ -431,19 +431,19 @@ class GraphController {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
         if (clicked != null) {
-            highlightNode(clicked, Color.DARKTURQUOISE, true);
+            highlightNode(clicked, Color.CYAN, true);
             clicked.setStrokeWidth(5.0 * subGraph.getZoomLevel());
         }
         if (clickedSNP != null) {
-            highlightNode(clickedSNP, Color.DARKTURQUOISE, true);
+            highlightNode(clickedSNP, Color.CYAN, true);
             clickedSNP.setStrokeWidth(5.0 * subGraph.getZoomLevel());
         }
         if (clickedShift != null) {
-            highlightNode(clickedShift, Color.PURPLE, true);
+            highlightNode(clickedShift, Color.CYAN, true);
             clickedShift.setStrokeWidth(5.0 * subGraph.getZoomLevel());
         }
         if (clickedSNPShift != null) {
-            highlightNode(clickedSNPShift, Color.PURPLE, true);
+            highlightNode(clickedSNPShift, Color.CYAN, true);
             clickedSNPShift.setStrokeWidth(5.0 * subGraph.getZoomLevel());
         }
         if (clicked == clickedShift && clicked != null && clickedShift != null) {
@@ -484,7 +484,7 @@ class GraphController {
      * @param max   The maximal amount of genomes
      * @param color the {@link Color} in which the highlight has to be done.
      */
-    public void highlightMinMax(int min, int max, Color color) {
+    void highlightMinMax(int min, int max, Color color) {
         LinkedList<DrawableNode> drawNodeList = new LinkedList<>();
 
         for (DrawableNode drawableNode : subGraph.getNodes().values()) {
@@ -518,7 +518,7 @@ class GraphController {
      * @param genomeID the GenomeID to highlight on.
      * @param color the Color to put on the node.
      */
-    public void highlightByGenome(int genomeID, Color color) {
+    void highlightByGenome(int genomeID, Color color) {
         LinkedList<DrawableNode> drawNodeList = new LinkedList<>();
 
         for (DrawableNode drawableNode : subGraph.getNodes().values()) {
@@ -565,7 +565,7 @@ class GraphController {
      * @param y position vertically where clicked
      * @return nodeClicked {@link DrawableNode} returns null if no node is clicked.
      */
-    public Drawable onClick(double x, double y) {
+    Drawable onClick(double x, double y) {
         return subGraph.onClick(x, y);
     }
 
@@ -576,7 +576,7 @@ class GraphController {
      * @param snp          is the {@link DrawableSNP} clicked on.
      * @param shiftPressed boolean true if shift was pressed during the click.
      */
-    public void highlightClicked(DrawableSegment segment, DrawableSNP snp, boolean shiftPressed) {
+    void highlightClicked(DrawableSegment segment, DrawableSNP snp, boolean shiftPressed) {
         if (shiftPressed) {
             if (clicked != null) {
                 this.clicked.colorize(subGraph);
@@ -588,11 +588,11 @@ class GraphController {
             this.clickedSNP = snp;
 
             if (segment != null) {
-                highlightNode(segment, Color.DARKTURQUOISE, true);
+                highlightNode(segment, Color.CYAN, true);
                 segment.setStrokeWidth(5.0 * subGraph.getZoomLevel()); //Correct thickness when zoomed
             }
             if (snp != null) {
-                highlightNode(snp, Color.DARKTURQUOISE, true);
+                highlightNode(snp, Color.CYAN, true);
                 snp.setStrokeWidth(5.0 * subGraph.getZoomLevel()); //Correct thickness when zoomed
             }
         } else {
@@ -606,11 +606,11 @@ class GraphController {
             this.clickedSNPShift = snp;
 
             if (segment != null) {
-                highlightNode(segment, Color.PURPLE, true);
+                highlightNode(segment, Color.CYAN, true);
                 segment.setStrokeWidth(5.0 * subGraph.getZoomLevel()); //Correct thickness when zoomed
             }
             if (snp != null) {
-                highlightNode(snp, Color.PURPLE, true);
+                highlightNode(snp, Color.CYAN, true);
                 snp.setStrokeWidth(5.0 * subGraph.getZoomLevel()); //Correct thickness when zoomed
             }
         }
@@ -620,7 +620,7 @@ class GraphController {
     /**
      * Method to reset the zoomLevel.
      */
-    public void resetZoom() {
+    void resetZoom() {
         this.subGraph.setZoomLevel(1);
     }
 
@@ -630,11 +630,10 @@ class GraphController {
      * @param edge the Drawable edge the check which genomes it contains.
      * @return Collection<Integer> of the genomes in the edge.
      */
-    public Collection<Integer> getGenomesEdge(DrawableEdge edge) {
+    Collection<Integer> getGenomesEdge(DrawableEdge edge) {
         Map<DrawableNode, Collection<Integer>> from = subGraph.getGenomes().get(edge.getStart().getParentSegment());
         if (from != null) {
-            Collection<Integer> genomes = from.get(edge.getEnd().getChildSegment());
-            return genomes;
+            return from.get(edge.getEnd().getChildSegment());
         }
         return null;
     }
@@ -664,19 +663,19 @@ class GraphController {
      *
      * @param highlightController the controller to be set.
      */
-    public void setHighlightController(HighlightController highlightController) {
+    void setHighlightController(HighlightController highlightController) {
         this.highlightController = highlightController;
     }
 
-    public void setCenterNode(int id) {
+    private void setCenterNode(int id) {
         this.centerNodeInt = id;
     }
 
-    public void setMiniMapController(MiniMapController miniMapController) {
+    void setMiniMapController(MiniMapController miniMapController) {
         this.miniMapController = miniMapController;
     }
 
-    public void setGuiController(GuiController guiController) {
+    void setGuiController(GuiController guiController) {
         this.guiController = guiController;
     }
 }

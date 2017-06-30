@@ -103,7 +103,7 @@ public final class Cache {
      * @return The converted name.
      */
     @NotNull
-    public static String toDBFile(String name) {
+    static String toDBFile(String name) {
         if (name.toLowerCase().endsWith(".gfa")) {
             name = name.substring(0, name.length() - 4);
         }
@@ -128,7 +128,7 @@ public final class Cache {
      * @param name collection to check for
      * @return true iff a cache exists for the file, false iff otherwise.
      */
-    public static boolean hasCache(String name) {
+    static boolean hasCache(String name) {
         return Files.exists(Paths.get(toDBFile(name)));
     }
 

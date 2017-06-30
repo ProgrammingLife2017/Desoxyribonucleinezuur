@@ -7,10 +7,7 @@ import org.junit.Test;
 import programminglife.gui.InitFXThread;
 import programminglife.model.GenomeGraph;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 
@@ -18,7 +15,7 @@ import static org.junit.Assert.assertEquals;
  * Class for the SubGraphGenomesOnEdgeTest.
  */
 public class SubGraphGenomesOnEdgeTest {
-    GenomeGraph g;
+    private GenomeGraph g;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -107,8 +104,8 @@ public class SubGraphGenomesOnEdgeTest {
         assertEquals(new HashSet<>(Arrays.asList(2, 5)), new HashSet<>(genomes.get(seg3).get(seg4)));
         assertEquals(new HashSet<>(Arrays.asList(0, 1)), new HashSet<>(genomes.get(seg3).get(seg5)));
         assertEquals(new HashSet<>(Arrays.asList(3, 4)), new HashSet<>(genomes.get(seg3).get(seg6)));
-        assertEquals(new HashSet<>(Arrays.asList(2)), new HashSet<>(genomes.get(seg4).get(seg6)));
-        assertEquals(new HashSet<>(Arrays.asList(5)), new HashSet<>(genomes.get(seg4).get(seg5)));
+        assertEquals(new HashSet<>(Collections.singletonList(2)), new HashSet<>(genomes.get(seg4).get(seg6)));
+        assertEquals(new HashSet<>(Collections.singletonList(5)), new HashSet<>(genomes.get(seg4).get(seg5)));
         assertEquals(new HashSet<>(Arrays.asList(0, 1, 5)), new HashSet<>(genomes.get(seg5).get(seg6)));
     }
 
@@ -144,9 +141,9 @@ public class SubGraphGenomesOnEdgeTest {
         Map<DrawableNode, Map<DrawableNode, Collection<Integer>>> genomes = sg.calculateGenomes();
 
         assertEquals(new HashSet<>(Arrays.asList(0, 1, 2)), new HashSet<>(genomes.get(seg3).get(seg4)));
-        assertEquals(new HashSet<>(Arrays.asList(3)), new HashSet<>(genomes.get(seg3).get(seg5)));
-        assertEquals(new HashSet<>(Arrays.asList(2)), new HashSet<>(genomes.get(seg4).get(seg6)));
-        assertEquals(new HashSet<>(Arrays.asList(0)), new HashSet<>(genomes.get(seg4).get(seg5)));
+        assertEquals(new HashSet<>(Collections.singletonList(3)), new HashSet<>(genomes.get(seg3).get(seg5)));
+        assertEquals(new HashSet<>(Collections.singletonList(2)), new HashSet<>(genomes.get(seg4).get(seg6)));
+        assertEquals(new HashSet<>(Collections.singletonList(0)), new HashSet<>(genomes.get(seg4).get(seg5)));
         assertEquals(new HashSet<>(Arrays.asList(0, 3)), new HashSet<>(genomes.get(seg5).get(seg6)));
     }
 }

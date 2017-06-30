@@ -46,7 +46,7 @@ public class XYCoordinate {
      * @param factor the factor
      * @return the new coordinate
      */
-    public XYCoordinate multiply(double factor) {
+    XYCoordinate multiply(double factor) {
         return new XYCoordinate((int) (this.getX() * factor), (int) (this.getY() * factor));
     }
 

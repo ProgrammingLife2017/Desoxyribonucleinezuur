@@ -15,7 +15,7 @@ import static org.junit.Assert.assertTrue;
 public class XYCoordinateTest {
     private XYCoordinate coordinate1;
     private XYCoordinate coordinate2;
-    private static double DELTA = 0.000001;
+    private static final double DELTA = 0.000001;
 
     @BeforeClass
     public static void setUpClass() throws Exception {

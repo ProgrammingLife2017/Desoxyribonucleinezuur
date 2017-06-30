@@ -106,7 +106,7 @@ public class GenomeGraph {
      * @param genomes the IDs of the genomes to identify
      * @return their names
      */
-    public Collection<String> getGenomeNames(int[] genomes) {
+    Collection<String> getGenomeNames(int[] genomes) {
         return Arrays.stream(genomes)
                 .boxed()
                 .map(this::getGenomeName)
@@ -131,7 +131,7 @@ public class GenomeGraph {
      * @param genomeID the Genome to look up
      * @return a {@link Collection} of Node IDs in the Genome
      */
-    public Collection<Integer> getNodeIDs(int genomeID) {
+    Collection<Integer> getNodeIDs(int genomeID) {
         return this.cache.getGenomeNodeIDs(genomeID);
     }
 
@@ -208,7 +208,7 @@ public class GenomeGraph {
      * @param genomeID the ID of the Genome
      * @return its name
      */
-    public String getGenomeName(int genomeID) {
+    String getGenomeName(int genomeID) {
         return this.cache.getGenomeName(genomeID);
     }
 

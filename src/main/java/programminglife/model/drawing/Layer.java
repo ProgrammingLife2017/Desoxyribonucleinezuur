@@ -20,7 +20,7 @@ public class Layer implements Iterable<DrawableNode>, Comparable<Double> {
     /**
      * Default empty constructor.
      */
-    public Layer() {
+    Layer() {
         this.x = 0;
         this.nodes = new ArrayList<>();
     }
@@ -68,7 +68,7 @@ public class Layer implements Iterable<DrawableNode>, Comparable<Double> {
      * @param hasParents Whether the neighbouring layer contains the parents (true)
      *                   or the children (false) of this layer.
      */
-    public void sort(SubGraph subGraph, Layer neighbour, boolean hasParents) {
+    void sort(SubGraph subGraph, Layer neighbour, boolean hasParents) {
         Map<DrawableNode, Double> averages = new LinkedHashMap<>();
 
         for (DrawableNode n : nodes) {
@@ -149,7 +149,7 @@ public class Layer implements Iterable<DrawableNode>, Comparable<Double> {
      * @param y double of the y location.
      * @param zoomLevel double of the zoomLevel.
      */
-    public void setDrawLocations(double y, double zoomLevel) {
+    void setDrawLocations(double y, double zoomLevel) {
 
         for (DrawableNode node : nodes) {
             if (node instanceof DrawableDummy) {
@@ -193,7 +193,7 @@ public class Layer implements Iterable<DrawableNode>, Comparable<Double> {
         return x;
     }
 
-    public void setX(double x) {
+    void setX(double x) {
         this.x = x;
     }
 

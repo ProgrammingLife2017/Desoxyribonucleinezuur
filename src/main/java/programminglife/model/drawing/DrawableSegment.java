@@ -105,7 +105,7 @@ public class DrawableSegment extends DrawableNode {
      * Setter for the dimension of the node.
      */
     @Override
-    public void setDrawDimensions(double zoomLevel) {
+    protected void setDrawDimensions(double zoomLevel) {
         int segmentLength = this.getSequenceLength();
         double width, height;
         double linearUntil = 10;

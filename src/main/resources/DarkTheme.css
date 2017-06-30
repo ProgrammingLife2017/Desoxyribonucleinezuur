@@ -33,7 +33,7 @@
 }
 
 #txtCenterNode {
-    -fx-background-color: gray;
+    -fx-background-color: darkgray;
     -fx-text-fill: white;
 }
 
@@ -48,15 +48,15 @@
 }
 
 #txtSearchGenomes {
-    -fx-background-color: gray;
+    -fx-background-color: darkgray;
 }
 
 #txtMin {
-    -fx-background-color: gray;
+    -fx-background-color: darkgray;
 }
 
 #txtMax {
-    -fx-background-color: gray;
+    -fx-background-color: darkgray;
 }
 
 .text-id {
@@ -75,12 +75,12 @@
     -fx-font-family: monospace;
     -fx-font-size: 10pt;
     -fx-text-fill: white;
-    -fx-background-color: gray;
+    -fx-background-color: darkgray;
 }
 
 .text-area .content {
     -fx-text-box-border: #696969;
-    -fx-background-color: gray;
+    -fx-background-color: darkgray;
 }
 
 .text-area .scroll-pane {

@@ -149,7 +149,7 @@ public abstract class DrawableNode implements Drawable {
      * @param x the x location
      * @param y the y location
      */
-    public final void setLocation(double x, double y) {
+    final void setLocation(double x, double y) {
         this.location.set(x, y);
     }
 
@@ -223,7 +223,7 @@ public abstract class DrawableNode implements Drawable {
      *
      * @param height double of the height to be set.
      */
-    public final void setHeight(double height) {
+    final void setHeight(double height) {
         this.dimensions.setY(height);
     }
 
@@ -276,7 +276,7 @@ public abstract class DrawableNode implements Drawable {
         return layer;
     }
 
-    public void setLayer(Layer layer) {
+    void setLayer(Layer layer) {
         this.layer = layer;
     }
 
@@ -287,7 +287,7 @@ public abstract class DrawableNode implements Drawable {
      *
      * @return A negative unique ID.
      */
-    public static synchronized int getUniqueId() {
+    static synchronized int getUniqueId() {
         uniqueId--;
         return uniqueId;
     }

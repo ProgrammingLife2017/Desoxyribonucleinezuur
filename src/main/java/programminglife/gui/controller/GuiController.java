@@ -92,7 +92,7 @@ public class GuiController implements Observer {
     private MiniMapController miniMapController;
     private HighlightController highlightController;
     private File file;
-    private File recentFileGFA = new File("RecentGFA.txt");
+    private final File recentFileGFA = new File("RecentGFA.txt");
     private Thread parseThread;
 
     private final ExtensionFilter extFilterGFA = new ExtensionFilter("GFA files (*.gfa)", "*.GFA");
@@ -218,9 +218,8 @@ public class GuiController implements Observer {
      * Handles the fileChooser when open a file.
      *
      * @param filter ExtensionFilter of which file type to open.
-     * @param isGFA  boolean to check if it is a GFA file.
      */
-    private void fileChooser(ExtensionFilter filter, boolean isGFA) {
+    private void fileChooser(ExtensionFilter filter) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(filter);
         if (file != null) {
@@ -229,13 +228,11 @@ public class GuiController implements Observer {
         }
         file = fileChooser.showOpenDialog(ProgrammingLife.getStage());
         if (file != null) {
-            if (isGFA) {
-                this.openFile(file);
-                Platform.runLater(() -> {
-                    File recentFileGFA = recentFileControllerGFA.getRecentFile();
-                    recentFileControllerGFA.updateRecent(recentFileGFA, file);
-                });
-            }
+            this.openFile(file);
+            Platform.runLater(() -> {
+                File recentFileGFA = recentFileControllerGFA.getRecentFile();
+                recentFileControllerGFA.updateRecent(recentFileGFA, file);
+            });
         }
     }
 
@@ -245,7 +242,7 @@ public class GuiController implements Observer {
      * Sets the event for the quit MenuItem.
      */
     private void initMenuBar() {
-        btnOpenGFA.setOnAction((ActionEvent event) -> fileChooser(extFilterGFA, true));
+        btnOpenGFA.setOnAction((ActionEvent event) -> fileChooser(extFilterGFA));
         btnOpenGFA.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCodeCombination.CONTROL_DOWN));
 
         btnQuit.setOnAction(event -> Alerts.quitAlert());
@@ -268,7 +265,7 @@ public class GuiController implements Observer {
 
         btnDark.setOnAction(event -> {
             ProgrammingLife.toggleCSS();
-            draw();
+            this.draw();
         });
         btnDark.setAccelerator(new KeyCodeCombination(KeyCode.Z, KeyCodeCombination.CONTROL_DOWN));
     }
@@ -318,9 +315,7 @@ public class GuiController implements Observer {
     private void initLeftControlpanelScreenModifiers() {
         disableGraphUIElements(true);
 
-        btnZoomReset.setOnAction(event -> {
-            this.draw();
-        });
+        btnZoomReset.setOnAction(event -> this.draw());
     }
 
     /**
@@ -380,17 +375,19 @@ public class GuiController implements Observer {
         } catch (NumberFormatException e) {
             Alerts.warning("Center node ID is not a number, try again with a number as input.");
         }
-        if (centerNode > getGraphController().getGraph().size()) {
-            centerNode = 1;
-        }
-        if (graphController.getGraph().contains(centerNode)) {
-            this.graphController.clear();
-            this.graphController.draw(centerNode, maxDepth);
-            this.miniMapController.showPosition(centerNode);
-            resetZoom();
-            Console.println("[%s] Graph drawn.", Thread.currentThread().getName());
-        } else {
-            Alerts.warning("The centernode is not a existing node, try again with a number that exists as a node.");
+        if (getGraphController().getGraph() != null) {
+            if (centerNode > getGraphController().getGraph().size()) {
+                centerNode = 1;
+            }
+            if (graphController.getGraph().contains(centerNode)) {
+                this.graphController.clear();
+                this.graphController.draw(centerNode, maxDepth);
+                this.miniMapController.showPosition(centerNode);
+                resetZoom();
+                Console.println("[%s] Graph drawn.", Thread.currentThread().getName());
+            } else {
+                Alerts.warning("The centernode is not a existing node, try again with a number that exists as a node.");
+            }
         }
     }
 
@@ -408,7 +405,7 @@ public class GuiController implements Observer {
             }
             GuiCreateBookmarkController gc = loader.getController();
             gc.setGuiController(this);
-            gc.setText(txtCenterNode.getText(), txtMaxDrawDepth.getText());
+            gc.setText(txtCenterNode.getText());
             Scene scene = new Scene(page);
             Stage bookmarkDialogStage = new Stage();
             bookmarkDialogStage.setResizable(false);
@@ -488,7 +485,6 @@ public class GuiController implements Observer {
                 } else {
                     showInfoEdge(edge, 10);
                 }
-               // graphController.highlightClicked(edge, shiftPressed); TODO FIX.
             }
         }
     }
@@ -842,7 +838,7 @@ public class GuiController implements Observer {
         return this.graphController;
     }
 
-    public AnchorPane getAnchorLeftControlPanel() {
+    AnchorPane getAnchorLeftControlPanel() {
         return this.anchorLeftControlPanel;
     }
 }

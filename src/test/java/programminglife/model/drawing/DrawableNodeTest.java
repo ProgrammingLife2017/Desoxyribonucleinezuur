@@ -16,8 +16,8 @@ import static org.junit.Assert.assertEquals;
 public class DrawableNodeTest {
     private static final String GRAPH_NAME = "testGraph";
 
-    DrawableSegment node;
-    GenomeGraph g;
+    private DrawableSegment node;
+    private GenomeGraph g;
 
     @BeforeClass
     public static void setUpClass() throws Exception {

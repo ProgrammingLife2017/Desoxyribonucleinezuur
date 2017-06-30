@@ -14,7 +14,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class NumberOnlyListenerTest {
 
-    TextField tf;
+    private TextField tf;
 
     @BeforeClass
     public static void setUpClass() throws Exception {

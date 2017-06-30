@@ -267,11 +267,11 @@ public class HighlightController {
         this.graphController = graphController;
     }
 
-    public Color[] getGenomeColors() {
+    Color[] getGenomeColors() {
         return genomeColors;
     }
 
-    public Collection<Integer> getSelectedGenomes() {
+    Collection<Integer> getSelectedGenomes() {
         return lstSelectedGenomes.getItems().stream()
                 .map(graphController.getGraph()::getGenomeID)
                 .collect(Collectors.toSet());

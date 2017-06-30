@@ -14,13 +14,13 @@ import programminglife.model.Bookmark;
  */
 public class GuiCreateBookmarkController {
 
+    private static final int DEFAULT_RADIUS = 10;
     private GuiController guiController;
 
     @FXML private Button btnOk;
     @FXML private Button btnCancel;
     @FXML private TextField txtBookmarkName;
     @FXML private TextField txtId;
-    @FXML private TextField txtRadius;
     @FXML private TextArea txtDescription;
     private int inputRadius;
     private int inputCenter;
@@ -45,7 +45,7 @@ public class GuiCreateBookmarkController {
             String name = guiController.getGraphController().getGraph().getID();
             try {
                 inputCenter = Integer.parseInt(txtId.getText());
-                inputRadius = Integer.parseInt(txtRadius.getText());
+                inputRadius = DEFAULT_RADIUS;
                 bookmarkName = txtBookmarkName.getText();
                 bookmarkDescription = txtDescription.getText();
                 Bookmark bookmark = new Bookmark(name, guiController.getFile().getAbsolutePath(),
@@ -79,10 +79,8 @@ public class GuiCreateBookmarkController {
      * Set the text in the center node and radius areas.
      *
      * @param center The text to fill the center area with
-     * @param radius The text to fill the radius area with
      */
-    void setText(String center, String radius) {
+    void setText(String center) {
         txtId.setText(center);
-        txtRadius.setText(radius);
     }
 }
