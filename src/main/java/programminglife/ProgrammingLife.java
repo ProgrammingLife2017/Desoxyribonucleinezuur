@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.DialogPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -92,6 +93,12 @@ public final class ProgrammingLife extends Application {
      */
     private final EventHandler<WindowEvent> confirmCloseEventHandler = event -> {
         Alert closeConfirmation = new Alert(Alert.AlertType.CONFIRMATION, "Do you really want to exit?");
+        DialogPane pane = closeConfirmation.getDialogPane();
+        if (ProgrammingLife.getShowCSS()) {
+            pane.getStylesheets().add("/Alerts.css");
+        } else {
+            pane.getStylesheets().removeAll();
+        }
         Button exitButton = (Button) closeConfirmation.getDialogPane().lookupButton(ButtonType.OK);
         exitButton.setText("Exit");
         closeConfirmation.setHeaderText("Confirm Exit");
