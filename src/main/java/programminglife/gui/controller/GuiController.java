@@ -266,7 +266,10 @@ public class GuiController implements Observer {
         });
         btnSNP.setAccelerator(new KeyCodeCombination(KeyCode.G, KeyCodeCombination.CONTROL_DOWN));
 
-        btnDark.setOnAction(event -> ProgrammingLife.toggleCSS());
+        btnDark.setOnAction(event -> {
+            ProgrammingLife.toggleCSS();
+            draw();
+        });
         btnDark.setAccelerator(new KeyCodeCombination(KeyCode.Z, KeyCodeCombination.CONTROL_DOWN));
     }
 
