@@ -8,7 +8,7 @@
 <!--suppress ALL -->
 <?import javafx.scene.text.Text?>
 <AnchorPane prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="programminglife.gui.controller.GuiController">
-    <MenuBar AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+    <MenuBar fx:id="menuBar" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <Menu fx:id="menuFile" mnemonicParsing="false" text="File">
             <MenuItem fx:id="btnOpenGFA" mnemonicParsing="false" text="Open GFA"/>
             <Menu fx:id="menuRecentGFA" mnemonicParsing="false" text="Open Recent GFA"/>
@@ -32,9 +32,9 @@
     <SplitPane dividerPositions="0.14, 1.0" layoutY="29.0" prefHeight="200.0" prefWidth="500.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="29.0">
         <AnchorPane fx:id="anchorLeftControlPanel" maxWidth="140.0" minHeight="0.0" minWidth="140.0" prefHeight="800.0" prefWidth="100.0" SplitPane.resizableWithParent="false">
             <Button fx:id="btnZoomReset" layoutX="12.0" layoutY="20.0" minWidth="100.0" mnemonicParsing="false" text="Reset View" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0"/>
-            <Text fx:id="txtCenter" layoutX="20.0" layoutY="97.0" text="Center Node:"/>
+            <Text fx:id="txtCenter" layoutX="20.0" layoutY="97.0" styleClass="text-id" text="Center Node:"/>
             <TextField fx:id="txtCenterNode" layoutX="20.0" layoutY="100.0" minWidth="100.0" promptText="Origin node" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0"/>
-            <Text fx:id="txtRadius" visible="false" layoutX="20.0" layoutY="142.0" text="Radius:"/>
+            <Text fx:id="txtRadius" visible="false" layoutX="20.0" layoutY="142.0" styleClass="text-id" text="Radius:"/>
             <TextField fx:id="txtMaxDrawDepth" visible="false" layoutX="20.0" layoutY="145.0" minWidth="100.0" promptText="Max depth" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0"/>
             <Button fx:id="btnDraw" layoutX="27.0" layoutY="130.0" minWidth="100.0" mnemonicParsing="false" text="Go to node" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0"/>
             <Button fx:id="btnDrawRandom" layoutX="20.0" layoutY="210.0" minWidth="100.0" mnemonicParsing="false" text="Surprise me!" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0"/>
@@ -46,14 +46,14 @@
             <ProgressBar fx:id="progressBar" minHeight="18.0" minWidth="100.0" progress="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"/>
         </AnchorPane>
         <AnchorPane fx:id="anchorTabPanel" maxWidth="500.0" minWidth="140.0" prefHeight="800.0" prefWidth="Infinity">
-            <TabPane maxWidth="500.0" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="100.0" tabMaxWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                <Tab text="Graph Info">
+            <TabPane fx:id="paneTab" maxWidth="500.0" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="100.0" tabMaxWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                <Tab fx:id="infoTab" text="Graph Info">
                     <AnchorPane fx:id="anchorGraphInfo" minWidth="50.0">
                         <Button fx:id="btnClipboard" layoutX="15.0" layoutY="15.0" mnemonicParsing="false" text="Copy to clipboard"/>
                         <Button fx:id="btnClipboard2" layoutX="255.0" layoutY="15.0" mnemonicParsing="false" text="Copy to clipboard"/>
                     </AnchorPane>
                 </Tab>
-                <Tab fx:id="searchTab" text="Search / Highlight"/>
+                <Tab fx:id="searchTab" text="Highlight"/>
             </TabPane>
         </AnchorPane>
     </SplitPane>

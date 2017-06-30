@@ -4,6 +4,8 @@ import com.google.common.base.Charsets;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.DialogPane;
+import programminglife.ProgrammingLife;
 
 import java.io.IOException;
 import java.net.URL;
@@ -28,7 +30,16 @@ public final class Alerts {
      * @param message String containing the message to be given to the user.
      */
     public static void error(String message) {
-        Platform.runLater(() -> new Alert(Alert.AlertType.ERROR, message, ButtonType.CLOSE).show());
+        Platform.runLater(() -> {
+           Alert a = new Alert(Alert.AlertType.ERROR, message, ButtonType.CLOSE);
+           DialogPane pane = a.getDialogPane();
+           if (ProgrammingLife.getShowCSS()) {
+                pane.getStylesheets().add("/Alerts.css");
+           } else {
+               pane.getStylesheets().removeAll();
+           }
+           a.show();
+        });
     }
 
     /**
@@ -37,7 +48,16 @@ public final class Alerts {
      * @param message String containing the message to be given to the user.
      */
     public static void warning(String message) {
-        Platform.runLater(() -> new Alert(Alert.AlertType.WARNING, message, ButtonType.CLOSE).show());
+        Platform.runLater(() -> {
+            Alert a = new Alert(Alert.AlertType.WARNING, message, ButtonType.CLOSE);
+            DialogPane pane = a.getDialogPane();
+            if (ProgrammingLife.getShowCSS()) {
+                pane.getStylesheets().add("/Alerts.css");
+            } else {
+                pane.getStylesheets().removeAll();
+            }
+            a.show();
+        });
     }
 
 
@@ -47,7 +67,16 @@ public final class Alerts {
      * @param message String containing the message to be given to the user.
      */
     public static void info(String message) {
-        Platform.runLater(() -> new Alert(Alert.AlertType.INFORMATION, message, ButtonType.CLOSE).show());
+        Platform.runLater(() -> {
+            Alert a = new Alert(Alert.AlertType.INFORMATION, message, ButtonType.CLOSE);
+            DialogPane pane = a.getDialogPane();
+            if (ProgrammingLife.getShowCSS()) {
+                pane.getStylesheets().add("/Alerts.css");
+            } else {
+                pane.getStylesheets().removeAll();
+            }
+            a.show();
+        });
     }
 
     /**
@@ -55,8 +84,15 @@ public final class Alerts {
      */
     public static void quitAlert() {
         Alert a = new Alert(Alert.AlertType.CONFIRMATION);
+        DialogPane pane = a.getDialogPane();
+        if (ProgrammingLife.getShowCSS()) {
+            pane.getStylesheets().add("/Alerts.css");
+        } else {
+            pane.getStylesheets().removeAll();
+        }
         a.setTitle("Confirm Exit");
-        a.setHeaderText("Do you really want to exit?");
+        a.setHeaderText("Exit:");
+        a.setContentText("Do you really want to exit?");
         Optional<ButtonType> result = a.showAndWait();
         result.ifPresent(buttonType -> {
             if (buttonType == ButtonType.OK) {
@@ -74,12 +110,18 @@ public final class Alerts {
      */
     public static void infoAboutAlert() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        DialogPane pane = alert.getDialogPane();
+        if (ProgrammingLife.getShowCSS()) {
+            pane.getStylesheets().add("/Alerts.css");
+        } else {
+            pane.getStylesheets().removeAll();
+        }
         alert.setTitle("About");
-        alert.setHeaderText(null);
         alert.setResizable(true);
         alert.getDialogPane().setMinWidth(ABOUT_MIN_WIDTH);
         URL url = Alerts.class.getResource("/texts/About.txt");
         try {
+            alert.setHeaderText("About:");
             alert.setContentText(com.google.common.io.Resources.toString(url, Charsets.UTF_8));
             alert.show();
         } catch (IOException e) {
@@ -92,12 +134,18 @@ public final class Alerts {
      */
     public static void infoInstructionAlert() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        DialogPane pane = alert.getDialogPane();
+        if (ProgrammingLife.getShowCSS()) {
+            pane.getStylesheets().add("/Alerts.css");
+        } else {
+            pane.getStylesheets().removeAll();
+        }
         alert.setTitle("Instructions");
-        alert.setHeaderText(null);
         alert.setResizable(true);
         alert.getDialogPane().setMinWidth(INSTRUCTIONS_MIN_WIDTH);
         URL url = Alerts.class.getResource("/texts/Instructions.txt");
         try {
+            alert.setHeaderText("Instructions:");
             alert.setContentText(com.google.common.io.Resources.toString(url, Charsets.UTF_8));
             alert.show();
         } catch (IOException e) {
@@ -112,9 +160,16 @@ public final class Alerts {
      */
     public static void infoBookmarkAlert(String s) {
         Alert alert = new Alert(Alert.AlertType.NONE);
+        DialogPane pane = alert.getDialogPane();
+        if (ProgrammingLife.getShowCSS()) {
+            pane.getStylesheets().add("/Alerts.css");
+        } else {
+            pane.getStylesheets().removeAll();
+        }
         alert.getButtonTypes().add(ButtonType.CLOSE);
         alert.setTitle("Bookmark information");
         alert.setResizable(false);
+        alert.setHeaderText("Bookmark information:");
         alert.setContentText(s);
         Platform.runLater(alert::show);
     }

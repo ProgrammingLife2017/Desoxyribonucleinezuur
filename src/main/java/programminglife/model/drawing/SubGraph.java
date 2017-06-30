@@ -387,29 +387,69 @@ public class SubGraph implements Iterable<DrawableNode> {
     private DrawableEdge onClickEdge(double x, double y) {
 
         //Find layers on the left and the right of the clicked location.
-        int foundLayerIndex = getLayerIndex(layers, x);
-        int leftLayerIndex;
+        int leftLayerIndex = getLayerIndex(layers, x);
 
-        if (layers.get(foundLayerIndex).getX() > x) {
-            leftLayerIndex = foundLayerIndex - 1;
-        } else {
-            leftLayerIndex = foundLayerIndex;
+        if (layers.get(leftLayerIndex).getX() > x) {
+            if (leftLayerIndex == 0) {
+                // outside graph, no edge can be clicked here.
+                return null;
+            } else {
+                leftLayerIndex--;
+            }
         }
 
         //get the corresponding layers.
         Layer leftLayer = layers.get(leftLayerIndex);
 
-        for (DrawableNode left : leftLayer.getNodes()) {
-            for (DrawableNode right : this.getChildren(left)) {
+        //click falls in between two layers.
+        if (leftLayer.getX() + leftLayer.getWidth() < x) {
+            for (DrawableNode left : leftLayer.getNodes()) {
+                for (DrawableNode right : this.getChildren(left)) {
                     if (calculateEdge(left, right, x, y)) {
 
-                       return new DrawableEdge(left, right);
+                        return new DrawableEdge(left, right);
                     }
 
                 }
             }
 
+
+        } else if (leftLayer.getX() + leftLayer.getWidth() > x) { //Edge within a layer.
+            for (DrawableNode left : leftLayer.getNodes()) {
+                for (DrawableNode right : this.getChildren(left)) {
+                    if (calculateEdgeInLayer(left, right, x, y)) {
+                        return new DrawableEdge(left, right);
+                    }
+
+                }
+            }
+        }
         return null;
+    }
+
+    /**
+     * Calculates the edges and see if the onclick is on a line. BUT THIS TIME INSIDE A LAYER
+     *
+     * @param left node of the edge.
+     * @param right node of the edge.
+     * @param x location
+     * @param y location
+     * @return true if clicked on edge, false if not
+     */
+    private boolean calculateEdgeInLayer(DrawableNode left, DrawableNode right, double x, double y) {
+        double start = left.getRightBorderCenter().getX();
+        Layer layer = left.getParentSegment().getLayer();
+        double end = layer.getX() + layer.getWidth();
+
+        double edgeY = left.getRightBorderCenter().getY(); // Since it is a horizontal line it stays on 1 Y
+
+        double genomeFraction = getGenomesEdge(left.getParentSegment(),
+                right.getChildSegment()).size() / (double) this.getNumberOfGenomes();
+        double minStrokeWidth = 1.d, maxStrokeWidth = 6.5;
+        double strokeWidth = minStrokeWidth + genomeFraction * (maxStrokeWidth - minStrokeWidth);
+
+        return (edgeY - strokeWidth * zoomLevel < y && edgeY + strokeWidth * zoomLevel > y
+                && x > start && x < end);
     }
 
 
@@ -574,6 +614,13 @@ public class SubGraph implements Iterable<DrawableNode> {
             int insertionPoint = -(resultIndex + 1);
             int rightLayerIndex = insertionPoint;
             int leftLayerIndex = insertionPoint - 1;
+
+            if (rightLayerIndex >= layers.size()) {
+                return layers.size() - 1;
+            } else if (leftLayerIndex <= 0) {
+                return 0;
+            }
+
             Layer rightLayer = layers.get(rightLayerIndex);
             Layer leftLayer = layers.get(leftLayerIndex);
 
