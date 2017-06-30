@@ -11,6 +11,7 @@ import java.util.Collection;
  */
 public abstract class DrawableNode implements Drawable {
     static final double NODE_HEIGHT = 10;
+    static final double NUCLEOTIDE_WIDTH = 10;
     private static int uniqueId = 0;
 
     private final GenomeGraph graph;
