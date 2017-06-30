@@ -86,7 +86,7 @@ class GraphController {
             time("Drawing", () -> draw(gc));
 
             centerOnNodeId(center);
-            highlightNode(center, Color.DARKORANGE);
+            highlightCenterNode(center, Color.DARKORANGE);
         });
     }
 
@@ -96,19 +96,7 @@ class GraphController {
     private void colorize() {
         subGraph.colorize();
     }
-
-    /**
-     * Fill the rectangles with the color.
-     *
-     * @param nodes the Collection of {@link Integer Integers} to highlight.
-     * @param color the {@link Color} to highlight with.
-     */
-    private void highlightNodesByID(Collection<Integer> nodes, Color color) {
-        for (int i : nodes) {
-            highlightNode(i, color);
-        }
-    }
-
+    
     /**
      * Method to highlight a collection of nodes.
      *
@@ -127,9 +115,9 @@ class GraphController {
      * @param nodeID the nodeID of the node to highlight.
      * @param color  the {@link Color} to highlight with.
      */
-    private void highlightNode(int nodeID, Color color) {
+    private void highlightCenterNode(int nodeID, Color color) {
         DrawableNode node = subGraph.getNodes().get(nodeID);
-        highlightNode(node, color, false);
+        highlightNode(node, color, true);
     }
 
     /**
