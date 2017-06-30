@@ -7,7 +7,7 @@
 
 <!--suppress ALL -->
 <?import javafx.scene.text.Text?>
-<AnchorPane prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="programminglife.gui.controller.GuiController">
+<AnchorPane prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="programminglife.gui.controller.GuiController">
     <MenuBar fx:id="menuBar" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <Menu fx:id="menuFile" mnemonicParsing="false" text="File">
             <MenuItem fx:id="btnOpenGFA" mnemonicParsing="false" text="Open GFA"/>
