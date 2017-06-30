@@ -44,7 +44,7 @@ final class BookmarkController {
      *
      * @return Map containing the bookmarks with their keys.
      */
-    public static Map<String, List<Bookmark>> loadAllBookmarks() {
+    static Map<String, List<Bookmark>> loadAllBookmarks() {
         return loadAllBookmarks(BOOKMARKPATH);
     }
 
@@ -55,7 +55,7 @@ final class BookmarkController {
      * @param bookmark The bookmark to store.
      * @return true if the bookmark is stored and did not exist yet, false otherwise
      */
-    public static boolean storeBookmark(Bookmark bookmark) {
+    static boolean storeBookmark(Bookmark bookmark) {
         return storeBookmark(BOOKMARKPATH, bookmark);
     }
 
@@ -66,7 +66,7 @@ final class BookmarkController {
      * @param graphName    The name of the graph file.
      * @param bookMarkName The name of the bookmark (must be unique for the graph).
      */
-    public static void deleteBookmark(String graphName, String bookMarkName) {
+    static void deleteBookmark(String graphName, String bookMarkName) {
         deleteBookmark(BOOKMARKPATH, graphName, bookMarkName);
     }
 

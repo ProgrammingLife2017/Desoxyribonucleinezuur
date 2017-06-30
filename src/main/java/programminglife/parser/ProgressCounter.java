@@ -27,14 +27,14 @@ public class ProgressCounter extends Observable {
     /**
      * Counter for the progress.
      */
-    public void count() {
+    void count() {
         this.progress++;
 
         this.setChanged();
         this.notifyObservers(this);
     }
 
-    public void setTotal(int total) {
+    void setTotal(int total) {
         this.total = total;
     }
 
@@ -71,7 +71,7 @@ public class ProgressCounter extends Observable {
     /**
      * Tells the ProgressBar loading is finished so it becomes invisible.
      */
-    public void finished() {
+    void finished() {
         this.setProgress(this.total);
     }
 

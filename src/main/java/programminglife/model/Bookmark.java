@@ -45,7 +45,7 @@ public class Bookmark {
         return bookmarkName;
     }
 
-    public void setBookmarkName(String bookmarkName) {
+    void setBookmarkName(String bookmarkName) {
         this.bookmarkName = bookmarkName;
     }
 
@@ -53,7 +53,7 @@ public class Bookmark {
         return description;
     }
 
-    public void setDescription(String description) {
+    void setDescription(String description) {
         this.description = description;
     }
 
@@ -77,7 +77,7 @@ public class Bookmark {
         return nodeID;
     }
 
-    public void setNodeID(int nodeID) {
+    void setNodeID(int nodeID) {
         this.nodeID = nodeID;
     }
 
@@ -85,7 +85,7 @@ public class Bookmark {
         return graphName;
     }
 
-    public void setGraphName(String file) {
+    void setGraphName(String file) {
         this.graphName = file;
     }
 

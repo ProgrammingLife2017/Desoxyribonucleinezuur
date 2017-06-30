@@ -782,7 +782,7 @@ public class SubGraph implements Iterable<DrawableNode> {
      * @param node The {@link DrawableNode} to get
      * @return A {@link Collection} of {@link DrawableNode}
      */
-    public Collection<DrawableNode> getParents(DrawableNode node) {
+    Collection<DrawableNode> getParents(DrawableNode node) {
         Collection<DrawableNode> parents = new LinkedHashSet<>();
         for (int parentID : node.getParents()) {
             if (this.nodes.containsKey(parentID)) {
@@ -877,7 +877,7 @@ public class SubGraph implements Iterable<DrawableNode> {
      * Assumption: graph is a DAG.
      * @return a topologically sorted list of nodes
      */
-    public List<DrawableNode> topoSort() {
+    List<DrawableNode> topoSort() {
         // topo sorted list
         ArrayList<DrawableNode> res = new ArrayList<>(this.nodes.size());
 
@@ -956,7 +956,7 @@ public class SubGraph implements Iterable<DrawableNode> {
      *
      * @return a {@link Map} of {@link Map Maps} of collections of genomes through links
      */
-    public Map<DrawableNode, Map<DrawableNode, Collection<Integer>>> calculateGenomes() {
+    Map<DrawableNode, Map<DrawableNode, Collection<Integer>>> calculateGenomes() {
         // For every node in the subGraph
         this.nodes.values().stream().map(DrawableNode::getParentSegment).forEach(parent -> {
             Map<DrawableNode, Collection<Integer>> parentGenomes = this.calculateGenomes(parent);
@@ -1164,7 +1164,7 @@ public class SubGraph implements Iterable<DrawableNode> {
         return genomes;
     }
 
-    public int getNumberOfGenomes() {
+    int getNumberOfGenomes() {
         return numberOfGenomes;
     }
 

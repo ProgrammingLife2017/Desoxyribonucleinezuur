@@ -130,7 +130,7 @@ class RecentFileController {
      * @param recentFile File containing the recent entries.
      * @param file       File to check if it already contained.
      */
-    public void updateRecent(File recentFile, File file) {
+    void updateRecent(File recentFile, File file) {
         findLines(recentFile);
         String currentFile = file.getAbsolutePath();
         if (checkDuplicate(currentFile)) {
@@ -241,11 +241,11 @@ class RecentFileController {
      *
      * @param guiController The gui controller
      */
-    public void setGuiController(GuiController guiController) {
+    void setGuiController(GuiController guiController) {
         this.guiController = guiController;
     }
 
-    public File getRecentFile() {
+    File getRecentFile() {
         return recentFile;
     }
 }
