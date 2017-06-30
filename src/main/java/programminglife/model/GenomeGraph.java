@@ -15,11 +15,12 @@ import java.util.stream.Collectors;
  * The class that handles the genome graph.
  */
 public class GenomeGraph {
-    private String id;
+    private final String id;
     private Cache cache;
 
     /**
      * Create a genomeGraph with id.
+     *
      * @param id id of the graph
      */
     public GenomeGraph(String id) {
@@ -29,6 +30,7 @@ public class GenomeGraph {
 
     /**
      * Get the {@link GenomeGraph} ID.
+     *
      * @return the ID
      */
     public String getID() {
@@ -38,6 +40,7 @@ public class GenomeGraph {
 
     /**
      * Replace a node in the graph.
+     *
      * @param nodeID the ID of the node
      */
     public void replaceNode(int nodeID) {
@@ -46,11 +49,12 @@ public class GenomeGraph {
 
     /**
      * Replace a node in the graph.
-     * @param nodeID the ID of the node
+     *
+     * @param nodeID   the ID of the node
      * @param children the new children
-     * @param parents the new parents
+     * @param parents  the new parents
      */
-    public void replaceNode(int nodeID, int[] children, int[] parents) {
+    private void replaceNode(int nodeID, int[] children, int[] parents) {
         this.cache.getChildrenAdjacencyMap().put(nodeID, children);
         this.cache.getParentsAdjacencyMap().put(nodeID, parents);
     }
@@ -59,6 +63,7 @@ public class GenomeGraph {
      * Get the number of nodes in the {@link GenomeGraph}.
      * This is based on the amount of nodes with a sequence in the cache not the amount of nodes
      * in the GenomeGraph.
+     *
      * @return the number of nodes
      */
     public int size() {
@@ -67,6 +72,7 @@ public class GenomeGraph {
 
     /**
      * Get IDs of children of a node.
+     *
      * @param nodeID the ID of the node to look up
      * @return an int[] of IDs
      */
@@ -76,6 +82,7 @@ public class GenomeGraph {
 
     /**
      * Getter for the ID's of the parents of a node.
+     *
      * @param nodeID node for which the parents are to be found.
      * @return int[] list of the parents.
      */
@@ -85,6 +92,7 @@ public class GenomeGraph {
 
     /**
      * Get the Genomes through a specific Node.
+     *
      * @param nodeID the Node to look up
      * @return a {@link Collection} of Genome IDs
      */
@@ -94,10 +102,11 @@ public class GenomeGraph {
 
     /**
      * Return a collection of names.
+     *
      * @param genomes the IDs of the genomes to identify
      * @return their names
      */
-    public Collection<String> getGenomeNames(int[] genomes) {
+    Collection<String> getGenomeNames(int[] genomes) {
         return Arrays.stream(genomes)
                 .boxed()
                 .map(this::getGenomeName)
@@ -106,6 +115,7 @@ public class GenomeGraph {
 
     /**
      * Return a collection of names.
+     *
      * @param genomes the IDs of the genomes to identify
      * @return their names
      */
@@ -117,6 +127,7 @@ public class GenomeGraph {
 
     /**
      * Get Nodes through a Genome.
+     *
      * @param genomeID the Genome to look up
      * @return a {@link Collection} of Node IDs in the Genome
      */
@@ -141,7 +152,8 @@ public class GenomeGraph {
 
     /**
      * Add a child to a node.
-     * @param nodeID Node ID to which the child will be added.
+     *
+     * @param nodeID  Node ID to which the child will be added.
      * @param childID Node ID of the child to be added.
      */
     private void addChild(int nodeID, int childID) {
@@ -169,12 +181,12 @@ public class GenomeGraph {
 
     /**
      * Add a parent to a node.
-     * @param nodeID Node ID to which the parent will be added.
+     *
+     * @param nodeID   Node ID to which the parent will be added.
      * @param parentID Node ID of the parent to be added.
      */
     private void addParent(int nodeID, int parentID) {
         int[] oldParents = this.getParentIDs(nodeID);
-        //TODO find a way to do this more efficiently
         int[] newParents = Arrays.copyOf(oldParents, oldParents.length + 1);
         newParents[newParents.length - 1] = parentID;
         this.cache.getParentsAdjacencyMap().put(nodeID, newParents);
@@ -182,7 +194,8 @@ public class GenomeGraph {
 
     /**
      * Set Genomes through a Node.
-     * @param nodeID the Node to address
+     *
+     * @param nodeID    the Node to address
      * @param genomeIDs the Genomes through this Node
      */
     public void setGenomes(int nodeID, int[] genomeIDs) {
@@ -191,15 +204,17 @@ public class GenomeGraph {
 
     /**
      * Get the name of a Genome.
+     *
      * @param genomeID the ID of the Genome
      * @return its name
      */
-    public String getGenomeName(int genomeID) {
+    String getGenomeName(int genomeID) {
         return this.cache.getGenomeName(genomeID);
     }
 
     /**
      * Get all names of genomes in the graph.
+     *
      * @return a {@link Collection} of names
      */
     public Collection<String> getGenomeNames() {
@@ -208,6 +223,7 @@ public class GenomeGraph {
 
     /**
      * Get the ID of a Genome.
+     *
      * @param genomeName the name of the Genome
      * @return its ID
      */
@@ -217,6 +233,7 @@ public class GenomeGraph {
 
     /**
      * Add a Genome to the {@link GenomeGraph}.
+     *
      * @param name its name
      */
     public void addGenome(String name) {
@@ -225,7 +242,8 @@ public class GenomeGraph {
 
     /**
      * Set the sequence for a Segment.
-     * @param nodeID the ID of the Segment
+     *
+     * @param nodeID   the ID of the Segment
      * @param sequence the sequence {@link String}
      */
     public void setSequence(int nodeID, String sequence) {
@@ -234,6 +252,7 @@ public class GenomeGraph {
 
     /**
      * Get the sequence of a Segment.
+     *
      * @param nodeID the ID of the Segment
      * @return the sequence {@link String}
      */
@@ -244,6 +263,7 @@ public class GenomeGraph {
 
     /**
      * Get the sequence length of a Segment.
+     *
      * @param nodeID the ID of the Segment
      * @return the sequence length {@link String}
      */
@@ -253,6 +273,7 @@ public class GenomeGraph {
 
     /**
      * Roll back the latest changes to the cache.
+     *
      * @throws IOException when something strange happens during deletion
      */
     public void rollback() throws IOException {
@@ -260,14 +281,8 @@ public class GenomeGraph {
     }
 
     /**
-     * Commit all changes to the cache.
-     */
-    public void commit() {
-        this.cache.commit();
-    }
-
-    /**
      * Remove the cache file for this {@link GenomeGraph}.
+     *
      * @throws IOException if something strange happens
      */
     public void removeCache() throws IOException {
@@ -286,14 +301,15 @@ public class GenomeGraph {
 
     /**
      * Append an {@link List<Integer>} to a int[].
+     *
      * @param oldArray the int[] to go first
-     * @param newList the {@link List<Integer>} to be appended
+     * @param newList  the {@link List<Integer>} to be appended
      * @return a int[] consisting of all elements
      */
     private int[] append(int[] oldArray, List<Integer> newList) {
         int[] newArray;
         if (oldArray == null) {
-            newArray = oldArray;
+            newArray = null;
         } else {
             newArray = ArrayUtils.addAll(oldArray, newList.stream().mapToInt(i -> i).toArray());
         }
@@ -303,7 +319,7 @@ public class GenomeGraph {
 
     /**
      * Cache the group of edges from the last parent.
-     *
+     * <p>
      * Necessary because these are skipped during parsing.
      */
     public void cacheLastEdges() {
@@ -314,6 +330,7 @@ public class GenomeGraph {
 
     /**
      * The fraction of genomes through a node.
+     *
      * @param nodeID the ID of the nods
      * @return the fraction
      */
@@ -323,6 +340,7 @@ public class GenomeGraph {
 
     /**
      * The number of genomes through a node.
+     *
      * @param nodeID the ID of the node
      * @return the number
      */

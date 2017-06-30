@@ -1,31 +1,34 @@
-package programminglife.controller;
+package programminglife.gui.controller;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+import programminglife.gui.Alerts;
 import programminglife.model.Bookmark;
-import programminglife.utility.Alerts;
 import programminglife.utility.Console;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.*;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
  * This class is a controller for loading storing and deleting bookmarks.
  */
-public final class BookmarkController {
+final class BookmarkController {
     private static final String BOOKMARKPATH = "bookmarks.xml";
 
     /**
@@ -33,40 +36,45 @@ public final class BookmarkController {
      * The functionality of this class does not rely on any particular instance.
      * It relies solely on the contents of the bookmarks file.
      */
-    private BookmarkController() { }
+    private BookmarkController() {
+    }
 
     /**
      * Loads all the bookmarks and puts them in a Map.
+     *
      * @return Map containing the bookmarks with their keys.
      */
-    public static Map<String, List<Bookmark>> loadAllBookmarks() {
+    static Map<String, List<Bookmark>> loadAllBookmarks() {
         return loadAllBookmarks(BOOKMARKPATH);
     }
 
     /**
      * Default bookmark storing method.
      * Uses the default bookmark path.
+     *
      * @param bookmark The bookmark to store.
      * @return true if the bookmark is stored and did not exist yet, false otherwise
      */
-    public static boolean storeBookmark(Bookmark bookmark) {
+    static boolean storeBookmark(Bookmark bookmark) {
         return storeBookmark(BOOKMARKPATH, bookmark);
     }
 
     /**
      * Default bookmark storing method.
      * Uses the default bookmark path.
-     * @param graphName The name of the graph file.
+     *
+     * @param graphName    The name of the graph file.
      * @param bookMarkName The name of the bookmark (must be unique for the graph).
      */
-    public static void deleteBookmark(String graphName, String bookMarkName) {
+    static void deleteBookmark(String graphName, String bookMarkName) {
         deleteBookmark(BOOKMARKPATH, graphName, bookMarkName);
     }
 
     /**
      * Checks whether a bookmark exists.
-     * @param fileName The name of the bookmarks file
-     * @param graphName The name of the graph file
+     *
+     * @param fileName     The name of the bookmarks file
+     * @param graphName    The name of the graph file
      * @param bookmarkName The name of the bookmark
      * @return true if it exists, false otherwise
      */
@@ -85,6 +93,7 @@ public final class BookmarkController {
 
     /**
      * Store a bookmark in bookmarks.xml.
+     *
      * @param fileName The path of the bookmarks file.
      * @param bookmark The bookmark to store.
      * @return true if the bookmark already exists, false otherwise.
@@ -104,13 +113,13 @@ public final class BookmarkController {
             Element graphTag = findTag(doc.getElementsByTagName("graph"), bookmark.getGraphName());
 
             // No earlier bookmarks in this graph
-           if (graphTag == null) {
-               graphTag = doc.createElement("graph");
-               Element graphNameTag = doc.createElement("name");
-               graphNameTag.appendChild(doc.createTextNode(bookmark.getGraphName()));
-               graphTag.appendChild(graphNameTag);
-               rootElement.appendChild(graphTag);
-           }
+            if (graphTag == null) {
+                graphTag = doc.createElement("graph");
+                Element graphNameTag = doc.createElement("name");
+                graphNameTag.appendChild(doc.createTextNode(bookmark.getGraphName()));
+                graphTag.appendChild(graphNameTag);
+                rootElement.appendChild(graphTag);
+            }
 
             graphTag.appendChild(newBookmark);
 
@@ -132,7 +141,8 @@ public final class BookmarkController {
 
     /**
      * Creates a bookmark Element.
-     * @param doc The Document to create the bookmark with
+     *
+     * @param doc      The Document to create the bookmark with
      * @param bookmark The bookmark to create the tag for
      * @return An element containing the new bookmark
      */
@@ -159,8 +169,9 @@ public final class BookmarkController {
 
     /**
      * Deletes a bookmark from the bookmark file.
-     * @param fileName The name of the bookmark file.
-     * @param graphName The name of the graph.
+     *
+     * @param fileName     The name of the bookmark file.
+     * @param graphName    The name of the graph.
      * @param bookmarkName The name of the bookmark to be deleted.
      */
     static void deleteBookmark(String fileName, String graphName, String bookmarkName) {
@@ -187,10 +198,11 @@ public final class BookmarkController {
 
     /**
      * Finds and loads the doc element from the bookmark file.
+     *
      * @param fileName The name of the file where the bookmarks reside.
      * @return A DOM Element containing all graphs and bookmarks.
      */
-    static Element loadDoc(String fileName) {
+    private static Element loadDoc(String fileName) {
         checkFile(fileName);
         Document dom;
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -207,11 +219,12 @@ public final class BookmarkController {
 
     /**
      * Load all bookmarks from all files.
+     *
      * @param fileName The bookmark file from which to read
      * @return A map of lists containing all bookmarks
      */
     static Map<String, List<Bookmark>> loadAllBookmarks(String fileName) {
-        Map<String, List<Bookmark>> result = new HashMap<>();
+        Map<String, List<Bookmark>> result = new LinkedHashMap<>();
         Element doc = loadDoc(fileName);
         assert doc != null;
         NodeList graphs = doc.getElementsByTagName("graph");
@@ -230,8 +243,9 @@ public final class BookmarkController {
 
     /**
      * Find the tag in the xml file belonging to the graph name.
+     *
      * @param nodeList is the list of all graph tags
-     * @param name is the name of the graph this method tries to find
+     * @param name     is the name of the graph this method tries to find
      * @return The Element containing the graph or null if not found
      */
     private static Element findTag(NodeList nodeList, String name) {
@@ -251,6 +265,7 @@ public final class BookmarkController {
     /**
      * Checks whether the given bookmark fileName exists.
      * If not it will create the file with the necessary tags.
+     *
      * @param fileName The name of the bookmark file
      */
     private static void checkFile(String fileName) {
@@ -277,6 +292,7 @@ public final class BookmarkController {
 
     /**
      * Parses a list of bookmark nodes and returns them.
+     *
      * @param graphName The file these bookmarks are about.
      * @param bookmarks The nodeList containing all bookmarks
      * @return A bookmark represented by the element
@@ -297,8 +313,9 @@ public final class BookmarkController {
 
     /**
      * Parses an xml element to return a bookmark.
+     *
      * @param graphName The file that this bookmark is about
-     * @param el The element containing the bookmark
+     * @param el        The element containing the bookmark
      * @return The bookmark from the element.
      */
     private static Bookmark parseBookmark(String graphName, Element el) {

@@ -12,11 +12,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import programminglife.ProgrammingLife;
-import programminglife.controller.BookmarkController;
+import programminglife.gui.Alerts;
 import programminglife.model.Bookmark;
 import programminglife.model.GenomeGraph;
 import programminglife.parser.GraphParser;
-import programminglife.utility.Alerts;
 import programminglife.utility.Console;
 
 import java.io.File;
@@ -48,6 +47,7 @@ public class GuiLoadBookmarkController implements Observer {
 
     /**
      * Checks whether the user has selected a bookmark.
+     *
      * @return True if selected, false otherwise.
      */
     private Bookmark checkBookmarkSelection() {
@@ -78,16 +78,12 @@ public class GuiLoadBookmarkController implements Observer {
     private void openBookmark() {
         Bookmark bookmark = checkBookmarkSelection();
         if (bookmark != null) {
-            guiController.setText(bookmark.getNodeID(), bookmark.getRadius());
+            guiController.setText(bookmark.getNodeID());
             if (guiController.getFile() == null
                     || !bookmark.getPath().equals(guiController.getFile().getAbsolutePath())) {
                 File file = new File(bookmark.getPath());
-                try {
-                    guiController.setFile(file);
-                    guiController.openFile(file).addObserver(this);
-                } catch (IOException e) {
-                    Alerts.error("File location has changed");
-                }
+                guiController.setFile(file);
+                guiController.openFile(file).addObserver(this);
             } else {
                 guiController.draw();
             }
@@ -104,6 +100,12 @@ public class GuiLoadBookmarkController implements Observer {
         Bookmark bookmark = checkBookmarkSelection();
         if (bookmark != null) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            DialogPane pane = alert.getDialogPane();
+            if (ProgrammingLife.getShowCSS()) {
+                pane.getStylesheets().add("/Alerts.css");
+            } else {
+                pane.getStylesheets().removeAll();
+            }
             alert.setTitle("Confirm Deletion");
             alert.setHeaderText("Do you really want to delete bookmark: \"" + bookmark.getBookmarkName() + "\"?");
             Optional<ButtonType> result = alert.showAndWait();
@@ -128,6 +130,11 @@ public class GuiLoadBookmarkController implements Observer {
         try {
             FXMLLoader loader = new FXMLLoader(ProgrammingLife.class.getResource("/CreateBookmarkWindow.fxml"));
             AnchorPane page = loader.load();
+            if (ProgrammingLife.getShowCSS()) {
+                page.getStylesheets().add("/CreateBookmark.css");
+            } else {
+                page.getStylesheets().removeAll();
+            }
             GuiCreateBookmarkController gc = loader.getController();
             gc.setGuiController(guiController);
             Scene scene = new Scene(page);
@@ -150,14 +157,15 @@ public class GuiLoadBookmarkController implements Observer {
         Bookmark bookmark = checkBookmarkSelection();
         if (bookmark != null) {
             Alerts.infoBookmarkAlert(String.format("Name: %s"
-                            + "%nNode ID: %d%nNode radius: %d%nDescription: %s", bookmark.getBookmarkName(),
-                    bookmark.getNodeID(), bookmark.getRadius(), bookmark.getDescription()));
+                            + "%nNode ID: %d%nDescription: %s", bookmark.getBookmarkName(),
+                    bookmark.getNodeID(), bookmark.getDescription()));
         }
     }
 
     /**
      * Creates the tableview with the menu's for the bookmarks.
-     * @param graph String the graph for which we have bookmarks.
+     *
+     * @param graph     String the graph for which we have bookmarks.
      * @param bookmarks List of bookmarks that are created for the graphs.
      */
     private void createTableView(String graph, List<Bookmark> bookmarks) {
@@ -209,6 +217,11 @@ public class GuiLoadBookmarkController implements Observer {
      */
     void initBookmarks() {
         accordionBookmark.getPanes().clear();
+        if (ProgrammingLife.getShowCSS()) {
+            accordionBookmark.getParent().getStylesheets().add("/Bookmark.css");
+        } else {
+            accordionBookmark.getParent().getStylesheets().removeAll();
+        }
 
         tableViews = new ArrayList<>();
 
@@ -229,6 +242,7 @@ public class GuiLoadBookmarkController implements Observer {
     /**
      * Sets the guicontroller for controlling the menu.
      * Is used for setting center node and radius text fields.
+     *
      * @param guiController The gui controller
      */
     void setGuiController(GuiController guiController) {
@@ -237,10 +251,9 @@ public class GuiLoadBookmarkController implements Observer {
 
     /**
      * Sets the create bookmark button to active when a file is opened.
-     * @param active true for active, false for inactive
      */
-    public void setBtnCreateBookmarkActive(Boolean active) {
-        btnCreateBookmark.setDisable(!active);
+    public void setBtnCreateBookmarkActive() {
+        btnCreateBookmark.setDisable(false);
     }
 
     /**

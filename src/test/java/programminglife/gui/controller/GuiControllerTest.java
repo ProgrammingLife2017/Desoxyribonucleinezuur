@@ -1,12 +1,15 @@
-package programminglife.gui;
+package programminglife.gui.controller;
 
-import javafx.scene.control.TextField;
+import javafx.geometry.VerticalDirection;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 import javafx.stage.Stage;
 import org.junit.*;
 import org.testfx.api.FxRobot;
 import org.testfx.api.FxToolkit;
 import org.testfx.util.WaitForAsyncUtils;
+import static org.testfx.api.FxAssert.verifyThat;
+import static org.testfx.matcher.base.NodeMatchers.*;
 import programminglife.ProgrammingLife;
 import programminglife.parser.Cache;
 import programminglife.utility.Console;
@@ -27,7 +30,6 @@ import static org.junit.Assert.*;
 public class GuiControllerTest extends FxRobot {
     private static final String TEST_DB = "test-gui.gfa.db";
     private static final String TEST_File = "/test-gui.gfa";
-    private static final String TEST_DB2 = "test-gui.db";
 
     private static Stage primaryStage;
     private static String operatingSystem;
@@ -81,28 +83,89 @@ public class GuiControllerTest extends FxRobot {
      */
     @Test
     public void clickOnTest() {
-        openAndParseFile(testFileName);
+        verifyThat("#txtMaxDrawDepth", isDisabled());
+        verifyThat("#txtCenterNode", isDisabled());
+        verifyThat("#btnDraw", isDisabled());
+        verifyThat("#btnZoomReset", isDisabled());
+        verifyThat("#btnDrawRandom", isDisabled());
+        verifyThat("#btnBookmark", isDisabled());
 
+        openAndParseGFA(testFileName);
+        sleep(1000);
+
+        verifyThat("#txtMaxDrawDepth", isEnabled());
+        verifyThat("#txtCenterNode", isEnabled());
+        verifyThat("#btnDraw", isEnabled());
+        verifyThat("#btnZoomReset", isEnabled());
+        verifyThat("#btnDrawRandom", isEnabled());
+        verifyThat("#btnBookmark", isEnabled());
+
+        verifyThat("#txtMaxDrawDepth", hasText("10"));
         clickOn("#txtMaxDrawDepth").type(KeyCode.BACK_SPACE);
-        clickOn("#txtMaxDrawDepth").type(KeyCode.DIGIT4);
+        clickOn("#txtMaxDrawDepth").write("4");
+        verifyThat("#txtMaxDrawDepth", hasText("4"));
+        verifyThat("#txtCenterNode", hasText("1"));
         clickOn("#txtCenterNode").type(KeyCode.BACK_SPACE);
-        clickOn("#txtCenterNode").type(KeyCode.DIGIT2);
-        press(KeyCode.CONTROL).type(KeyCode.M);
-        release(KeyCode.CONTROL);
+        clickOn("#txtCenterNode").write("2");
+        verifyThat("#txtCenterNode", hasText("2"));
+
+        press(KeyCode.CONTROL).type(KeyCode.M).release(KeyCode.CONTROL);
+
         clickOn("#btnDraw");
-
-
-        assertEquals("2", ((TextField) lookup("#txtCenterNode").query()).getCharacters().toString());
-        assertEquals("4", ((TextField) lookup("#txtMaxDrawDepth").query()).getCharacters().toString());
+        clickOn(350, 200);
+        press(KeyCode.SHIFT).clickOn(350, 200).release(KeyCode.SHIFT);
+        press(MouseButton.PRIMARY).moveBy(20, 20).release(MouseButton.PRIMARY);
+        scroll(5, VerticalDirection.UP).scroll(5, VerticalDirection.DOWN);
+        clickOn("#btnClipboard");
         clickOn("#btnZoomReset");
         clickOn("#btnDrawRandom");
+
         sleep(500);
         openWindows();
+        highlight();
+        bookmark();
+    }
+
+    private void highlight() {
+        clickOn("#searchTab");
+        clickOn("#txtGenome").write("TKK_REF.fasta");
+        clickOn("#btnHighlight");
+    }
+
+    private void bookmark() {
+        clickOn("#btnBookmark");
+        verifyThat("#bookmarkCreator", isVisible());
+        clickOn("#txtBookmarkName").write("bookmarkTest");
+        clickOn("#btnOk");
+
+        clickOn("#btnBookmark");
+        clickOn("#btnOk");
+        clickOn("Close");
+        clickOn("#txtBookmarkName").write("bookmarkTest");
+        clickOn("#btnOk");
+        clickOn("Close");
+        clickOn("#btnCancel");
+
+        press(KeyCode.CONTROL).type(KeyCode.B).release(KeyCode.CONTROL);
+        verifyThat("#bookmarkLoader", isVisible());
+        sleep(500);
+
+        doubleClickOn("bookmarkTest");
+        sleep(2000);
+        press(KeyCode.CONTROL).type(KeyCode.B).release(KeyCode.CONTROL);
+        clickOn("bookmarkTest").clickOn("#btnDeleteBookmark");
+        type(KeyCode.ENTER);
+
     }
 
     private void openWindows() {
-        press(KeyCode.CONTROL).type(KeyCode.H);
-        release(KeyCode.CONTROL);
+        press(KeyCode.CONTROL).type(KeyCode.G).release(KeyCode.CONTROL);
+        sleep(500);
+        press(KeyCode.CONTROL).type(KeyCode.G).release(KeyCode.CONTROL);
+        clickOn("#menuToggle").clickOn("#btnConsole");
+        clickOn("#menuToggle").clickOn("#btnMiniMap");
+
+        press(KeyCode.CONTROL).type(KeyCode.H).release(KeyCode.CONTROL);
         sleep(500);
         type(KeyCode.ENTER);
         sleep(500);
@@ -112,9 +175,9 @@ public class GuiControllerTest extends FxRobot {
         sleep(500);
         type(KeyCode.ENTER);
 
-        press(KeyCode.CONTROL).type(KeyCode.I);
-        release(KeyCode.CONTROL);
+        press(KeyCode.CONTROL).type(KeyCode.I).release(KeyCode.CONTROL);
         sleep(500);
+
         type(KeyCode.ENTER);
         sleep(500);
 
@@ -125,15 +188,19 @@ public class GuiControllerTest extends FxRobot {
         sleep(500);
     }
 
-    private void openAndParseFile(String fileName) {
-        press(KeyCode.CONTROL).type(KeyCode.O);
-        release(KeyCode.CONTROL);
+
+    private void openAndParseGFA(String fileName) {
+        press(KeyCode.CONTROL).type(KeyCode.O).release(KeyCode.CONTROL);
         sleep(1, TimeUnit.SECONDS);
 
+        type(KeyCode.K, 5);
+        type(KeyCode.ENTER).type(KeyCode.ENTER);
+
+        sleep(500);
         typeString(fileName);
 
         type(KeyCode.ENTER);
-        if(operatingSystem.contains("mac")) {
+        if (operatingSystem.contains("mac")) {
             sleep(500, TimeUnit.MILLISECONDS);
             type(KeyCode.ENTER);
         }
@@ -143,8 +210,8 @@ public class GuiControllerTest extends FxRobot {
 
     private void typeString(String s) {
         for (int i = 0; i < s.length(); i++) {
-            KeyCode kc = KeyCode.getKeyCode(testFileName.toUpperCase().charAt(i) + "");
-            switch (testFileName.charAt(i)) {
+            KeyCode kc = KeyCode.getKeyCode(s.toUpperCase().charAt(i) + "");
+            switch (s.charAt(i)) {
                 case ':':
                     press(KeyCode.SHIFT).type(KeyCode.SEMICOLON);
                     release(KeyCode.SHIFT);

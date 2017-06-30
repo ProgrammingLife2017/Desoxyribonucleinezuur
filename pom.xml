@@ -6,7 +6,7 @@
 
     <groupId>nl.tudelft.contextproject</groupId>
     <artifactId>ProgrammingLife</artifactId>
-    <version>milestone4</version>
+    <version>final</version>
     <packaging>jar</packaging>
 
     <name>ProgrammingLife</name>
@@ -85,7 +85,6 @@
                 <version>2.20</version>
                 <configuration>
                     <excludes>
-                        <!-- exclude tests here -->
                         <exclude>**/GuiControllerTest.java</exclude>
                     </excludes>
                 </configuration>

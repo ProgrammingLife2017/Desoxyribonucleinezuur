@@ -16,12 +16,13 @@ public class Bookmark {
 
     /**
      * Initialize a bookmark.
-     * @param graphName The graph file where this bookmark belongs to
-     * @param path The path where the graph file is located.
+     *
+     * @param graphName    The graph file where this bookmark belongs to
+     * @param path         The path where the graph file is located.
      * @param bookmarkName this is the bookmarkName of the file in which this genome and location is present
-     * @param nodeID is the ID of the node where the bookmark is present.
-     * @param radius is the depth to which surrounding nodes will be visualized.
-     * @param description The text describing this bookmark.
+     * @param nodeID       is the ID of the node where the bookmark is present.
+     * @param radius       is the depth to which surrounding nodes will be visualized.
+     * @param description  The text describing this bookmark.
      */
     public Bookmark(String graphName, String path, int nodeID, int radius, String bookmarkName, String description) {
         this.graphName = graphName;
@@ -44,7 +45,7 @@ public class Bookmark {
         return bookmarkName;
     }
 
-    public void setBookmarkName(String bookmarkName) {
+    void setBookmarkName(String bookmarkName) {
         this.bookmarkName = bookmarkName;
     }
 
@@ -52,7 +53,7 @@ public class Bookmark {
         return description;
     }
 
-    public void setDescription(String description) {
+    void setDescription(String description) {
         this.description = description;
     }
 
@@ -76,20 +77,15 @@ public class Bookmark {
         return nodeID;
     }
 
-    public void setNodeID(int nodeID) {
+    void setNodeID(int nodeID) {
         this.nodeID = nodeID;
-    }
-
-    @Override
-    public int hashCode() {
-        return super.hashCode();
     }
 
     public String getGraphName() {
         return graphName;
     }
 
-    public void setGraphName(String file) {
+    void setGraphName(String file) {
         this.graphName = file;
     }
 
@@ -106,6 +102,17 @@ public class Bookmark {
             }
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getGraphName().hashCode();
+        result = 31 * result + getPath().hashCode();
+        result = 31 * result + getRadius();
+        result = 31 * result + getNodeID();
+        result = 31 * result + getBookmarkName().hashCode();
+        result = 31 * result + getDescription().hashCode();
+        return result;
     }
 
     @Override

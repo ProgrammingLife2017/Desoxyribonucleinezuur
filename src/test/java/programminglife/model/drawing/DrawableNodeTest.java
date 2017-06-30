@@ -4,9 +4,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import programminglife.gui.InitFXThread;
 import programminglife.model.GenomeGraph;
 import programminglife.model.XYCoordinate;
-import programminglife.utility.InitFXThread;
 
 import static org.junit.Assert.assertEquals;
 
@@ -16,8 +16,8 @@ import static org.junit.Assert.assertEquals;
 public class DrawableNodeTest {
     private static final String GRAPH_NAME = "testGraph";
 
-    DrawableSegment node;
-    GenomeGraph g;
+    private DrawableSegment node;
+    private GenomeGraph g;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -30,7 +30,7 @@ public class DrawableNodeTest {
         g.setSequence(1, "ATCG");
         g.replaceNode(1);
         g.setGenomes(1, new int[0]);
-        node = new DrawableSegment(g, 1);
+        node = new DrawableSegment(g, 1, 1);
     }
 
     @After
@@ -39,20 +39,18 @@ public class DrawableNodeTest {
     }
 
 
-    // TODO: implement other tests
-
     @Test
     public void sizeTest() {
-        node.setSize(new XYCoordinate(3, 4));
+        node.setSize(3, 4);
 
-        assertEquals(3, node.getSize().getX(), 0.0);
-        assertEquals(4, node.getSize().getY(), 0.0);
+        assertEquals(3, node.getWidth(), 0.0);
+        assertEquals(4, node.getHeight(), 0.0);
     }
 
     @Test
     public void rightBorderCenterTest() {
         node.setLocation(2, 2);
-        node.setSize(new XYCoordinate(4, 2));
+        node.setSize(4, 2);
 
         assertEquals(6, node.getRightBorderCenter().getX(), 0.0);
         assertEquals(3, node.getRightBorderCenter().getY(), 0.0);
@@ -61,10 +59,21 @@ public class DrawableNodeTest {
     @Test
     public void leftBorderCenterTest() {
         node.setLocation(2, 2);
-        node.setSize(new XYCoordinate(4, 2));
+        node.setSize(4, 2);
 
         assertEquals(2, node.getLeftBorderCenter().getX(), 0.0);
         assertEquals(3, node.getLeftBorderCenter().getY(), 0.0);
     }
+
+    @Test
+    public void centerTest() {
+        node.setLocation(2, 2);
+        node.setSize(4 , 2);
+        assertEquals(new XYCoordinate(4,3), node.getCenter());
+    }
+
+
+
+
 
 }

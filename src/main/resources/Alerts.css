@@ -1,0 +1,44 @@
+.dialog-pane {
+    -fx-border-color:black;
+    -fx-border-width:1.0px;
+ }
+
+/**Customization of The Bar where the buttons are located**/
+.dialog-pane > .button-bar > .container {
+    -fx-background-color: #696969;
+}
+
+.dialog-pane > .content.label {
+   -fx-padding: 0.5em 0.5em 0.5em 0.5em;
+   -fx-background-color: #696969;
+   -fx-text-fill: white;
+   -fx-font-size: 15.0px;
+}
+
+/**Customization of DialogPane Header**/
+.dialog-pane:header .header-panel {
+  -fx-background-color: #696969;
+}
+
+.dialog-pane:header .header-panel .label {
+  -fx-background-color: #696969;
+  -fx-background-radius: 10px;
+  -fx-text-fill: white;
+  -fx-font-size: 15.0px;
+}
+
+/**Customization of Buttons**/
+.dialog-pane .button {
+    -fx-padding: 4 10 4 10;
+    -fx-border-color: #e2e2e2;
+    -fx-border-width: 1;
+    -fx-border-radius: 8,7,6;
+    -fx-background-radius: 8,7,6;
+    -fx-background-insets: 0,1,2;
+    -fx-background-color: #1d1d1d;
+    -fx-text-fill: #d8d8d8;
+}
+
+.dialog-pane .button:hover {
+    -fx-background-color: #3a3a3a;
+}

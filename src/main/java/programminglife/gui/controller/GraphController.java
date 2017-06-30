@@ -1,206 +1,354 @@
 package programminglife.gui.controller;
 
 import javafx.geometry.Bounds;
-import javafx.scene.Group;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
+import programminglife.ProgrammingLife;
+import programminglife.gui.ResizableCanvas;
 import programminglife.model.GenomeGraph;
+import programminglife.model.XYCoordinate;
 import programminglife.model.drawing.*;
 import programminglife.utility.Console;
 
-import java.util.Collection;
-import java.util.LinkedList;
-
-import static javafx.scene.shape.StrokeType.OUTSIDE;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
- * Created by Martijn van Meerten on 8-5-2017.
  * Controller for drawing the graph.
  */
-public class GraphController {
+class GraphController {
 
     private GenomeGraph graph;
-    private Group grpDrawArea;
     private double locationCenterY;
     private double locationCenterX;
-    private LinkedList<DrawableNode> oldMinMaxList = new LinkedList<>();
     private SubGraph subGraph;
-    private AnchorPane anchorGraphInfo;
-    private LinkedList<DrawableNode> oldGenomeList = new LinkedList<>();
+    private final ResizableCanvas canvas;
+    private final int archFactor = 5;
+
+    private DrawableSegment clicked;
+    private DrawableSegment clickedShift;
+    private DrawableSNP clickedSNP;
+    private DrawableSNP clickedSNPShift;
+    private final Map<DrawableNode, List<Color>> nodeGenomeList;
+
     private int centerNodeInt;
+    private boolean drawSNP = false;
+
+    private HighlightController highlightController;
+    private MiniMapController miniMapController;
+    private GuiController guiController;
 
     /**
      * Initialize controller object.
-     * @param graph The genome graph to control
-     * @param grpDrawArea The {@link Group} to draw in
-     * @param anchorGraphInfo the {@link AnchorPane} were to show the info of a node or edge.
+     *
+     * @param canvas the {@link Canvas} to draw in
      */
-    public GraphController(GenomeGraph graph, Group grpDrawArea, AnchorPane anchorGraphInfo) {
-        this.graph = graph;
-        this.grpDrawArea = grpDrawArea;
-        this.anchorGraphInfo = anchorGraphInfo;
+    GraphController(ResizableCanvas canvas) {
+        this.graph = null;
+        this.canvas = canvas;
+        this.highlightController = null;
+        this.nodeGenomeList = new HashMap<>();
     }
 
-    public int getCenterNodeInt() {
+    int getCenterNodeInt() {
         return this.centerNodeInt;
     }
 
     /**
-     * Method to draw the subGraph decided by a center node and radius.
-     * @param center the node of which the radius starts.
-     * @param radius the amount of layers to be drawn.
+     * Utility function for benchmarking purposes.
+     *
+     * @param description the description to print
+     * @param r           the {@link Runnable} to run/benchmark
      */
-    public void draw(int center, int radius) {
-        long startTimeProgram = System.nanoTime();
-        DrawableSegment centerNode = new DrawableSegment(graph, center);
-        centerNodeInt = centerNode.getIdentifier();
-        subGraph = new SubGraph(centerNode, radius);
-
-        long startLayoutTime = System.nanoTime();
-
-        subGraph.layout();
-
-        long startTimeDrawing = System.nanoTime();
-
-        for (DrawableNode drawableNode : subGraph.getNodes().values()) {
-            drawNode(drawableNode);
-            for (DrawableNode child : subGraph.getChildren(drawableNode)) {
-                drawEdge(drawableNode, child);
-            }
-        }
-
-        centerOnNodeId(center);
-        highlightNode(center, Color.DARKORANGE);
-
-        long finishTime = System.nanoTime();
-        long differenceTimeProgram = finishTime - startTimeProgram;
-        long differenceTimeDrawing = finishTime - startTimeDrawing;
-        long differenceTimeLayout = finishTime - startLayoutTime;
-        long msDifferenceTimeProgram = differenceTimeProgram / 1000000;
-        long millisecondTimeDrawing = differenceTimeDrawing   / 1000000;
-        long msDifferenceTimeLayout = differenceTimeLayout   / 1000000;
-        Console.println("Time of Drawing:  " + millisecondTimeDrawing);
-        Console.println("Time of layout:  " + msDifferenceTimeLayout);
-        Console.println("Time of Total Program:  " + msDifferenceTimeProgram);
-
+    private void time(String description, Runnable r) {
+        long start = System.nanoTime();
+        r.run();
+        Console.println(String.format("%s: %d ms", description, (System.nanoTime() - start) / 1000000));
     }
 
     /**
-     * Fill the rectangles with the color.
-     * @param nodes the Collection of {@link Integer Integers} to highlight.
-     * @param color the {@link Color} to highlight with.
+     * Method to draw the subGraph decided by a center node and radius.
+     *
+     * @param center the node of which the radius starts.
+     * @param radius the amount of layers to be drawn.
      */
-    private void highlightNodesByID(Collection<Integer> nodes, Color color) {
-        for (int i : nodes) {
-            highlightNode(i, color);
-        }
+    void draw(int center, int radius) {
+        time("Total drawing", () -> {
+            DrawableSegment centerNode = new DrawableSegment(graph, center, 1);
+            centerNodeInt = centerNode.getIdentifier();
+            GraphicsContext gc = canvas.getGraphicsContext2D();
+
+            time("Find subgraph", () -> subGraph = new SubGraph(centerNode, radius, drawSNP));
+
+            time("Colorize", this::colorize);
+
+            time("Drawing", () -> draw(gc));
+
+            centerOnNodeId(center);
+            highlightCenterNode(center, Color.DARKORANGE);
+        });
+    }
+
+    /**
+     * Method to do the coloring of the to be drawn graph.
+     */
+    private void colorize() {
+        subGraph.colorize();
     }
 
     /**
      * Method to highlight a collection of nodes.
+     *
      * @param nodes The nodes to highlight.
      * @param color The color to highlight with.
      */
     private void highlightNodes(Collection<DrawableNode> nodes, Color color) {
-        for (DrawableNode drawNode: nodes) {
-            highlightNode(drawNode, color);
+        for (DrawableNode drawNode : nodes) {
+            highlightNode(drawNode, color, false);
         }
     }
 
     /**
      * Fill the rectangle with the color.
+     *
      * @param nodeID the nodeID of the node to highlight.
-     * @param color the {@link Color} to highlight with.
+     * @param color  the {@link Color} to highlight with.
      */
-    public void highlightNode(int nodeID, Color color) {
+    private void highlightCenterNode(int nodeID, Color color) {
         DrawableNode node = subGraph.getNodes().get(nodeID);
-        highlightNode(node, color);
+        highlightNode(node, color, true);
     }
 
     /**
      * Highlights a single node.
-     * @param node {@link DrawableNode} to highlight.
+     *
+     * @param node  {@link DrawableNode} to highlight.
      * @param color {@link Color} to color with.
+     * @param clickedOn boolean to check if the node was clicked on.
      */
-    public void highlightNode(DrawableNode node, Color color) {
-        node.setStroke(color);
-        node.setStrokeWidth(3);
-        node.setStrokeType(OUTSIDE);
+    private void highlightNode(DrawableNode node, Color color, Boolean clickedOn) {
+        if (clickedOn) {
+            node.setStrokeColor(color);
+        }
+        node.setStrokeWidth(5.0 * subGraph.getZoomLevel());
+        drawNode(canvas.getGraphicsContext2D(), node);
     }
 
     /**
      * Method to highlight a Link. Changes the stroke color of the Link.
-     * @param edge {@link DrawableEdge} is the edge to highlight.
+     *
+     * @param edge  {@link DrawableEdge} is the edge to highlight.
      * @param color {@link Color} is the color in which the Link node needs to highlight.
      */
     private void highlightEdge(DrawableEdge edge, Color color) {
-        edge.setStroke(color);
+        edge.setStrokeColor(color);
     }
 
     /**
      * Method to highlight a dummy node. Changes the stroke color of the node.
-     * @param node {@link DrawableDummy} is the dummy node that needs highlighting.
+     *
+     * @param node  {@link DrawableDummy} is the dummy node that needs highlighting.
      * @param color {@link Color} is the color in which the dummy node needs a highlight.
      */
     private void highlightDummyNode(DrawableDummy node, Color color) {
-        node.setStroke(color);
+        node.setStrokeColor(color);
     }
 
     /**
      * Draws a edge on the location it has.
+     *
+     * @param gc     {@link GraphicsContext} is the GraphicsContext required to draw.
      * @param parent {@link DrawableNode} is the node to be draw from.
-     * @param child {@link DrawableNode} is the node to draw to.
+     * @param child  {@link DrawableNode} is the node to draw to.
      */
-    private void drawEdge(DrawableNode parent, DrawableNode child) {
+    private void drawEdge(GraphicsContext gc, DrawableNode parent, DrawableNode child) {
         DrawableEdge edge = new DrawableEdge(parent, child);
-        // If either parent or child are dummy nodes make on click use the link in that dummy.
-        if (parent instanceof DrawableDummy) {
-            edge.setOnMouseClicked(event -> Console.println(parent.toString()));
-        } else if (child instanceof DrawableDummy) {
-            edge.setOnMouseClicked(event -> Console.println(child.toString()));
-        } else {
-            edge.setOnMouseClicked(event -> Console.println(edge.toString()));
+
+        Color[] genomeColors = highlightController.getGenomeColors();
+
+        Collection<Integer> genomesEdge = this.getGenomesEdge(edge);
+        Collection<Integer> highlightedGenomes = highlightController.getSelectedGenomes();
+        List<Color> genomesToDraw = null;
+        if (genomesEdge != null) {
+            genomesToDraw = highlightedGenomes.stream()
+                    .filter(genomesEdge::contains)
+                    .map(id -> genomeColors[id])
+                    .collect(Collectors.toList());
         }
-        edge.setOnMouseClicked(event -> {
-            if (event.isShiftDown()) {
-                showInfoEdge(edge, 250);
-            } else {
-                showInfoEdge(edge, 10);
+
+        edge.colorize(subGraph);
+
+        gc.setLineWidth(edge.getStrokeWidth());
+        gc.setStroke(edge.getStrokeColor());
+        if (ProgrammingLife.getShowCSS()) {
+            gc.setStroke(Color.WHITE);
+        }
+
+        XYCoordinate startLocation = edge.getStartLocation();
+
+        XYCoordinate endLayerLocation = new XYCoordinate(
+                parent.getLeftBorderCenter().getX() + parent.getLayer().getWidth(),
+                parent.getLeftBorderCenter().getY());
+
+        XYCoordinate endLocation = edge.getEndLocation();
+
+        if (genomesToDraw == null || genomesToDraw.size() == 0) {
+            gc.strokeLine(startLocation.getX(), startLocation.getY(), endLayerLocation.getX(), endLayerLocation.getY());
+            gc.strokeLine(endLayerLocation.getX(), endLayerLocation.getY(), endLocation.getX(), endLocation.getY());
+        } else {
+            int seqNumber = 0;
+            int numberOfGenomes = genomesToDraw.size();
+            double genomeHeight = edge.getStrokeWidth() / numberOfGenomes;
+            startLocation.setY(startLocation.getY() - (genomeHeight * numberOfGenomes / 2));
+            endLayerLocation.setY(endLayerLocation.getY() - (genomeHeight * numberOfGenomes / 2));
+            endLocation.setY(endLocation.getY() - (genomeHeight * numberOfGenomes / 2));
+
+            gc.save();
+            gc.setLineWidth(genomeHeight);
+
+            for (Color color : genomesToDraw) {
+                gc.setStroke(color);
+                gc.strokeLine(startLocation.getX(), startLocation.getY() + genomeHeight * seqNumber,
+                        endLayerLocation.getX(), endLayerLocation.getY() + genomeHeight * seqNumber);
+
+                gc.strokeLine(endLayerLocation.getX(), endLayerLocation.getY() + genomeHeight * seqNumber,
+                        endLocation.getX(), endLocation.getY() + genomeHeight * seqNumber);
+
+                seqNumber++;
             }
-        });
-        edge.colorize(graph);
-        edge.setStartNode(edge.getStart());
-        edge.setEndNode(edge.getEnd());
-        this.grpDrawArea.getChildren().add(edge);
-        edge.toBack();
+            gc.restore();
+        }
+
     }
 
     /**
      * Draws a node on the location it has.
+     *
+     * @param gc           {@link GraphicsContext} is the GraphicsContext required to draw.
      * @param drawableNode {@link DrawableNode} is the node to be drawn.
      */
-    public void drawNode(DrawableNode drawableNode) {
-        if (!(drawableNode instanceof DrawableDummy)) {
-            drawableNode.setOnMouseClicked(event -> Console.println(drawableNode.details()));
+    private void drawNode(GraphicsContext gc, DrawableNode drawableNode) {
+        gc.setStroke(drawableNode.getStrokeColor());
+        gc.setFill(drawableNode.getFillColor());
+        gc.setLineWidth(drawableNode.getStrokeWidth());
 
-            drawableNode.setOnMouseClicked(event -> {
-                if (event.isShiftDown()) {
-                    showInfoNode((DrawableSegment) drawableNode, 250);
-                } else {
-                    showInfoNode((DrawableSegment) drawableNode, 10);
+        double width = drawableNode.getWidth();
+        double height = drawableNode.getHeight();
+        double locX = drawableNode.getLocation().getX();
+        double locY = drawableNode.getLocation().getY();
+
+        if (drawableNode instanceof DrawableSNP) {
+            drawSNP(gc, (DrawableSNP) drawableNode);
+
+        } else if (drawableNode instanceof DrawableDummy) {
+            Color[] genomeColors = highlightController.getGenomeColors();
+            Collection<Integer> genomesDummy = drawableNode.getGenomes();
+            Collection<Integer> highlightedGenomes = highlightController.getSelectedGenomes();
+            List<Color> genomesToDraw = null;
+            if (genomesDummy != null) {
+                genomesToDraw = highlightedGenomes.stream()
+                        .filter(genomesDummy::contains)
+                        .map(id -> genomeColors[id])
+                        .collect(Collectors.toList());
+            }
+            if (ProgrammingLife.getShowCSS()) {
+                gc.setStroke(Color.WHITE);
+            }
+            if (genomesToDraw != null && genomesToDraw.size() > 0) {
+                int seqNumber = 0;
+                double genomeHeight = drawableNode.getStrokeWidth() / genomesToDraw.size();
+
+                XYCoordinate location = drawableNode.getLocation();
+
+                gc.save();
+                gc.setLineWidth(genomeHeight);
+                for (Color color : genomesToDraw) {
+                    gc.setStroke(color);
+                    gc.strokeLine(location.getX(), location.getY() + genomeHeight * seqNumber
+                                    - (genomeHeight * genomesToDraw.size() / 2),
+                            location.getX() + width, location.getY() + genomeHeight * seqNumber
+                                    - (genomeHeight * genomesToDraw.size() / 2));
+
+                    seqNumber++;
                 }
-            });
-        }
+                gc.restore();
+            } else {
+                gc.strokeRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height);
+                gc.fillRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height);
+            }
 
-        drawableNode.colorize();
-        this.grpDrawArea.getChildren().add(drawableNode);
+        } else if (!nodeGenomeList.containsKey(drawableNode)) {
+            gc.strokeRoundRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height, archFactor, archFactor);
+            gc.fillRoundRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height, archFactor, archFactor);
+        } else {
+            int seqNumber = 0;
+            int numberOfGenomes = nodeGenomeList.get(drawableNode).size();
+            double genomeHeight = height / numberOfGenomes;
+
+            gc.strokeRoundRect(drawableNode.getLeftBorderCenter().getX(), locY, width, height, archFactor, archFactor);
+            gc.save();
+
+            for (Color color : nodeGenomeList.get(drawableNode)) {
+                gc.setFill(color);
+                gc.fillRect(locX, locY + genomeHeight * seqNumber, width, genomeHeight);
+                seqNumber++;
+            }
+            gc.restore();
+        }
+    }
+
+    /**
+     * Draws an SNP node on the location it has.
+     *
+     * @param gc {@link GraphicsContext} is the GraphicsContext required to draw.
+     * @param drawableSNP {@link DrawableSNP} is the node to be drawn.
+     */
+    private void drawSNP(GraphicsContext gc, DrawableSNP drawableSNP) {
+        double width = drawableSNP.getWidth();
+        double height = drawableSNP.getHeight();
+        double locX = drawableSNP.getLocation().getX();
+        double locY = drawableSNP.getLocation().getY();
+
+        gc.save();
+
+        gc.translate(drawableSNP.getCenter().getX(), drawableSNP.getCenter().getY());
+        gc.rotate(45);
+        gc.translate(-drawableSNP.getCenter().getX(), -drawableSNP.getCenter().getY());
+
+        int size = drawableSNP.getMutations().size();
+        int seqNumber = 0;
+        gc.strokeRoundRect(locX, locY, width, height, archFactor, archFactor);
+
+        for (DrawableSegment drawableSegment : drawableSNP.getMutations()) {
+            String seqChar = drawableSegment.getSequence();
+            switch (seqChar) {
+                default:
+                    throw new IllegalArgumentException("This is not a valid mutation.");
+                case "A":
+                    gc.setFill(Color.GREEN);
+                    break;
+                case "C":
+                    gc.setFill(Color.BLUE);
+                    break;
+                case "G":
+                    gc.setFill(Color.ORANGE);
+                    break;
+                case "T":
+                    gc.setFill(Color.RED);
+                    break;
+                case "N":
+                    gc.setFill(Color.WHITE);
+            }
+            gc.fillRect(locX + (width / size) * seqNumber, locY, width / size, height);
+            seqNumber++;
+        }
+        gc.restore();
     }
 
     /**
      * Getter for the graph.
+     *
      * @return - The graph
      */
     public GenomeGraph getGraph() {
@@ -209,6 +357,7 @@ public class GraphController {
 
     /**
      * Setter for the graph.
+     *
      * @param graph The graph
      */
     void setGraph(GenomeGraph graph) {
@@ -218,8 +367,8 @@ public class GraphController {
     /**
      * Clear the draw area.
      */
-    public void clear() {
-        this.grpDrawArea.getChildren().clear();
+    void clear() {
+        this.canvas.getGraphicsContext2D().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
     }
 
     public double getLocationCenterX() {
@@ -233,155 +382,112 @@ public class GraphController {
 
     /**
      * Centers on the given node.
+     *
      * @param nodeId is the node to center on.
      */
-    public void centerOnNodeId(int nodeId) {
+    private void centerOnNodeId(int nodeId) {
         DrawableNode drawableCenterNode = subGraph.getNodes().get(nodeId);
-        double xCoordinate = drawableCenterNode.getX();
 
-        Bounds bounds = grpDrawArea.getParent().getLayoutBounds();
+        Bounds bounds = canvas.getParent().getLayoutBounds();
         double boundsHeight = bounds.getHeight();
         double boundsWidth = bounds.getWidth();
+
+        double xCoordinate = drawableCenterNode.getCenter().getX();
 
         locationCenterY = boundsHeight / 4;
         locationCenterX = boundsWidth / 2 - xCoordinate;
 
-        grpDrawArea.setTranslateX(locationCenterX);
-        grpDrawArea.setTranslateY(locationCenterY);
+        translate(locationCenterX, locationCenterY);
     }
 
     /**
-     * Method to show the information of an edge.
-     * @param edge DrawableEdge the edge which has been clicked on.
-     * @param x int the x location of the TextField.
+     * Translate function for the nodes. Used to change the location of nodes instead of mocing the canvas.
+     *
+     * @param xDifference double with the value of the change in the X (horizontal) direction.
+     * @param yDifference double with the value of the change in the Y (vertical) direction.
      */
-    private void showInfoEdge(DrawableEdge edge, int x) {
-        anchorGraphInfo.getChildren().removeIf(node1 -> node1.getLayoutX() == x);
-
-        Text idText = new Text("Genomes: "); idText.setLayoutX(x); idText.setLayoutY(65);
-        Text parentsText = new Text("Parent: "); parentsText.setLayoutX(x); parentsText.setLayoutY(115);
-        Text childrenText = new Text("Child: "); childrenText.setLayoutX(x); childrenText.setLayoutY(165);
-
-        TextField id = getTextField("Genomes: ", x, 70, graph.getGenomeNames(edge.getGenomes()).toString());
-        TextField parent = getTextField("Parent Node: ", x, 120, Integer.toString(edge.getStart().getIdentifier()));
-        TextField child = getTextField("Child Node: ", x, 170, Integer.toString(edge.getEnd().getIdentifier()));
-
-        anchorGraphInfo.getChildren().addAll(idText, parentsText, childrenText, id, parent, child);
+    void translate(double xDifference, double yDifference) {
+        subGraph.translate(xDifference, yDifference);
+        draw(canvas.getGraphicsContext2D());
     }
 
     /**
-     * Method to show the information of a node.
-     * @param node DrawableSegment the node which has been clicked on.
-     * @param x int the x location of the TextField.
+     * Zoom function for the nodes. Used to increase the size of the nodes instead of zooming in on the canvas itself.
+     *
+     * @param scale double with the value of the increase of the nodes. Value higher than 1 means that the node size
+     *              decreases, value below 1 means that the node size increases.
      */
-    private void showInfoNode(DrawableSegment node, int x) {
-        Text idText = new Text("ID: "); idText.setLayoutX(x); idText.setLayoutY(65);
-        Text parentText = new Text("Parents: "); parentText.setLayoutX(x); parentText.setLayoutY(105);
-        Text childText = new Text("Children: "); childText.setLayoutX(x); childText.setLayoutY(145);
-        Text inEdgeText = new Text("Incoming Edges: "); inEdgeText.setLayoutX(x); inEdgeText.setLayoutY(185);
-        Text outEdgeText = new Text("Outgoing Edges: "); outEdgeText.setLayoutX(x); outEdgeText.setLayoutY(225);
-        Text seqLengthText = new Text("Sequence Length: "); seqLengthText.setLayoutX(x); seqLengthText.setLayoutY(265);
-        Text genomeText = new Text("Genomes: "); genomeText.setLayoutX(x); genomeText.setLayoutY(305);
-        Text seqText = new Text("Sequence: "); seqText.setLayoutX(x); seqText.setLayoutY(370);
+    void zoom(double scale) {
+        subGraph.zoom(scale);
+        draw(canvas.getGraphicsContext2D());
+    }
 
-        anchorGraphInfo.getChildren().removeIf(node1 -> node1.getLayoutX() == x);
+    /**
+     * Draw method for the whole subgraph. Calls draw node and draw Edge for every node and edge.
+     *
+     * @param gc is the {@link GraphicsContext} required to draw.
+     */
+    private void draw(GraphicsContext gc) {
+        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
-        TextField idTextField = getTextField("ID: ", x, 70, Integer.toString(node.getIdentifier()));
-
-        StringBuilder parentSB = new StringBuilder();
-        node.getParents().forEach(id -> parentSB.append(id).append(", "));
-        TextField parents;
-        if (parentSB.length() > 2) {
-            parentSB.setLength(parentSB.length() - 2);
-            parents = getTextField("Parents: ", x, 110, parentSB.toString());
-        } else {
-            parentSB.replace(0, parentSB.length(), "This node has no parent(s)");
-            parents = getTextField("Parents: ", x, 110, parentSB.toString());
+        if (clicked != null) {
+            highlightNode(clicked, Color.CYAN, true);
+            clicked.setStrokeWidth(5.0 * subGraph.getZoomLevel());
+        }
+        if (clickedSNP != null) {
+            highlightNode(clickedSNP, Color.CYAN, true);
+            clickedSNP.setStrokeWidth(5.0 * subGraph.getZoomLevel());
+        }
+        if (clickedShift != null) {
+            highlightNode(clickedShift, Color.CYAN, true);
+            clickedShift.setStrokeWidth(5.0 * subGraph.getZoomLevel());
+        }
+        if (clickedSNPShift != null) {
+            highlightNode(clickedSNPShift, Color.CYAN, true);
+            clickedSNPShift.setStrokeWidth(5.0 * subGraph.getZoomLevel());
+        }
+        if (clicked == clickedShift && clicked != null && clickedShift != null) {
+            highlightNode(clicked, Color.DARKCYAN, true);
+            clicked.setStrokeWidth(5.0 * subGraph.getZoomLevel());
+        }
+        if (clickedSNP == clickedSNPShift && clickedSNP != null && clickedSNPShift != null) {
+            highlightNode(clickedSNP, Color.DARKCYAN, true);
+            clickedSNP.setStrokeWidth(5.0 * subGraph.getZoomLevel());
         }
 
-        StringBuilder childSB = new StringBuilder();
-        node.getChildren().forEach(id -> childSB.append(id).append(", "));
-        TextField children;
-        if (childSB.length() > 2) {
-            childSB.setLength(childSB.length() - 2);
-            children = getTextField("Children: ", x, 150, childSB.toString());
-        } else {
-            childSB.replace(0, childSB.length(), "This node has no child(ren)");
-            children = getTextField("Children: ", x, 150, childSB.toString());
+        boolean didLoad = subGraph.checkDynamicLoad(0, canvas.getWidth());
+        Bounds bounds = canvas.getParent().getLayoutBounds();
+        double centerCanvasX = bounds.getWidth() / 2;
+        this.setCenterNode(subGraph.updateCenterNode(centerCanvasX, centerNodeInt));
+        this.guiController.setText(this.centerNodeInt);
+        this.miniMapController.showPosition(this.centerNodeInt);
+
+        if (didLoad && highlightController != null) {
+            highlightController.highlight();
         }
 
-        String genomesString = graph.getGenomeNames(node.getGenomes()).toString();
-        String sequenceString = node.getSequence().replaceAll("(.{24})", "$1" + System.getProperty("line.separator"));
-        TextField inEdges = getTextField("Incoming Edges: ", x, 190, Integer.toString(node.getParents().size()));
-        TextField outEdges = getTextField("Outgoing Edges: ", x, 230, Integer.toString(node.getChildren().size()));
-        TextField seqLength = getTextField("Sequence Length: ", x, 270, Integer.toString(node.getSequence().length()));
-        TextArea genome = getTextArea("Genome: ", x, 310, genomesString.substring(1, genomesString.length() - 1), 40);
-        genome.setWrapText(true);
-        TextArea seq = getTextArea("Sequence: ", x, 375, sequenceString, 250);
-        anchorGraphInfo.getChildren().addAll(idText, parentText, childText, inEdgeText,
-                outEdgeText, genomeText, seqLengthText, seqText);
-        anchorGraphInfo.getChildren().addAll(idTextField, parents, children, inEdges, outEdges, genome, seqLength, seq);
-    }
+        for (DrawableNode drawableNode : subGraph.getNodes().values()) {
+            for (DrawableNode child : subGraph.getChildren(drawableNode)) {
+                drawEdge(gc, drawableNode, child);
+            }
+        }
 
-    /**
-     * Returns a textField to be used by the edge and node information show panel.
-     * @param id String the id of the textField.
-     * @param x int the x coordinate of the textField inside the anchorPane.
-     * @param y int the y coordinate of the textField inside the anchorPane.
-     * @param text String the text to be shown by the textField.
-     * @param height int of the height of the area.
-     * @return TextField the created textField.
-     */
-    private TextArea getTextArea(String id, int x, int y, String text, int height) {
-        TextArea textArea = new TextArea();
-        textArea.setId(id);
-        textArea.setText(text);
-        textArea.setLayoutX(x);
-        textArea.setLayoutY(y);
-        textArea.setEditable(false);
-        textArea.setStyle("-fx-text-box-border: transparent;-fx-background-color: none; -fx-background-insets: 0;"
-                + " -fx-padding: 1 3 1 3; -fx-focus-color: transparent; "
-                + "-fx-faint-focus-color: transparent; -fx-font-family: monospace;");
-        textArea.setPrefSize(225, height);
-
-        return textArea;
-    }
-
-    /**
-     * Returns a textField to be used by the edge and node information show panel.
-     * @param id String the id of the textField.
-     * @param x int the x coordinate of the textField inside the anchorPane.
-     * @param y int the y coordinate of the textField inside the anchorPane.
-     * @param text String the text to be shown by the textField.
-     * @return TextField the created textField.
-     */
-    private TextField getTextField(String id, int x, int y, String text) {
-        TextField textField = new TextField();
-        textField.setId(id);
-        textField.setText(text);
-        textField.setLayoutX(x);
-        textField.setLayoutY(y);
-        textField.setEditable(false);
-        textField.setStyle("-fx-text-box-border: transparent;-fx-background-color: none; -fx-background-insets: 0;"
-                + " -fx-padding: 1 3 1 3; -fx-focus-color: transparent; "
-                + "-fx-faint-focus-color: transparent; -fx-font-family: monospace;");
-        textField.setPrefSize(220, 20);
-
-        return textField;
+        for (DrawableNode drawableNode : subGraph.getNodes().values()) {
+            drawNode(gc, drawableNode);
+        }
     }
 
     /**
      * Method to do highlighting based on a min and max amount of genomes in a node.
-     * @param min The minimal amount of genomes
-     * @param max The maximal amount of genomes
+     *
+     * @param min   The minimal amount of genomes
+     * @param max   The maximal amount of genomes
      * @param color the {@link Color} in which the highlight has to be done.
      */
-    public void highlightMinMax(int min, int max, Color color) {
+    void highlightMinMax(int min, int max, Color color) {
         LinkedList<DrawableNode> drawNodeList = new LinkedList<>();
 
-        removeHighlight(oldMinMaxList);
-        removeHighlight(oldGenomeList);
-        for (DrawableNode drawableNode: subGraph.getNodes().values()) {
+        for (DrawableNode drawableNode : subGraph.getNodes().values()) {
             if (drawableNode != null && !(drawableNode instanceof DrawableDummy)) {
                 int genomeCount = drawableNode.getGenomes().size();
                 if (genomeCount >= min && genomeCount <= max) {
@@ -389,38 +495,187 @@ public class GraphController {
                 }
             }
         }
-        oldMinMaxList = drawNodeList;
         highlightNodes(drawNodeList, color);
     }
 
     /**
      * Resets the node highlighting to remove highlights.
-     * @param nodes are the nodes to remove the highlight from.
      */
-    private void removeHighlight(Collection<DrawableNode> nodes) {
-        for (DrawableNode node: nodes) {
-            node.colorize();
+    void removeHighlight() {
+        try {
+            subGraph.forEach(node -> node.colorize(subGraph));
+            nodeGenomeList.clear();
+        } catch (NullPointerException n) {
+            // Occurs when the subgraph is cleared upon opening another graph, nothing on the hand!
         }
+        this.draw(canvas.getGraphicsContext2D());
     }
 
 
     /**
      * Highlights based on genomeID.
+     *
      * @param genomeID the GenomeID to highlight on.
+     * @param color the Color to put on the node.
      */
-    public void highlightByGenome(int genomeID) {
+    void highlightByGenome(int genomeID, Color color) {
         LinkedList<DrawableNode> drawNodeList = new LinkedList<>();
-        removeHighlight(oldGenomeList);
-        removeHighlight(oldMinMaxList);
-        for (DrawableNode drawableNode: subGraph.getNodes().values()) {
+
+        for (DrawableNode drawableNode : subGraph.getNodes().values()) {
             Collection<Integer> genomes = drawableNode.getGenomes();
+            List<Color> listColor = new LinkedList<>();
             for (int genome : genomes) {
                 if (genome == genomeID && !(drawableNode instanceof DrawableDummy)) {
+                    if (nodeGenomeList.containsKey(drawableNode) && drawableNode.getGenomes().contains(genome)) {
+                        listColor = nodeGenomeList.get(drawableNode);
+                    }
                     drawNodeList.add(drawableNode);
+                    if (!listColor.contains(color)) {
+                        listColor.add(color);
+                    }
+                    nodeGenomeList.put(drawableNode, listColor);
                 }
             }
         }
-        oldGenomeList = drawNodeList;
-        highlightNodes(drawNodeList, Color.YELLOW);
+        highlightNodes(drawNodeList, color);
+    }
+
+    /**
+     * Sets if the glyph  snippets will be drawn or not.
+     */
+    void setSNP() {
+        drawSNP = !drawSNP;
+        resetClicked();
+    }
+
+    /**
+     * Resets which nodes are clicked on.
+     */
+    void resetClicked() {
+        clicked = null;
+        clickedShift = null;
+        clickedSNP = null;
+        clickedSNPShift = null;
+    }
+
+    /**
+     * Returns the node clicked on else returns null.
+     *
+     * @param x position horizontally where clicked
+     * @param y position vertically where clicked
+     * @return nodeClicked {@link DrawableNode} returns null if no node is clicked.
+     */
+    Drawable onClick(double x, double y) {
+        return subGraph.onClick(x, y);
+    }
+
+    /**
+     * Method to highlight the node clicked on.
+     *
+     * @param segment      is the {@link DrawableSegment} clicked on.
+     * @param snp          is the {@link DrawableSNP} clicked on.
+     * @param shiftPressed boolean true if shift was pressed during the click.
+     */
+    void highlightClicked(DrawableSegment segment, DrawableSNP snp, boolean shiftPressed) {
+        if (shiftPressed) {
+            if (clicked != null) {
+                this.clicked.colorize(subGraph);
+            }
+            if (clickedSNP != null) {
+                this.clickedSNP.colorize(subGraph);
+            }
+            this.clicked = segment;
+            this.clickedSNP = snp;
+
+            if (segment != null) {
+                highlightNode(segment, Color.CYAN, true);
+                segment.setStrokeWidth(5.0 * subGraph.getZoomLevel()); //Correct thickness when zoomed
+            }
+            if (snp != null) {
+                highlightNode(snp, Color.CYAN, true);
+                snp.setStrokeWidth(5.0 * subGraph.getZoomLevel()); //Correct thickness when zoomed
+            }
+        } else {
+            if (clickedShift != null) {
+                this.clickedShift.colorize(subGraph);
+            }
+            if (clickedSNPShift != null) {
+                this.clickedSNPShift.colorize(subGraph);
+            }
+            this.clickedShift = segment;
+            this.clickedSNPShift = snp;
+
+            if (segment != null) {
+                highlightNode(segment, Color.CYAN, true);
+                segment.setStrokeWidth(5.0 * subGraph.getZoomLevel()); //Correct thickness when zoomed
+            }
+            if (snp != null) {
+                highlightNode(snp, Color.CYAN, true);
+                snp.setStrokeWidth(5.0 * subGraph.getZoomLevel()); //Correct thickness when zoomed
+            }
+        }
+        draw(canvas.getGraphicsContext2D());
+    }
+
+    /**
+     * Method to reset the zoomLevel.
+     */
+    void resetZoom() {
+        this.subGraph.setZoomLevel(1);
+    }
+
+    /**
+     * Method to return the genomes in a given edge.
+     *
+     * @param edge the Drawable edge the check which genomes it contains.
+     * @return Collection<Integer> of the genomes in the edge.
+     */
+    Collection<Integer> getGenomesEdge(DrawableEdge edge) {
+        Map<DrawableNode, Collection<Integer>> from = subGraph.getGenomes().get(edge.getStart().getParentSegment());
+        if (from != null) {
+            return from.get(edge.getEnd().getChildSegment());
+        }
+        return null;
+    }
+
+    /**
+     * Method to return the segments in a given edge.
+     *
+     * @param node the Drawable segment the check which parent segments it contains.
+     * @return Collection<Integer> of the parents segments in the node.
+     */
+    Collection<DrawableNode> getParentSegments(DrawableSegment node) {
+        return subGraph.getParentSegments(node);
+    }
+
+    /**
+     * Method to return the segments in a given edge.
+     *
+     * @param node the Drawable segment the check which child segments it contains.
+     * @return Collection<Integer> of the child segments in the node.
+     */
+    Collection<DrawableNode> getChildSegments(DrawableSegment node) {
+        return subGraph.getChildSegments(node);
+    }
+
+    /**
+     * Setter for the highlight controller.
+     *
+     * @param highlightController the controller to be set.
+     */
+    void setHighlightController(HighlightController highlightController) {
+        this.highlightController = highlightController;
+    }
+
+    private void setCenterNode(int id) {
+        this.centerNodeInt = id;
+    }
+
+    void setMiniMapController(MiniMapController miniMapController) {
+        this.miniMapController = miniMapController;
+    }
+
+    void setGuiController(GuiController guiController) {
+        this.guiController = guiController;
     }
 }

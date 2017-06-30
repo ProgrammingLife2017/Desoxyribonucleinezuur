@@ -10,6 +10,7 @@ public class XYCoordinate {
 
     /**
      * Constructor for X-Y coordinate.
+     *
      * @param x The x-coordinate
      * @param y The y-coordinate
      */
@@ -20,6 +21,7 @@ public class XYCoordinate {
 
     /**
      * Sum coordinates.
+     *
      * @param other the coordinate to add to this one
      * @return the sum
      */
@@ -29,6 +31,7 @@ public class XYCoordinate {
 
     /**
      * Add to x and y coordinate.
+     *
      * @param x The value to add to x
      * @param y The value to add to y
      * @return the new {@link XYCoordinate}
@@ -39,15 +42,17 @@ public class XYCoordinate {
 
     /**
      * Multiply the coordinate with a factor.
+     *
      * @param factor the factor
      * @return the new coordinate
      */
-    public XYCoordinate multiply(double factor) {
+    XYCoordinate multiply(double factor) {
         return new XYCoordinate((int) (this.getX() * factor), (int) (this.getY() * factor));
     }
 
     /**
      * Get the X coordinate.
+     *
      * @return the x
      */
     public double getX() {
@@ -56,6 +61,7 @@ public class XYCoordinate {
 
     /**
      * Set the X coordinate.
+     *
      * @param x the value to set
      * @return the {@link XYCoordinate} for chaining
      */
@@ -67,6 +73,7 @@ public class XYCoordinate {
 
     /**
      * Get the Y coordinate.
+     *
      * @return the y
      */
     public double getY() {
@@ -75,6 +82,7 @@ public class XYCoordinate {
 
     /**
      * Set the Y coordinate.
+     *
      * @param y the value to set
      * @return the {@link XYCoordinate} for chaining
      */
@@ -87,5 +95,36 @@ public class XYCoordinate {
     @Override
     public String toString() {
         return "(" + this.getX() + ", " + this.getY() + ")";
+    }
+
+    /**
+     * Sets the X and Y coordinate.
+     *
+     * @param x double X coordinate.
+     * @param y double Y coordinate.
+     */
+    public void set(double x, double y) {
+        this.setX(x);
+        this.setY(y);
+    }
+
+    /**
+     * Equals method for XYCoordinate.
+     *
+     * @param other the object to compare with.
+     * @return boolean true if equals, false if not equal.
+     */
+    @Override
+    public boolean equals(Object other) {
+        if (other instanceof XYCoordinate) {
+            XYCoordinate that = (XYCoordinate) other;
+            return this.getX() == that.getX() && this.getY() == that.getY();
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 }

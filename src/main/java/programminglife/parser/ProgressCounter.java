@@ -1,4 +1,4 @@
-package programminglife.utility;
+package programminglife.parser;
 
 import java.util.Observable;
 
@@ -8,24 +8,16 @@ import java.util.Observable;
 public class ProgressCounter extends Observable {
     private int progress;
     private int total;
-    private String description;
-
-    /**
-     * Constructor with description.
-     * @param description String.
-     */
-    public ProgressCounter(String description) {
-        this(Integer.MAX_VALUE, description);
-    }
+    private final String description;
 
     /**
      * Constructor with description and integer of line count.
-     * @param total int.
+     *
      * @param description String.
      */
-    public ProgressCounter(int total, String description) {
+    ProgressCounter(String description) {
         this.progress = 0;
-        this.total = total;
+        this.total = Integer.MAX_VALUE;
         this.description = description;
 
         this.setChanged();
@@ -35,14 +27,14 @@ public class ProgressCounter extends Observable {
     /**
      * Counter for the progress.
      */
-    public void count() {
+    void count() {
         this.progress++;
 
         this.setChanged();
         this.notifyObservers(this);
     }
 
-    public void setTotal(int total) {
+    void setTotal(int total) {
         this.total = total;
     }
 
@@ -53,6 +45,7 @@ public class ProgressCounter extends Observable {
 
     /**
      * Calculates how much percent has been loaded.
+     *
      * @return percentage of file parsed.
      */
     public double percentage() {
@@ -65,6 +58,7 @@ public class ProgressCounter extends Observable {
 
     /**
      * set the line count to the max so that it is 100%.
+     *
      * @param count int equal to the total
      */
     private void setProgress(int count) {
@@ -77,7 +71,7 @@ public class ProgressCounter extends Observable {
     /**
      * Tells the ProgressBar loading is finished so it becomes invisible.
      */
-    public void finished() {
+    void finished() {
         this.setProgress(this.total);
     }
 

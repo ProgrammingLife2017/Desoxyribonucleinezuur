@@ -4,9 +4,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import programminglife.gui.InitFXThread;
 import programminglife.model.GenomeGraph;
-import programminglife.model.exception.UnknownTypeException;
-import programminglife.utility.InitFXThread;
+import programminglife.model.exception.ParseException;
 
 import java.io.File;
 import java.util.Observable;
@@ -51,7 +51,7 @@ public class GraphParserTest implements Observer {
         faultyGraphParser.getGraph().removeCache();
     }
 
-    @Test(expected = UnknownTypeException.class)
+    @Test(expected = ParseException.class)
     public void faultyParseTest() throws Exception {
         faultyGraphParser.parse();
     }
@@ -90,12 +90,12 @@ public class GraphParserTest implements Observer {
     }
 
     @Test
-    public void parseLinkTest() throws UnknownTypeException {
-         graphParser.parseLink(linkLine);
+    public void parseLinkTest() throws ParseException {
+        graphParser.parseLink(linkLine);
     }
 
     @Test
-    public void parseSegmentTest() throws UnknownTypeException {
+    public void parseSegmentTest() throws ParseException {
         graphParser.parseSegment(nodeLine);
         GenomeGraph g = graphParser.getGraph();
 
@@ -113,7 +113,7 @@ public class GraphParserTest implements Observer {
         graphParser.run();
     }
 
-    @Test(expected = UnknownTypeException.class)
+    @Test(expected = ParseException.class)
     public void runTestFailure() throws Throwable {
         try {
             faultyGraphParser.addObserver(this);
@@ -144,36 +144,36 @@ public class GraphParserTest implements Observer {
             graphParser.parseSegment("Fiets");
             fail("This should not be parsed");
         } catch (Exception e) {
-            assertEquals(UnknownTypeException.class, e.getClass());
+            assertEquals(ParseException.class, e.getClass());
             assertEquals("Line (Fiets) is not a segment", e.getMessage());
         }
     }
 
     @Test
-    public void parseLinkNotStartingL() throws UnknownTypeException {
+    public void parseLinkNotStartingL() throws ParseException {
         try {
             graphParser.parseLink("Fiets");
             fail("This should not be parsed");
         } catch (Exception e) {
-            assertEquals(UnknownTypeException.class, e.getClass());
+            assertEquals(ParseException.class, e.getClass());
             assertEquals("Line (Fiets) is not a link", e.getMessage());
         }
     }
 
     @Test
-    public void parseHeaderNotStartingH() throws UnknownTypeException {
+    public void parseHeaderNotStartingH() throws ParseException {
         try {
             graphParser.parseHeader("Fiets");
             fail("This should not be parsed");
         } catch (Exception e) {
-            assertEquals(UnknownTypeException.class, e.getClass());
+            assertEquals(ParseException.class, e.getClass());
             assertEquals("Line (Fiets) is not a header", e.getMessage());
         }
     }
 
     @Test
     public void parseMultipleHeaders() throws Exception {
-        String[] lines = new String[] {"H\tVN:Z:1.0\n", "H\tBUILD:Z:VCF2GRAPH\n", "H\tORI:Z:SZAXPI008746-45"};
+        String[] lines = new String[]{"H\tVN:Z:1.0\n", "H\tBUILD:Z:VCF2GRAPH\n", "H\tORI:Z:SZAXPI008746-45"};
         for (String line : lines) {
             graphParser.parseHeader(line);
         }
@@ -181,34 +181,34 @@ public class GraphParserTest implements Observer {
     }
 
     @Test
-    public void parseSegmentIDNotNumber() throws UnknownTypeException {
+    public void parseSegmentIDNotNumber() throws ParseException {
         try {
             graphParser.parseSegment("S\tID\tT\t*\tORI:Z:TKK-01-0066.fasta;TKK_REF.fasta");
             fail("This should not be parsed");
         } catch (Exception e) {
-            assertEquals(UnknownTypeException.class, e.getClass());
+            assertEquals(ParseException.class, e.getClass());
             assertEquals("The segment ID (ID) should be a number", e.getMessage());
         }
     }
 
     @Test
-    public void parseSegmentNotEnoughProperties() throws UnknownTypeException {
+    public void parseSegmentNotEnoughProperties() throws ParseException {
         try {
             graphParser.parseSegment("S\t8\tT\t*");
             fail("This should not be parsed");
         } catch (Exception e) {
-            assertEquals(UnknownTypeException.class, e.getClass());
+            assertEquals(ParseException.class, e.getClass());
             assertEquals("Segment has less than 5 properties (4)", e.getMessage());
         }
     }
 
     @Test
-    public void parseSegmentNoGenomes() throws UnknownTypeException {
+    public void parseSegmentNoGenomes() throws ParseException {
         try {
             graphParser.parseSegment("S\t8\tT\t*\tGenomes:A;B;C");
             fail("This should not be parsed");
         } catch (Exception e) {
-            assertEquals(UnknownTypeException.class, e.getClass());
+            assertEquals(ParseException.class, e.getClass());
             assertEquals("Segment has no genomes", e.getMessage());
         }
     }
@@ -219,29 +219,29 @@ public class GraphParserTest implements Observer {
             graphParser.parseSegment("S\t8\tT\t*\tORI:Z:TKK_NOPE");
             fail("This should not be parsed");
         } catch (Exception e) {
-            assertEquals(UnknownTypeException.class, e.getClass());
+            assertEquals(ParseException.class, e.getClass());
             assertEquals("Unknown genome name in segment", e.getMessage());
         }
     }
 
     @Test
-    public void parseLinkFirstIDNotNumber() throws UnknownTypeException {
+    public void parseLinkFirstIDNotNumber() throws ParseException {
         try {
             graphParser.parseLink("L\tX\t+\t2\t+\t0M");
             fail("This should not be parsed");
         } catch (Exception e) {
-            assertEquals(UnknownTypeException.class, e.getClass());
+            assertEquals(ParseException.class, e.getClass());
             assertEquals("The source ID (X) should be a number", e.getMessage());
         }
     }
 
     @Test
-    public void parseLinkSecondIDNotNumber() throws UnknownTypeException {
+    public void parseLinkSecondIDNotNumber() throws ParseException {
         try {
             graphParser.parseLink("L\t1\t+\tY\t+\t0M");
             fail("This should not be parsed");
         } catch (Exception e) {
-            assertEquals(UnknownTypeException.class, e.getClass());
+            assertEquals(ParseException.class, e.getClass());
             assertEquals("The destination ID (Y) should be a number", e.getMessage());
         }
     }
