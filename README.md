@@ -21,6 +21,7 @@ You can navigate the graph by dragging on the main screen to pan, or use the scr
 
 For going to specific locations, there are three ways:
 - use bookmarks, see next section
+- In the left pane, you can fill in a node ID to navigate to and then press ENTER or use the 'go to node' button
 - You can click on the minimap to navigate to that location.
 - Use the 'surprise me' button in the left pane. It just loads a random part of the graph.
 
