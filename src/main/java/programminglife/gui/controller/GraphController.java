@@ -85,8 +85,8 @@ class GraphController {
 
             time("Drawing", () -> draw(gc));
 
-            centerOnNodeId(center);
-            highlightCenterNode(center, Color.DARKORANGE);
+            int centerId = centerOnNodeId(center);
+            highlightCenterNode(centerId, Color.DARKORANGE);
         });
     }
 
@@ -385,19 +385,27 @@ class GraphController {
      *
      * @param nodeId is the node to center on.
      */
-    private void centerOnNodeId(int nodeId) {
+    private int centerOnNodeId(int nodeId) {
         DrawableNode drawableCenterNode = subGraph.getNodes().get(nodeId);
+        int centerId = nodeId;
 
         Bounds bounds = canvas.getParent().getLayoutBounds();
         double boundsHeight = bounds.getHeight();
         double boundsWidth = bounds.getWidth();
 
-        double xCoordinate = drawableCenterNode.getCenter().getX();
+        double xCoordinate;
+        if (drawableCenterNode != null) {
+            xCoordinate = drawableCenterNode.getCenter().getX();
+        } else {
+            centerId = graph.getChildIDs(nodeId)[0];
+            xCoordinate = subGraph.getNodes().get(centerId).getCenter().getX();
+        }
 
         locationCenterY = boundsHeight / 4;
         locationCenterX = boundsWidth / 2 - xCoordinate;
 
         translate(locationCenterX, locationCenterY);
+        return centerId;
     }
 
     /**
