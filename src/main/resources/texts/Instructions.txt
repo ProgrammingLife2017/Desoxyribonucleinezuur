@@ -3,7 +3,7 @@ Main area:
     - Move the graph by pressing the left mouse-button and moving the mouse.
     - Select a node by left-clicking it.
     - Select a second node to compare by right-clicking or shift + left-clicking it.
-    - The shade of blue inside nodes and the thickness of edges determines the amount of genomes through that node/edge.
+    - The shade of blue inside nodes and the thickness of edges represents the amount of genomes through that node/edge.
 
 Top menu "File":
     - Open will show a menu where the file to be opened can be chosen.
