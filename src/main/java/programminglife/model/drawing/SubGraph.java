@@ -286,7 +286,7 @@ public class SubGraph implements Iterable<DrawableNode> {
      */
     public int updateCenterNode(double centerCanvasX, int oldCenterNode) {
         for (int i = 0; i < layers.size(); i++) {
-            if (layers.get(i).getX() > centerCanvasX) {
+            if (layers.get(i).getX() > centerCanvasX && i > 0) {
                 if (Math.abs(layers.get(i - 1).getX() - centerCanvasX)
                         < Math.abs(layers.get(i).getX() - centerCanvasX)) {
                     for (DrawableNode node : layers.get(i - 1)) {

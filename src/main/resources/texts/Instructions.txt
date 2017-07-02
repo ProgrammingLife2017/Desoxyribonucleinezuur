@@ -1,15 +1,17 @@
 Main area:
-    - Zoom using the zoom buttons or alt + scroll wheel.
-    - Move the graph by pressing alt + dragging a node or edge.
+    - Zoom using the scroll wheel or by pinching the track pad.
+    - Move the graph by pressing the left mouse-button and moving the mouse.
+    - Select a node by left-clicking it.
+    - Select a second node to compare by right-clicking or shift + left-clicking it.
+    - The shade of blue inside nodes and the thickness of edges determines the amount of genomes through that node/edge.
 
 Top menu "File":
     - Open will show a menu where the file to be opened can be chosen.
     - Open recent will show files that have been used previously.
-    - Quit will close the application after confirmation.
 
 Top menu "View":
     - Toggle Dark will toggle the styling of the program.
-    - Toggle SNP will toggle if SNP are drawn, or separate nodes.
+    - Toggle SNP will toggle the drawing of SNPs glyphs, or separate nodes.
     - Toggle Console will toggle the console useful for advanced users.
     - Toggle MiniMap will toggle the MiniMap which shows the current location
 
@@ -17,15 +19,22 @@ Top menu "Bookmarks", Bookmark menu:
     - Open will open the currently selected bookmark.
     - Create will open a new window where a new bookmark can be added.
     - Delete will remove the currently selected bookmark.
-    - Cancel will close the bookmark window.
+
+Right menu "Highlight":
+    - Highlight genomes by double clicking or selecting the genome from the left panel and clicking the "->" button.
+    - Search through genomes by entering the substring of the genome you want to highlight.
+    - Select a minimum and/or maximum number of genomes you wish to visualize through nodes,
+      by checking the box and entering the desired amount. This will widen the strokes around nodes.
 
 Left hand panel:
-    - Reset the zoom with reset zoom and jump back to the origin of the drawn graph with the Reset X/Y button.
-    - In the two text boxes you can choose the start node and the amount of layers (depth).
-    - The surprise me! button chooses a random start node and draws with the depth you gave.
+    - Reset the zoom with reset view.
+    - In the center node text box you can choose the center node to view.
+    - The surprise me! button chooses a random center node and draws.
     - The bookmark button allows you to add a bookmark at your current location.
+
+Mini map:
+    - Click on the mini map to navigate to that location.
 
 Usage of files:
     - A .gfa file which is used by the program can be stored at any location the user desires.
-    - The first time a file is loaded its path will be stored in the application to be used by certain functions.
     - If a file is edited in any manner those functions might not work anymore and the file will need to be updated.
