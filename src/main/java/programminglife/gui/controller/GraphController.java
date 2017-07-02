@@ -397,7 +397,11 @@ class GraphController {
         if (drawableCenterNode != null) {
             xCoordinate = drawableCenterNode.getCenter().getX();
         } else {
-            centerId = graph.getChildIDs(nodeId)[0];
+            if (graph.getChildIDs(nodeId).length > 0) {
+                centerId = graph.getChildIDs(nodeId)[0];
+            } else {
+                centerId = graph.getParentIDs(nodeId)[0];
+            }
             xCoordinate = subGraph.getNodes().get(centerId).getCenter().getX();
         }
 
