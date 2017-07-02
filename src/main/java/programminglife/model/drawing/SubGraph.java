@@ -293,7 +293,7 @@ public class SubGraph implements Iterable<DrawableNode> {
                 return node.getIdentifier();
             }
         }
-        if (centerIndex >= layers.size()) {
+        if (centerIndex >= layers.size() - 1) {
             for (DrawableNode node : layers.get(centerIndex - 1)) {
                 if (node instanceof DrawableSegment
                         && ((DrawableSegment) node).getSequence().length() > 1) {
