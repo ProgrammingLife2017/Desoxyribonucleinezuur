@@ -285,35 +285,26 @@ public class SubGraph implements Iterable<DrawableNode> {
      * @return int of the new centerNode.
      */
     public int updateCenterNode(double centerCanvasX, int oldCenterNode) {
-        for (int i = 0; i < layers.size(); i++) {
-            if (layers.get(i).getX() > centerCanvasX) {
-                if (Math.abs(layers.get(i - 1).getX() - centerCanvasX)
-                        < Math.abs(layers.get(i).getX() - centerCanvasX)) {
-                    for (DrawableNode node : layers.get(i - 1)) {
-                        if (node instanceof DrawableSegment
-                                && ((DrawableSegment) node).getSequence().length() > 1) {
-                            return node.getIdentifier();
-                        }
-                    }
-                    for (DrawableNode node : layers.get(i)) {
-                        if (node instanceof  DrawableSegment
-                                && ((DrawableSegment) node).getSequence().length() > 1) {
-                            return node.getIdentifier();
-                        }
-                    }
-                } else {
-                    for (DrawableNode node : layers.get(i)) {
-                        if (node instanceof DrawableSegment
-                                && ((DrawableSegment) node).getSequence().length() > 1) {
-                            return node.getIdentifier();
-                        }
-                    }
-                    for (DrawableNode node : layers.get(i - 1)) {
-                        if (node instanceof  DrawableSegment
-                                && ((DrawableSegment) node).getSequence().length() > 1) {
-                            return node.getIdentifier();
-                        }
-                    }
+        int centerIndex = getLayerIndex(layers, centerCanvasX);
+        Layer centerLayer = layers.get(centerIndex);
+        for (DrawableNode node : centerLayer) {
+            if (node instanceof DrawableSegment
+                    && ((DrawableSegment) node).getSequence().length() > 1) {
+                return node.getIdentifier();
+            }
+        }
+        if (centerIndex >= layers.size() - 1) {
+            for (DrawableNode node : layers.get(centerIndex - 1)) {
+                if (node instanceof DrawableSegment
+                        && ((DrawableSegment) node).getSequence().length() > 1) {
+                    return node.getIdentifier();
+                }
+            }
+        } else {
+            for (DrawableNode node : layers.get(centerIndex + 1)) {
+                if (node instanceof DrawableSegment
+                        && ((DrawableSegment) node).getSequence().length() > 2) {
+                    return node.getIdentifier();
                 }
             }
         }
