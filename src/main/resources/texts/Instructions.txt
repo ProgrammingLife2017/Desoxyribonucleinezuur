@@ -37,4 +37,5 @@ Mini map:
 
 Usage of files:
     - A .gfa file which is used by the program can be stored at any location the user desires.
-    - If a file is edited in any manner those functions might not work anymore and the file will need to be updated.
+    - If a file is edited in any manner the application might not recognize it anymore
+      and the file will need to be updated.
