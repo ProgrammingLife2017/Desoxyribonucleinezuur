@@ -74,6 +74,7 @@ public class GuiController implements Observer {
     @FXML private Button btnClipboard2;
     @FXML private ProgressBar progressBar;
     @FXML private Tab searchTab;
+    @FXML private Tab infoTab;
 
     @FXML private TextField txtMaxDrawDepth;
     @FXML private TextField txtCenterNode;
@@ -134,9 +135,11 @@ public class GuiController implements Observer {
     public GraphParser openFile(File file) {
         if (file != null) {
             if (this.graphController != null && this.graphController.getGraph() != null) {
+                this.graphController.removeHighlight();
                 this.graphController.resetClicked();
                 this.graphController.getGraph().close();
                 this.canvas.getGraphicsContext2D().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+                initRightSearchTab();
             }
 
             disableGraphUIElements(true);
@@ -151,6 +154,7 @@ public class GuiController implements Observer {
             this.parseThread = new Thread(graphParser);
             this.parseThread.start();
             this.setFile(file);
+            this.anchorGraphInfo.setDisable(false);
 
             return graphParser;
         }
@@ -307,6 +311,10 @@ public class GuiController implements Observer {
      */
     private void disableGraphUIElements(boolean isDisabled) {
         anchorLeftControlPanel.setDisable(isDisabled);
+        anchorGraphInfo.setDisable(isDisabled);
+        searchTab.setDisable(isDisabled);
+        infoTab.setDisable(isDisabled);
+        anchorGraphPanel.setDisable(isDisabled);
     }
 
     /**
